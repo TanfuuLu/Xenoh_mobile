@@ -1,0 +1,39 @@
+include: package:very_good_analysis/analysis_options.yaml
+
+analyzer:
+  language:
+    strict-casts: true
+    strict-inference: true
+    strict-raw-types: true
+  errors:
+    invalid_annotation_target: ignore # freezed/json codegen noise
+  exclude:
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+    # Vendored fork (patched for a large-icon notification feature) — its own
+    # unmodified files use older Flutter APIs; not our lint surface.
+    - "packages/flutter_foreground_task/**"
+
+linter:
+  rules:
+    prefer_const_constructors: true
+    require_trailing_commas: true
+    public_member_api_docs: false
+    lines_longer_than_80_chars: false
+    # Use relative imports within lib/ (consistent with the feature-first tree
+    # and code-patterns.md); disable the conflicting package-import rule.
+    always_use_package_imports: false
+    prefer_relative_imports: true
+    # Clean-Architecture repositories are intentionally single-method abstracts.
+    one_member_abstracts: false
+    # DI constructors map public named params → private fields by design.
+    prefer_initializing_formals: false
+    # Repositories use a catch-all fallback that returns UnknownFailure.
+    avoid_catches_without_on_clauses: false
+    # Color-token files are self-documenting; explicit `Color` on every alias is noise.
+    specify_nonobvious_property_types: false
+    # Keep the conventional `flutter:` sdk dep first rather than strict A–Z.
+    sort_pub_dependencies: false
+    # Explicit pagination args (pageNumber/pageSize) read clearer than relying
+    # on defaults.
+    avoid_redundant_argument_values: false

@@ -1,0 +1,109 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+part of 'exercises_controller.dart';
+
+// **************************************************************************
+// RiverpodGenerator
+// **************************************************************************
+
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
+/// Exercises (with their sets) for a daily workout.
+
+@ProviderFor(ExercisesController)
+final exercisesControllerProvider = ExercisesControllerFamily._();
+
+/// Exercises (with their sets) for a daily workout.
+final class ExercisesControllerProvider
+    extends $AsyncNotifierProvider<ExercisesController, List<Exercise>> {
+  /// Exercises (with their sets) for a daily workout.
+  ExercisesControllerProvider._({
+    required ExercisesControllerFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'exercisesControllerProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$exercisesControllerHash();
+
+  @override
+  String toString() {
+    return r'exercisesControllerProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  ExercisesController create() => ExercisesController();
+
+  @override
+  bool operator ==(Object other) {
+    return other is ExercisesControllerProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$exercisesControllerHash() =>
+    r'5e97985d3ea19df7b982d42ecd3929592d1ed74b';
+
+/// Exercises (with their sets) for a daily workout.
+
+final class ExercisesControllerFamily extends $Family
+    with
+        $ClassFamilyOverride<
+          ExercisesController,
+          AsyncValue<List<Exercise>>,
+          List<Exercise>,
+          FutureOr<List<Exercise>>,
+          String
+        > {
+  ExercisesControllerFamily._()
+    : super(
+        retry: null,
+        name: r'exercisesControllerProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  /// Exercises (with their sets) for a daily workout.
+
+  ExercisesControllerProvider call(String dailyWorkoutId) =>
+      ExercisesControllerProvider._(argument: dailyWorkoutId, from: this);
+
+  @override
+  String toString() => r'exercisesControllerProvider';
+}
+
+/// Exercises (with their sets) for a daily workout.
+
+abstract class _$ExercisesController extends $AsyncNotifier<List<Exercise>> {
+  late final _$args = ref.$arg as String;
+  String get dailyWorkoutId => _$args;
+
+  FutureOr<List<Exercise>> build(String dailyWorkoutId);
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<AsyncValue<List<Exercise>>, List<Exercise>>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<List<Exercise>>, List<Exercise>>,
+              AsyncValue<List<Exercise>>,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, () => build(_$args));
+  }
+}
