@@ -7,6 +7,8 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../app/theme/app_colors.dart';
 import '../../app/theme/app_dimens.dart';
 import '../../features/shared_api/xenoh_api.dart';
+import '../config/app_config.dart';
+import '../utils/safe_external_url.dart';
 
 /// Resolves a signed, directly-usable download URL for a chat attachment.
 /// `inline` mirrors the backend's `?inline=` flag: true for rendering an
@@ -161,8 +163,19 @@ class ChatFileAttachment extends ConsumerWidget {
         inline: false,
       )).future,
     );
-    if (url.isEmpty) return;
-    await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+    final apiHost = Uri.tryParse(AppConfig.apiBaseUrl)?.host.toLowerCase();
+    final assetsHost = Uri.tryParse(
+      AppConfig.assetsBaseUrl,
+    )?.host.toLowerCase();
+    final uri = safeExternalUri(
+      url,
+      allowedHosts: {
+        ?apiHost,
+        ?assetsHost,
+      },
+    );
+    if (uri == null) return;
+    await launchUrl(uri, mode: LaunchMode.externalApplication);
   }
 
   static IconData _iconFor(String fileName) {

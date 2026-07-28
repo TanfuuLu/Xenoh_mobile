@@ -194,6 +194,24 @@ abstract class AppLocalizations {
   /// **'Back'**
   String get commonBack;
 
+  /// Title for an unknown application route
+  ///
+  /// In en, this message translates to:
+  /// **'Page not found'**
+  String get notFoundTitle;
+
+  /// Message for an unknown application route
+  ///
+  /// In en, this message translates to:
+  /// **'This page does not exist or is no longer available.'**
+  String get notFoundMessage;
+
+  /// Navigation action on the not-found page
+  ///
+  /// In en, this message translates to:
+  /// **'Return home'**
+  String get notFoundHomeAction;
+
   /// Generic validator message for a required field
   ///
   /// In en, this message translates to:
@@ -2443,24 +2461,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Platform Plans'**
   String get appShellDrawerAdminPlans;
-
-  /// Drawer item label for admin payments
-  ///
-  /// In en, this message translates to:
-  /// **'Payments'**
-  String get appShellDrawerAdminPayments;
-
-  /// Drawer section title for subscription/billing
-  ///
-  /// In en, this message translates to:
-  /// **'Updates and billing'**
-  String get appShellDrawerUpdatesBillingSection;
-
-  /// Drawer item label for the subscription screen
-  ///
-  /// In en, this message translates to:
-  /// **'Subscription'**
-  String get appShellDrawerSubscription;
 
   /// Email field label, shared across auth screens
   ///
@@ -6455,47 +6455,11 @@ abstract class AppLocalizations {
   /// **'Subscription'**
   String get subscriptionTitle;
 
-  /// No description provided for @subscriptionExtendOrChangeTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Extend or change plan'**
-  String get subscriptionExtendOrChangeTitle;
-
-  /// No description provided for @subscriptionGoProTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Go Pro'**
-  String get subscriptionGoProTitle;
-
   /// No description provided for @subscriptionUnlockMessage.
   ///
   /// In en, this message translates to:
   /// **'Unlock AI insights, analytics and coaching tools.'**
   String get subscriptionUnlockMessage;
-
-  /// No description provided for @subscriptionContinueToPaymentCta.
-  ///
-  /// In en, this message translates to:
-  /// **'Continue to payment'**
-  String get subscriptionContinueToPaymentCta;
-
-  /// No description provided for @subscriptionRenewCta.
-  ///
-  /// In en, this message translates to:
-  /// **'Renew {tier}'**
-  String subscriptionRenewCta(String tier);
-
-  /// No description provided for @subscriptionSwitchToCta.
-  ///
-  /// In en, this message translates to:
-  /// **'Switch to {tier}'**
-  String subscriptionSwitchToCta(String tier);
-
-  /// No description provided for @subscriptionDevActivateCta.
-  ///
-  /// In en, this message translates to:
-  /// **'Dev: activate Pro now'**
-  String get subscriptionDevActivateCta;
 
   /// No description provided for @subscriptionCurrentPlanLabel.
   ///
@@ -6509,12 +6473,6 @@ abstract class AppLocalizations {
   /// **'Expires'**
   String get subscriptionExpiresLabel;
 
-  /// No description provided for @subscriptionExpiredLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Expired'**
-  String get subscriptionExpiredLabel;
-
   /// No description provided for @subscriptionNoExpiryLabel.
   ///
   /// In en, this message translates to:
@@ -6527,77 +6485,17 @@ abstract class AppLocalizations {
   /// **'AI requests this month'**
   String get subscriptionAiRequestsThisMonthLabel;
 
-  /// No description provided for @subscriptionNotIncludedLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Not included'**
-  String get subscriptionNotIncludedLabel;
-
-  /// No description provided for @subscriptionRemainingLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'{count} remaining'**
-  String subscriptionRemainingLabel(int count);
-
-  /// No description provided for @subscriptionCurrentChipLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Current'**
-  String get subscriptionCurrentChipLabel;
-
-  /// No description provided for @subscriptionIncludedInProCoachMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'Included in your Pro Coach plan'**
-  String get subscriptionIncludedInProCoachMessage;
-
-  /// No description provided for @subscriptionRenewToExtendMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'Renew to extend your plan'**
-  String get subscriptionRenewToExtendMessage;
-
-  /// No description provided for @subscriptionBilledOnceMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'Billed once by bank transfer'**
-  String get subscriptionBilledOnceMessage;
-
-  /// No description provided for @subscriptionPaymentNoteMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'Payment is by Vietnamese bank transfer. Your plan activates automatically once the transfer is confirmed (usually within a few minutes).'**
-  String get subscriptionPaymentNoteMessage;
-
-  /// No description provided for @subscriptionPerMonthSuffix.
-  ///
-  /// In en, this message translates to:
-  /// **'/mo'**
-  String get subscriptionPerMonthSuffix;
-
   /// No description provided for @subscriptionTierProIndividual.
   ///
   /// In en, this message translates to:
   /// **'Pro Individual'**
   String get subscriptionTierProIndividual;
 
-  /// No description provided for @subscriptionTierProIndividualTagline.
-  ///
-  /// In en, this message translates to:
-  /// **'For athletes training solo'**
-  String get subscriptionTierProIndividualTagline;
-
   /// No description provided for @subscriptionTierProCoach.
   ///
   /// In en, this message translates to:
   /// **'Pro Coach'**
   String get subscriptionTierProCoach;
-
-  /// No description provided for @subscriptionTierProCoachTagline.
-  ///
-  /// In en, this message translates to:
-  /// **'For coaches managing clients'**
-  String get subscriptionTierProCoachTagline;
 
   /// No description provided for @subscriptionTierFree.
   ///
@@ -6611,138 +6509,6 @@ abstract class AppLocalizations {
   /// **'{months, plural, =1{1 month} other{{months} months}}'**
   String subscriptionMonthsLabel(int months);
 
-  /// No description provided for @subscriptionBestValueLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Best value'**
-  String get subscriptionBestValueLabel;
-
-  /// No description provided for @subscriptionCompletePaymentTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Complete payment'**
-  String get subscriptionCompletePaymentTitle;
-
-  /// No description provided for @subscriptionAmountToTransferLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'AMOUNT TO TRANSFER'**
-  String get subscriptionAmountToTransferLabel;
-
-  /// No description provided for @subscriptionScanInstructionsMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'Scan the QR with your banking app, or transfer manually using the details below. Include the transfer description so we can match your payment automatically.'**
-  String get subscriptionScanInstructionsMessage;
-
-  /// No description provided for @subscriptionBankLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Bank'**
-  String get subscriptionBankLabel;
-
-  /// No description provided for @subscriptionAccountNumberLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Account number'**
-  String get subscriptionAccountNumberLabel;
-
-  /// No description provided for @subscriptionAccountNameLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Account name'**
-  String get subscriptionAccountNameLabel;
-
-  /// No description provided for @subscriptionAmountLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Amount'**
-  String get subscriptionAmountLabel;
-
-  /// No description provided for @subscriptionTransferDescriptionLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Transfer description'**
-  String get subscriptionTransferDescriptionLabel;
-
-  /// No description provided for @subscriptionOrderExpiresMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'This order expires {datetime}.'**
-  String subscriptionOrderExpiresMessage(String datetime);
-
-  /// No description provided for @subscriptionCopyTooltip.
-  ///
-  /// In en, this message translates to:
-  /// **'Copy {label}'**
-  String subscriptionCopyTooltip(String label);
-
-  /// No description provided for @subscriptionCopiedSnackbar.
-  ///
-  /// In en, this message translates to:
-  /// **'{label} copied'**
-  String subscriptionCopiedSnackbar(String label);
-
-  /// No description provided for @subscriptionOrderExpiredMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'This order has expired. Go back to start a new one.'**
-  String get subscriptionOrderExpiredMessage;
-
-  /// No description provided for @subscriptionWaitingForTransferMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'Waiting for your transfer…'**
-  String get subscriptionWaitingForTransferMessage;
-
-  /// No description provided for @subscriptionAutoUpdateMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'This page updates automatically once payment is confirmed (usually within a few minutes).'**
-  String get subscriptionAutoUpdateMessage;
-
-  /// No description provided for @subscriptionScanToPayLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'SCAN TO PAY'**
-  String get subscriptionScanToPayLabel;
-
-  /// No description provided for @subscriptionQrUnavailableMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'QR unavailable — use the transfer details below.'**
-  String get subscriptionQrUnavailableMessage;
-
-  /// No description provided for @subscriptionOpenBankingAppMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'Open your banking app and scan with VietQR'**
-  String get subscriptionOpenBankingAppMessage;
-
-  /// No description provided for @subscriptionUpgradeToastMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'You\'re now on {tier} 🎉'**
-  String subscriptionUpgradeToastMessage(String tier);
-
-  /// No description provided for @marketingPricingTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Pricing'**
-  String get marketingPricingTitle;
-
-  /// No description provided for @marketingChooseYourPlanTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Choose your Pro plan'**
-  String get marketingChooseYourPlanTitle;
-
-  /// No description provided for @marketingChooseYourPlanSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Public pricing for AI insights, analytics, and coach workflows.'**
-  String get marketingChooseYourPlanSubtitle;
-
   /// No description provided for @marketingCreateAccountCta.
   ///
   /// In en, this message translates to:
@@ -6754,48 +6520,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sign in'**
   String get marketingSignInCta;
-
-  /// No description provided for @marketingCoachChipLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Coach'**
-  String get marketingCoachChipLabel;
-
-  /// No description provided for @marketingFeatureAiInsights.
-  ///
-  /// In en, this message translates to:
-  /// **'AI insights and quota-backed coach tips'**
-  String get marketingFeatureAiInsights;
-
-  /// No description provided for @marketingFeaturePlanAnalytics.
-  ///
-  /// In en, this message translates to:
-  /// **'Plan analytics, balance checks, and progress insight'**
-  String get marketingFeaturePlanAnalytics;
-
-  /// No description provided for @marketingFeatureNutritionInsight.
-  ///
-  /// In en, this message translates to:
-  /// **'Nutrition insight and richer progress views'**
-  String get marketingFeatureNutritionInsight;
-
-  /// No description provided for @marketingFeatureClientManagement.
-  ///
-  /// In en, this message translates to:
-  /// **'Client management, invite codes, and coach dashboard'**
-  String get marketingFeatureClientManagement;
-
-  /// No description provided for @marketingFeatureClientPlans.
-  ///
-  /// In en, this message translates to:
-  /// **'Client plans, nutrition oversight, AI briefs, and chat'**
-  String get marketingFeatureClientPlans;
-
-  /// No description provided for @marketingSavePercentLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Save {percent}%'**
-  String marketingSavePercentLabel(int percent);
 
   /// No description provided for @adminDashboardTitle.
   ///
@@ -7061,71 +6785,11 @@ abstract class AppLocalizations {
   /// **'Days'**
   String get adminDaysLabel;
 
-  /// No description provided for @adminPaymentsTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Payments'**
-  String get adminPaymentsTitle;
-
-  /// No description provided for @adminPaymentsHeaderTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Payments and subscriptions'**
-  String get adminPaymentsHeaderTitle;
-
-  /// No description provided for @adminPaymentsHeaderSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'SePay order state, tier, revenue, and active subscriptions.'**
-  String get adminPaymentsHeaderSubtitle;
-
   /// No description provided for @adminRevenueLabel.
   ///
   /// In en, this message translates to:
   /// **'Revenue'**
   String get adminRevenueLabel;
-
-  /// No description provided for @adminThisMonthLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'This month'**
-  String get adminThisMonthLabel;
-
-  /// No description provided for @adminPendingLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Pending'**
-  String get adminPendingLabel;
-
-  /// No description provided for @adminCompletedLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Completed'**
-  String get adminCompletedLabel;
-
-  /// No description provided for @adminNoPaymentsTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'No payments'**
-  String get adminNoPaymentsTitle;
-
-  /// No description provided for @adminNoPaymentsMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'Payment orders appear here.'**
-  String get adminNoPaymentsMessage;
-
-  /// No description provided for @adminNoSubscriptionsTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'No subscriptions'**
-  String get adminNoSubscriptionsTitle;
-
-  /// No description provided for @adminNoSubscriptionsMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'Active and historical subscriptions appear here.'**
-  String get adminNoSubscriptionsMessage;
 
   /// No description provided for @adminAnalyticsTitle.
   ///
@@ -7616,20 +7280,20 @@ abstract class AppLocalizations {
   /// No description provided for @legalRefundSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Subscription and payment expectations for Pro plans.'**
+  /// **'Subscription access and account adjustment information.'**
   String get legalRefundSubtitle;
 
-  /// No description provided for @legalRefundPaymentOrdersTitle.
+  /// No description provided for @legalRefundSubscriptionAccessTitle.
   ///
   /// In en, this message translates to:
   /// **'Subscription access'**
-  String get legalRefundPaymentOrdersTitle;
+  String get legalRefundSubscriptionAccessTitle;
 
-  /// No description provided for @legalRefundPaymentOrdersBody.
+  /// No description provided for @legalRefundSubscriptionAccessBody.
   ///
   /// In en, this message translates to:
-  /// **'Pro subscriptions are purchased and managed on the Xenoh website. The mobile app reflects subscription access after the website account is updated.'**
-  String get legalRefundPaymentOrdersBody;
+  /// **'The mobile app reflects the subscription access associated with your Xenoh account after account status updates.'**
+  String get legalRefundSubscriptionAccessBody;
 
   /// No description provided for @legalRefundReviewProcessTitle.
   ///
@@ -7640,7 +7304,7 @@ abstract class AppLocalizations {
   /// No description provided for @legalRefundReviewProcessBody.
   ///
   /// In en, this message translates to:
-  /// **'Refund requests are handled through the Xenoh website according to the applicable purchase terms and account state.'**
+  /// **'Refund requests are handled according to the applicable terms and account state.'**
   String get legalRefundReviewProcessBody;
 
   /// No description provided for @legalRefundAccessChangesTitle.
@@ -7702,12 +7366,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Pro Coach unlocks client management, invite codes, client plans, chat, nutrition oversight, and AI briefs.'**
   String get marketingCoachesBody;
-
-  /// No description provided for @marketingViewPricingCta.
-  ///
-  /// In en, this message translates to:
-  /// **'View pricing'**
-  String get marketingViewPricingCta;
 
   /// No description provided for @marketingAboutNavLabel.
   ///
@@ -7924,6 +7582,324 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Notification permission was not granted.'**
   String get workoutNotificationPermissionDenied;
+
+  /// No description provided for @supplementsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Supplements'**
+  String get supplementsTitle;
+
+  /// No description provided for @supplementsClientTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Client supplements'**
+  String get supplementsClientTitle;
+
+  /// No description provided for @supplementsTodayTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get supplementsTodayTab;
+
+  /// No description provided for @supplementsRegimensTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Schedules'**
+  String get supplementsRegimensTab;
+
+  /// No description provided for @supplementsHistoryTab.
+  ///
+  /// In en, this message translates to:
+  /// **'History'**
+  String get supplementsHistoryTab;
+
+  /// No description provided for @supplementsTodayLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'TODAY'**
+  String get supplementsTodayLabel;
+
+  /// No description provided for @supplementsPreviousDayTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous day'**
+  String get supplementsPreviousDayTooltip;
+
+  /// No description provided for @supplementsNextDayTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Next day'**
+  String get supplementsNextDayTooltip;
+
+  /// No description provided for @supplementsCoachReadOnlyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Coaches can review adherence here. Only the client can record a dose.'**
+  String get supplementsCoachReadOnlyMessage;
+
+  /// No description provided for @supplementsAdherenceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'ADHERENCE'**
+  String get supplementsAdherenceLabel;
+
+  /// No description provided for @supplementsTakenOfPlanned.
+  ///
+  /// In en, this message translates to:
+  /// **'{taken} of {planned} taken'**
+  String supplementsTakenOfPlanned(int taken, int planned);
+
+  /// No description provided for @supplementsNoDosesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No doses scheduled'**
+  String get supplementsNoDosesTitle;
+
+  /// No description provided for @supplementsNoDosesMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'There are no supplement doses planned for this day.'**
+  String get supplementsNoDosesMessage;
+
+  /// No description provided for @supplementsMarkTakenButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Taken'**
+  String get supplementsMarkTakenButton;
+
+  /// No description provided for @supplementsSkipButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get supplementsSkipButton;
+
+  /// No description provided for @supplementsResetDoseTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset dose'**
+  String get supplementsResetDoseTooltip;
+
+  /// No description provided for @supplementsStatusPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get supplementsStatusPending;
+
+  /// No description provided for @supplementsStatusTaken.
+  ///
+  /// In en, this message translates to:
+  /// **'Taken'**
+  String get supplementsStatusTaken;
+
+  /// No description provided for @supplementsStatusSkipped.
+  ///
+  /// In en, this message translates to:
+  /// **'Skipped'**
+  String get supplementsStatusSkipped;
+
+  /// No description provided for @supplementsStatusMissed.
+  ///
+  /// In en, this message translates to:
+  /// **'Missed'**
+  String get supplementsStatusMissed;
+
+  /// No description provided for @supplementsShowArchivedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Show archived'**
+  String get supplementsShowArchivedLabel;
+
+  /// No description provided for @supplementsAddRegimenButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get supplementsAddRegimenButton;
+
+  /// No description provided for @supplementsNoRegimensTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No supplement schedules'**
+  String get supplementsNoRegimensTitle;
+
+  /// No description provided for @supplementsNoRegimensMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a supplement and its dose times to start tracking.'**
+  String get supplementsNoRegimensMessage;
+
+  /// No description provided for @supplementsCreatedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Supplement schedule created.'**
+  String get supplementsCreatedMessage;
+
+  /// No description provided for @supplementsUpdatedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Supplement schedule updated.'**
+  String get supplementsUpdatedMessage;
+
+  /// No description provided for @supplementsArchiveTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Archive schedule?'**
+  String get supplementsArchiveTitle;
+
+  /// No description provided for @supplementsArchiveMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Archive {name}? Past adherence history will be preserved.'**
+  String supplementsArchiveMessage(String name);
+
+  /// No description provided for @supplementsArchiveButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Archive'**
+  String get supplementsArchiveButton;
+
+  /// No description provided for @supplementsArchivedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Archived'**
+  String get supplementsArchivedLabel;
+
+  /// No description provided for @supplementsDoseSlotCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 dose time} other{{count} dose times}}'**
+  String supplementsDoseSlotCount(int count);
+
+  /// No description provided for @supplementsLastThirtyDaysLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'LAST 30 DAYS'**
+  String get supplementsLastThirtyDaysLabel;
+
+  /// No description provided for @supplementsNoHistoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No adherence history'**
+  String get supplementsNoHistoryTitle;
+
+  /// No description provided for @supplementsNoHistoryMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'History will appear after supplement doses are scheduled.'**
+  String get supplementsNoHistoryMessage;
+
+  /// No description provided for @supplementsEditRegimenTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit supplement'**
+  String get supplementsEditRegimenTitle;
+
+  /// No description provided for @supplementsCreateRegimenTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add supplement'**
+  String get supplementsCreateRegimenTitle;
+
+  /// No description provided for @supplementsNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get supplementsNameLabel;
+
+  /// No description provided for @supplementsBrandLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Brand'**
+  String get supplementsBrandLabel;
+
+  /// No description provided for @supplementsFormLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Form'**
+  String get supplementsFormLabel;
+
+  /// No description provided for @supplementsInstructionsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Instructions'**
+  String get supplementsInstructionsLabel;
+
+  /// No description provided for @supplementsNotesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes'**
+  String get supplementsNotesLabel;
+
+  /// No description provided for @supplementsRequiredMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Required'**
+  String get supplementsRequiredMessage;
+
+  /// No description provided for @supplementsEffectiveFromLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'New schedule effective from'**
+  String get supplementsEffectiveFromLabel;
+
+  /// No description provided for @supplementsStartDateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Start date'**
+  String get supplementsStartDateLabel;
+
+  /// No description provided for @supplementsDoseSlotsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Dose schedule'**
+  String get supplementsDoseSlotsTitle;
+
+  /// No description provided for @supplementsAddDoseButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Add dose'**
+  String get supplementsAddDoseButton;
+
+  /// No description provided for @supplementsAmountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get supplementsAmountLabel;
+
+  /// No description provided for @supplementsUnitLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Unit'**
+  String get supplementsUnitLabel;
+
+  /// No description provided for @supplementsTimeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Time'**
+  String get supplementsTimeLabel;
+
+  /// No description provided for @supplementsWeekdaysLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Days of week'**
+  String get supplementsWeekdaysLabel;
+
+  /// No description provided for @supplementsEveryDayLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Every day'**
+  String get supplementsEveryDayLabel;
+
+  /// No description provided for @supplementsSelectWeekdayMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Select at least one weekday for every dose.'**
+  String get supplementsSelectWeekdayMessage;
+
+  /// No description provided for @supplementsInvalidDoseMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid amount and unit for every dose.'**
+  String get supplementsInvalidDoseMessage;
 }
 
 class _AppLocalizationsDelegate

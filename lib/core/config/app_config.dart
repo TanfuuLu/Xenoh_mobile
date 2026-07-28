@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 /// Runtime configuration, supplied via `--dart-define`.
 ///
 /// Example (Android emulator, dev backend on https://localhost:7017):
@@ -20,13 +22,27 @@ abstract final class AppConfig {
     defaultValue: 'https://assets.xenoh.online/',
   );
 
-  /// Allow self-signed certs (dev backend). Defaults to true only for the
-  /// localhost-style dev hosts; pass --dart-define=ALLOW_BAD_CERT=false in prod.
-  static const allowBadCertificate = bool.fromEnvironment(
+  /// Explicit opt-in for a self-signed local development backend.
+  static const _allowBadCertificateRequested = bool.fromEnvironment(
     'ALLOW_BAD_CERT',
-    defaultValue: true,
+    defaultValue: false,
   );
 
   static bool get isLocalhost =>
       apiBaseUrl.contains('localhost') || apiBaseUrl.contains('10.0.2.2');
+
+  /// Certificate bypass is impossible in release builds and for remote hosts,
+  /// even when a bad production build flag is supplied.
+  static bool get allowBadCertificate => canAllowBadCertificate(
+    requested: _allowBadCertificateRequested,
+    isDebug: kDebugMode,
+    isLocalhost: isLocalhost,
+  );
 }
+
+@visibleForTesting
+bool canAllowBadCertificate({
+  required bool requested,
+  required bool isDebug,
+  required bool isLocalhost,
+}) => requested && isDebug && isLocalhost;

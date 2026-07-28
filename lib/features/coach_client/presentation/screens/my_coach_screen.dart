@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_dimens.dart';
 import '../../../../app/theme/app_typography.dart';
+import '../../../../core/utils/app_routes.dart';
 import '../../../../core/widgets/xn_card.dart';
 import '../../../../core/widgets/xn_chip.dart';
 import '../../../../core/widgets/xn_section.dart';
@@ -88,13 +89,14 @@ class _CoachProfileBody extends ConsumerWidget {
           relationship: relationship,
           profile: profile,
           onMessage: () => context.push(
-            '/coach/messages',
-            extra: (
-              relationshipId: textOf(relationship, [
-                'id',
-                'relationshipId',
-              ], fallback: ''),
-              coachName: textOf(
+            relationshipChatLocation(
+              coachInbox: false,
+              relationshipId: textOf(
+                relationship,
+                ['id', 'relationshipId'],
+                fallback: '',
+              ),
+              peerName: textOf(
                 relationship,
                 ['coachName'],
                 fallback: l10n.coachDefaultName,

@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -106,6 +104,7 @@ class PlanDetailScreen extends ConsumerWidget {
                   Icons.mode_comment_outlined,
                   l10n.commonComments,
                 ),
+                const PopupMenuDivider(),
                 _menuItem(
                   _PlanAction.edit,
                   Icons.edit_outlined,
@@ -182,16 +181,10 @@ class PlanDetailScreen extends ConsumerWidget {
                       context,
                     ).scale(1).clamp(1.0, 1.6);
                     final narrow = constraints.crossAxisExtent < 380;
-                    final contentHeight =
-                        (narrow ? 500.0 : 470.0) +
+                    final cardHeight =
+                        (narrow ? 462.0 : 430.0) +
                         ((textScale - 1) * 180) +
-                        (items.any((week) => week.hasWarning) ? 40 : 0);
-                    final cardHeight = math.max(
-                      contentHeight,
-                      constraints.viewportMainAxisExtent -
-                          constraints.precedingScrollExtent -
-                          AppSpacing.xxl,
-                    );
+                        (items.any((week) => week.hasWarning) ? 34 : 0);
                     return SliverToBoxAdapter(
                       child: SizedBox(
                         height: cardHeight,
@@ -403,7 +396,7 @@ class _WeekTimelineCarouselState extends State<_WeekTimelineCarousel> {
     _activeIndex = _startIndex;
     _controller = PageController(
       initialPage: _activeIndex,
-      viewportFraction: 0.9,
+      viewportFraction: 0.88,
     );
   }
 
@@ -428,10 +421,10 @@ class _WeekTimelineCarouselState extends State<_WeekTimelineCarousel> {
               return AnimatedScale(
                 duration: AppMotion.med,
                 curve: Curves.easeOutCubic,
-                scale: selected ? 1 : 0.96,
+                scale: selected ? 1 : 0.945,
                 child: AnimatedOpacity(
                   duration: AppMotion.fast,
-                  opacity: selected ? 1 : 0.62,
+                  opacity: selected ? 1 : 0.48,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: AppSpacing.sm,
@@ -534,10 +527,10 @@ class _WeekCard extends ConsumerWidget {
         ? AppColors.warning
         : AppColors.sage500;
     final surface = isCurrent
-        ? AppColors.accentSoft.withValues(alpha: 0.38)
+        ? AppColors.bg2
         : week.isCompleted
-        ? AppColors.successBg.withValues(alpha: 0.32)
-        : AppColors.bg2;
+        ? AppColors.successBg.withValues(alpha: 0.46)
+        : AppColors.clay050;
     final cardRadius = BorderRadius.circular(
       expanded ? AppRadius.xxl : AppRadius.lg,
     );
@@ -619,7 +612,7 @@ class _WeekCard extends ConsumerWidget {
                 const SizedBox(width: AppSpacing.md),
                 Expanded(child: identity()),
                 const SizedBox(width: AppSpacing.sm),
-                Flexible(child: actions()),
+                actions(),
               ],
             );
           },
@@ -658,22 +651,24 @@ class _WeekCard extends ConsumerWidget {
           curve: Curves.easeOutCubic,
           margin: EdgeInsets.only(bottom: isLast ? 0 : AppSpacing.md),
           constraints: expanded ? const BoxConstraints.expand() : null,
-          padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
+          padding: const EdgeInsets.fromLTRB(16, 15, 16, 16),
           decoration: BoxDecoration(
             color: surface,
             borderRadius: cardRadius,
             border: Border.all(
               color: isCurrent
-                  ? AppColors.accent.withValues(alpha: 0.24)
-                  : AppColors.surfaceBorderSoft,
-              width: expanded ? 1.4 : 1,
+                  ? AppColors.accent.withValues(alpha: 0.48)
+                  : AppColors.surfaceBorderSoft.withValues(alpha: 0.76),
+              width: isCurrent ? 1.6 : 1,
             ),
             boxShadow: expanded
-                ? const [
+                ? [
                     BoxShadow(
-                      color: AppColors.shadow,
-                      blurRadius: 18,
-                      offset: Offset(0, 8),
+                      color: isCurrent
+                          ? AppColors.shadowDeep
+                          : AppColors.shadow,
+                      blurRadius: isCurrent ? 26 : 16,
+                      offset: const Offset(0, 10),
                     ),
                   ]
                 : null,
@@ -976,8 +971,10 @@ class _PlanWeeksSummary extends StatelessWidget {
     final progress = totalDays == 0 ? 0.0 : completedDays / totalDays;
 
     return XnCard(
-      color: AppColors.bg3.withValues(alpha: 0.72),
-      border: Border.all(color: AppColors.border1.withValues(alpha: 0.52)),
+      color: AppColors.clay900,
+      border: Border.all(
+        color: AppColors.fgOnClay.withValues(alpha: 0.08),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -989,13 +986,15 @@ class _PlanWeeksSummary extends StatelessWidget {
                 height: 48,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: AppColors.bg2,
+                  color: AppColors.fgOnClay.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(AppRadius.md),
-                  border: Border.all(color: AppColors.surfaceBorderSoft),
+                  border: Border.all(
+                    color: AppColors.fgOnClay.withValues(alpha: 0.14),
+                  ),
                 ),
                 child: const Icon(
                   Icons.calendar_view_week_rounded,
-                  color: AppColors.accent,
+                  color: AppColors.fgOnClay,
                 ),
               ),
               const SizedBox(width: AppSpacing.md),
@@ -1005,7 +1004,11 @@ class _PlanWeeksSummary extends StatelessWidget {
                   children: [
                     Text(
                       l10n.trainingPlanTimelineLabel,
-                      style: AppTypography.display(22, letterSpacing: 0),
+                      style: AppTypography.display(
+                        24,
+                        letterSpacing: -0.2,
+                        color: AppColors.fgOnClay,
+                      ),
                     ),
                     const SizedBox(height: 4),
                     Text(
@@ -1015,7 +1018,7 @@ class _PlanWeeksSummary extends StatelessWidget {
                         totalDays,
                       ),
                       style: const TextStyle(
-                        color: AppColors.fg2,
+                        color: AppColors.clay200,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -1027,7 +1030,7 @@ class _PlanWeeksSummary extends StatelessWidget {
           const SizedBox(height: AppSpacing.lg),
           _ProgressBar(
             value: progress.clamp(0.0, 1.0),
-            color: AppColors.accent,
+            color: AppColors.clay200,
           ),
           const SizedBox(height: AppSpacing.md),
           Row(
@@ -1036,6 +1039,7 @@ class _PlanWeeksSummary extends StatelessWidget {
                 child: _SummaryMetric(
                   label: l10n.trainingWeeksDoneLabel,
                   value: '$completedWeeks/${weeks.length}',
+                  inverse: true,
                 ),
               ),
               const SizedBox(width: AppSpacing.sm),
@@ -1044,6 +1048,7 @@ class _PlanWeeksSummary extends StatelessWidget {
                   label: l10n.commonWarnings,
                   value: '$warnings',
                   tone: warnings > 0 ? XnChipTone.warn : XnChipTone.sage,
+                  inverse: true,
                 ),
               ),
               const SizedBox(width: AppSpacing.sm),
@@ -1051,6 +1056,7 @@ class _PlanWeeksSummary extends StatelessWidget {
                 child: _SummaryMetric(
                   label: l10n.commonProgress,
                   value: '${(progress * 100).round()}%',
+                  inverse: true,
                 ),
               ),
             ],
@@ -1076,24 +1082,32 @@ class _ListSectionHeader extends StatelessWidget {
             label,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              color: AppColors.fg1,
-              fontSize: 13,
-              fontWeight: FontWeight.w500,
+            style: AppTypography.display(
+              18,
+              weight: FontWeight.w500,
+              letterSpacing: -0.1,
             ),
           ),
         ),
         const SizedBox(width: AppSpacing.md),
-        Flexible(
+        Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.md,
+            vertical: 6,
+          ),
+          decoration: BoxDecoration(
+            color: AppColors.bg2.withValues(alpha: 0.72),
+            borderRadius: BorderRadius.circular(AppRadius.pill),
+          ),
           child: Text(
             meta,
-            maxLines: 2,
+            maxLines: 1,
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.end,
             style: AppTypography.mono(
-              12,
+              11,
               color: AppColors.fg3,
-              weight: FontWeight.w500,
+              weight: FontWeight.w600,
             ),
           ),
         ),
@@ -1107,19 +1121,30 @@ class _SummaryMetric extends StatelessWidget {
     required this.label,
     required this.value,
     this.tone = XnChipTone.neutral,
+    this.inverse = false,
   });
 
   final String label;
   final String value;
   final XnChipTone tone;
+  final bool inverse;
 
   @override
   Widget build(BuildContext context) {
-    final (bg, fg) = switch (tone) {
-      XnChipTone.warn => (AppColors.warningBg, AppColors.warning),
-      XnChipTone.sage => (AppColors.successBg, AppColors.success),
-      _ => (AppColors.bg2, AppColors.fg2),
-    };
+    final (bg, fg) = inverse
+        ? (
+            AppColors.fgOnClay.withValues(alpha: 0.08),
+            tone == XnChipTone.warn
+                ? const Color(0xFFFFD294)
+                : tone == XnChipTone.sage
+                ? const Color(0xFFDCE5B9)
+                : AppColors.fgOnClay,
+          )
+        : switch (tone) {
+            XnChipTone.warn => (AppColors.warningBg, AppColors.warning),
+            XnChipTone.sage => (AppColors.successBg, AppColors.success),
+            _ => (AppColors.bg2, AppColors.fg2),
+          };
 
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
@@ -1140,8 +1165,10 @@ class _SummaryMetric extends StatelessWidget {
             label,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              color: AppColors.fg3,
+            style: TextStyle(
+              color: inverse
+                  ? AppColors.fgOnClay.withValues(alpha: 0.66)
+                  : AppColors.fg3,
               fontSize: 11,
               fontWeight: FontWeight.w500,
             ),

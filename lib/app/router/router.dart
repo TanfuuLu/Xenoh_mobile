@@ -50,6 +50,7 @@ import '../../features/settings/presentation/screens/change_password_screen.dart
 import '../../features/settings/presentation/screens/settings_screen.dart';
 import '../../features/sharing/presentation/screens/pr_share_screen.dart';
 import '../../features/subscription/presentation/screens/subscription_status_screen.dart';
+import '../../features/supplements/presentation/screens/supplements_screen.dart';
 import '../../features/training/presentation/screens/comments_screen.dart';
 import '../../features/training/presentation/screens/day_screen.dart';
 import '../../features/training/presentation/screens/exercise_library_screen.dart';
@@ -59,7 +60,9 @@ import '../../features/training/presentation/screens/plans_screen.dart';
 import '../../features/training/presentation/screens/week_analysis_screen.dart';
 import '../../features/training/presentation/screens/week_screen.dart';
 import '../home_shell.dart';
+import '../not_found_screen.dart';
 import '../splash_screen.dart';
+import 'route_access.dart';
 
 part 'router.g.dart';
 
@@ -92,45 +95,15 @@ GoRouter router(Ref ref) {
       if (clientId != null) {
         return ClientAiInsightsScreen(clientId: clientId);
       }
-      return const DashboardScreen();
+      return NotFoundScreen(
+        isAuthenticated: ref.read(authControllerProvider).isAuthed,
+      );
     },
     redirect: (context, state) {
       final auth = ref.read(authControllerProvider);
       final loc = state.matchedLocation;
 
-      final publicRoute =
-          loc == '/' ||
-          loc == '/about' ||
-          loc == '/privacy' ||
-          loc == '/account-deletion' ||
-          loc == '/terms' ||
-          loc == '/refund-policy' ||
-          loc.startsWith('/share/pr/') ||
-          loc == '/forgot-password' ||
-          loc == '/auth/social-callback';
-
-      if (!auth.isResolved) {
-        return loc == '/splash' || publicRoute ? null : '/splash';
-      }
-
-      final atAuthScreen = loc == '/login' || loc == '/register';
-      if (!auth.isAuthed) {
-        return atAuthScreen || publicRoute ? null : '/login';
-      }
-
-      if (atAuthScreen || loc == '/splash') return '/dashboard';
-      final user = auth.sessionOrNull?.user;
-      if (loc.startsWith('/admin') && user?.isAdmin != true) {
-        return '/dashboard';
-      }
-      final coachRoute =
-          loc.startsWith('/coach/clients') ||
-          loc.startsWith('/coach/key-vault') ||
-          loc.startsWith('/coach/chat');
-      if (coachRoute && user?.isCoach != true) {
-        return '/dashboard';
-      }
-      return null;
+      return routeAccessRedirect(auth, loc);
     },
     routes: [
       GoRoute(path: '/', builder: (_, _) => _withMenu(const LandingScreen())),
@@ -145,7 +118,7 @@ GoRouter router(Ref ref) {
       ),
       GoRoute(
         path: '/account-deletion',
-        builder: (_, _) => const AccountDeletionRequestScreen(),
+        builder: (_, _) => _withMenu(const AccountDeletionRequestScreen()),
       ),
       GoRoute(
         path: '/terms',
@@ -241,6 +214,12 @@ GoRouter router(Ref ref) {
                 ),
               ),
               GoRoute(
+                path: '/coach/clients/:clientId/supplements',
+                builder: (_, state) => SupplementsScreen(
+                  clientId: state.pathParameters['clientId'],
+                ),
+              ),
+              GoRoute(
                 path: '/coach/key-vault',
                 builder: (_, _) => const KeyVaultScreen(),
               ),
@@ -250,13 +229,13 @@ GoRouter router(Ref ref) {
               ),
               GoRoute(
                 path: '/coach/chat/messages',
+                redirect: (_, state) =>
+                    _missingRelationshipId(state) ? '/coach/chat' : null,
                 builder: (_, state) {
-                  final extra =
-                      state.extra!
-                          as ({String relationshipId, String clientName});
                   return RelationshipChatScreen(
-                    relationshipId: extra.relationshipId,
-                    peerName: extra.clientName,
+                    relationshipId:
+                        state.uri.queryParameters['relationshipId']!,
+                    peerName: state.uri.queryParameters['peerName'] ?? '',
                   );
                 },
               ),
@@ -369,6 +348,10 @@ GoRouter router(Ref ref) {
                 path: '/nutrition',
                 builder: (_, _) => const NutritionScreen(),
               ),
+              GoRoute(
+                path: '/supplements',
+                builder: (_, _) => const SupplementsScreen(),
+              ),
             ],
           ),
           StatefulShellBranch(
@@ -379,8 +362,14 @@ GoRouter router(Ref ref) {
               ),
               GoRoute(
                 path: '/profile/edit',
-                builder: (_, state) =>
-                    EditProfileScreen(profile: state.extra! as UserProfile),
+                redirect: (_, state) =>
+                    state.extra is UserProfile ? null : '/profile',
+                builder: (_, state) {
+                  final profile = state.extra;
+                  return profile is UserProfile
+                      ? EditProfileScreen(profile: profile)
+                      : const ProfileScreen();
+                },
               ),
               GoRoute(
                 path: '/settings',
@@ -401,13 +390,13 @@ GoRouter router(Ref ref) {
               GoRoute(path: '/coach', builder: (_, _) => const MyCoachScreen()),
               GoRoute(
                 path: '/coach/messages',
+                redirect: (_, state) =>
+                    _missingRelationshipId(state) ? '/coach' : null,
                 builder: (_, state) {
-                  final extra =
-                      state.extra!
-                          as ({String relationshipId, String coachName});
                   return RelationshipChatScreen(
-                    relationshipId: extra.relationshipId,
-                    peerName: extra.coachName,
+                    relationshipId:
+                        state.uri.queryParameters['relationshipId']!,
+                    peerName: state.uri.queryParameters['peerName'] ?? '',
                   );
                 },
               ),
@@ -472,3 +461,6 @@ String? _clientAiInsightIdFromPath(String path) {
   ).firstMatch(path);
   return match?.group(1);
 }
+
+bool _missingRelationshipId(GoRouterState state) =>
+    state.uri.queryParameters['relationshipId']?.trim().isEmpty ?? true;

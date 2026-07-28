@@ -3,10 +3,10 @@ abstract final class AppSpacing {
   static const xs = 4.0;
   static const sm = 7.0;
   static const md = 10.0;
-  static const lg = 14.0;
-  static const xl = 18.0;
-  static const xxl = 24.0;
-  static const xxxl = 32.0;
+  static const lg = 16.0;
+  static const xl = 20.0;
+  static const xxl = 26.0;
+  static const xxxl = 36.0;
 }
 
 abstract final class AppRadius {
@@ -20,6 +20,12 @@ abstract final class AppRadius {
 }
 
 abstract final class AppLayout {
+  /// Maximum width of a complete screen on tablets, desktop, and web.
+  static const screenMaxWidth = 900.0;
+
+  /// Maximum width for reading-focused lists and forms.
+  static const contentMaxWidth = 760.0;
+
   /// Matches the rendered height of the dashboard hero card, so every
   /// screen's first card reads at the same visual weight regardless of
   /// how little content it holds.

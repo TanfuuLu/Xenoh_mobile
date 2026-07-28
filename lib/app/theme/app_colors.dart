@@ -6,11 +6,11 @@ import 'package:flutter/material.dart';
 /// ivory cards, clay navigation states, and muted sage as the secondary accent.
 abstract final class AppColors {
   // Clay / brand primary.
-  static const clay050 = Color(0xFFF8F2EB);
-  static const clay100 = Color(0xFFECDCCA);
-  static const clay200 = Color(0xFFDDBFA2);
-  static const clay800 = Color(0xFF6C503D);
-  static const clay900 = Color(0xFF493326);
+  static const clay050 = Color(0xFFFAF5EE);
+  static const clay100 = Color(0xFFE9D7C4);
+  static const clay200 = Color(0xFFCFB096);
+  static const clay800 = Color(0xFF6D4837);
+  static const clay900 = Color(0xFF35251D);
 
   // Sage / secondary accent.
   static const sage100 = Color(0xFFE3E6D2);
@@ -19,32 +19,32 @@ abstract final class AppColors {
 
   // Ink / text.
   static const ink050 = Color(0xFFF5EFE8);
-  static const ink300 = Color(0xFFB8A593);
-  static const ink500 = Color(0xFF8A7359);
-  static const ink900 = Color(0xFF251A13);
+  static const ink300 = Color(0xFFB4A08D);
+  static const ink500 = Color(0xFF806A57);
+  static const ink900 = Color(0xFF201711);
 
   // Website paper canvas.
-  static const paper = Color(0xFFF2E9DC);
-  static const paperAlt = Color(0xFFDEC5A5);
+  static const paper = Color(0xFFF7F0E6);
+  static const paperAlt = Color(0xFFE4D2BC);
 
   // Semantic surfaces.
   static const bgPage = paper;
-  static const bg2 = Color(0xFFFFFBF6);
-  static const bg3 = Color(0xFFECDBC5);
-  static const bg4 = Color(0xFFDCC09F);
+  static const bg2 = Color(0xFFFFFDF9);
+  static const bg3 = Color(0xFFEEE1D0);
+  static const bg4 = Color(0xFFD4BEA5);
   static const bgInverse = ink900;
 
   // Semantic foreground.
   static const fg1 = ink900;
-  static const fg2 = Color(0xFF5B4839);
-  static const fg3 = Color(0xFF806B57);
-  static const fg4 = Color(0xFFA38D78);
+  static const fg2 = Color(0xFF594638);
+  static const fg3 = Color(0xFF75604E);
+  static const fg4 = Color(0xFF9D8773);
   static const fgOnClay = Color(0xFFFFFFFF);
 
   // Borders.
-  static const border1 = Color(0xFFC7B09A);
-  static const border2 = Color(0xFF927560);
-  static const surfaceBorderSoft = Color(0xFFDDCDBD);
+  static const border1 = Color(0xFFC9B39D);
+  static const border2 = Color(0xFF8A6D59);
+  static const surfaceBorderSoft = Color(0xFFDFD0C1);
 
   // Accent.
   static const accent = clay800;
@@ -55,9 +55,9 @@ abstract final class AppColors {
   static const accent2Soft = sage100;
 
   // Buttons.
-  static const buttonBg = Color(0xFFFFFBF6);
-  static const buttonHover = Color(0xFFF3E9DD);
-  static const buttonBorder = Color(0xFFD9C7B5);
+  static const buttonBg = Color(0xFFFFFDF9);
+  static const buttonHover = Color(0xFFF2E7DB);
+  static const buttonBorder = Color(0xFFD8C5B3);
 
   // Status.
   static const success = Color(0xFF485A26);
@@ -70,6 +70,6 @@ abstract final class AppColors {
   static const infoBg = Color(0xFFDEE5EA);
 
   // Website-like soft shadows.
-  static const shadow = Color(0x1F583F2E);
-  static const shadowDeep = Color(0x33583F2E);
+  static const shadow = Color(0x18503A2B);
+  static const shadowDeep = Color(0x30503A2B);
 }

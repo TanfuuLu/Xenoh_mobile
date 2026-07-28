@@ -7,7 +7,6 @@ import '../../../../core/widgets/xn_section.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../shared_api/api_widgets.dart';
 import '../../../shared_api/xenoh_api.dart';
-import '../../../subscription/presentation/providers/pricing.dart';
 
 final adminInsightsProvider = FutureProvider.autoDispose<JsonMap>((ref) {
   return ref
@@ -101,7 +100,7 @@ class _InsightsTab extends ConsumerWidget {
                 totals,
                 ['activePaidSubscriptions'],
               ),
-              l10n.adminRevenueLabel: formatVnd(_numOf(totals, 'revenue')),
+              l10n.adminRevenueLabel: _formatVnd(_numOf(totals, 'revenue')),
               l10n.adminPlansLabel: textOf(totals, ['plansCreated']),
               l10n.adminWorkoutDaysLabel: textOf(
                 totals,
@@ -416,6 +415,16 @@ num _numOf(JsonMap map, String key) {
   final value = map[key];
   if (value is num) return value;
   return num.tryParse('$value') ?? 0;
+}
+
+String _formatVnd(num amount) {
+  final digits = amount.round().abs().toString();
+  final buffer = StringBuffer();
+  for (var i = 0; i < digits.length; i++) {
+    if (i > 0 && (digits.length - i) % 3 == 0) buffer.write('.');
+    buffer.write(digits[i]);
+  }
+  return '$buffer ₫';
 }
 
 String _duration(num seconds) {

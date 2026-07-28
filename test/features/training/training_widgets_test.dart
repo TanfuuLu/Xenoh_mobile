@@ -71,8 +71,10 @@ Widget _app(Widget child, {TrainingRepository? repo}) {
 }
 
 void main() {
-  testWidgets('week card fits a narrow phone with larger text', (tester) async {
-    tester.view.physicalSize = const Size(360, 640);
+  testWidgets('Vietnamese week card fits without header overflow', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(478, 713);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
@@ -123,6 +125,7 @@ void main() {
           trainingRepositoryProvider.overrideWithValue(repo),
         ],
         child: MaterialApp(
+          locale: const Locale('vi'),
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           builder: (context, child) => MediaQuery(
@@ -139,6 +142,7 @@ void main() {
 
     expect(tester.takeException(), isNull);
     expect(find.text('Foundation and technique week'), findsOneWidget);
+    expect(find.text('Đang tập trung'), findsOneWidget);
   });
 
   testWidgets('CreatePlanSheet supports coach-scoped plan creation', (
@@ -210,6 +214,59 @@ void main() {
       () => repo.updatePlan(
         planId: 'p1',
         name: 'Updated plan',
+        startDate: DateTime(2026, 6),
+        endDate: DateTime(2026, 8),
+      ),
+    ).called(1);
+  });
+
+  testWidgets('CreatePlanSheet duplicate mode initializes after localization', (
+    tester,
+  ) async {
+    final repo = MockTrainingRepository();
+    final source = _plan('p1');
+    final duplicate = source.copyWith(id: 'p2', name: 'Plan p1 copy');
+    when(
+      () => repo.duplicatePlan(
+        sourcePlanId: source.id,
+        name: 'Plan p1 copy',
+        startDate: DateTime(2026, 6),
+        endDate: DateTime(2026, 8),
+      ),
+    ).thenAnswer((_) async => duplicate);
+    when(
+      () => repo.getPlans(pageNumber: 1, pageSize: 20),
+    ).thenAnswer(
+      (_) async => PagedResult(
+        items: [source, duplicate],
+        pageNumber: 1,
+        pageSize: 20,
+        totalCount: 2,
+        hasMore: false,
+      ),
+    );
+
+    await tester.pumpWidget(
+      _app(
+        CreatePlanSheet(
+          mode: PlanFormMode.duplicate,
+          initialPlan: source,
+        ),
+        repo: repo,
+      ),
+    );
+    await tester.pump();
+
+    expect(tester.takeException(), isNull);
+    expect(find.text('Plan p1 copy'), findsOneWidget);
+
+    await tester.tap(find.text('Create copy'));
+    await tester.pumpAndSettle();
+
+    verify(
+      () => repo.duplicatePlan(
+        sourcePlanId: source.id,
+        name: 'Plan p1 copy',
         startDate: DateTime(2026, 6),
         endDate: DateTime(2026, 8),
       ),

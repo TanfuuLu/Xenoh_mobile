@@ -4,8 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../app/theme/app_dimens.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../shared_api/api_widgets.dart';
-import '../providers/pricing.dart';
 import '../providers/subscription_controllers.dart';
+import '../providers/tier_labels.dart';
 
 class SubscriptionStatusScreen extends ConsumerWidget {
   const SubscriptionStatusScreen({super.key});

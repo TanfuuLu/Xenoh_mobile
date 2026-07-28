@@ -4,8 +4,8 @@ import 'package:mocktail/mocktail.dart';
 import 'package:xenoh_mobile/features/subscription/data/repositories/subscription_repository_provider.dart';
 import 'package:xenoh_mobile/features/subscription/domain/entities/subscription.dart';
 import 'package:xenoh_mobile/features/subscription/domain/repositories/subscription_repository.dart';
-import 'package:xenoh_mobile/features/subscription/presentation/providers/pricing.dart';
 import 'package:xenoh_mobile/features/subscription/presentation/providers/subscription_controllers.dart';
+import 'package:xenoh_mobile/features/subscription/presentation/providers/tier_labels.dart';
 import 'package:xenoh_mobile/l10n/app_localizations_en.dart';
 
 class MockSubscriptionRepository extends Mock
@@ -63,13 +63,7 @@ void main() {
     });
   });
 
-  group('pricing', () {
-    test('priceFor and monthlyPriceFor read the table', () {
-      expect(priceFor(PurchasableTier.proCoach, 6), 1194000);
-      expect(monthlyPriceFor(PurchasableTier.proCoach, 6), 199000);
-      expect(priceFor(PurchasableTier.proIndividual, 1), 100000);
-    });
-
+  group('tier labels', () {
     test('tierLabel humanises the API tier name', () {
       final l10n = AppLocalizationsEn();
       expect(tierLabel('ProIndividual', l10n), 'Pro Individual');

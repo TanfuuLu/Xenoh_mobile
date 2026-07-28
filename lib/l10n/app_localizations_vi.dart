@@ -60,6 +60,16 @@ class AppLocalizationsVi extends AppLocalizations {
   String get commonBack => 'Quay lại';
 
   @override
+  String get notFoundTitle => 'Không tìm thấy trang';
+
+  @override
+  String get notFoundMessage =>
+      'Trang này không tồn tại hoặc không còn khả dụng.';
+
+  @override
+  String get notFoundHomeAction => 'Về trang chính';
+
+  @override
   String get commonRequiredError => 'Bắt buộc';
 
   @override
@@ -1284,15 +1294,6 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get appShellDrawerAdminPlans => 'Gói nền tảng';
-
-  @override
-  String get appShellDrawerAdminPayments => 'Thanh toán';
-
-  @override
-  String get appShellDrawerUpdatesBillingSection => 'Cập nhật và thanh toán';
-
-  @override
-  String get appShellDrawerSubscription => 'Gói đăng ký';
 
   @override
   String get authEmailLabel => 'Email';
@@ -3499,30 +3500,8 @@ class AppLocalizationsVi extends AppLocalizations {
   String get subscriptionTitle => 'Gói đăng ký';
 
   @override
-  String get subscriptionExtendOrChangeTitle => 'Gia hạn hoặc đổi gói';
-
-  @override
-  String get subscriptionGoProTitle => 'Nâng cấp Pro';
-
-  @override
   String get subscriptionUnlockMessage =>
       'Mở khóa phân tích AI, thống kê và công cụ huấn luyện.';
-
-  @override
-  String get subscriptionContinueToPaymentCta => 'Tiếp tục thanh toán';
-
-  @override
-  String subscriptionRenewCta(String tier) {
-    return 'Gia hạn $tier';
-  }
-
-  @override
-  String subscriptionSwitchToCta(String tier) {
-    return 'Đổi sang $tier';
-  }
-
-  @override
-  String get subscriptionDevActivateCta => 'Dev: kích hoạt Pro ngay';
 
   @override
   String get subscriptionCurrentPlanLabel => 'GÓI HIỆN TẠI';
@@ -3531,56 +3510,16 @@ class AppLocalizationsVi extends AppLocalizations {
   String get subscriptionExpiresLabel => 'Hết hạn';
 
   @override
-  String get subscriptionExpiredLabel => 'Đã hết hạn';
-
-  @override
   String get subscriptionNoExpiryLabel => 'Không hết hạn';
 
   @override
   String get subscriptionAiRequestsThisMonthLabel => 'Lượt dùng AI tháng này';
 
   @override
-  String get subscriptionNotIncludedLabel => 'Không bao gồm';
-
-  @override
-  String subscriptionRemainingLabel(int count) {
-    return 'Còn $count';
-  }
-
-  @override
-  String get subscriptionCurrentChipLabel => 'Hiện tại';
-
-  @override
-  String get subscriptionIncludedInProCoachMessage =>
-      'Đã bao gồm trong gói Pro Coach';
-
-  @override
-  String get subscriptionRenewToExtendMessage =>
-      'Gia hạn để kéo dài gói của bạn';
-
-  @override
-  String get subscriptionBilledOnceMessage =>
-      'Thanh toán một lần qua chuyển khoản ngân hàng';
-
-  @override
-  String get subscriptionPaymentNoteMessage =>
-      'Thanh toán qua chuyển khoản ngân hàng Việt Nam. Gói của bạn sẽ tự động kích hoạt sau khi xác nhận chuyển khoản (thường trong vài phút).';
-
-  @override
-  String get subscriptionPerMonthSuffix => '/tháng';
-
-  @override
   String get subscriptionTierProIndividual => 'Pro Individual';
 
   @override
-  String get subscriptionTierProIndividualTagline =>
-      'Dành cho người tập luyện cá nhân';
-
-  @override
   String get subscriptionTierProCoach => 'Pro Coach';
-
-  @override
-  String get subscriptionTierProCoachTagline => 'Dành cho HLV quản lý học viên';
 
   @override
   String get subscriptionTierFree => 'Miễn phí';
@@ -3597,119 +3536,10 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
-  String get subscriptionBestValueLabel => 'Tiết kiệm nhất';
-
-  @override
-  String get subscriptionCompletePaymentTitle => 'Hoàn tất thanh toán';
-
-  @override
-  String get subscriptionAmountToTransferLabel => 'SỐ TIỀN CHUYỂN KHOẢN';
-
-  @override
-  String get subscriptionScanInstructionsMessage =>
-      'Quét mã QR bằng ứng dụng ngân hàng, hoặc chuyển khoản thủ công theo thông tin bên dưới. Vui lòng nhập đúng nội dung chuyển khoản để hệ thống tự động đối soát.';
-
-  @override
-  String get subscriptionBankLabel => 'Ngân hàng';
-
-  @override
-  String get subscriptionAccountNumberLabel => 'Số tài khoản';
-
-  @override
-  String get subscriptionAccountNameLabel => 'Tên tài khoản';
-
-  @override
-  String get subscriptionAmountLabel => 'Số tiền';
-
-  @override
-  String get subscriptionTransferDescriptionLabel => 'Nội dung chuyển khoản';
-
-  @override
-  String subscriptionOrderExpiresMessage(String datetime) {
-    return 'Đơn hàng này hết hạn lúc $datetime.';
-  }
-
-  @override
-  String subscriptionCopyTooltip(String label) {
-    return 'Sao chép $label';
-  }
-
-  @override
-  String subscriptionCopiedSnackbar(String label) {
-    return 'Đã sao chép $label';
-  }
-
-  @override
-  String get subscriptionOrderExpiredMessage =>
-      'Đơn hàng đã hết hạn. Quay lại để tạo đơn mới.';
-
-  @override
-  String get subscriptionWaitingForTransferMessage =>
-      'Đang chờ chuyển khoản của bạn…';
-
-  @override
-  String get subscriptionAutoUpdateMessage =>
-      'Trang này sẽ tự động cập nhật khi thanh toán được xác nhận (thường trong vài phút).';
-
-  @override
-  String get subscriptionScanToPayLabel => 'QUÉT ĐỂ THANH TOÁN';
-
-  @override
-  String get subscriptionQrUnavailableMessage =>
-      'Không có mã QR — vui lòng dùng thông tin chuyển khoản bên dưới.';
-
-  @override
-  String get subscriptionOpenBankingAppMessage =>
-      'Mở ứng dụng ngân hàng và quét bằng VietQR';
-
-  @override
-  String subscriptionUpgradeToastMessage(String tier) {
-    return 'Bạn đã nâng cấp lên $tier 🎉';
-  }
-
-  @override
-  String get marketingPricingTitle => 'Bảng giá';
-
-  @override
-  String get marketingChooseYourPlanTitle => 'Chọn gói Pro của bạn';
-
-  @override
-  String get marketingChooseYourPlanSubtitle =>
-      'Bảng giá công khai cho phân tích AI, thống kê và công cụ huấn luyện.';
-
-  @override
   String get marketingCreateAccountCta => 'Tạo tài khoản';
 
   @override
   String get marketingSignInCta => 'Đăng nhập';
-
-  @override
-  String get marketingCoachChipLabel => 'HLV';
-
-  @override
-  String get marketingFeatureAiInsights =>
-      'Phân tích AI và gợi ý từ HLV theo hạn mức';
-
-  @override
-  String get marketingFeaturePlanAnalytics =>
-      'Thống kê kế hoạch, kiểm tra cân bằng và phân tích tiến độ';
-
-  @override
-  String get marketingFeatureNutritionInsight =>
-      'Phân tích dinh dưỡng và góc nhìn tiến độ chi tiết hơn';
-
-  @override
-  String get marketingFeatureClientManagement =>
-      'Quản lý học viên, mã mời và bảng điều khiển HLV';
-
-  @override
-  String get marketingFeatureClientPlans =>
-      'Kế hoạch học viên, theo dõi dinh dưỡng, phân tích AI và trò chuyện';
-
-  @override
-  String marketingSavePercentLabel(int percent) {
-    return 'Tiết kiệm $percent%';
-  }
 
   @override
   String get adminDashboardTitle => 'Bảng điều khiển Admin';
@@ -3853,39 +3683,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get adminDaysLabel => 'Ngày';
 
   @override
-  String get adminPaymentsTitle => 'Thanh toán';
-
-  @override
-  String get adminPaymentsHeaderTitle => 'Thanh toán và gói đăng ký';
-
-  @override
-  String get adminPaymentsHeaderSubtitle =>
-      'Trạng thái đơn SePay, gói, doanh thu và gói đăng ký đang hoạt động.';
-
-  @override
   String get adminRevenueLabel => 'Doanh thu';
-
-  @override
-  String get adminThisMonthLabel => 'Tháng này';
-
-  @override
-  String get adminPendingLabel => 'Đang chờ';
-
-  @override
-  String get adminCompletedLabel => 'Hoàn tất';
-
-  @override
-  String get adminNoPaymentsTitle => 'Không có thanh toán';
-
-  @override
-  String get adminNoPaymentsMessage => 'Đơn thanh toán sẽ xuất hiện ở đây.';
-
-  @override
-  String get adminNoSubscriptionsTitle => 'Không có gói đăng ký';
-
-  @override
-  String get adminNoSubscriptionsMessage =>
-      'Gói đăng ký hiện tại và trước đây sẽ xuất hiện ở đây.';
 
   @override
   String get adminAnalyticsTitle => 'Thống kê Admin';
@@ -4151,21 +3949,21 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get legalRefundSubtitle =>
-      'Kỳ vọng về gói đăng ký và thanh toán cho các gói Pro.';
+      'Thông tin về quyền truy cập gói đăng ký và điều chỉnh tài khoản.';
 
   @override
-  String get legalRefundPaymentOrdersTitle => 'Quyền truy cập gói đăng ký';
+  String get legalRefundSubscriptionAccessTitle => 'Quyền truy cập gói đăng ký';
 
   @override
-  String get legalRefundPaymentOrdersBody =>
-      'Gói Pro được mua và quản lý trên website Xenoh. Ứng dụng di động phản ánh quyền truy cập sau khi tài khoản trên website được cập nhật.';
+  String get legalRefundSubscriptionAccessBody =>
+      'Ứng dụng di động phản ánh quyền truy cập gói đăng ký gắn với tài khoản Xenoh của bạn sau khi trạng thái tài khoản được cập nhật.';
 
   @override
   String get legalRefundReviewProcessTitle => 'Quy trình xem xét';
 
   @override
   String get legalRefundReviewProcessBody =>
-      'Yêu cầu hoàn tiền được xử lý trên website Xenoh theo điều khoản mua hàng và trạng thái tài khoản hiện hành.';
+      'Yêu cầu hoàn tiền được xử lý theo các điều khoản áp dụng và trạng thái tài khoản hiện hành.';
 
   @override
   String get legalRefundAccessChangesTitle => 'Thay đổi quyền truy cập';
@@ -4201,9 +3999,6 @@ class AppLocalizationsVi extends AppLocalizations {
   @override
   String get marketingCoachesBody =>
       'Pro Coach mở khóa quản lý học viên, mã mời, kế hoạch học viên, trò chuyện, theo dõi dinh dưỡng và phân tích AI.';
-
-  @override
-  String get marketingViewPricingCta => 'Xem bảng giá';
 
   @override
   String get marketingAboutNavLabel => 'Giới thiệu';
@@ -4325,4 +4120,175 @@ class AppLocalizationsVi extends AppLocalizations {
   @override
   String get workoutNotificationPermissionDenied =>
       'Quyền thông báo chưa được cấp.';
+
+  @override
+  String get supplementsTitle => 'Thực phẩm bổ sung';
+
+  @override
+  String get supplementsClientTitle => 'Thực phẩm bổ sung của học viên';
+
+  @override
+  String get supplementsTodayTab => 'Hôm nay';
+
+  @override
+  String get supplementsRegimensTab => 'Lịch dùng';
+
+  @override
+  String get supplementsHistoryTab => 'Lịch sử';
+
+  @override
+  String get supplementsTodayLabel => 'HÔM NAY';
+
+  @override
+  String get supplementsPreviousDayTooltip => 'Ngày trước';
+
+  @override
+  String get supplementsNextDayTooltip => 'Ngày sau';
+
+  @override
+  String get supplementsCoachReadOnlyMessage =>
+      'Huấn luyện viên có thể xem mức độ tuân thủ. Chỉ học viên mới có thể ghi nhận liều dùng.';
+
+  @override
+  String get supplementsAdherenceLabel => 'TUÂN THỦ';
+
+  @override
+  String supplementsTakenOfPlanned(int taken, int planned) {
+    return 'Đã dùng $taken/$planned';
+  }
+
+  @override
+  String get supplementsNoDosesTitle => 'Không có liều dùng';
+
+  @override
+  String get supplementsNoDosesMessage =>
+      'Không có liều thực phẩm bổ sung nào được lên lịch cho ngày này.';
+
+  @override
+  String get supplementsMarkTakenButton => 'Đã dùng';
+
+  @override
+  String get supplementsSkipButton => 'Bỏ qua';
+
+  @override
+  String get supplementsResetDoseTooltip => 'Đặt lại liều';
+
+  @override
+  String get supplementsStatusPending => 'Chờ dùng';
+
+  @override
+  String get supplementsStatusTaken => 'Đã dùng';
+
+  @override
+  String get supplementsStatusSkipped => 'Đã bỏ qua';
+
+  @override
+  String get supplementsStatusMissed => 'Đã lỡ';
+
+  @override
+  String get supplementsShowArchivedLabel => 'Hiện đã lưu trữ';
+
+  @override
+  String get supplementsAddRegimenButton => 'Thêm';
+
+  @override
+  String get supplementsNoRegimensTitle => 'Chưa có lịch bổ sung';
+
+  @override
+  String get supplementsNoRegimensMessage =>
+      'Thêm thực phẩm bổ sung và thời gian dùng để bắt đầu theo dõi.';
+
+  @override
+  String get supplementsCreatedMessage => 'Đã tạo lịch bổ sung.';
+
+  @override
+  String get supplementsUpdatedMessage => 'Đã cập nhật lịch bổ sung.';
+
+  @override
+  String get supplementsArchiveTitle => 'Lưu trữ lịch dùng?';
+
+  @override
+  String supplementsArchiveMessage(String name) {
+    return 'Lưu trữ $name? Lịch sử tuân thủ trước đây vẫn được giữ lại.';
+  }
+
+  @override
+  String get supplementsArchiveButton => 'Lưu trữ';
+
+  @override
+  String get supplementsArchivedLabel => 'Đã lưu trữ';
+
+  @override
+  String supplementsDoseSlotCount(int count) {
+    return '$count thời điểm dùng';
+  }
+
+  @override
+  String get supplementsLastThirtyDaysLabel => '30 NGÀY GẦN NHẤT';
+
+  @override
+  String get supplementsNoHistoryTitle => 'Chưa có lịch sử tuân thủ';
+
+  @override
+  String get supplementsNoHistoryMessage =>
+      'Lịch sử sẽ xuất hiện sau khi có liều bổ sung được lên lịch.';
+
+  @override
+  String get supplementsEditRegimenTitle => 'Sửa thực phẩm bổ sung';
+
+  @override
+  String get supplementsCreateRegimenTitle => 'Thêm thực phẩm bổ sung';
+
+  @override
+  String get supplementsNameLabel => 'Tên';
+
+  @override
+  String get supplementsBrandLabel => 'Thương hiệu';
+
+  @override
+  String get supplementsFormLabel => 'Dạng';
+
+  @override
+  String get supplementsInstructionsLabel => 'Hướng dẫn';
+
+  @override
+  String get supplementsNotesLabel => 'Ghi chú';
+
+  @override
+  String get supplementsRequiredMessage => 'Bắt buộc';
+
+  @override
+  String get supplementsEffectiveFromLabel => 'Lịch mới có hiệu lực từ';
+
+  @override
+  String get supplementsStartDateLabel => 'Ngày bắt đầu';
+
+  @override
+  String get supplementsDoseSlotsTitle => 'Lịch liều dùng';
+
+  @override
+  String get supplementsAddDoseButton => 'Thêm liều';
+
+  @override
+  String get supplementsAmountLabel => 'Số lượng';
+
+  @override
+  String get supplementsUnitLabel => 'Đơn vị';
+
+  @override
+  String get supplementsTimeLabel => 'Thời gian';
+
+  @override
+  String get supplementsWeekdaysLabel => 'Các ngày trong tuần';
+
+  @override
+  String get supplementsEveryDayLabel => 'Mỗi ngày';
+
+  @override
+  String get supplementsSelectWeekdayMessage =>
+      'Chọn ít nhất một ngày trong tuần cho mỗi liều.';
+
+  @override
+  String get supplementsInvalidDoseMessage =>
+      'Nhập số lượng và đơn vị hợp lệ cho mỗi liều.';
 }

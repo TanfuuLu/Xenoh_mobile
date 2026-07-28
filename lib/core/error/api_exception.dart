@@ -33,6 +33,9 @@ Failure failureFromDio(DioException e) {
       message ?? 'Please check your input.',
       fieldErrors: fieldErrors,
     ),
+    409 => ValidationFailure(
+      message ?? 'This change conflicts with existing data.',
+    ),
     401 => const AuthFailure(),
     403 => ForbiddenFailure(message ?? "You don't have access to this."),
     404 => NotFoundFailure(message ?? 'Not found.'),

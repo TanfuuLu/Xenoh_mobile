@@ -9,7 +9,7 @@ part 'auth_response_dto.g.dart';
 /// `AuthResponseBody` from login / refresh / external (API ref §3.1).
 /// The refresh token is NOT in the body — it arrives as the `xenoh.refresh`
 /// cookie.
-@freezed
+@Freezed(toStringOverride: false)
 abstract class AuthResponseDto with _$AuthResponseDto {
   const factory AuthResponseDto({
     required String userId,

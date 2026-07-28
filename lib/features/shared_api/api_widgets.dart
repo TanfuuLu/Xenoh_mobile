@@ -6,6 +6,7 @@ import '../../app/theme/app_typography.dart';
 import '../../core/widgets/xn_button.dart';
 import '../../core/widgets/xn_card.dart';
 import '../../core/widgets/xn_chip.dart';
+import '../../core/widgets/xn_page_list.dart';
 import '../../core/widgets/xn_section.dart';
 import '../../l10n/app_localizations.dart';
 import 'xenoh_api.dart';
@@ -32,25 +33,9 @@ class FeatureScreenFrame extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final body = ListView(
-      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-      padding: const EdgeInsets.fromLTRB(
-        AppSpacing.lg,
-        AppSpacing.md,
-        AppSpacing.lg,
-        AppSpacing.xxl,
-      ),
-      children: children,
-    );
     return Scaffold(
       appBar: AppBar(title: Text(title), actions: actions, leading: leading),
-      body: onRefresh == null
-          ? body
-          : RefreshIndicator(
-              color: AppColors.accent,
-              onRefresh: onRefresh!,
-              child: body,
-            ),
+      body: XnPageList(onRefresh: onRefresh, children: children),
     );
   }
 }

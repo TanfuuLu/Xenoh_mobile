@@ -53,8 +53,12 @@ Dio dio(Ref ref) {
   if (kDebugMode) {
     dio.interceptors.add(
       LogInterceptor(
-        requestBody: true,
-        responseBody: true,
+        // Auth endpoints carry passwords, reset codes, tickets, and tokens.
+        // Log metadata only so debug device logs never contain credentials.
+        requestBody: false,
+        responseBody: false,
+        requestHeader: false,
+        responseHeader: false,
         logPrint: (o) => debugPrint('$o'),
       ),
     );

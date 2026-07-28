@@ -69,8 +69,8 @@ LegalPageContent legalPageContent(LegalPageKind kind, AppLocalizations l10n) =>
         icon: Icons.receipt_long_outlined,
         sections: [
           LegalSection(
-            title: l10n.legalRefundPaymentOrdersTitle,
-            body: l10n.legalRefundPaymentOrdersBody,
+            title: l10n.legalRefundSubscriptionAccessTitle,
+            body: l10n.legalRefundSubscriptionAccessBody,
           ),
           LegalSection(
             title: l10n.legalRefundReviewProcessTitle,

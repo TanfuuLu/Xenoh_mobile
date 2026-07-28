@@ -8,14 +8,12 @@ part of 'subscription_controllers.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
-/// The current user's subscription. Refresh by invalidating (e.g. after a
-/// payment completes or a dev-activate).
+/// The current user's server-authoritative subscription state.
 
 @ProviderFor(subscription)
 final subscriptionProvider = SubscriptionProvider._();
 
-/// The current user's subscription. Refresh by invalidating (e.g. after a
-/// payment completes or a dev-activate).
+/// The current user's server-authoritative subscription state.
 
 final class SubscriptionProvider
     extends
@@ -25,8 +23,7 @@ final class SubscriptionProvider
           FutureOr<Subscription>
         >
     with $FutureModifier<Subscription>, $FutureProvider<Subscription> {
-  /// The current user's subscription. Refresh by invalidating (e.g. after a
-  /// payment completes or a dev-activate).
+  /// The current user's server-authoritative subscription state.
   SubscriptionProvider._()
     : super(
         from: null,

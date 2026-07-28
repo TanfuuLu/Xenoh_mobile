@@ -24,16 +24,16 @@ class XnSectionGroup extends StatelessWidget {
     return Container(
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-        color: AppColors.bg2.withValues(alpha: 0.96),
+        color: AppColors.bg2.withValues(alpha: 0.94),
         borderRadius: BorderRadius.circular(AppRadius.xxl),
         border: Border.all(
-          color: AppColors.surfaceBorderSoft.withValues(alpha: 0.68),
+          color: AppColors.surfaceBorderSoft.withValues(alpha: 0.52),
         ),
         boxShadow: const [
           BoxShadow(
             color: AppColors.shadow,
-            blurRadius: 20,
-            offset: Offset(0, 8),
+            blurRadius: 16,
+            offset: Offset(0, 6),
           ),
         ],
       ),

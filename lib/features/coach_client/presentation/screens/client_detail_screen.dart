@@ -199,6 +199,13 @@ class ClientDetailScreen extends ConsumerWidget {
     return FeatureScreenFrame(
       title: l10n.coachClientDetailTitle,
       actions: [
+        IconButton(
+          tooltip: l10n.supplementsTitle,
+          onPressed: () => unawaited(
+            context.push('/coach/clients/$clientId/supplements'),
+          ),
+          icon: const Icon(Icons.medication_outlined),
+        ),
         Padding(
           padding: const EdgeInsets.only(right: AppSpacing.sm),
           child: TextButton.icon(

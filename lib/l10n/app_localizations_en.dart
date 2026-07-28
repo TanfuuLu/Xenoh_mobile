@@ -60,6 +60,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonBack => 'Back';
 
   @override
+  String get notFoundTitle => 'Page not found';
+
+  @override
+  String get notFoundMessage =>
+      'This page does not exist or is no longer available.';
+
+  @override
+  String get notFoundHomeAction => 'Return home';
+
+  @override
   String get commonRequiredError => 'Required';
 
   @override
@@ -1276,15 +1286,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get appShellDrawerAdminPlans => 'Platform Plans';
-
-  @override
-  String get appShellDrawerAdminPayments => 'Payments';
-
-  @override
-  String get appShellDrawerUpdatesBillingSection => 'Updates and billing';
-
-  @override
-  String get appShellDrawerSubscription => 'Subscription';
 
   @override
   String get authEmailLabel => 'Email';
@@ -3491,30 +3492,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get subscriptionTitle => 'Subscription';
 
   @override
-  String get subscriptionExtendOrChangeTitle => 'Extend or change plan';
-
-  @override
-  String get subscriptionGoProTitle => 'Go Pro';
-
-  @override
   String get subscriptionUnlockMessage =>
       'Unlock AI insights, analytics and coaching tools.';
-
-  @override
-  String get subscriptionContinueToPaymentCta => 'Continue to payment';
-
-  @override
-  String subscriptionRenewCta(String tier) {
-    return 'Renew $tier';
-  }
-
-  @override
-  String subscriptionSwitchToCta(String tier) {
-    return 'Switch to $tier';
-  }
-
-  @override
-  String get subscriptionDevActivateCta => 'Dev: activate Pro now';
 
   @override
   String get subscriptionCurrentPlanLabel => 'CURRENT PLAN';
@@ -3523,54 +3502,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get subscriptionExpiresLabel => 'Expires';
 
   @override
-  String get subscriptionExpiredLabel => 'Expired';
-
-  @override
   String get subscriptionNoExpiryLabel => 'No expiry';
 
   @override
   String get subscriptionAiRequestsThisMonthLabel => 'AI requests this month';
 
   @override
-  String get subscriptionNotIncludedLabel => 'Not included';
-
-  @override
-  String subscriptionRemainingLabel(int count) {
-    return '$count remaining';
-  }
-
-  @override
-  String get subscriptionCurrentChipLabel => 'Current';
-
-  @override
-  String get subscriptionIncludedInProCoachMessage =>
-      'Included in your Pro Coach plan';
-
-  @override
-  String get subscriptionRenewToExtendMessage => 'Renew to extend your plan';
-
-  @override
-  String get subscriptionBilledOnceMessage => 'Billed once by bank transfer';
-
-  @override
-  String get subscriptionPaymentNoteMessage =>
-      'Payment is by Vietnamese bank transfer. Your plan activates automatically once the transfer is confirmed (usually within a few minutes).';
-
-  @override
-  String get subscriptionPerMonthSuffix => '/mo';
-
-  @override
   String get subscriptionTierProIndividual => 'Pro Individual';
 
   @override
-  String get subscriptionTierProIndividualTagline =>
-      'For athletes training solo';
-
-  @override
   String get subscriptionTierProCoach => 'Pro Coach';
-
-  @override
-  String get subscriptionTierProCoachTagline => 'For coaches managing clients';
 
   @override
   String get subscriptionTierFree => 'Free';
@@ -3587,119 +3528,10 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get subscriptionBestValueLabel => 'Best value';
-
-  @override
-  String get subscriptionCompletePaymentTitle => 'Complete payment';
-
-  @override
-  String get subscriptionAmountToTransferLabel => 'AMOUNT TO TRANSFER';
-
-  @override
-  String get subscriptionScanInstructionsMessage =>
-      'Scan the QR with your banking app, or transfer manually using the details below. Include the transfer description so we can match your payment automatically.';
-
-  @override
-  String get subscriptionBankLabel => 'Bank';
-
-  @override
-  String get subscriptionAccountNumberLabel => 'Account number';
-
-  @override
-  String get subscriptionAccountNameLabel => 'Account name';
-
-  @override
-  String get subscriptionAmountLabel => 'Amount';
-
-  @override
-  String get subscriptionTransferDescriptionLabel => 'Transfer description';
-
-  @override
-  String subscriptionOrderExpiresMessage(String datetime) {
-    return 'This order expires $datetime.';
-  }
-
-  @override
-  String subscriptionCopyTooltip(String label) {
-    return 'Copy $label';
-  }
-
-  @override
-  String subscriptionCopiedSnackbar(String label) {
-    return '$label copied';
-  }
-
-  @override
-  String get subscriptionOrderExpiredMessage =>
-      'This order has expired. Go back to start a new one.';
-
-  @override
-  String get subscriptionWaitingForTransferMessage =>
-      'Waiting for your transfer…';
-
-  @override
-  String get subscriptionAutoUpdateMessage =>
-      'This page updates automatically once payment is confirmed (usually within a few minutes).';
-
-  @override
-  String get subscriptionScanToPayLabel => 'SCAN TO PAY';
-
-  @override
-  String get subscriptionQrUnavailableMessage =>
-      'QR unavailable — use the transfer details below.';
-
-  @override
-  String get subscriptionOpenBankingAppMessage =>
-      'Open your banking app and scan with VietQR';
-
-  @override
-  String subscriptionUpgradeToastMessage(String tier) {
-    return 'You\'re now on $tier 🎉';
-  }
-
-  @override
-  String get marketingPricingTitle => 'Pricing';
-
-  @override
-  String get marketingChooseYourPlanTitle => 'Choose your Pro plan';
-
-  @override
-  String get marketingChooseYourPlanSubtitle =>
-      'Public pricing for AI insights, analytics, and coach workflows.';
-
-  @override
   String get marketingCreateAccountCta => 'Create account';
 
   @override
   String get marketingSignInCta => 'Sign in';
-
-  @override
-  String get marketingCoachChipLabel => 'Coach';
-
-  @override
-  String get marketingFeatureAiInsights =>
-      'AI insights and quota-backed coach tips';
-
-  @override
-  String get marketingFeaturePlanAnalytics =>
-      'Plan analytics, balance checks, and progress insight';
-
-  @override
-  String get marketingFeatureNutritionInsight =>
-      'Nutrition insight and richer progress views';
-
-  @override
-  String get marketingFeatureClientManagement =>
-      'Client management, invite codes, and coach dashboard';
-
-  @override
-  String get marketingFeatureClientPlans =>
-      'Client plans, nutrition oversight, AI briefs, and chat';
-
-  @override
-  String marketingSavePercentLabel(int percent) {
-    return 'Save $percent%';
-  }
 
   @override
   String get adminDashboardTitle => 'Admin dashboard';
@@ -3843,39 +3675,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get adminDaysLabel => 'Days';
 
   @override
-  String get adminPaymentsTitle => 'Payments';
-
-  @override
-  String get adminPaymentsHeaderTitle => 'Payments and subscriptions';
-
-  @override
-  String get adminPaymentsHeaderSubtitle =>
-      'SePay order state, tier, revenue, and active subscriptions.';
-
-  @override
   String get adminRevenueLabel => 'Revenue';
-
-  @override
-  String get adminThisMonthLabel => 'This month';
-
-  @override
-  String get adminPendingLabel => 'Pending';
-
-  @override
-  String get adminCompletedLabel => 'Completed';
-
-  @override
-  String get adminNoPaymentsTitle => 'No payments';
-
-  @override
-  String get adminNoPaymentsMessage => 'Payment orders appear here.';
-
-  @override
-  String get adminNoSubscriptionsTitle => 'No subscriptions';
-
-  @override
-  String get adminNoSubscriptionsMessage =>
-      'Active and historical subscriptions appear here.';
 
   @override
   String get adminAnalyticsTitle => 'Admin analytics';
@@ -4141,21 +3941,21 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get legalRefundSubtitle =>
-      'Subscription and payment expectations for Pro plans.';
+      'Subscription access and account adjustment information.';
 
   @override
-  String get legalRefundPaymentOrdersTitle => 'Subscription access';
+  String get legalRefundSubscriptionAccessTitle => 'Subscription access';
 
   @override
-  String get legalRefundPaymentOrdersBody =>
-      'Pro subscriptions are purchased and managed on the Xenoh website. The mobile app reflects subscription access after the website account is updated.';
+  String get legalRefundSubscriptionAccessBody =>
+      'The mobile app reflects the subscription access associated with your Xenoh account after account status updates.';
 
   @override
   String get legalRefundReviewProcessTitle => 'Review Process';
 
   @override
   String get legalRefundReviewProcessBody =>
-      'Refund requests are handled through the Xenoh website according to the applicable purchase terms and account state.';
+      'Refund requests are handled according to the applicable terms and account state.';
 
   @override
   String get legalRefundAccessChangesTitle => 'Access Changes';
@@ -4191,9 +3991,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get marketingCoachesBody =>
       'Pro Coach unlocks client management, invite codes, client plans, chat, nutrition oversight, and AI briefs.';
-
-  @override
-  String get marketingViewPricingCta => 'View pricing';
 
   @override
   String get marketingAboutNavLabel => 'About';
@@ -4315,4 +4112,181 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get workoutNotificationPermissionDenied =>
       'Notification permission was not granted.';
+
+  @override
+  String get supplementsTitle => 'Supplements';
+
+  @override
+  String get supplementsClientTitle => 'Client supplements';
+
+  @override
+  String get supplementsTodayTab => 'Today';
+
+  @override
+  String get supplementsRegimensTab => 'Schedules';
+
+  @override
+  String get supplementsHistoryTab => 'History';
+
+  @override
+  String get supplementsTodayLabel => 'TODAY';
+
+  @override
+  String get supplementsPreviousDayTooltip => 'Previous day';
+
+  @override
+  String get supplementsNextDayTooltip => 'Next day';
+
+  @override
+  String get supplementsCoachReadOnlyMessage =>
+      'Coaches can review adherence here. Only the client can record a dose.';
+
+  @override
+  String get supplementsAdherenceLabel => 'ADHERENCE';
+
+  @override
+  String supplementsTakenOfPlanned(int taken, int planned) {
+    return '$taken of $planned taken';
+  }
+
+  @override
+  String get supplementsNoDosesTitle => 'No doses scheduled';
+
+  @override
+  String get supplementsNoDosesMessage =>
+      'There are no supplement doses planned for this day.';
+
+  @override
+  String get supplementsMarkTakenButton => 'Taken';
+
+  @override
+  String get supplementsSkipButton => 'Skip';
+
+  @override
+  String get supplementsResetDoseTooltip => 'Reset dose';
+
+  @override
+  String get supplementsStatusPending => 'Pending';
+
+  @override
+  String get supplementsStatusTaken => 'Taken';
+
+  @override
+  String get supplementsStatusSkipped => 'Skipped';
+
+  @override
+  String get supplementsStatusMissed => 'Missed';
+
+  @override
+  String get supplementsShowArchivedLabel => 'Show archived';
+
+  @override
+  String get supplementsAddRegimenButton => 'Add';
+
+  @override
+  String get supplementsNoRegimensTitle => 'No supplement schedules';
+
+  @override
+  String get supplementsNoRegimensMessage =>
+      'Add a supplement and its dose times to start tracking.';
+
+  @override
+  String get supplementsCreatedMessage => 'Supplement schedule created.';
+
+  @override
+  String get supplementsUpdatedMessage => 'Supplement schedule updated.';
+
+  @override
+  String get supplementsArchiveTitle => 'Archive schedule?';
+
+  @override
+  String supplementsArchiveMessage(String name) {
+    return 'Archive $name? Past adherence history will be preserved.';
+  }
+
+  @override
+  String get supplementsArchiveButton => 'Archive';
+
+  @override
+  String get supplementsArchivedLabel => 'Archived';
+
+  @override
+  String supplementsDoseSlotCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count dose times',
+      one: '1 dose time',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get supplementsLastThirtyDaysLabel => 'LAST 30 DAYS';
+
+  @override
+  String get supplementsNoHistoryTitle => 'No adherence history';
+
+  @override
+  String get supplementsNoHistoryMessage =>
+      'History will appear after supplement doses are scheduled.';
+
+  @override
+  String get supplementsEditRegimenTitle => 'Edit supplement';
+
+  @override
+  String get supplementsCreateRegimenTitle => 'Add supplement';
+
+  @override
+  String get supplementsNameLabel => 'Name';
+
+  @override
+  String get supplementsBrandLabel => 'Brand';
+
+  @override
+  String get supplementsFormLabel => 'Form';
+
+  @override
+  String get supplementsInstructionsLabel => 'Instructions';
+
+  @override
+  String get supplementsNotesLabel => 'Notes';
+
+  @override
+  String get supplementsRequiredMessage => 'Required';
+
+  @override
+  String get supplementsEffectiveFromLabel => 'New schedule effective from';
+
+  @override
+  String get supplementsStartDateLabel => 'Start date';
+
+  @override
+  String get supplementsDoseSlotsTitle => 'Dose schedule';
+
+  @override
+  String get supplementsAddDoseButton => 'Add dose';
+
+  @override
+  String get supplementsAmountLabel => 'Amount';
+
+  @override
+  String get supplementsUnitLabel => 'Unit';
+
+  @override
+  String get supplementsTimeLabel => 'Time';
+
+  @override
+  String get supplementsWeekdaysLabel => 'Days of week';
+
+  @override
+  String get supplementsEveryDayLabel => 'Every day';
+
+  @override
+  String get supplementsSelectWeekdayMessage =>
+      'Select at least one weekday for every dose.';
+
+  @override
+  String get supplementsInvalidDoseMessage =>
+      'Enter a valid amount and unit for every dose.';
 }

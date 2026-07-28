@@ -48,6 +48,7 @@ class _CreatePlanSheetState extends ConsumerState<CreatePlanSheet> {
   DateTime? _start;
   DateTime? _end;
   bool _submitting = false;
+  bool _localizedInitialNameApplied = false;
 
   String _title(AppLocalizations l10n) => switch (widget.mode) {
     PlanFormMode.create => l10n.trainingNewPlanTitle,
@@ -66,11 +67,25 @@ class _CreatePlanSheetState extends ConsumerState<CreatePlanSheet> {
     super.initState();
     final plan = widget.initialPlan;
     if (plan == null) return;
-    _name.text = widget.mode == PlanFormMode.duplicate
-        ? AppLocalizations.of(context).trainingDuplicatePlanName(plan.name)
-        : plan.name;
+    if (widget.mode != PlanFormMode.duplicate) {
+      _name.text = plan.name;
+      _localizedInitialNameApplied = true;
+    }
     _start = plan.startDate;
     _end = plan.endDate;
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_localizedInitialNameApplied) return;
+    final plan = widget.initialPlan;
+    if (widget.mode == PlanFormMode.duplicate && plan != null) {
+      _name.text = AppLocalizations.of(
+        context,
+      ).trainingDuplicatePlanName(plan.name);
+    }
+    _localizedInitialNameApplied = true;
   }
 
   @override

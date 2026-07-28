@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../app/home_shell.dart';
 import '../../../../app/theme/app_colors.dart';
@@ -131,6 +132,11 @@ class _NutritionScreenState extends ConsumerState<NutritionScreen> {
         leading: const HomeShellMenuButton(),
         title: Text(l10n.nutritionScreenTitle),
         actions: [
+          IconButton(
+            tooltip: l10n.supplementsTitle,
+            icon: const Icon(Icons.medication_outlined),
+            onPressed: () => unawaited(context.push('/supplements')),
+          ),
           if (summary.value case final data?)
             IconButton(
               tooltip: l10n.nutritionEditProfileTooltip,

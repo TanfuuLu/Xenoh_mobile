@@ -15,6 +15,7 @@ import '../features/profile/presentation/providers/profile_controller.dart';
 import '../l10n/app_localizations.dart';
 import 'theme/app_colors.dart';
 import 'theme/app_dimens.dart';
+import 'widgets/app_responsive_frame.dart';
 
 /// Exposes the [HomeShell]'s drawer to descendant screens (which live in the
 /// shell's branch navigators and have their own Scaffolds). Avoids a global
@@ -53,7 +54,7 @@ class AppBottomMenuFrame extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: child,
+      body: AppResponsiveFrame(child: child),
       bottomNavigationBar: _XenohBottomMenuBar(
         selectedIndex: 0,
         onDestinationSelected: (index, destinations) {
@@ -142,7 +143,9 @@ class HomeShell extends ConsumerWidget {
       body: Builder(
         builder: (innerContext) => _HomeShellScope(
           openDrawer: () => Scaffold.of(innerContext).openDrawer(),
-          child: _WorkoutLockScreenConsentGate(child: navigationShell),
+          child: _WorkoutLockScreenConsentGate(
+            child: AppResponsiveFrame(child: navigationShell),
+          ),
         ),
       ),
       bottomNavigationBar: _XenohBottomMenuBar(
@@ -285,25 +288,27 @@ class _XenohBottomMenuBar extends StatelessWidget {
       top: false,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(
-          AppSpacing.md,
-          AppSpacing.xs,
-          AppSpacing.md,
+          AppSpacing.lg,
+          2,
+          AppSpacing.lg,
           AppSpacing.sm,
         ),
         child: Container(
           padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.xs,
-            vertical: 6,
+            horizontal: 5,
+            vertical: 5,
           ),
           decoration: BoxDecoration(
-            color: AppColors.bg2.withValues(alpha: 0.96),
-            borderRadius: BorderRadius.circular(AppRadius.xxl),
-            border: Border.all(color: AppColors.surfaceBorderSoft),
+            color: AppColors.bg2.withValues(alpha: 0.98),
+            borderRadius: BorderRadius.circular(AppRadius.xl),
+            border: Border.all(
+              color: AppColors.surfaceBorderSoft.withValues(alpha: 0.72),
+            ),
             boxShadow: const [
               BoxShadow(
-                color: AppColors.shadow,
-                blurRadius: 24,
-                offset: Offset(0, 10),
+                color: AppColors.shadowDeep,
+                blurRadius: 28,
+                offset: Offset(0, 12),
               ),
             ],
           ),
@@ -344,7 +349,7 @@ class _NavItem extends StatelessWidget {
     final iconWidget = selected
         ? (destination.selectedIcon ?? destination.icon)
         : destination.icon;
-    final color = selected ? AppColors.clay900 : AppColors.fg3;
+    final color = selected ? AppColors.fgOnClay : AppColors.fg3;
 
     return Semantics(
       button: true,
@@ -354,32 +359,39 @@ class _NavItem extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 3),
         child: Material(
           color: Colors.transparent,
-          borderRadius: BorderRadius.circular(AppRadius.xl),
+          borderRadius: BorderRadius.circular(AppRadius.lg),
           child: InkWell(
             onTap: onTap,
-            borderRadius: BorderRadius.circular(AppRadius.xl),
+            borderRadius: BorderRadius.circular(AppRadius.lg),
             child: AnimatedContainer(
               duration: AppMotion.med,
               curve: Curves.easeOutCubic,
-              padding: const EdgeInsets.symmetric(vertical: 8),
+              padding: const EdgeInsets.symmetric(vertical: 7),
               decoration: BoxDecoration(
-                color: selected ? AppColors.accentSoft : Colors.transparent,
-                borderRadius: BorderRadius.circular(AppRadius.xl),
+                color: selected ? AppColors.clay900 : Colors.transparent,
+                borderRadius: BorderRadius.circular(AppRadius.lg),
                 border: Border.all(
-                  color: selected
-                      ? AppColors.border1.withValues(alpha: 0.5)
-                      : Colors.transparent,
+                  color: selected ? AppColors.clay900 : Colors.transparent,
                 ),
+                boxShadow: selected
+                    ? const [
+                        BoxShadow(
+                          color: AppColors.shadow,
+                          blurRadius: 10,
+                          offset: Offset(0, 4),
+                        ),
+                      ]
+                    : null,
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   AnimatedScale(
-                    scale: selected ? 1.08 : 1,
+                    scale: selected ? 1.04 : 1,
                     duration: AppMotion.med,
                     curve: Curves.easeOutBack,
                     child: IconTheme(
-                      data: IconThemeData(color: color, size: 22),
+                      data: IconThemeData(color: color, size: 21),
                       child: iconWidget,
                     ),
                   ),
@@ -392,7 +404,7 @@ class _NavItem extends StatelessWidget {
                     style: TextStyle(
                       color: color,
                       fontSize: 11,
-                      fontWeight: FontWeight.w500,
+                      fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
                       letterSpacing: 0.1,
                     ),
                   ),

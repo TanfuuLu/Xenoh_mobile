@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_dimens.dart';
+import '../../../../core/utils/app_routes.dart';
 import '../../../../core/widgets/xn_section.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../shared_api/api_widgets.dart';
@@ -81,8 +82,11 @@ class ChatHubScreen extends ConsumerWidget {
     if (!context.mounted) return;
     unawaited(
       context.push<void>(
-        '/coach/chat/messages',
-        extra: (relationshipId: relationshipId, clientName: clientName),
+        relationshipChatLocation(
+          coachInbox: true,
+          relationshipId: relationshipId,
+          peerName: clientName,
+        ),
       ),
     );
   }

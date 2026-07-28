@@ -35,10 +35,6 @@ bool operator ==(Object other) {
 @override
 int get hashCode => Object.hash(runtimeType,userId,accessToken,email,fullName,const DeepCollectionEquality().hash(roles),avatarUrl);
 
-@override
-String toString() {
-  return 'AuthResponseDto(userId: $userId, accessToken: $accessToken, email: $email, fullName: $fullName, roles: $roles, avatarUrl: $avatarUrl)';
-}
 
 
 }
@@ -250,10 +246,6 @@ bool operator ==(Object other) {
 @override
 int get hashCode => Object.hash(runtimeType,userId,accessToken,email,fullName,const DeepCollectionEquality().hash(_roles),avatarUrl);
 
-@override
-String toString() {
-  return 'AuthResponseDto(userId: $userId, accessToken: $accessToken, email: $email, fullName: $fullName, roles: $roles, avatarUrl: $avatarUrl)';
-}
 
 
 }
