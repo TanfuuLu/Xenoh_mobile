@@ -360,7 +360,7 @@ class _DayCard extends ConsumerWidget {
             : day.isRest
             ? AppColors.sage100.withValues(alpha: 0.24)
             : day.isCompleted
-            ? AppColors.successBg.withValues(alpha: 0.32)
+            ? AppColors.successBg
             : AppColors.bg2);
     final cardRadius = BorderRadius.circular(
       expanded ? AppRadius.xxl : AppRadius.lg,
