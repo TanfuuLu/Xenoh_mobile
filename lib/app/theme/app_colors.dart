@@ -61,7 +61,6 @@ abstract final class AppColors {
 
   // Status.
   static const success = Color(0xFF485A26);
-  static const successBright = Color(0xFF2E7D32);
   static const successBg = Color(0xFFE8ECD6);
   static const warning = Color(0xFF8D560D);
   static const warningBg = Color(0xFFF0E0C8);
