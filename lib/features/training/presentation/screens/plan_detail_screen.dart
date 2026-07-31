@@ -744,7 +744,7 @@ class _WeekAtGlance extends ConsumerWidget {
             rows: [
               _WeekAtGlanceRow(
                 icon: Icons.trending_up_rounded,
-                color: AppColors.success,
+                color: AppColors.successBright,
                 label: l10n.progressVolumeLabel,
                 value:
                     '${_formatWeekVolume(context, data.actualVolume)} kg-reps',
