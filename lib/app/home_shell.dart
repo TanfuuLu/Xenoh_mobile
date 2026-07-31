@@ -261,15 +261,11 @@ class _ShellDestination {
     required this.branchIndex,
     required this.path,
     required this.destination,
-    required this.color,
-    required this.softColor,
   });
 
   final int branchIndex;
   final String path;
   final NavigationDestination destination;
-  final Color color;
-  final Color softColor;
 }
 
 class _XenohBottomMenuBar extends StatelessWidget {
@@ -322,8 +318,6 @@ class _XenohBottomMenuBar extends StatelessWidget {
                 Expanded(
                   child: _NavItem(
                     destination: destinations[i].destination,
-                    activeColor: destinations[i].color,
-                    softColor: destinations[i].softColor,
                     selected: i == selected,
                     onTap: () => onDestinationSelected(i, destinations),
                   ),
@@ -342,15 +336,11 @@ class _XenohBottomMenuBar extends StatelessWidget {
 class _NavItem extends StatelessWidget {
   const _NavItem({
     required this.destination,
-    required this.activeColor,
-    required this.softColor,
     required this.selected,
     required this.onTap,
   });
 
   final NavigationDestination destination;
-  final Color activeColor;
-  final Color softColor;
   final bool selected;
   final VoidCallback onTap;
 
@@ -359,8 +349,7 @@ class _NavItem extends StatelessWidget {
     final iconWidget = selected
         ? (destination.selectedIcon ?? destination.icon)
         : destination.icon;
-    final iconColor = selected ? AppColors.fgOnClay : activeColor;
-    final labelColor = selected ? AppColors.fgOnClay : AppColors.fg2;
+    final color = selected ? AppColors.fgOnClay : AppColors.fg3;
 
     return Semantics(
       button: true,
@@ -379,14 +368,10 @@ class _NavItem extends StatelessWidget {
               curve: Curves.easeOutCubic,
               padding: const EdgeInsets.symmetric(vertical: 7),
               decoration: BoxDecoration(
-                color: selected
-                    ? activeColor
-                    : softColor.withValues(alpha: 0.62),
+                color: selected ? AppColors.clay900 : Colors.transparent,
                 borderRadius: BorderRadius.circular(AppRadius.lg),
                 border: Border.all(
-                  color: selected
-                      ? activeColor
-                      : activeColor.withValues(alpha: 0.12),
+                  color: selected ? AppColors.clay900 : Colors.transparent,
                 ),
                 boxShadow: selected
                     ? const [
@@ -406,7 +391,7 @@ class _NavItem extends StatelessWidget {
                     duration: AppMotion.med,
                     curve: Curves.easeOutBack,
                     child: IconTheme(
-                      data: IconThemeData(color: iconColor, size: 21),
+                      data: IconThemeData(color: color, size: 21),
                       child: iconWidget,
                     ),
                   ),
@@ -417,7 +402,7 @@ class _NavItem extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      color: labelColor,
+                      color: color,
                       fontSize: 11,
                       fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
                       letterSpacing: 0.1,
@@ -442,8 +427,6 @@ List<_ShellDestination> _bottomDestinations(
     _ShellDestination(
       branchIndex: 0,
       path: '/dashboard',
-      color: AppColors.coral700,
-      softColor: AppColors.coral100,
       destination: NavigationDestination(
         icon: const Icon(Icons.dashboard_outlined),
         selectedIcon: const Icon(Icons.dashboard_rounded),
@@ -453,8 +436,6 @@ List<_ShellDestination> _bottomDestinations(
     _ShellDestination(
       branchIndex: 1,
       path: '/plans',
-      color: AppColors.violet700,
-      softColor: AppColors.violet100,
       destination: NavigationDestination(
         icon: const Icon(Icons.calendar_month_outlined),
         selectedIcon: const Icon(Icons.calendar_month_rounded),
@@ -467,8 +448,6 @@ List<_ShellDestination> _bottomDestinations(
       _ShellDestination(
         branchIndex: 0,
         path: '/coach/clients',
-        color: AppColors.sky700,
-        softColor: AppColors.sky100,
         destination: NavigationDestination(
           icon: const Icon(Icons.supervisor_account_outlined),
           selectedIcon: const Icon(Icons.supervisor_account_rounded),
@@ -478,8 +457,6 @@ List<_ShellDestination> _bottomDestinations(
     _ShellDestination(
       branchIndex: 2,
       path: '/nutrition',
-      color: AppColors.mint700,
-      softColor: AppColors.mint100,
       destination: NavigationDestination(
         icon: const Icon(Icons.restaurant_menu_outlined),
         selectedIcon: const Icon(Icons.restaurant_menu_rounded),
@@ -489,8 +466,6 @@ List<_ShellDestination> _bottomDestinations(
     _ShellDestination(
       branchIndex: 3,
       path: '/profile',
-      color: AppColors.amber700,
-      softColor: AppColors.amber100,
       destination: NavigationDestination(
         icon: const Icon(Icons.person_outline_rounded),
         selectedIcon: const Icon(Icons.person_rounded),
