@@ -529,7 +529,7 @@ class _WeekCard extends ConsumerWidget {
     final surface = isCurrent
         ? AppColors.bg2
         : week.isCompleted
-        ? AppColors.successBg.withValues(alpha: 0.46)
+        ? AppColors.successBg
         : AppColors.clay050;
     final cardRadius = BorderRadius.circular(
       expanded ? AppRadius.xxl : AppRadius.lg,
