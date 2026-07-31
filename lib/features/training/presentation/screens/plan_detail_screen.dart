@@ -744,17 +744,20 @@ class _WeekAtGlance extends ConsumerWidget {
             rows: [
               _WeekAtGlanceRow(
                 icon: Icons.trending_up_rounded,
+                color: AppColors.success,
                 label: l10n.progressVolumeLabel,
                 value:
                     '${_formatWeekVolume(context, data.actualVolume)} kg-reps',
               ),
               _WeekAtGlanceRow(
                 icon: Icons.layers_outlined,
+                color: AppColors.warning,
                 label: l10n.progressCompletedSetsLabel,
                 value: '${data.completedSets}/${data.totalSets}',
               ),
               _WeekAtGlanceRow(
                 icon: Icons.timer_outlined,
+                color: AppColors.info,
                 label: l10n.progressTimeTrainedLabel,
                 value: _formatWeekDuration(l10n, data.totalDurationSeconds),
               ),
@@ -838,11 +841,13 @@ class _WeekAtGlanceContent extends StatelessWidget {
 class _WeekAtGlanceRow extends StatelessWidget {
   const _WeekAtGlanceRow({
     required this.icon,
+    required this.color,
     required this.label,
     required this.value,
   });
 
   final IconData icon;
+  final Color color;
   final String label;
   final String value;
 
@@ -850,7 +855,7 @@ class _WeekAtGlanceRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(icon, size: 18, color: AppColors.fg3),
+        Icon(icon, size: 18, color: color),
         const SizedBox(width: AppSpacing.lg),
         Expanded(
           child: Text(
