@@ -11,11 +11,11 @@ abstract final class AppTheme {
     const scheme = ColorScheme.light(
       primary: AppColors.accent,
       primaryContainer: AppColors.accentSoft,
-      onPrimaryContainer: AppColors.accentPress,
+      onPrimaryContainer: AppColors.clay900,
       secondary: AppColors.accent2,
       onSecondary: AppColors.fgOnClay,
       secondaryContainer: AppColors.accent2Soft,
-      onSecondaryContainer: AppColors.sky700,
+      onSecondaryContainer: AppColors.sage700,
       surface: AppColors.bg2,
       onSurface: AppColors.fg1,
       surfaceContainerHighest: AppColors.bg3,
@@ -24,9 +24,6 @@ abstract final class AppTheme {
       outlineVariant: AppColors.surfaceBorderSoft,
       error: AppColors.danger,
       errorContainer: AppColors.dangerBg,
-      tertiary: AppColors.violet500,
-      tertiaryContainer: AppColors.violet100,
-      onTertiaryContainer: AppColors.violet700,
     );
 
     final textTheme = AppTypography.textTheme();
@@ -226,7 +223,7 @@ abstract final class AppTheme {
       chipTheme: const ChipThemeData(
         backgroundColor: AppColors.accentSoft,
         labelStyle: TextStyle(
-          color: AppColors.accentPress,
+          color: AppColors.clay900,
           fontFamily: AppTypography.fontFamily,
         ),
         shape: RoundedRectangleBorder(
@@ -299,7 +296,7 @@ abstract final class AppTheme {
           }),
           foregroundColor: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.selected)) {
-              return AppColors.accentPress;
+              return AppColors.clay900;
             }
             return AppColors.fg2;
           }),
@@ -347,7 +344,7 @@ abstract final class AppTheme {
         labelTextStyle: WidgetStateProperty.resolveWith(
           (states) => TextStyle(
             color: states.contains(WidgetState.selected)
-                ? AppColors.accent
+                ? AppColors.clay900
                 : AppColors.fg3,
             fontSize: 12,
             fontWeight: FontWeight.w500,
@@ -356,7 +353,7 @@ abstract final class AppTheme {
         iconTheme: WidgetStateProperty.resolveWith(
           (states) => IconThemeData(
             color: states.contains(WidgetState.selected)
-                ? AppColors.accent
+                ? AppColors.clay900
                 : AppColors.fg3,
             size: 22,
           ),
