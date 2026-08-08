@@ -791,6 +791,20 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get cycleDayMetricLabel => 'Cycle day';
+
+  @override
+  String get cycleUntilPeriodMetricLabel => 'Until period';
+
+  @override
+  String get cycleConfidenceMetricLabel => 'Confidence';
+
+  @override
+  String cycleDaysValue(int days) {
+    return '$days days';
+  }
+
+  @override
   String get cycleNextPeriodMissingLabel => 'Next period -';
 
   @override
@@ -2150,6 +2164,25 @@ class AppLocalizationsEn extends AppLocalizations {
       'How well this plan distributes training across the body.';
 
   @override
+  String get trainingPlanProgressInsightTitle => 'AI plan progress';
+
+  @override
+  String get trainingPlanProgressInsightSubtitle =>
+      'A focused read on this plan\'s trajectory and the best next block.';
+
+  @override
+  String get trainingAnalyzingProgressMessage => 'Analyzing plan progress…';
+
+  @override
+  String get trainingWhatsWorkingTitle => 'What\'s working';
+
+  @override
+  String get trainingFocusAreasTitle => 'Focus areas';
+
+  @override
+  String get trainingNextBlockTitle => 'Next block';
+
+  @override
   String get trainingReviewingPlanMessage => 'Reviewing your plan…';
 
   @override
@@ -2189,6 +2222,29 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get trainingAvgDaysPerWeekLabel => 'Avg days/wk';
+
+  @override
+  String get trainingLongestTrainingStreakLabel => 'Longest training streak';
+
+  @override
+  String get trainingAvgExercisesPerDayLabel => 'Avg exercises/day';
+
+  @override
+  String get trainingMovementPatternsTitle => 'Movement pattern coverage';
+
+  @override
+  String trainingPatternCoverageStats(String exercises, String sets) {
+    return '$exercises exercises · $sets sets';
+  }
+
+  @override
+  String get trainingExerciseVarietyTitle => 'Exercise variety';
+
+  @override
+  String get trainingUniqueExercisesLabel => 'Unique exercises';
+
+  @override
+  String get trainingRepeatedExercisesLabel => 'Repeated exercises';
 
   @override
   String get trainingWorkloadLabel => 'Workload';
@@ -2453,6 +2509,30 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get trainingEditSetPlanTooltip => 'Edit set target';
+
+  @override
+  String trainingEditSetPlanTitle(int number) {
+    return 'Edit set $number';
+  }
+
+  @override
+  String get trainingPlannedRepsLabel => 'Planned reps';
+
+  @override
+  String get trainingPlannedWeightLabel => 'Planned weight';
+
+  @override
+  String get trainingSetRepsRangeError => 'Reps must be between 1 and 1000.';
+
+  @override
+  String get trainingSetWeightRangeError =>
+      'Weight must be between 0 and 10000 kg.';
+
+  @override
+  String get trainingLastPerformanceLabel => 'Last time';
+
+  @override
   String get trainingMarkDoneTooltip => 'Mark done';
 
   @override
@@ -2608,10 +2688,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get nutritionCreateMealPlanTitle => 'Create meal plan';
 
   @override
-  String get nutritionDayCreateSegment => 'Day Create';
+  String get nutritionDayCreateSegment => 'One day';
 
   @override
-  String get nutritionWeeklyCreateSegment => 'Weekly Create';
+  String get nutritionWeeklyCreateSegment => 'Whole week';
 
   @override
   String get nutritionCreateForLabel => 'Create for';
@@ -2651,6 +2731,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get nutritionCreateDayCta => 'Create day';
+
+  @override
+  String get nutritionCreateWeekCta => 'Create week';
 
   @override
   String get nutritionSelectFoodTitle => 'Select food';
@@ -2865,11 +2948,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get insightsRefreshTooltip => 'Refresh';
 
   @override
-  String get insightsHeaderTitle => 'AI training analysis';
+  String get insightsHeaderTitle => 'AI coach review';
 
   @override
   String get insightsHeaderSubtitle =>
-      'Pro-gated analysis, coach tips, cached results, and quota states.';
+      'Training signals, body trends, and the next decisions from your latest data.';
+
+  @override
+  String get insightsTrainingDecisionLabel =>
+      'Training assessment and decisions';
 
   @override
   String get insightsCoachTipTitle => 'Coach tip';
@@ -2906,6 +2993,36 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get insightsCoachSuggestionsLabel => 'COACH SUGGESTIONS';
+
+  @override
+  String get insightsEvidenceLabel => 'Evidence';
+
+  @override
+  String get insightsWhyItMattersLabel => 'Why it matters';
+
+  @override
+  String get insightsNextActionLabel => 'Next action';
+
+  @override
+  String get insightsDataSummaryLabel => 'Data summary';
+
+  @override
+  String get insightsGoalFitLabel => 'Goal fit';
+
+  @override
+  String get insightsDeloadLabel => 'Deload decision';
+
+  @override
+  String get insightsLoadProgressionLabel => 'Load progression';
+
+  @override
+  String get insightsRpeGuidanceLabel => 'RPE guidance';
+
+  @override
+  String get insightsVolumeGuidanceLabel => 'Volume guidance';
+
+  @override
+  String get insightsPrioritiesLabel => 'Priorities';
 
   @override
   String get insightsLastAnalyzedAtLabel => 'LAST ANALYZED AT';
@@ -2999,6 +3116,23 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get aiCoachChatQuotaReachedMessage =>
       'You\'ve used your AI quota for now. Try again later.';
+
+  @override
+  String get aiCoachChatConversationsTooltip => 'Conversations';
+
+  @override
+  String get aiCoachChatNewConversationTooltip => 'New conversation';
+
+  @override
+  String get aiCoachChatConversationsTitle => 'Conversations';
+
+  @override
+  String get aiCoachChatUntitledConversation => 'New conversation';
+
+  @override
+  String aiCoachChatMessageCount(String count) {
+    return '$count messages';
+  }
 
   @override
   String get powerliftingAnalysisTitle => 'Powerlifting analysis';
@@ -3216,14 +3350,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get coachForThisClientChip => 'For this client';
 
   @override
-  String get coachCurrentTrainingBlockFallback => 'Current training block';
+  String get coachCurrentTrainingBlockFallback => 'Current plan';
 
   @override
   String get coachClientPlanProgressLabel => 'Client plan progress';
 
   @override
-  String get coachNoPlanCreatedMessage =>
-      'No plan created for this client yet.';
+  String get coachNoPlanCreatedMessage => 'No current plan for this client.';
 
   @override
   String get coachClientDetailTitle => 'Client detail';
@@ -3269,6 +3402,129 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get coachNutritionTitle => 'Nutrition';
+
+  @override
+  String get coachClientNutritionTitle => 'Client nutrition';
+
+  @override
+  String get coachNutritionSelectedIntakeTitle => 'Daily intake';
+
+  @override
+  String get coachNutritionHistoryTitle => '7-day history';
+
+  @override
+  String get coachNutritionNoLogMessage =>
+      'No nutrition intake was recorded for this date.';
+
+  @override
+  String get coachNutritionNoHistoryMessage =>
+      'No nutrition history is available for this period.';
+
+  @override
+  String get coachNutritionReadOnlyMessage =>
+      'Nutrition intake is read-only for coaches. The client records their own daily totals.';
+
+  @override
+  String get nutritionInsightTitle => 'Nutrition insight';
+
+  @override
+  String get nutritionInsightSubtitle =>
+      'A practical read of the last 14 days against the current calorie and macro targets.';
+
+  @override
+  String get nutritionInsightLast14Days => 'Last 14 days';
+
+  @override
+  String get nutritionInsightLockedTitle => 'Advanced nutrition analysis';
+
+  @override
+  String get nutritionInsightLockedMessage =>
+      'Upgrade to Pro and record enough nutrition data to unlock trends and recommendations.';
+
+  @override
+  String get nutritionInsightInsufficientMessage =>
+      'There is not enough recorded intake yet. Keep logging daily calories and macros to build a useful insight.';
+
+  @override
+  String get nutritionInsightWeightGap => 'Weight gap';
+
+  @override
+  String get nutritionInsightCalorieConsistency => 'Calorie consistency';
+
+  @override
+  String get nutritionInsightMacroBalance => 'Macro balance';
+
+  @override
+  String get nutritionInsightNextMove => 'Next moves';
+
+  @override
+  String get nutritionInsightAverageMacros => 'Average daily macros';
+
+  @override
+  String get nutritionInsightStrategies => 'Macro strategies';
+
+  @override
+  String get nutritionInsightRecommended => 'Recommended';
+
+  @override
+  String get nutritionInsightMissing => 'Not available';
+
+  @override
+  String get nutritionInsightCaloriesHoldTitle => 'Hold calories steady';
+
+  @override
+  String get nutritionInsightCaloriesHoldBody =>
+      'Average intake is within 150 kcal of target. Keep the same target and improve consistency.';
+
+  @override
+  String get nutritionInsightCaloriesReduceTitle => 'Reduce average intake';
+
+  @override
+  String get nutritionInsightCaloriesReduceBody =>
+      'Average intake is above target. Tighten portions gradually instead of making a large cut.';
+
+  @override
+  String get nutritionInsightCaloriesAddTitle => 'Add calories gradually';
+
+  @override
+  String get nutritionInsightCaloriesAddBody =>
+      'Average intake is below target. Add a repeatable meal or snack to close the gap.';
+
+  @override
+  String get nutritionInsightCaloriesSetTitle => 'Set a calorie target';
+
+  @override
+  String get nutritionInsightCaloriesSetBody =>
+      'Complete the nutrition profile so intake can be compared with a daily target.';
+
+  @override
+  String get nutritionInsightProteinTitle => 'Prioritize protein';
+
+  @override
+  String get nutritionInsightProteinBody =>
+      'Average protein is below 90% of target. Build each main meal around a protein source.';
+
+  @override
+  String get nutritionInsightTimingTitle => 'Keep macro timing consistent';
+
+  @override
+  String get nutritionInsightTimingBody =>
+      'Protein is on track. Distribute macros around training and recovery needs.';
+
+  @override
+  String get nutritionInsightTargetWeightTitle => 'Set a target weight';
+
+  @override
+  String get nutritionInsightTargetWeightBody =>
+      'Add a target weight to connect nutrition decisions to the intended direction.';
+
+  @override
+  String get nutritionInsightWeightDirectionTitle =>
+      'Follow the weight direction';
+
+  @override
+  String get nutritionInsightWeightDirectionBody =>
+      'Use the weight gap and weekly trend to decide whether calories should change.';
 
   @override
   String get coachCaloriesLabel => 'Calories';
@@ -3327,6 +3583,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String coachAverageChangeChip(String value) {
+    return 'Avg $value';
+  }
+
+  @override
   String get coachLast90DaysChip => 'Last 90 days';
 
   @override
@@ -3338,6 +3599,9 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get coachNoAdditionalAiInsightMessage =>
       'No additional AI insight sections returned.';
+
+  @override
+  String get coachSuggestedMessageTitle => 'Suggested message to client';
 
   @override
   String get coachCachedLabel => 'Cached';
@@ -3528,6 +3792,100 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get subscriptionChoosePlanTitle => 'Choose your plan';
+
+  @override
+  String get subscriptionChoosePlanSubtitle =>
+      'Prepaid fixed terms. Plans do not renew automatically.';
+
+  @override
+  String get subscriptionCatalogEmpty =>
+      'No subscription offers are available right now.';
+
+  @override
+  String get subscriptionUnlimitedClients => 'Unlimited coaching clients';
+
+  @override
+  String get subscriptionPromotionLabel => 'Promotion code';
+
+  @override
+  String get subscriptionPromotionHint => 'Enter code';
+
+  @override
+  String get subscriptionApplyPromotion => 'Apply';
+
+  @override
+  String subscriptionPromotionApplied(String code, String amount) {
+    return 'Code $code applied. New total: $amount';
+  }
+
+  @override
+  String get subscriptionPromotionInvalid =>
+      'This promotion code is not valid.';
+
+  @override
+  String get subscriptionAcceptTerms =>
+      'I agree to the Terms of Service and Refund Policy.';
+
+  @override
+  String get subscriptionViewTerms => 'Terms of Service';
+
+  @override
+  String get subscriptionViewRefundPolicy => 'Refund Policy';
+
+  @override
+  String get subscriptionCreateOrder => 'Create payment order';
+
+  @override
+  String get subscriptionPaymentTitle => 'Bank transfer payment';
+
+  @override
+  String get subscriptionPaymentInstruction =>
+      'Transfer the exact amount using the details below before the order expires.';
+
+  @override
+  String get subscriptionPaymentBank => 'Bank';
+
+  @override
+  String get subscriptionPaymentAccountNumber => 'Account number';
+
+  @override
+  String get subscriptionPaymentAccountName => 'Account name';
+
+  @override
+  String get subscriptionPaymentAmount => 'Amount';
+
+  @override
+  String get subscriptionPaymentContent => 'Transfer content';
+
+  @override
+  String get subscriptionPaymentExpires => 'Order expires';
+
+  @override
+  String get subscriptionPaymentCopy => 'Copy';
+
+  @override
+  String get subscriptionPaymentCopied => 'Copied to clipboard.';
+
+  @override
+  String get subscriptionPaymentClose => 'Close';
+
+  @override
+  String get coachClientTodayWorkoutTitle => 'Client\'s workout today';
+
+  @override
+  String get coachClientNoActivePlanMessage =>
+      'This client has no active training plan.';
+
+  @override
+  String get coachClientNoWorkoutDayMessage =>
+      'No workout day was found for today in this plan.';
+
+  @override
+  String get coachClientWorkoutCoachViewLabel =>
+      'Coach view: workout completion remains with the client.';
+
+  @override
   String get marketingCreateAccountCta => 'Create account';
 
   @override
@@ -3642,6 +4000,29 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get adminSuspendUserTooltip => 'Suspend user';
+
+  @override
+  String get adminAccountStatusLabel => 'Account status';
+
+  @override
+  String get adminAccountActiveLabel => 'Active';
+
+  @override
+  String get adminSuspendConfirmTitle => 'Suspend this user?';
+
+  @override
+  String get adminSuspendConfirmMessage =>
+      'The user will be signed out and unable to sign in until an administrator restores the account.';
+
+  @override
+  String get adminUnsuspendConfirmTitle => 'Restore this user?';
+
+  @override
+  String get adminUnsuspendConfirmMessage =>
+      'The user will be allowed to sign in again.';
+
+  @override
+  String get adminSuspensionUpdatedSnackbar => 'Account status updated.';
 
   @override
   String get adminPlanAnalyticsTitle => 'Plan analytics';
@@ -4094,6 +4475,842 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get accountDeletionConfirmLabel => 'Delete account';
+
+  @override
+  String get accountDeletionVerifyingTitle => 'Confirming deletion';
+
+  @override
+  String get accountDeletionVerifyingBody =>
+      'Please wait while we verify your request.';
+
+  @override
+  String get accountDeletionCompleteTitle => 'Account deletion completed';
+
+  @override
+  String get accountDeletionCompleteBody =>
+      'Your Xenoh account has been permanently deleted and you have been signed out.';
+
+  @override
+  String get accountDeletionFailedTitle =>
+      'This deletion link is invalid or expired';
+
+  @override
+  String get accountDeletionFailedBody =>
+      'Request a new account deletion email to continue.';
+
+  @override
+  String get accountDeletionBackLabel => 'Return to account deletion';
+
+  @override
+  String get notificationsUnavailableTitle => 'Destination unavailable';
+
+  @override
+  String get notificationsUnavailableMessage =>
+      'This notification is safe to read here, but its full mobile feature is not available yet.';
+
+  @override
+  String get nutritionHistoryTitle => 'Nutrition history';
+
+  @override
+  String get nutritionHistoryAverage => 'Average daily intake';
+
+  @override
+  String get nutritionHistoryEmpty => 'No nutrition logs in this date range.';
+
+  @override
+  String get progressVolumeHistoryTitle => 'Training volume';
+
+  @override
+  String progressVolumeHistorySubtitle(String unit) {
+    return 'Completed monthly volume in $unit';
+  }
+
+  @override
+  String progressVolumeMonths(int count) {
+    return '$count months';
+  }
+
+  @override
+  String get progressVolumeHistoryEmpty => 'No completed training volume yet.';
+
+  @override
+  String get progressVolumeHistoryLoadError => 'Could not load volume history.';
+
+  @override
+  String get communityReportShareTitle => 'Report training share';
+
+  @override
+  String get communityReportShareHint =>
+      'Explain what is wrong with this share';
+
+  @override
+  String get communityReportSubmit => 'Report';
+
+  @override
+  String get communityReportShareSuccess => 'Share reported for review.';
+
+  @override
+  String get communityCopyWorkoutTitle => 'Copy workout structure';
+
+  @override
+  String get communityCopyWorkoutWarning =>
+      'Choose a target day. Existing exercises will be replaced; performance and private metrics are never copied.';
+
+  @override
+  String get communitySelectPlan => 'Select plan';
+
+  @override
+  String get communitySelectWeek => 'Select week';
+
+  @override
+  String get communitySelectDay => 'Select training day';
+
+  @override
+  String get communityCopyWorkoutAction => 'Copy workout';
+
+  @override
+  String communityCopyWorkoutSuccess(int count) {
+    return '$count exercises copied.';
+  }
+
+  @override
+  String get communityShareActionsTooltip => 'Share actions';
+
+  @override
+  String get challengesTitle => 'Fitness challenges';
+
+  @override
+  String get challengesCreate => 'Create challenge';
+
+  @override
+  String get challengesMineTab => 'My challenges';
+
+  @override
+  String get challengesDiscoverTab => 'Discover';
+
+  @override
+  String get challengesEmpty => 'No challenges here yet.';
+
+  @override
+  String get challengeDetailTitle => 'Challenge details';
+
+  @override
+  String get challengeAccept => 'Accept';
+
+  @override
+  String get challengeDecline => 'Decline';
+
+  @override
+  String get challengeJoin => 'Join challenge';
+
+  @override
+  String get challengeLeave => 'Leave';
+
+  @override
+  String get challengeCheckIn => 'Check in';
+
+  @override
+  String get challengeUndoCheckIn => 'Undo check-in';
+
+  @override
+  String get challengeInvite => 'Invite members';
+
+  @override
+  String get challengeCancel => 'Cancel challenge';
+
+  @override
+  String get challengeCancelConfirm => 'Cancel this challenge for all members?';
+
+  @override
+  String get challengeMembers => 'Members';
+
+  @override
+  String get challengeStandings => 'Standings';
+
+  @override
+  String get challengeBaselineRequired => 'Baseline required';
+
+  @override
+  String get challengeCreator => 'Creator';
+
+  @override
+  String get challengeRemoveMember => 'Remove member';
+
+  @override
+  String get challengeTitleLabel => 'Title';
+
+  @override
+  String get challengeTitleValidation => 'Enter 3 to 80 characters.';
+
+  @override
+  String get challengeDescriptionLabel => 'Description';
+
+  @override
+  String get challengeMetricLabel => 'Metric';
+
+  @override
+  String get challengeAccessLabel => 'Access';
+
+  @override
+  String get challengeWeeklyTarget => 'Sessions per week';
+
+  @override
+  String get challengeCheckInPrompt => 'Check-in prompt';
+
+  @override
+  String get challengeCapacity => 'Participant capacity';
+
+  @override
+  String get challengeStartDate => 'Start date';
+
+  @override
+  String get challengeEndDate => 'End date';
+
+  @override
+  String get competitionsTitle => 'Competitions';
+
+  @override
+  String get organizerHomeTitle => 'Organizer home';
+
+  @override
+  String get organizerHomeEyebrow => 'EVENT OPERATIONS';
+
+  @override
+  String get organizerHomeSubtitle =>
+      'Run registrations, payments, and results from one clear workspace.';
+
+  @override
+  String get organizerEventsTitle => 'Events';
+
+  @override
+  String get organizerRosterTitle => 'Roster';
+
+  @override
+  String get organizerResultsTitle => 'Results';
+
+  @override
+  String get organizerProfileTitle => 'Organizer profile';
+
+  @override
+  String get organizerApplicationTitle => 'Become an organizer';
+
+  @override
+  String get organizerApplicationSubtitle =>
+      'Submit your organization details and evidence for review.';
+
+  @override
+  String get organizerPendingTitle => 'Application under review';
+
+  @override
+  String get organizerPendingSubtitle =>
+      'Event tools unlock after an administrator approves your application.';
+
+  @override
+  String get organizerRejectedTitle => 'Application needs changes';
+
+  @override
+  String get organizerSuspendedTitle => 'Organizer access suspended';
+
+  @override
+  String get organizerNoEvents => 'No managed events yet.';
+
+  @override
+  String get organizerCreateEvent => 'Create event';
+
+  @override
+  String get organizerReviewApplications => 'Review applications';
+
+  @override
+  String get organizerApprovedAthletes => 'Approved athletes';
+
+  @override
+  String get organizerCapacityFilled => 'Capacity filled';
+
+  @override
+  String get organizerNextEvent => 'Next event';
+
+  @override
+  String get organizerSelectEvent => 'Select event';
+
+  @override
+  String get organizerNoRegistrations => 'No registrations match this event.';
+
+  @override
+  String get organizerApprove => 'Approve';
+
+  @override
+  String get organizerReject => 'Reject';
+
+  @override
+  String get organizerPublish => 'Publish event';
+
+  @override
+  String get organizerPublishResults => 'Publish results';
+
+  @override
+  String get organizerPublished => 'Published';
+
+  @override
+  String get organizerDraft => 'Draft';
+
+  @override
+  String get organizerRegistrationStatus => 'Registration';
+
+  @override
+  String get organizerPaymentStatus => 'Payment';
+
+  @override
+  String get organizerResultsReady => 'Results ready';
+
+  @override
+  String get organizerResultsHint =>
+      'Select an approved athlete to record discipline-specific results.';
+
+  @override
+  String get organizerOrganizationName => 'Organization name';
+
+  @override
+  String get organizerContactEmail => 'Contact email';
+
+  @override
+  String get organizerContactPhone => 'Contact phone';
+
+  @override
+  String get organizerAddress => 'Venue address';
+
+  @override
+  String get organizerWebsite => 'Website';
+
+  @override
+  String get organizerNotes => 'Notes';
+
+  @override
+  String get organizerEvidence => 'Verification document';
+
+  @override
+  String get organizerSubmitApplication => 'Submit for review';
+
+  @override
+  String get organizerApplicationSaved => 'Organizer application submitted.';
+
+  @override
+  String get organizerEvidenceRequired =>
+      'Choose a verification document first.';
+
+  @override
+  String get organizerEventPublished => 'Event published.';
+
+  @override
+  String get organizerDecisionSaved => 'Registration decision saved.';
+
+  @override
+  String get organizerResultsPublished => 'Results published.';
+
+  @override
+  String get organizerBodyweightKg => 'Bodyweight (kg)';
+
+  @override
+  String get organizerBestSquatKg => 'Best squat (kg)';
+
+  @override
+  String get organizerBestBenchKg => 'Best bench (kg)';
+
+  @override
+  String get organizerBestDeadliftKg => 'Best deadlift (kg)';
+
+  @override
+  String get organizerPlace => 'Place';
+
+  @override
+  String get organizerResultState => 'Result state';
+
+  @override
+  String get organizerResultNotes => 'Result notes';
+
+  @override
+  String get organizerSaveResult => 'Save result';
+
+  @override
+  String get organizerResultSaved => 'Result saved.';
+
+  @override
+  String get organizerManageEvent => 'Manage event';
+
+  @override
+  String get organizerOverviewTab => 'Overview';
+
+  @override
+  String get organizerCategoriesTab => 'Categories';
+
+  @override
+  String get organizerStaffTab => 'Staff';
+
+  @override
+  String get organizerEditEvent => 'Edit event';
+
+  @override
+  String get organizerCloseRegistration => 'Close registration';
+
+  @override
+  String get organizerCancelEvent => 'Cancel event';
+
+  @override
+  String get organizerDeleteEvent => 'Delete event';
+
+  @override
+  String get organizerCancelReason => 'Cancellation reason';
+
+  @override
+  String get organizerEventUpdated => 'Event updated.';
+
+  @override
+  String get organizerEventDeleted => 'Event deleted.';
+
+  @override
+  String get organizerRegistrationClosed => 'Registration closed.';
+
+  @override
+  String get organizerEventCancelled => 'Event cancelled.';
+
+  @override
+  String get organizerCategoryName => 'Category name';
+
+  @override
+  String get organizerCategoryCode => 'Category code';
+
+  @override
+  String get organizerCapacity => 'Capacity';
+
+  @override
+  String get organizerAddCategory => 'Add category';
+
+  @override
+  String get organizerNoCategories => 'No categories configured yet.';
+
+  @override
+  String get organizerCategoryAdded => 'Category added.';
+
+  @override
+  String get organizerCategoryRemoved => 'Category removed.';
+
+  @override
+  String get organizerStaffUserId => 'Staff user ID';
+
+  @override
+  String get organizerStaffPermissions => 'Staff permissions';
+
+  @override
+  String get organizerSaveStaff => 'Save staff access';
+
+  @override
+  String get organizerRemoveStaff => 'Remove staff access';
+
+  @override
+  String get organizerStaffSaved => 'Staff access saved.';
+
+  @override
+  String get organizerStaffRemoved => 'Staff access removed.';
+
+  @override
+  String get organizerEventDescription => 'Event description';
+
+  @override
+  String get organizerVenueName => 'Venue name';
+
+  @override
+  String get organizerStartsAt => 'Starts at';
+
+  @override
+  String get organizerEndsAt => 'Ends at';
+
+  @override
+  String get organizerRegistrationOpens => 'Registration opens';
+
+  @override
+  String get organizerRegistrationCloses => 'Registration closes';
+
+  @override
+  String get organizerRegistrationFee => 'Registration fee';
+
+  @override
+  String get organizerCurrency => 'Currency';
+
+  @override
+  String get organizerBankName => 'Bank name';
+
+  @override
+  String get organizerBankAccountNumber => 'Bank account number';
+
+  @override
+  String get organizerBankAccountName => 'Bank account name';
+
+  @override
+  String get organizerTransferInstructions => 'Transfer instructions';
+
+  @override
+  String get organizerAddGuest => 'Add guest athlete';
+
+  @override
+  String get organizerAthleteName => 'Athlete name';
+
+  @override
+  String get organizerGuestAdded => 'Guest athlete added.';
+
+  @override
+  String get organizerPromoteWaitlist => 'Promote from waitlist';
+
+  @override
+  String get organizerWaitlistPromoted => 'Athlete promoted.';
+
+  @override
+  String get organizerOpenReceipt => 'Open receipt';
+
+  @override
+  String get organizerApproveReceipt => 'Approve receipt';
+
+  @override
+  String get organizerRejectReceipt => 'Reject receipt';
+
+  @override
+  String get organizerReceiptReviewed => 'Receipt review saved.';
+
+  @override
+  String get organizerLinkGuest => 'Link Xenoh account';
+
+  @override
+  String get organizerUserId => 'Xenoh user ID';
+
+  @override
+  String get organizerGuestLinked => 'Guest registration linked.';
+
+  @override
+  String get adminOrganizerVerification => 'Organizer verification';
+
+  @override
+  String get adminOrganizerVerificationSubtitle =>
+      'Review evidence and record an auditable access decision.';
+
+  @override
+  String get adminOrganizerQueueEmpty =>
+      'No organizer applications in this state.';
+
+  @override
+  String get adminOrganizerEvidenceOpen => 'Review evidence';
+
+  @override
+  String get adminOrganizerDecisionReason => 'Audit reason';
+
+  @override
+  String get adminOrganizerDecisionReasonHint =>
+      'Explain the evidence and policy basis for this decision.';
+
+  @override
+  String get adminOrganizerDecisionSaved => 'Organizer decision saved.';
+
+  @override
+  String get adminOrganizerSaveDecision => 'Save decision';
+
+  @override
+  String get adminPaymentsTitle => 'Payments & subscriptions';
+
+  @override
+  String get adminPaymentsSubtitle =>
+      'Monitor revenue, orders, and subscription access.';
+
+  @override
+  String get adminTotalRevenueLabel => 'Total revenue';
+
+  @override
+  String get adminPendingAmountLabel => 'Pending amount';
+
+  @override
+  String get adminCompletedOrdersLabel => 'Completed orders';
+
+  @override
+  String get adminPaymentOrdersTitle => 'Payment orders';
+
+  @override
+  String get adminNoPaymentsTitle => 'No payment orders';
+
+  @override
+  String get adminNoPaymentsMessage =>
+      'No payment orders match the current filters.';
+
+  @override
+  String get adminSubscriptionsTitle => 'Subscriptions';
+
+  @override
+  String get adminNoSubscriptionsTitle => 'No subscriptions';
+
+  @override
+  String get adminNoSubscriptionsMessage =>
+      'No subscriptions match the current filters.';
+
+  @override
+  String get adminAdjustSubscription => 'Adjust subscription';
+
+  @override
+  String get adminDurationMonths => 'Duration (months)';
+
+  @override
+  String get adminAuditReason => 'Audit reason';
+
+  @override
+  String get adminPromotionsTitle => 'Promotions';
+
+  @override
+  String get adminPromotionsSubtitle =>
+      'Create and manage discount codes used at checkout.';
+
+  @override
+  String get adminNewPromotion => 'New code';
+
+  @override
+  String get adminEditPromotion => 'Edit promotion';
+
+  @override
+  String get adminNoPromotionsTitle => 'No promotion codes';
+
+  @override
+  String get adminNoPromotionsMessage =>
+      'Create the first checkout promotion code.';
+
+  @override
+  String get adminPromotionCode => 'Promotion code';
+
+  @override
+  String get adminDiscountValue => 'Discount value';
+
+  @override
+  String get adminAppliesToTier => 'Applies to tier';
+
+  @override
+  String get adminMaxRedemptions => 'Maximum redemptions';
+
+  @override
+  String get commonActive => 'Active';
+
+  @override
+  String get commonInactive => 'Inactive';
+
+  @override
+  String get commonDescription => 'Description';
+
+  @override
+  String get appShellNavHome => 'Home';
+
+  @override
+  String get appShellNavTraining => 'Training';
+
+  @override
+  String get appShellNavChat => 'Chat';
+
+  @override
+  String get appShellNavEvents => 'Events';
+
+  @override
+  String get appShellNavRoster => 'Roster';
+
+  @override
+  String get appShellNavResults => 'Results';
+
+  @override
+  String get appShellNavOverview => 'Overview';
+
+  @override
+  String get appShellNavUsers => 'Users';
+
+  @override
+  String get appShellNavModeration => 'Moderation';
+
+  @override
+  String get appShellNavFinance => 'Finance';
+
+  @override
+  String get appShellNavMore => 'More';
+
+  @override
+  String get competitionsMine => 'My competitions';
+
+  @override
+  String get competitionsEmpty => 'No competitions match this filter.';
+
+  @override
+  String get competitionsMineEmpty => 'You have not entered a competition yet.';
+
+  @override
+  String get competitionDetailTitle => 'Competition details';
+
+  @override
+  String get competitionApply => 'Apply to compete';
+
+  @override
+  String get competitionCategories => 'Categories';
+
+  @override
+  String get competitionCategory => 'Category';
+
+  @override
+  String get competitionChooseCategory => 'Choose a category.';
+
+  @override
+  String get competitionPhone => 'Phone number';
+
+  @override
+  String get competitionPhoneValidation => 'Enter at least 7 characters.';
+
+  @override
+  String get competitionSubmit => 'Submit application';
+
+  @override
+  String get competitionSubmitted => 'Application submitted.';
+
+  @override
+  String get competitionUploadReceipt => 'Upload receipt';
+
+  @override
+  String get competitionReceiptSubmitted => 'Receipt submitted for review.';
+
+  @override
+  String get competitionWithdraw => 'Withdraw';
+
+  @override
+  String get competitionWithdrawConfirm =>
+      'Withdraw this competition application?';
+
+  @override
+  String get competitionWithdrawn => 'Application withdrawn.';
+
+  @override
+  String get competitionDisciplinePowerlifting => 'Powerlifting';
+
+  @override
+  String get competitionDisciplineBodybuilding => 'Bodybuilding';
+
+  @override
+  String get competitionStatusDraft => 'Draft';
+
+  @override
+  String get competitionStatusPublished => 'Published';
+
+  @override
+  String get competitionStatusRegistrationClosed => 'Registration closed';
+
+  @override
+  String get competitionStatusInProgress => 'In progress';
+
+  @override
+  String get competitionStatusCompleted => 'Completed';
+
+  @override
+  String get competitionStatusCancelled => 'Cancelled';
+
+  @override
+  String get competitionRegistrationSubmitted => 'Submitted';
+
+  @override
+  String get competitionRegistrationWaitlisted => 'Waitlisted';
+
+  @override
+  String get competitionRegistrationApproved => 'Approved';
+
+  @override
+  String get competitionRegistrationRejected => 'Rejected';
+
+  @override
+  String get competitionRegistrationWithdrawn => 'Withdrawn';
+
+  @override
+  String get competitionPaymentNotRequired => 'Not required';
+
+  @override
+  String get competitionPaymentAwaitingReceipt => 'Awaiting receipt';
+
+  @override
+  String get competitionPaymentUnderReview => 'Under review';
+
+  @override
+  String get competitionPaymentPaid => 'Paid';
+
+  @override
+  String get competitionPaymentReceiptRejected => 'Receipt rejected';
+
+  @override
+  String get competitionResultFinished => 'Finished';
+
+  @override
+  String get competitionResultDisqualified => 'Disqualified';
+
+  @override
+  String get competitionResultDidNotFinish => 'Did not finish';
+
+  @override
+  String get competitionOrganizerPending => 'Pending';
+
+  @override
+  String get competitionOrganizerApproved => 'Approved';
+
+  @override
+  String get competitionOrganizerRejected => 'Rejected';
+
+  @override
+  String get competitionOrganizerSuspended => 'Suspended';
+
+  @override
+  String get organizerPermissionManageEvent => 'Manage event';
+
+  @override
+  String get organizerPermissionManageCategories => 'Manage categories';
+
+  @override
+  String get organizerPermissionReviewRegistrations => 'Review registrations';
+
+  @override
+  String get organizerPermissionReviewPayments => 'Review payments';
+
+  @override
+  String get organizerPermissionManageResults => 'Manage results';
+
+  @override
+  String get organizerPermissionManageStaff => 'Manage staff';
+
+  @override
+  String get storageTitle => 'Files';
+
+  @override
+  String get storageUsed => 'Storage used';
+
+  @override
+  String get storageUpload => 'Upload document';
+
+  @override
+  String storageMaxFileSize(String size) {
+    return 'Maximum file size: $size';
+  }
+
+  @override
+  String get storageFileTooLarge =>
+      'This file exceeds the upload or remaining storage limit.';
+
+  @override
+  String get storageMyFiles => 'My files';
+
+  @override
+  String get storageEmpty => 'No files uploaded yet.';
+
+  @override
+  String get storageSharedWithMe => 'Shared with me';
+
+  @override
+  String get storageDownload => 'Download / open';
+
+  @override
+  String get storageShare => 'Share with client';
+
+  @override
+  String storageDeleteConfirm(String name) {
+    return 'Delete $name?';
+  }
 
   @override
   String get commonNotNow => 'Not now';

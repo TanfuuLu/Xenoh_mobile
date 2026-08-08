@@ -4,6 +4,7 @@ import '../../../../core/utils/date_only.dart';
 import '../dtos/bodyweight_log_dto.dart';
 import '../dtos/training_activity_dto.dart';
 import '../dtos/user_profile_dto.dart';
+import '../dtos/volume_history_point_dto.dart';
 
 /// Thin wrapper over the `/users/me` profile endpoints. Throws [DioException];
 /// the repository maps to domain failures.
@@ -26,6 +27,22 @@ class ProfileRemoteDataSource {
       queryParameters: {'year': year, 'month': month},
     );
     return TrainingActivityDto.fromJson(res.data!);
+  }
+
+  Future<List<VolumeHistoryPointDto>> getVolumeHistory({
+    required int months,
+  }) async {
+    final res = await _dio.get<List<dynamic>>(
+      '/users/me/volume-history',
+      queryParameters: {'months': months},
+    );
+    return (res.data ?? const [])
+        .map(
+          (item) => VolumeHistoryPointDto.fromJson(
+            item as Map<String, dynamic>,
+          ),
+        )
+        .toList();
   }
 
   /// `PUT /users/me` (`UpdateMyProfileCommand`). All fields optional — null

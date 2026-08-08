@@ -15,6 +15,7 @@ import '../../../auth/presentation/providers/auth_controller.dart';
 import '../../../auth/presentation/providers/auth_state.dart';
 import '../../../shared_api/api_widgets.dart';
 import '../../../shared_api/xenoh_api.dart';
+import '../providers/chat_unread_controller.dart';
 import 'chat_hub_screen.dart' show messagesProvider;
 
 enum _AttachChoice { image, file }
@@ -60,8 +61,8 @@ class _RelationshipChatScreenState
   Future<void> _markRead() async {
     try {
       await ref
-          .read(xenohApiProvider)
-          .postVoid('/messages/relationships/${widget.relationshipId}/read');
+          .read(chatUnreadControllerProvider.notifier)
+          .markRead(widget.relationshipId);
     } catch (_) {
       // Read receipts are non-critical; message loading remains available.
     }

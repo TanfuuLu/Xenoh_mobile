@@ -1,14 +1,31 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../dashboard/presentation/providers/dashboard_controller.dart';
 import '../../data/repositories/training_repository_provider.dart';
 import '../../domain/entities/exercise.dart';
+import '../../domain/entities/last_exercise_performance.dart';
 import 'days_controller.dart';
 import 'plan_detail_controller.dart';
 import 'plans_controller.dart';
 import 'week_analysis_provider.dart';
 
 part 'exercises_controller.g.dart';
+
+typedef LastExercisePerformanceArgs = ({
+  String exerciseTemplateId,
+  String dailyWorkoutId,
+});
+
+final lastExercisePerformanceProvider = FutureProvider.autoDispose
+    .family<LastExercisePerformance, LastExercisePerformanceArgs>((ref, args) {
+      return ref
+          .watch(trainingRepositoryProvider)
+          .getLastExercisePerformance(
+            exerciseTemplateId: args.exerciseTemplateId,
+            dailyWorkoutId: args.dailyWorkoutId,
+          );
+    });
 
 /// Exercises (with their sets) for a daily workout.
 @riverpod
@@ -52,6 +69,21 @@ class ExercisesController extends _$ExercisesController {
     }
     _patchExercise(updated);
     _syncProgressCaches();
+  }
+
+  Future<void> updateSetPlan(
+    String setId, {
+    int? plannedReps,
+    double? plannedWeight,
+  }) async {
+    final updated = await ref
+        .read(trainingRepositoryProvider)
+        .updateSetPlan(
+          setId,
+          plannedReps: plannedReps,
+          plannedWeight: plannedWeight,
+        );
+    _patchExercise(updated);
   }
 
   Future<void> reorder(List<String> exerciseIds) async {

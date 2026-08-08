@@ -10,6 +10,7 @@ import '../../../../core/widgets/xn_input.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../shared_api/api_widgets.dart';
 import '../../../shared_api/xenoh_api.dart';
+import 'admin_users_screen.dart';
 
 final adminUserDetailProvider = FutureProvider.autoDispose
     .family<JsonMap, String>((ref, userId) {
@@ -31,6 +32,7 @@ class _AdminUserDetailScreenState extends ConsumerState<AdminUserDetailScreen> {
   String _tier = 'Free';
   String _duration = '';
   var _saving = false;
+  var _initialized = false;
 
   @override
   void dispose() {
@@ -68,9 +70,11 @@ class _AdminUserDetailScreenState extends ConsumerState<AdminUserDetailScreen> {
   }
 
   Widget _body(JsonMap value, AppLocalizations l10n) {
-    _tier = _tier == 'Free'
-        ? textOf(value, ['subscriptionTier', 'tier'], fallback: 'Free')
-        : _tier;
+    if (!_initialized) {
+      _tier = textOf(value, ['subscriptionTier', 'tier'], fallback: 'Free');
+      _initialized = true;
+    }
+    final suspended = value['isSuspended'] == true;
     return Column(
       children: [
         KeyValueGrid(
@@ -82,6 +86,9 @@ class _AdminUserDetailScreenState extends ConsumerState<AdminUserDetailScreen> {
               value,
               ['isSubscriptionActive', 'isActive'],
             ),
+            l10n.adminAccountStatusLabel: suspended
+                ? l10n.adminSuspendedLabel
+                : l10n.adminAccountActiveLabel,
             l10n.adminPlansLabel: textOf(value, ['planCount']),
             l10n.adminReportsStatLabel: textOf(
               value,
@@ -146,6 +153,18 @@ class _AdminUserDetailScreenState extends ConsumerState<AdminUserDetailScreen> {
           loading: _saving,
           onPressed: () => unawaited(_save(l10n)),
         ),
+        const SizedBox(height: AppSpacing.md),
+        XnButton(
+          label: suspended
+              ? l10n.adminUnsuspendUserTooltip
+              : l10n.adminSuspendUserTooltip,
+          icon: suspended ? Icons.lock_open_rounded : Icons.block_rounded,
+          variant: suspended
+              ? XnButtonVariant.secondary
+              : XnButtonVariant.danger,
+          loading: _saving,
+          onPressed: () => unawaited(_toggleSuspension(suspended, l10n)),
+        ),
       ],
     );
   }
@@ -175,6 +194,71 @@ class _AdminUserDetailScreenState extends ConsumerState<AdminUserDetailScreen> {
       );
     } finally {
       if (mounted) setState(() => _saving = false);
+    }
+  }
+
+  Future<void> _toggleSuspension(
+    bool currentlySuspended,
+    AppLocalizations l10n,
+  ) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(
+          currentlySuspended
+              ? l10n.adminUnsuspendConfirmTitle
+              : l10n.adminSuspendConfirmTitle,
+        ),
+        content: Text(
+          currentlySuspended
+              ? l10n.adminUnsuspendConfirmMessage
+              : l10n.adminSuspendConfirmMessage,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: Text(l10n.commonCancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: Text(
+              currentlySuspended
+                  ? l10n.adminUnsuspendUserTooltip
+                  : l10n.adminSuspendUserTooltip,
+            ),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) {
+      return;
+    }
+    setState(() => _saving = true);
+    final action = currentlySuspended ? 'unsuspend' : 'suspend';
+    try {
+      await ref
+          .read(xenohApiProvider)
+          .postVoid('/admin/users/${widget.userId}/$action');
+      ref
+        ..invalidate(adminUserDetailProvider(widget.userId))
+        ..invalidate(adminUsersProvider);
+      if (!mounted) {
+        return;
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.adminSuspensionUpdatedSnackbar)),
+      );
+    } catch (error) {
+      if (!mounted) {
+        return;
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(apiErrorMessage(error, context))),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _saving = false);
+      }
     }
   }
 }

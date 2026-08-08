@@ -503,7 +503,7 @@ final class ShareActionControllerProvider
 }
 
 String _$shareActionControllerHash() =>
-    r'1bfb60e2cfc48957376c7b57a9f3ef3f8b3615d6';
+    r'c1fd35aca26995705cab32fb5c0f91c64f4d5f6f';
 
 abstract class _$ShareActionController extends $AsyncNotifier<void> {
   FutureOr<void> build();

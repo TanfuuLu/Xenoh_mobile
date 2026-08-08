@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:xenoh_mobile/core/widgets/hero_card_background.dart';
 import 'package:xenoh_mobile/features/dashboard/data/repositories/dashboard_repository_provider.dart';
 import 'package:xenoh_mobile/features/dashboard/domain/entities/personal_dashboard.dart';
 import 'package:xenoh_mobile/features/dashboard/domain/repositories/dashboard_repository.dart';
@@ -67,6 +68,10 @@ void main() {
     await tester.pump(const Duration(milliseconds: 50)); // resolve futures
 
     expect(tester.takeException(), isNull);
+
+    // The dashboard heading stays on the page surface instead of becoming a
+    // large dark, image-backed hero.
+    expect(find.byType(HeroCardBackground), findsNothing);
 
     await tester.scrollUntilVisible(
       find.text('BODYWEIGHT'),

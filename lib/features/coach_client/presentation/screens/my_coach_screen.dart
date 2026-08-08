@@ -2,17 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_dimens.dart';
 import '../../../../app/theme/app_typography.dart';
 import '../../../../core/utils/app_routes.dart';
+import '../../../../core/utils/safe_external_url.dart';
 import '../../../../core/widgets/xn_card.dart';
 import '../../../../core/widgets/xn_chip.dart';
 import '../../../../core/widgets/xn_section.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../shared_api/api_widgets.dart';
 import '../../../shared_api/xenoh_api.dart';
+import '../providers/chat_unread_controller.dart';
 
 final myCoachProvider = FutureProvider.autoDispose<JsonMap?>((ref) {
   return ref
@@ -82,12 +85,20 @@ class _CoachProfileBody extends ConsumerWidget {
         : ref.watch(coachProfileProvider(coachId)).value;
     final bio = profile == null ? null : optionalTextOf(profile, ['bio']);
     final l10n = AppLocalizations.of(context);
+    final relationshipId = textOf(
+      relationship,
+      ['id', 'relationshipId'],
+      fallback: '',
+    );
+    final unreadCount =
+        ref.watch(chatUnreadControllerProvider).value?[relationshipId] ?? 0;
 
     return Column(
       children: [
         _CoachCard(
           relationship: relationship,
           profile: profile,
+          unreadCount: unreadCount,
           onMessage: () => context.push(
             relationshipChatLocation(
               coachInbox: false,
@@ -187,6 +198,7 @@ class _CoachCard extends StatelessWidget {
     required this.onMessage,
     required this.onDisconnect,
     required this.onLifecycleAction,
+    required this.unreadCount,
     this.profile,
   });
 
@@ -195,6 +207,7 @@ class _CoachCard extends StatelessWidget {
   final VoidCallback onMessage;
   final VoidCallback onDisconnect;
   final ValueChanged<_CoachAction> onLifecycleAction;
+  final int unreadCount;
 
   @override
   Widget build(BuildContext context) {
@@ -214,6 +227,9 @@ class _CoachCard extends StatelessWidget {
     final avatarUrl = profile == null
         ? null
         : optionalTextOf(profile!, ['avatarUrl']);
+    final socialLinks = profile == null
+        ? const <({String label, IconData icon, Uri uri})>[]
+        : _coachSocialLinks(profile!);
     final startDate = _parseDate(relationship['startDate']);
     final endDate = _parseDate(relationship['endDate']);
 
@@ -308,11 +324,33 @@ class _CoachCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: AppSpacing.md),
+          if (socialLinks.isNotEmpty) ...[
+            Wrap(
+              spacing: AppSpacing.xs,
+              runSpacing: AppSpacing.xs,
+              children: [
+                for (final link in socialLinks)
+                  OutlinedButton.icon(
+                    onPressed: () => launchUrl(
+                      link.uri,
+                      mode: LaunchMode.externalApplication,
+                    ),
+                    icon: Icon(link.icon, size: 16),
+                    label: Text(link.label),
+                  ),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.md),
+          ],
           SizedBox(
             width: double.infinity,
             child: FilledButton.icon(
               onPressed: onMessage,
-              icon: const Icon(Icons.chat_bubble_outline_rounded, size: 18),
+              icon: Badge(
+                isLabelVisible: unreadCount > 0,
+                label: Text(unreadCount.toString()),
+                child: const Icon(Icons.chat_bubble_outline_rounded, size: 18),
+              ),
               label: Text(l10n.coachMessageCoachButton),
             ),
           ),
@@ -368,6 +406,32 @@ class _CoachCard extends StatelessWidget {
       ),
     );
   }
+}
+
+List<({String label, IconData icon, Uri uri})> _coachSocialLinks(
+  JsonMap profile,
+) {
+  final links = <({String label, IconData icon, Uri uri})>[];
+  void add(String label, IconData icon, String key, Set<String> hosts) {
+    final value = optionalTextOf(profile, [key]);
+    if (value == null) {
+      return;
+    }
+    final uri = safeExternalUri(value, allowedHosts: hosts);
+    if (uri != null) {
+      links.add((label: label, icon: icon, uri: uri));
+    }
+  }
+
+  add('Facebook', Icons.facebook_rounded, 'facebookUrl', const {
+    'facebook.com',
+    'www.facebook.com',
+  });
+  add('Instagram', Icons.camera_alt_outlined, 'instagramUrl', const {
+    'instagram.com',
+    'www.instagram.com',
+  });
+  return links;
 }
 
 class _IntroductionCard extends StatelessWidget {

@@ -188,6 +188,7 @@ abstract class TrainingDayShareDto with _$TrainingDayShareDto {
     @Default(false) bool lovedByCurrentUser,
     @Default(<TrainingDayShareExerciseDto>[])
     List<TrainingDayShareExerciseDto> exercises,
+    @Default(false) bool isReusable,
     String? userAvatarUrl,
     double? averageRpe,
     String? caption,
@@ -216,6 +217,7 @@ abstract class TrainingDayShareDto with _$TrainingDayShareDto {
     caption: caption,
     loveCount: loveCount,
     lovedByCurrentUser: lovedByCurrentUser,
+    isReusable: isReusable,
     createdAt: DateTime.tryParse(createdAt) ?? DateTime(1970),
     exercises: exercises.map((e) => e.toEntity()).toList(growable: false),
   );

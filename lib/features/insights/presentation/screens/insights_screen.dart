@@ -10,35 +10,27 @@ import '../../../../core/utils/text_bullets.dart';
 import '../../../../core/utils/weight_units.dart';
 import '../../../../core/widgets/bullet_list.dart';
 import '../../../../core/widgets/xn_card.dart';
+import '../../../../core/widgets/xn_chip.dart';
 import '../../../../core/widgets/xn_section.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../profile/domain/entities/bodyweight_log.dart';
 import '../../../profile/presentation/providers/preferences_provider.dart';
 import '../../../profile/presentation/widgets/bodyweight_chart.dart';
+import '../../../shared_api/ai_widgets.dart';
 import '../../../shared_api/api_widgets.dart';
 import '../../../shared_api/xenoh_api.dart';
+import '../../domain/ai_response_models.dart';
 
 final personalInsightsProvider = FutureProvider.autoDispose
     .family<JsonMap, String>((ref, lang) {
       return ref.watch(xenohApiProvider).getObject('/insights/me?lang=$lang');
     });
 
-final coachTipProvider = FutureProvider.autoDispose.family<JsonMap, String>((
-  ref,
-  lang,
-) {
-  return ref
-      .watch(xenohApiProvider)
-      .getObject('/insights/me/coach-tip?lang=$lang');
-});
-
 class InsightsScreen extends ConsumerWidget {
   const InsightsScreen({super.key});
 
   Future<void> _refresh(WidgetRef ref, String lang) async {
-    ref
-      ..invalidate(personalInsightsProvider(lang))
-      ..invalidate(coachTipProvider(lang));
+    ref.invalidate(personalInsightsProvider(lang));
   }
 
   @override
@@ -46,7 +38,6 @@ class InsightsScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final lang = ref.watch(appLocaleProvider)?.languageCode ?? 'en';
     final insight = ref.watch(personalInsightsProvider(lang));
-    final tip = ref.watch(coachTipProvider(lang));
     final unit = ref.watch(weightUnitProvider);
     return FeatureScreenFrame(
       title: l10n.insightsTitle,
@@ -65,30 +56,12 @@ class InsightsScreen extends ConsumerWidget {
           icon: Icons.auto_awesome_outlined,
         ),
         const SizedBox(height: AppSpacing.lg),
-        Text(l10n.insightsCoachTipTitle, style: AppTypography.display(18)),
-        const SizedBox(height: AppSpacing.sm),
-        switch (tip) {
-          AsyncData(:final value) => _InsightCard(
-            icon: Icons.emoji_objects_outlined,
-            title: textOf(value, [
-              'headline',
-              'title',
-              'message',
-            ], fallback: l10n.insightsTipFallback),
-            detail: optionalTextOf(value, ['detail', 'content', 'message']),
-          ),
-          AsyncError(:final error) => FeatureError(error: error),
-          _ => const LoadingList(),
-        },
-        const SizedBox(height: AppSpacing.lg),
-        Text(
-          l10n.insightsPersonalAnalysisTitle,
-          style: AppTypography.display(18),
-        ),
-        const SizedBox(height: AppSpacing.sm),
         switch (insight) {
           AsyncData(:final value) => _InsightBody(value, unit: unit),
-          AsyncError(:final error) => FeatureError(error: error),
+          AsyncError(:final error) => AiErrorView(
+            error: error,
+            onRetry: () => ref.invalidate(personalInsightsProvider(lang)),
+          ),
           _ => const LoadingList(),
         },
       ],
@@ -148,6 +121,17 @@ class _InsightBody extends StatelessWidget {
 
     return Column(
       children: [
+        if (recommendation is JsonMap) ...[
+          _RecommendationCard(
+            title: textOf(recommendation, ['headline']),
+            actions:
+                (recommendation['actions'] as List<dynamic>?)
+                    ?.whereType<String>()
+                    .toList() ??
+                const [],
+          ),
+          const SizedBox(height: AppSpacing.sm),
+        ],
         XnSectionList(
           children: [
             for (final (key, label, icon) in _sections(l10n))
@@ -161,31 +145,8 @@ class _InsightBody extends StatelessWidget {
           ],
         ),
         const SizedBox(height: AppSpacing.sm),
-        if (recommendation is JsonMap) ...[
-          _RecommendationCard(
-            title: textOf(recommendation, ['headline']),
-            actions:
-                (recommendation['actions'] as List<dynamic>?)
-                    ?.whereType<String>()
-                    .toList() ??
-                const [],
-          ),
-          const SizedBox(height: AppSpacing.sm),
-        ],
         if (planReview is JsonMap)
-          _PlanReviewCard(
-            title: textOf(planReview, ['headline']),
-            mistakes:
-                (planReview['mistakes'] as List<dynamic>?)
-                    ?.whereType<String>()
-                    .toList() ??
-                const [],
-            suggestions:
-                (planReview['suggestions'] as List<dynamic>?)
-                    ?.whereType<String>()
-                    .toList() ??
-                const [],
-          ),
+          _PlanReviewCard(review: AnalysisPlanReview.fromJson(planReview)),
         if (generatedAt != null) ...[
           const SizedBox(height: AppSpacing.md),
           _GeneratedAtRow(generatedAt: generatedAt, cached: cached),
@@ -200,6 +161,45 @@ class _InsightBody extends StatelessWidget {
           _MetricsSection(metrics: metrics, unit: unit),
         ],
       ],
+    );
+  }
+}
+
+class _LabeledInsight extends StatelessWidget {
+  const _LabeledInsight({
+    required this.label,
+    required this.text,
+    required this.icon,
+  });
+
+  final String label;
+  final String text;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: AppSpacing.md),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, size: 18, color: AppColors.fg3),
+          const SizedBox(width: AppSpacing.sm),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(label.toUpperCase(), style: _eyebrow),
+                const SizedBox(height: AppSpacing.xs),
+                BulletList(
+                  items: _aiPoints(text),
+                  dotColor: AppColors.clay800,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -278,11 +278,15 @@ class _RecommendationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return XnCard(
-      color: AppColors.bg3,
+      color: AppColors.clay050,
+      border: Border.all(color: AppColors.clay200),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Text(l10n.insightsNextActionLabel.toUpperCase(), style: _eyebrow),
+          const SizedBox(height: AppSpacing.sm),
           Row(
             children: [
               const Icon(Icons.checklist_rounded, color: AppColors.accent),
@@ -344,59 +348,86 @@ class _RecommendationCard extends StatelessWidget {
   }
 }
 
-/// Plan-level errors the AI flagged vs. the coach's fix suggestions.
+/// Full plan assessment returned by `/insights/me`.
 class _PlanReviewCard extends StatelessWidget {
-  const _PlanReviewCard({
-    required this.title,
-    required this.mistakes,
-    required this.suggestions,
-  });
+  const _PlanReviewCard({required this.review});
 
-  final String title;
-  final List<String> mistakes;
-  final List<String> suggestions;
+  final AnalysisPlanReview review;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return XnCard(
-      color: AppColors.warningBg,
-      border: Border.all(color: AppColors.warning.withValues(alpha: 0.22)),
+      color: AppColors.bg2,
+      border: Border.all(color: AppColors.border1),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              const Icon(Icons.warning_amber_rounded, color: AppColors.warning),
+              const Icon(Icons.monitor_heart_outlined, color: AppColors.accent),
               const SizedBox(width: AppSpacing.sm),
               Expanded(
-                child: Text(
-                  title,
-                  style: const TextStyle(
-                    color: AppColors.fg1,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.insightsTrainingDecisionLabel.toUpperCase(),
+                      style: _eyebrow,
+                    ),
+                    const SizedBox(height: AppSpacing.xs),
+                    Text(
+                      review.headline,
+                      style: const TextStyle(
+                        color: AppColors.fg1,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
-          if (mistakes.isNotEmpty) ...[
+          if (review.dataSummary.isNotEmpty)
+            _LabeledInsight(
+              label: l10n.insightsDataSummaryLabel,
+              text: review.dataSummary,
+              icon: Icons.analytics_outlined,
+            ),
+          if (review.goalFit.isNotEmpty)
+            _LabeledInsight(
+              label: l10n.insightsGoalFitLabel,
+              text: review.goalFit,
+              icon: Icons.flag_outlined,
+            ),
+          _DecisionBlock(
+            label: l10n.insightsDeloadLabel,
+            decision: review.deload,
+            icon: Icons.battery_saver_outlined,
+          ),
+          _DecisionBlock(
+            label: l10n.insightsLoadProgressionLabel,
+            decision: review.loadProgression,
+            icon: Icons.trending_up_rounded,
+          ),
+          if (review.rpeGuidance.isNotEmpty)
+            _LabeledInsight(
+              label: l10n.insightsRpeGuidanceLabel,
+              text: review.rpeGuidance,
+              icon: Icons.speed_outlined,
+            ),
+          if (review.volumeGuidance.isNotEmpty)
+            _LabeledInsight(
+              label: l10n.insightsVolumeGuidanceLabel,
+              text: review.volumeGuidance,
+              icon: Icons.fitness_center_outlined,
+            ),
+          if (review.priorities.isNotEmpty) ...[
             const SizedBox(height: AppSpacing.md),
-            Text(l10n.insightsWhatWentWrongLabel, style: _eyebrow),
+            Text(l10n.insightsPrioritiesLabel, style: _eyebrow),
             const SizedBox(height: AppSpacing.sm),
-            for (final item in mistakes)
-              _BulletLine(
-                icon: Icons.error_outline_rounded,
-                color: AppColors.danger,
-                text: item,
-              ),
-          ],
-          if (suggestions.isNotEmpty) ...[
-            const SizedBox(height: AppSpacing.md),
-            Text(l10n.insightsCoachSuggestionsLabel, style: _eyebrow),
-            const SizedBox(height: AppSpacing.sm),
-            for (final item in suggestions)
+            for (final item in review.priorities)
               _BulletLine(
                 icon: Icons.check_circle_outline_rounded,
                 color: AppColors.success,
@@ -406,6 +437,183 @@ class _PlanReviewCard extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+class _DecisionBlock extends StatelessWidget {
+  const _DecisionBlock({
+    required this.label,
+    required this.decision,
+    required this.icon,
+  });
+
+  final String label;
+  final AnalysisTrainingDecision decision;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    if (decision.verdict.isEmpty &&
+        decision.rationale.isEmpty &&
+        decision.prescription.isEmpty) {
+      return const SizedBox.shrink();
+    }
+    final decisionColor = _decisionColor(decision.verdict);
+    return Padding(
+      padding: const EdgeInsets.only(top: AppSpacing.md),
+      child: Container(
+        padding: const EdgeInsets.all(AppSpacing.md),
+        decoration: BoxDecoration(
+          color: decisionColor.withValues(alpha: 0.045),
+          borderRadius: BorderRadius.circular(AppRadius.md),
+          border: Border.all(color: decisionColor.withValues(alpha: 0.42)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(icon, size: 18, color: decisionColor),
+                const SizedBox(width: AppSpacing.sm),
+                Expanded(
+                  child: Text(
+                    label,
+                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                ),
+                if (decision.verdict.isNotEmpty)
+                  XnChip(
+                    label: decision.verdict,
+                    tone: _severityTone(decision.verdict),
+                    compact: true,
+                  ),
+              ],
+            ),
+            if (decision.rationale.isNotEmpty) ...[
+              const SizedBox(height: AppSpacing.sm),
+              BulletList(
+                items: _aiPoints(decision.rationale),
+                dotColor: decisionColor,
+              ),
+            ],
+            if (decision.prescription.isNotEmpty) ...[
+              const SizedBox(height: AppSpacing.md),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(AppSpacing.sm),
+                decoration: BoxDecoration(
+                  color: AppColors.bg2.withValues(alpha: 0.8),
+                  borderRadius: BorderRadius.circular(AppRadius.sm),
+                  border: Border.all(
+                    color: decisionColor.withValues(alpha: 0.22),
+                  ),
+                ),
+                child: _ActionChecklist(
+                  items: _aiPoints(decision.prescription),
+                  color: decisionColor,
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ActionChecklist extends StatelessWidget {
+  const _ActionChecklist({required this.items, required this.color});
+
+  final List<String> items;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        for (var index = 0; index < items.length; index++) ...[
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 2),
+                child: Icon(
+                  Icons.arrow_circle_right_outlined,
+                  size: 17,
+                  color: color,
+                ),
+              ),
+              const SizedBox(width: AppSpacing.sm),
+              Expanded(
+                child: Text(
+                  items[index],
+                  style: const TextStyle(
+                    color: AppColors.fg1,
+                    fontWeight: FontWeight.w600,
+                    height: 1.38,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          if (index != items.length - 1) const SizedBox(height: AppSpacing.sm),
+        ],
+      ],
+    );
+  }
+}
+
+Color _decisionColor(String verdict) {
+  switch (verdict.toLowerCase()) {
+    case 'increase':
+    case 'progress':
+    case 'recommended':
+      return AppColors.success;
+    case 'hold':
+    case 'consider':
+      return AppColors.warning;
+    case 'avoid':
+    case 'reduce':
+      return AppColors.danger;
+    default:
+      return AppColors.info;
+  }
+}
+
+List<String> _aiPoints(String value) {
+  final points = <String>[];
+  for (final paragraph in value.split(RegExp(r'\n+'))) {
+    for (final sentence in splitIntoSentences(paragraph)) {
+      if (sentence.length > 160 && sentence.contains('; ')) {
+        points.addAll(
+          sentence
+              .split('; ')
+              .map((part) => part.trim())
+              .where((part) => part.isNotEmpty),
+        );
+      } else {
+        points.add(sentence);
+      }
+    }
+  }
+  return points;
+}
+
+XnChipTone _severityTone(String value) {
+  switch (value.toLowerCase()) {
+    case 'recommended':
+    case 'increase':
+    case 'progress':
+      return XnChipTone.sage;
+    case 'hold':
+    case 'consider':
+      return XnChipTone.warn;
+    case 'avoid':
+    case 'reduce':
+      return XnChipTone.danger;
+    default:
+      return XnChipTone.neutral;
   }
 }
 
@@ -777,7 +985,7 @@ class _WeekComparisonCard extends StatelessWidget {
           label: l10n.insightsPreviousWeekLabel,
           volume: previousVolume,
           ratio: previousVolume / maxVolume,
-          color: AppColors.bg4,
+          color: AppColors.dataBlue,
           unit: unit,
         ),
         const SizedBox(height: AppSpacing.md),
@@ -785,7 +993,7 @@ class _WeekComparisonCard extends StatelessWidget {
           label: l10n.insightsCurrentWeekLabel,
           volume: currentVolume,
           ratio: currentVolume / maxVolume,
-          color: AppColors.accent,
+          color: AppColors.dataTeal,
           unit: unit,
         ),
       ],
@@ -864,7 +1072,11 @@ class _MuscleBalanceCard extends StatelessWidget {
       children: [
         for (var i = 0; i < sorted.length; i++) ...[
           if (i > 0) const SizedBox(height: AppSpacing.md),
-          _MuscleBalanceRow(point: sorted[i], unit: unit),
+          _MuscleBalanceRow(
+            point: sorted[i],
+            unit: unit,
+            color: AppColors.dataColor(i),
+          ),
         ],
       ],
     );
@@ -872,10 +1084,15 @@ class _MuscleBalanceCard extends StatelessWidget {
 }
 
 class _MuscleBalanceRow extends StatelessWidget {
-  const _MuscleBalanceRow({required this.point, required this.unit});
+  const _MuscleBalanceRow({
+    required this.point,
+    required this.unit,
+    required this.color,
+  });
 
   final JsonMap point;
   final WeightUnit unit;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
@@ -918,7 +1135,7 @@ class _MuscleBalanceRow extends StatelessWidget {
             value: (sharePercent / 100).clamp(0.0, 1.0),
             minHeight: 8,
             backgroundColor: AppColors.bg3,
-            valueColor: const AlwaysStoppedAnimation(AppColors.accent),
+            valueColor: AlwaysStoppedAnimation(color),
           ),
         ),
       ],

@@ -173,4 +173,36 @@ class CommunityRepositoryImpl implements CommunityRepository {
       throw failureFromDio(e);
     }
   }
+
+  @override
+  Future<void> reportShare({
+    required String shareId,
+    required String reason,
+    required String details,
+  }) async {
+    try {
+      await _remote.reportShare(
+        shareId: shareId,
+        reason: reason,
+        details: details,
+      );
+    } on DioException catch (e) {
+      throw failureFromDio(e);
+    }
+  }
+
+  @override
+  Future<int> copyShare({
+    required String shareId,
+    required String targetDailyWorkoutId,
+  }) async {
+    try {
+      return await _remote.copyShare(
+        shareId: shareId,
+        targetDailyWorkoutId: targetDailyWorkoutId,
+      );
+    } on DioException catch (e) {
+      throw failureFromDio(e);
+    }
+  }
 }

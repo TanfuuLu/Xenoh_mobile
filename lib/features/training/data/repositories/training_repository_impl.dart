@@ -6,6 +6,7 @@ import '../../../../core/models/paged_result.dart';
 import '../../domain/entities/daily_workout.dart';
 import '../../domain/entities/exercise.dart';
 import '../../domain/entities/exercise_template.dart';
+import '../../domain/entities/last_exercise_performance.dart';
 import '../../domain/entities/plan.dart';
 import '../../domain/entities/weekly_workout.dart';
 import '../../domain/repositories/training_repository.dart';
@@ -195,6 +196,31 @@ class TrainingRepositoryImpl implements TrainingRepository {
   });
 
   @override
+  Future<Exercise> updateSetPlan(
+    String setId, {
+    int? plannedReps,
+    double? plannedWeight,
+  }) => _guard(() async {
+    final dto = await _remote.updateSetPlan(
+      setId,
+      plannedReps: plannedReps,
+      plannedWeight: plannedWeight,
+    );
+    return _mapExercise(dto);
+  });
+
+  @override
+  Future<LastExercisePerformance> getLastExercisePerformance({
+    required String exerciseTemplateId,
+    required String dailyWorkoutId,
+  }) => _guard(
+    () => _remote.getLastExercisePerformance(
+      exerciseTemplateId: exerciseTemplateId,
+      dailyWorkoutId: dailyWorkoutId,
+    ),
+  );
+
+  @override
   Future<Exercise> startExerciseTimer(String exerciseId) => _guard(
     () async => _mapExercise(await _remote.startExerciseTimer(exerciseId)),
   );
@@ -280,9 +306,11 @@ class TrainingRepositoryImpl implements TrainingRepository {
   @override
   Future<List<ExerciseTemplate>> getExerciseTemplates({
     String? muscleGroup,
+    String? clientId,
   }) => _guard(() async {
     final templates = await _remote.getExerciseTemplates(
       muscleGroup: muscleGroup,
+      clientId: clientId,
     );
     return [
       for (final dto in templates)
@@ -297,6 +325,7 @@ class TrainingRepositoryImpl implements TrainingRepository {
     required List<String> secondaryMuscleGroups,
     required String exerciseKind,
     String? description,
+    String? clientId,
   }) => _guard(
     () async => (await _remote.createCustomExerciseTemplate(
       name: name,
@@ -304,6 +333,7 @@ class TrainingRepositoryImpl implements TrainingRepository {
       secondaryMuscleGroups: secondaryMuscleGroups,
       exerciseKind: exerciseKind,
       description: description,
+      clientId: clientId,
     )).toEntity(),
   );
 

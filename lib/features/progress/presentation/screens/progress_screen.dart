@@ -8,13 +8,17 @@ import '../../../../app/theme/app_typography.dart';
 import '../../../../core/error/failure.dart';
 import '../../../../core/widgets/async_value_view.dart';
 import '../../../../core/widgets/pro_locked_view.dart';
+import '../../../../core/widgets/xn_section.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../profile/domain/entities/volume_history_point.dart';
 import '../../../profile/presentation/providers/preferences_provider.dart';
+import '../../../profile/presentation/providers/profile_controller.dart';
 import '../../../training/domain/entities/plan.dart';
 import '../../../training/presentation/providers/plans_controller.dart';
 import '../../domain/entities/plan_analytics.dart';
 import '../providers/progress_controllers.dart';
 import '../widgets/powerlifting_panel.dart';
+import '../widgets/volume_history_card.dart';
 import 'plan_analytics_screen.dart';
 
 /// Plan progress: pick one of the user's plans (defaulting to the active one)
@@ -81,22 +85,30 @@ class _PlanProgress extends ConsumerStatefulWidget {
 
 class _PlanProgressState extends ConsumerState<_PlanProgress> {
   _ProgressTab _tab = _ProgressTab.overview;
+  var _volumeMonths = 6;
 
   @override
   Widget build(BuildContext context) {
     final analytics = ref.watch(planAnalyticsProvider(widget.selectedPlanId));
+    final volume = ref.watch(volumeHistoryProvider(_volumeMonths));
 
     return RefreshIndicator(
       color: AppColors.accent,
       onRefresh: () {
-        ref.invalidate(plansControllerProvider);
+        ref
+          ..invalidate(plansControllerProvider)
+          ..invalidate(volumeHistoryProvider(_volumeMonths));
         return ref.refresh(planAnalyticsProvider(widget.selectedPlanId).future);
       },
-      child: _content(context, analytics),
+      child: _content(context, analytics, volume),
     );
   }
 
-  Widget _content(BuildContext context, AsyncValue<PlanAnalytics> analytics) {
+  Widget _content(
+    BuildContext context,
+    AsyncValue<PlanAnalytics> analytics,
+    AsyncValue<List<VolumeHistoryPoint>> volume,
+  ) {
     final l10n = AppLocalizations.of(context);
     final selector = _PlanSelector(
       plans: widget.plans,
@@ -110,6 +122,8 @@ class _PlanProgressState extends ConsumerState<_PlanProgress> {
         padding: const EdgeInsets.all(AppSpacing.lg),
         children: [
           selector,
+          const SizedBox(height: AppSpacing.lg),
+          _volumeCard(volume),
           const SizedBox(height: AppSpacing.lg),
           ProLockedView(
             title: l10n.progressProFeatureTitle,
@@ -128,6 +142,8 @@ class _PlanProgressState extends ConsumerState<_PlanProgress> {
         padding: const EdgeInsets.all(AppSpacing.lg),
         children: [
           selector,
+          const SizedBox(height: AppSpacing.lg),
+          _volumeCard(volume),
           SizedBox(
             height: MediaQuery.sizeOf(context).height * 0.5,
             child: const Center(child: CircularProgressIndicator()),
@@ -142,6 +158,8 @@ class _PlanProgressState extends ConsumerState<_PlanProgress> {
           padding: const EdgeInsets.all(AppSpacing.lg),
           children: [
             selector,
+            const SizedBox(height: AppSpacing.lg),
+            _volumeCard(volume),
             if (powerlifting != null) ...[
               const SizedBox(height: AppSpacing.md),
               _TabBar(
@@ -164,6 +182,41 @@ class _PlanProgressState extends ConsumerState<_PlanProgress> {
         );
       },
     );
+  }
+
+  Widget _volumeCard(AsyncValue<List<VolumeHistoryPoint>> volume) {
+    final l10n = AppLocalizations.of(context);
+    return switch (volume) {
+      AsyncData(:final value) => VolumeHistoryCard(
+        points: value,
+        unit: ref.watch(weightUnitProvider),
+        months: _volumeMonths,
+        onMonthsChanged: (months) => setState(() => _volumeMonths = months),
+      ),
+      AsyncError() => XnSectionGroup(
+        children: [
+          Text(l10n.progressVolumeHistoryLoadError),
+          const SizedBox(height: AppSpacing.sm),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: TextButton(
+              onPressed: () => ref.invalidate(
+                volumeHistoryProvider(_volumeMonths),
+              ),
+              child: Text(l10n.commonRetry),
+            ),
+          ),
+        ],
+      ),
+      _ => const XnSectionGroup(
+        children: [
+          SizedBox(
+            height: 160,
+            child: Center(child: CircularProgressIndicator()),
+          ),
+        ],
+      ),
+    };
   }
 }
 

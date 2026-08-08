@@ -9,13 +9,13 @@ import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_dimens.dart';
 import '../../../../app/theme/app_typography.dart';
 import '../../../../core/widgets/async_value_view.dart';
-import '../../../../core/widgets/synced_background_card.dart';
+import '../../../../core/widgets/xn_card.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../auth/presentation/providers/auth_controller.dart';
 import '../../../auth/presentation/providers/auth_state.dart';
-import '../../../profile/data/repositories/profile_background_repository.dart';
 import '../../data/repositories/training_repository_provider.dart';
 import '../../domain/entities/plan.dart';
+import '../navigation/training_route_scope.dart';
 import '../providers/coach_client_plans_provider.dart';
 import '../providers/plans_controller.dart';
 import '../widgets/ai_starter_plan_sheet.dart';
@@ -101,21 +101,6 @@ class _PlansScreenState extends ConsumerState<PlansScreen> {
     final coachClientPlans = isCoach
         ? ref.watch(coachClientPlansProvider)
         : null;
-    final backgroundPath = ref
-        .watch(
-          profileBackgroundPathProvider(ProfileBackgroundRepository.deviceKey),
-        )
-        .value;
-    final backgroundAlignment =
-        ref
-            .watch(
-              profileBackgroundAlignmentProvider(
-                ProfileBackgroundRepository.deviceKey,
-              ),
-            )
-            .value ??
-        Alignment.center;
-
     return Scaffold(
       appBar: AppBar(
         leading: const HomeShellMenuButton(),
@@ -137,12 +122,16 @@ class _PlansScreenState extends ConsumerState<PlansScreen> {
           data: (items) => _PlansBody(
             plans: items,
             coachClientPlans: coachClientPlans,
-            backgroundImagePath: backgroundPath,
-            backgroundAlignment: backgroundAlignment,
             controller: _scroll,
             onCreatePlan: _createPlan,
             onCreateAiPlan: _createAiPlan,
-            onOpenPlan: (plan) => context.push('/plans/${plan.id}'),
+            onOpenPlan: (plan, clientId) => context.push(
+              trainingRouteLocation(
+                '/plans/${plan.id}',
+                coachView: clientId != null,
+                clientId: clientId,
+              ),
+            ),
             onOpenAnalytics: (plan) =>
                 context.push('/plans/${plan.id}/analytics'),
             onOpenReview: (plan) =>
@@ -262,7 +251,6 @@ class _PlansBody extends StatelessWidget {
   const _PlansBody({
     required this.plans,
     required this.coachClientPlans,
-    required this.backgroundImagePath,
     required this.controller,
     required this.onCreatePlan,
     required this.onCreateAiPlan,
@@ -273,7 +261,6 @@ class _PlansBody extends StatelessWidget {
     required this.onDelete,
     required this.onActivateClientPlan,
     required this.onDeleteClientPlan,
-    this.backgroundAlignment = Alignment.center,
   });
 
   final List<Plan> plans;
@@ -281,12 +268,10 @@ class _PlansBody extends StatelessWidget {
   /// Plans the coach created for clients, grouped by client. Null for
   /// non-coach users (the section is hidden entirely).
   final AsyncValue<List<CoachClientPlanGroup>>? coachClientPlans;
-  final String? backgroundImagePath;
-  final Alignment backgroundAlignment;
   final ScrollController controller;
   final VoidCallback onCreatePlan;
   final VoidCallback onCreateAiPlan;
-  final ValueChanged<Plan> onOpenPlan;
+  final void Function(Plan plan, String? clientId) onOpenPlan;
   final ValueChanged<Plan> onOpenAnalytics;
   final ValueChanged<Plan> onOpenReview;
   final ValueChanged<Plan> onActivate;
@@ -312,8 +297,6 @@ class _PlansBody extends StatelessWidget {
         _PlansHeader(
           myPlanCount: myPlans.length,
           coachPlanCount: coachPlans.length,
-          backgroundImagePath: backgroundImagePath,
-          backgroundAlignment: backgroundAlignment,
           onCreatePlan: onCreatePlan,
           onCreateAiPlan: onCreateAiPlan,
         ),
@@ -332,7 +315,7 @@ class _PlansBody extends StatelessWidget {
           for (final plan in myPlans) ...[
             PlanCard(
               plan: plan,
-              onTap: () => onOpenPlan(plan),
+              onTap: () => onOpenPlan(plan, null),
               onAnalytics: () => onOpenAnalytics(plan),
               onReview: () => onOpenReview(plan),
               onActivate: () => onActivate(plan),
@@ -359,7 +342,7 @@ class _PlansBody extends StatelessWidget {
           for (final plan in coachPlans) ...[
             PlanCard(
               plan: plan,
-              onTap: () => onOpenPlan(plan),
+              onTap: () => onOpenPlan(plan, null),
               onAnalytics: () => onOpenAnalytics(plan),
               onReview: () => onOpenReview(plan),
               onActivate: () => onActivate(plan),
@@ -392,7 +375,7 @@ class _PlansBody extends StatelessWidget {
             PlanCard(
               plan: plan,
               manageAsCoach: true,
-              onTap: () => onOpenPlan(plan),
+              onTap: () => onOpenPlan(plan, group.clientId),
               onAnalytics: () => onOpenAnalytics(plan),
               onReview: () => onOpenReview(plan),
               onActivate: () => onActivateClientPlan(plan),
@@ -534,125 +517,114 @@ class _PlansHeader extends StatelessWidget {
   const _PlansHeader({
     required this.myPlanCount,
     required this.coachPlanCount,
-    required this.backgroundImagePath,
     required this.onCreatePlan,
     required this.onCreateAiPlan,
-    this.backgroundAlignment = Alignment.center,
   });
 
   final int myPlanCount;
   final int coachPlanCount;
-  final String? backgroundImagePath;
-  final Alignment backgroundAlignment;
   final VoidCallback onCreatePlan;
   final VoidCallback onCreateAiPlan;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return SyncedBackgroundCard(
-      backgroundImagePath: backgroundImagePath,
-      backgroundAlignment: backgroundAlignment,
-      minHeight: 0,
-      padding: const EdgeInsets.all(AppSpacing.xl),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      l10n.trainingPlansHeaderTitle,
-                      style: AppTypography.display(
-                        25,
-                        weight: FontWeight.w500,
-                        color: AppColors.fgOnClay,
-                        letterSpacing: 0,
-                        height: 1.05,
-                      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    l10n.trainingPlansHeaderSubtitle,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      color: AppColors.fg2,
+                      fontSize: 13,
+                      height: 1.35,
+                      fontWeight: FontWeight.w500,
                     ),
-                    const SizedBox(height: AppSpacing.sm),
-                    Text(
-                      l10n.trainingPlansHeaderSubtitle,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: AppColors.clay200,
-                        fontSize: 13,
-                        height: 1.35,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: AppSpacing.md),
-              Container(
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(
-                  color: AppColors.clay100.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(AppRadius.lg),
-                  border: Border.all(
-                    color: AppColors.clay200.withValues(alpha: 0.2),
                   ),
-                ),
-                child: const Icon(
-                  Icons.lightbulb_outline_rounded,
-                  color: AppColors.clay100,
-                  size: 24,
+                ],
+              ),
+            ),
+            const SizedBox(width: AppSpacing.md),
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: Colors.transparent,
+                borderRadius: BorderRadius.circular(AppRadius.lg),
+                border: Border.all(
+                  color: AppColors.surfaceBorderSoft,
                 ),
               ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.lg),
-          Row(
-            children: [
-              Expanded(
-                child: _HeaderMetric(
-                  label: l10n.trainingMyPlansTitle,
-                  value: '$myPlanCount',
-                ),
+              child: const Icon(
+                Icons.lightbulb_outline_rounded,
+                color: AppColors.accent,
+                size: 24,
               ),
-              const SizedBox(width: AppSpacing.sm),
-              Expanded(
-                child: _HeaderMetric(
-                  label: l10n.trainingCoachPlansTitle,
-                  value: '$coachPlanCount',
-                ),
+            ),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.lg),
+        Row(
+          children: [
+            Expanded(
+              child: _HeaderMetric(
+                label: l10n.trainingMyPlansTitle,
+                value: '$myPlanCount',
               ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.lg),
-          Row(
-            children: [
-              Expanded(
-                child: _PillAction(
-                  label: l10n.trainingAiStarterCta,
-                  icon: Icons.auto_awesome_rounded,
-                  onPressed: onCreateAiPlan,
-                  filled: false,
-                  inverse: true,
-                ),
+            ),
+            const SizedBox(width: AppSpacing.sm),
+            Expanded(
+              child: _HeaderMetric(
+                label: l10n.trainingCoachPlansTitle,
+                value: '$coachPlanCount',
               ),
-              const SizedBox(width: AppSpacing.sm),
-              Expanded(
-                child: _PillAction(
-                  label: l10n.trainingNewPlanTitle,
-                  icon: Icons.add_rounded,
-                  onPressed: onCreatePlan,
-                  filled: true,
-                  inverse: true,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
+            ),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.lg),
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final aiAction = _PillAction(
+              label: l10n.trainingAiStarterCta,
+              icon: Icons.auto_awesome_rounded,
+              onPressed: onCreateAiPlan,
+              filled: false,
+            );
+            final createAction = _PillAction(
+              label: l10n.trainingNewPlanTitle,
+              icon: Icons.add_rounded,
+              onPressed: onCreatePlan,
+              filled: true,
+            );
+            if (constraints.maxWidth < 360) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  aiAction,
+                  const SizedBox(height: AppSpacing.sm),
+                  createAction,
+                ],
+              );
+            }
+            return Row(
+              children: [
+                Expanded(child: aiAction),
+                const SizedBox(width: AppSpacing.sm),
+                Expanded(child: createAction),
+              ],
+            );
+          },
+        ),
+      ],
     );
   }
 }
@@ -665,14 +637,10 @@ class _HeaderMetric extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return XnCard(
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.md,
         vertical: AppSpacing.sm,
-      ),
-      decoration: BoxDecoration(
-        color: AppColors.clay100.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(AppRadius.md),
       ),
       child: Row(
         children: [
@@ -681,7 +649,7 @@ class _HeaderMetric extends StatelessWidget {
             style: AppTypography.mono(
               18,
               weight: FontWeight.w500,
-              color: AppColors.fgOnClay,
+              color: AppColors.fg1,
             ),
           ),
           const SizedBox(width: AppSpacing.sm),
@@ -691,7 +659,7 @@ class _HeaderMetric extends StatelessWidget {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(
-                color: AppColors.clay200,
+                color: AppColors.fg2,
                 fontSize: 11,
                 fontWeight: FontWeight.w500,
               ),
@@ -709,23 +677,17 @@ class _PillAction extends StatelessWidget {
     required this.icon,
     required this.onPressed,
     required this.filled,
-    this.inverse = false,
   });
 
   final String label;
   final IconData icon;
   final VoidCallback onPressed;
   final bool filled;
-  final bool inverse;
 
   @override
   Widget build(BuildContext context) {
-    final bg = filled
-        ? (inverse ? AppColors.clay100 : AppColors.accent)
-        : (inverse ? AppColors.clay100.withValues(alpha: 0.12) : AppColors.bg2);
-    final fg = filled
-        ? (inverse ? AppColors.ink900 : AppColors.fgOnClay)
-        : (inverse ? AppColors.fgOnClay : AppColors.fg1);
+    final bg = filled ? AppColors.accent : AppColors.bg2;
+    final fg = filled ? AppColors.fgOnClay : AppColors.fg1;
     return FilledButton.icon(
       onPressed: onPressed,
       icon: Icon(icon),
@@ -734,11 +696,7 @@ class _PillAction extends StatelessWidget {
         backgroundColor: bg,
         foregroundColor: fg,
         side: BorderSide(
-          color: inverse
-              ? AppColors.clay200.withValues(alpha: 0.2)
-              : filled
-              ? AppColors.accentHover
-              : AppColors.surfaceBorderSoft,
+          color: filled ? AppColors.accentHover : AppColors.surfaceBorderSoft,
         ),
         shape: const StadiumBorder(),
         elevation: 0,

@@ -13,10 +13,13 @@ part 'exercise_templates_controller.g.dart';
 @Riverpod(keepAlive: true)
 class ExerciseTemplatesController extends _$ExerciseTemplatesController {
   @override
-  Future<List<ExerciseTemplate>> build({String? muscleGroup}) {
+  Future<List<ExerciseTemplate>> build({
+    String? muscleGroup,
+    String? clientId,
+  }) {
     return ref
         .watch(trainingRepositoryProvider)
-        .getExerciseTemplates(muscleGroup: muscleGroup);
+        .getExerciseTemplates(muscleGroup: muscleGroup, clientId: clientId);
   }
 
   Future<void> createCustom({
@@ -26,7 +29,7 @@ class ExerciseTemplatesController extends _$ExerciseTemplatesController {
     required String exerciseKind,
     String? description,
   }) async {
-    await ref
+    final created = await ref
         .read(trainingRepositoryProvider)
         .createCustomExerciseTemplate(
           name: name,
@@ -34,8 +37,19 @@ class ExerciseTemplatesController extends _$ExerciseTemplatesController {
           secondaryMuscleGroups: secondaryMuscleGroups,
           exerciseKind: exerciseKind,
           description: description,
+          clientId: clientId,
         );
-    ref.invalidateSelf();
+    final current = state.value;
+    if (current == null) {
+      ref.invalidateSelf();
+      return;
+    }
+    final matchesFilter =
+        muscleGroup == null ||
+        created.primaryMuscleGroup.toLowerCase() == muscleGroup!.toLowerCase();
+    if (matchesFilter) {
+      state = AsyncValue.data([created, ...current]);
+    }
   }
 
   Future<void> updateCustom({

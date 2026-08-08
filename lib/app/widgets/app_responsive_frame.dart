@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../theme/app_colors.dart';
 import '../theme/app_dimens.dart';
+
+enum AppBreakpoint { compact, medium, expanded }
 
 /// Keeps complete application screens comfortably sized on large viewports.
 ///
@@ -15,19 +16,25 @@ class AppResponsiveFrame extends StatelessWidget {
 
   final Widget child;
 
+  static AppBreakpoint breakpointForWidth(double width) {
+    if (width >= 840) return AppBreakpoint.expanded;
+    if (width >= 600) return AppBreakpoint.medium;
+    return AppBreakpoint.compact;
+  }
+
+  static bool usesNavigationRail(double width) =>
+      breakpointForWidth(width) == AppBreakpoint.expanded;
+
   @override
   Widget build(BuildContext context) {
-    return ColoredBox(
-      color: AppColors.bgPage,
-      child: Align(
-        alignment: Alignment.topCenter,
-        child: ConstrainedBox(
-          key: canvasKey,
-          constraints: const BoxConstraints(
-            maxWidth: AppLayout.screenMaxWidth,
-          ),
-          child: SizedBox.expand(child: child),
+    return Align(
+      alignment: Alignment.topCenter,
+      child: ConstrainedBox(
+        key: canvasKey,
+        constraints: const BoxConstraints(
+          maxWidth: AppLayout.screenMaxWidth,
         ),
+        child: SizedBox.expand(child: child),
       ),
     );
   }

@@ -6,18 +6,21 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../app/home_shell.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_dimens.dart';
 import '../../../../app/theme/app_typography.dart';
 import '../../../../core/utils/date_only.dart';
+import '../../../../core/utils/safe_external_url.dart';
 import '../../../../core/utils/weight_units.dart';
 import '../../../../core/widgets/async_value_view.dart';
 import '../../../../core/widgets/xn_animated_number.dart';
 import '../../../../core/widgets/xn_card.dart';
 import '../../../../core/widgets/xn_section.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../dashboard/presentation/providers/dashboard_controller.dart';
 import '../../data/repositories/profile_background_repository.dart';
 import '../../data/repositories/profile_repository_provider.dart';
 import '../../domain/entities/bodyweight_log.dart';
@@ -90,6 +93,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       await ref
           .read(myProfileControllerProvider.notifier)
           .uploadAvatar(image.path);
+      ref.invalidate(dashboardControllerProvider);
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -309,61 +313,73 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     : null,
               ),
               const SizedBox(height: AppSpacing.md),
-              XnSectionGroup(
-                children: [
-                  _DetailsCard(profile: data),
-                  const XnSectionDivider(),
-                  XnSection(
-                    child: IntrinsicHeight(
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Expanded(
-                            child: _TotalCard(
-                              icon: Icons.schedule_rounded,
-                              label: l10n.profileTotalTrainedTimeLabel,
-                              value: activity.value == null ? '00:00:00' : null,
-                              animatedValue: activity
-                                  .value
-                                  ?.totalDurationSeconds
-                                  .toDouble(),
-                              formatter: formatAnimatedDuration,
-                            ),
+              _ProfilePanel(child: _DetailsCard(profile: data)),
+              const SizedBox(height: AppSpacing.md),
+              _ProfilePanel(
+                child: XnSection(
+                  child: IntrinsicHeight(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Expanded(
+                          child: _TotalCard(
+                            icon: Icons.schedule_rounded,
+                            label: l10n.profileTotalTrainedTimeLabel,
+                            value: activity.value == null ? '00:00:00' : null,
+                            animatedValue: activity.value?.totalDurationSeconds
+                                .toDouble(),
+                            formatter: formatAnimatedDuration,
                           ),
-                          const SizedBox(width: AppSpacing.xl),
-                          Expanded(
-                            child: _TotalCard(
-                              icon: Icons.fitness_center_rounded,
-                              label: l10n.profileTotalWeightLabel,
-                              value: activity.value == null
-                                  ? '— ${unit.suffix}'
-                                  : null,
-                              animatedValue: activity.value == null
-                                  ? null
-                                  : unit.fromKg(
-                                      activity.value!.totalWeightTrainedKg,
-                                    ),
-                              formatter: (value) =>
-                                  '${formatWeight(value)} ${unit.suffix}',
-                            ),
+                        ),
+                        const SizedBox(width: AppSpacing.xl),
+                        Expanded(
+                          child: _TotalCard(
+                            icon: Icons.fitness_center_rounded,
+                            label: l10n.profileTotalWeightLabel,
+                            value: activity.value == null
+                                ? '— ${unit.suffix}'
+                                : null,
+                            animatedValue: activity.value == null
+                                ? null
+                                : unit.fromKg(
+                                    activity.value!.totalWeightTrainedKg,
+                                  ),
+                            formatter: (value) =>
+                                '${formatWeight(value)} ${unit.suffix}',
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
-                  const XnSectionDivider(),
-                  _CalendarCard(
-                    month: _calendarMonth,
-                    activity: activity,
-                    onPrev: () => _shiftMonth(-1),
-                    onNext: () => _shiftMonth(1),
-                  ),
-                ],
+                ),
+              ),
+              const SizedBox(height: AppSpacing.md),
+              _ProfilePanel(
+                child: _CalendarCard(
+                  month: _calendarMonth,
+                  activity: activity,
+                  onPrev: () => _shiftMonth(-1),
+                  onNext: () => _shiftMonth(1),
+                ),
               ),
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+class _ProfilePanel extends StatelessWidget {
+  const _ProfilePanel({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return XnCard(
+      padding: const EdgeInsets.all(AppSpacing.md),
+      child: child,
     );
   }
 }
@@ -396,86 +412,79 @@ class _ProfileHeader extends StatelessWidget {
         ? null
         : File(backgroundImagePath!);
     final hasBackground = backgroundFile != null && backgroundFile.existsSync();
-    final primaryColor = hasBackground ? AppColors.fgOnClay : AppColors.fg1;
-    final secondaryColor = hasBackground
-        ? AppColors.fgOnClay.withValues(alpha: 0.78)
-        : AppColors.fg3;
-    final bodyColor = hasBackground
-        ? AppColors.fgOnClay.withValues(alpha: 0.88)
-        : AppColors.fg2;
+    final socialLinks = _profileSocialLinks(profile);
 
-    return Container(
-      width: double.infinity,
-      constraints: const BoxConstraints(minHeight: AppLayout.heroCardMinHeight),
-      clipBehavior: Clip.antiAlias,
-      decoration: BoxDecoration(
-        color: AppColors.bg2,
-        borderRadius: BorderRadius.circular(AppRadius.xxl),
-        border: Border.all(
-          color: AppColors.surfaceBorderSoft.withValues(alpha: 0.82),
-        ),
-        boxShadow: const [
-          BoxShadow(
-            color: AppColors.shadowDeep,
-            blurRadius: 22,
-            offset: Offset(0, 10),
-          ),
-        ],
-      ),
-      child: Stack(
+    return XnCard(
+      padding: EdgeInsets.zero,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (hasBackground) ...[
-            Positioned.fill(
-              child: Image.file(
-                backgroundFile,
-                fit: BoxFit.cover,
-                alignment: backgroundAlignment,
-                filterQuality: FilterQuality.medium,
-              ),
-            ),
-            Positioned.fill(
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      AppColors.clay900.withValues(alpha: 0.78),
-                      AppColors.clay900.withValues(alpha: 0.56),
-                    ],
+          if (hasBackground)
+            SizedBox(
+              height: 72,
+              width: double.infinity,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Image.file(
+                    backgroundFile,
+                    fit: BoxFit.cover,
+                    alignment: backgroundAlignment,
+                    filterQuality: FilterQuality.medium,
                   ),
-                ),
+                  DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: AppColors.ink900.withValues(alpha: 0.18),
+                    ),
+                  ),
+                  Positioned(
+                    right: AppSpacing.sm,
+                    top: AppSpacing.sm,
+                    child: IconButton.filledTonal(
+                      tooltip: l10n.profileChangeBackgroundTooltip,
+                      icon: const Icon(Icons.wallpaper_outlined),
+                      onPressed: onChangeBackground,
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
           Padding(
-            padding: const EdgeInsets.all(AppSpacing.xxl),
+            padding: const EdgeInsets.all(AppSpacing.lg),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     InkWell(
-                      customBorder: const CircleBorder(),
+                      borderRadius: BorderRadius.circular(AppRadius.md),
                       onTap: onChangeAvatar,
-                      child: CircleAvatar(
-                        radius: 34,
-                        backgroundColor: hasBackground
-                            ? AppColors.fgOnClay.withValues(alpha: 0.18)
-                            : AppColors.accentSoft,
-                        backgroundImage: hasAvatar
-                            ? NetworkImage(avatar)
-                            : null,
+                      child: Container(
+                        width: 58,
+                        height: 58,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: AppColors.accentSoft,
+                          borderRadius: BorderRadius.circular(AppRadius.md),
+                          border: Border.all(
+                            color: AppColors.surfaceBorderSoft,
+                          ),
+                          image: hasAvatar
+                              ? DecorationImage(
+                                  image: NetworkImage(avatar),
+                                  fit: BoxFit.cover,
+                                )
+                              : null,
+                        ),
                         child: hasAvatar
                             ? null
                             : Text(
                                 _initials(profile.fullName),
-                                style: TextStyle(
-                                  color: hasBackground
-                                      ? AppColors.fgOnClay
-                                      : AppColors.clay900,
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 21,
+                                style: const TextStyle(
+                                  color: AppColors.clay900,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 19,
                                 ),
                               ),
                       ),
@@ -493,9 +502,10 @@ class _ProfileHeader extends StatelessWidget {
                                       ? 'Xenoh'
                                       : profile.fullName,
                                   style: AppTypography.display(
-                                    26,
+                                    23,
+                                    weight: FontWeight.w700,
                                     letterSpacing: 0,
-                                    color: primaryColor,
+                                    color: AppColors.fg1,
                                   ),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
@@ -506,7 +516,7 @@ class _ProfileHeader extends StatelessWidget {
                                   tooltip: l10n.profileEditTitle,
                                   icon: const Icon(Icons.edit_outlined),
                                   iconSize: 16,
-                                  color: primaryColor,
+                                  color: AppColors.fg2,
                                   visualDensity: VisualDensity.compact,
                                   padding: EdgeInsets.zero,
                                   constraints: const BoxConstraints(),
@@ -517,8 +527,8 @@ class _ProfileHeader extends StatelessWidget {
                           const SizedBox(height: AppSpacing.xs),
                           Text(
                             profile.email,
-                            style: TextStyle(
-                              color: secondaryColor,
+                            style: const TextStyle(
+                              color: AppColors.fg3,
                               fontSize: 14,
                             ),
                             maxLines: 1,
@@ -527,30 +537,55 @@ class _ProfileHeader extends StatelessWidget {
                         ],
                       ),
                     ),
-                    IconButton(
-                      tooltip: l10n.profileChangeBackgroundTooltip,
-                      icon: const Icon(Icons.wallpaper_rounded),
-                      color: primaryColor,
-                      onPressed: onChangeBackground,
-                    ),
+                    if (!hasBackground)
+                      IconButton(
+                        tooltip: l10n.profileChangeBackgroundTooltip,
+                        icon: const Icon(Icons.wallpaper_outlined),
+                        color: AppColors.fg2,
+                        onPressed: onChangeBackground,
+                      ),
                   ],
                 ),
                 const SizedBox(height: AppSpacing.lg),
                 Text(
                   l10n.profileBioLabel,
-                  style: _eyebrow.copyWith(
-                    color: hasBackground
-                        ? AppColors.fgOnClay.withValues(alpha: 0.68)
-                        : AppColors.fg3,
-                  ),
+                  style: _eyebrow,
                 ),
                 const SizedBox(height: 2),
                 Text(
                   profile.bio?.isNotEmpty == true
                       ? profile.bio!
                       : l10n.profileNoBioYet,
-                  style: TextStyle(color: bodyColor, fontSize: 14, height: 1.3),
+                  style: const TextStyle(
+                    color: AppColors.fg2,
+                    fontSize: 14,
+                    height: 1.3,
+                  ),
                 ),
+                if (socialLinks.isNotEmpty) ...[
+                  const SizedBox(height: AppSpacing.sm),
+                  Wrap(
+                    spacing: AppSpacing.xs,
+                    runSpacing: AppSpacing.xs,
+                    children: [
+                      for (final link in socialLinks)
+                        TextButton.icon(
+                          onPressed: () => unawaited(
+                            launchUrl(
+                              link.uri,
+                              mode: LaunchMode.externalApplication,
+                            ),
+                          ),
+                          icon: Icon(link.icon, size: 16),
+                          label: Text(link.label),
+                          style: TextButton.styleFrom(
+                            foregroundColor: AppColors.accent,
+                            visualDensity: VisualDensity.compact,
+                          ),
+                        ),
+                    ],
+                  ),
+                ],
               ],
             ),
           ),
@@ -558,6 +593,40 @@ class _ProfileHeader extends StatelessWidget {
       ),
     );
   }
+}
+
+List<({String label, IconData icon, Uri uri})> _profileSocialLinks(
+  UserProfile profile,
+) {
+  final links = <({String label, IconData icon, Uri uri})>[];
+  void add(
+    String label,
+    IconData icon,
+    String? value,
+    Set<String> allowedHosts,
+  ) {
+    if (value == null) {
+      return;
+    }
+    final uri = safeExternalUri(value, allowedHosts: allowedHosts);
+    if (uri != null) {
+      links.add((label: label, icon: icon, uri: uri));
+    }
+  }
+
+  add('Facebook', Icons.facebook_rounded, profile.facebookUrl, const {
+    'facebook.com',
+    'www.facebook.com',
+  });
+  add('Instagram', Icons.camera_alt_outlined, profile.instagramUrl, const {
+    'instagram.com',
+    'www.instagram.com',
+  });
+  add('Zalo', Icons.chat_bubble_outline_rounded, profile.zaloUrl, const {
+    'zalo.me',
+    'www.zalo.me',
+  });
+  return links;
 }
 
 class _LevelCard extends StatelessWidget {

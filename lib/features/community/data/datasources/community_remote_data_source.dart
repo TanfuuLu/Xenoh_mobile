@@ -107,19 +107,41 @@ class CommunityRemoteDataSource {
 
   Future<TrainingDayShareDto> loveShare(String shareId) async {
     final res = await _dio.post<Map<String, dynamic>>(
-      '/training-day-shares/$shareId/love',
+      '/training-day-shares/$shareId/kudos',
     );
     return TrainingDayShareDto.fromJson(res.data!);
   }
 
   Future<TrainingDayShareDto> unloveShare(String shareId) async {
     final res = await _dio.delete<Map<String, dynamic>>(
-      '/training-day-shares/$shareId/love',
+      '/training-day-shares/$shareId/kudos',
     );
     return TrainingDayShareDto.fromJson(res.data!);
   }
 
   Future<void> deleteShare(String shareId) async {
     await _dio.delete<void>('/training-day-shares/$shareId');
+  }
+
+  Future<void> reportShare({
+    required String shareId,
+    required String reason,
+    required String details,
+  }) async {
+    await _dio.post<void>(
+      '/training-day-shares/$shareId/reports',
+      data: {'reason': reason, 'details': details},
+    );
+  }
+
+  Future<int> copyShare({
+    required String shareId,
+    required String targetDailyWorkoutId,
+  }) async {
+    final res = await _dio.post<Map<String, dynamic>>(
+      '/training-day-shares/$shareId/copy',
+      data: {'targetDailyWorkoutId': targetDailyWorkoutId},
+    );
+    return (res.data?['exercisesCopied'] as num?)?.toInt() ?? 0;
   }
 }

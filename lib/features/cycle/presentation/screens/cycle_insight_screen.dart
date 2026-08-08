@@ -12,6 +12,7 @@ import '../../../../core/widgets/xn_section.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../profile/presentation/providers/preferences_provider.dart';
 import '../../../profile/presentation/providers/profile_controller.dart';
+import '../../../shared_api/ai_widgets.dart';
 import '../../domain/entities/cycle_models.dart';
 import '../providers/cycle_controllers.dart';
 
@@ -48,6 +49,15 @@ class CycleInsightScreen extends ConsumerWidget {
             child: AsyncValueView(
               value: insight,
               onRetry: () => ref.invalidate(cycleInsightProvider),
+              errorBuilder: (error) => Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(AppSpacing.lg),
+                  child: AiErrorView(
+                    error: error,
+                    onRetry: () => ref.invalidate(cycleInsightProvider),
+                  ),
+                ),
+              ),
               data: (data) => ListView(
                 padding: const EdgeInsets.fromLTRB(
                   AppSpacing.lg,

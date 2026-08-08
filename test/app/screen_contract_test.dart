@@ -8,7 +8,11 @@ void main() {
       screensRoot
           .listSync(recursive: true)
           .whereType<File>()
-          .where((file) => file.path.endsWith('_screen.dart'))
+          .where(
+            (file) =>
+                file.path.endsWith('_screen.dart') ||
+                file.path.endsWith('_screens.dart'),
+          )
           .toList()
         ..sort((a, b) => a.path.compareTo(b.path));
 

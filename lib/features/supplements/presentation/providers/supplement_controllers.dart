@@ -101,14 +101,23 @@ class SupplementMutationController extends _$SupplementMutationController {
   );
 
   Future<bool> _run(Future<Object?> Function() action) async {
-    state = const AsyncValue.loading();
-    state = await AsyncValue.guard(action);
-    if (!state.hasError) {
-      ref
-        ..invalidate(supplementRegimensProvider)
-        ..invalidate(supplementDailyProvider)
-        ..invalidate(supplementHistoryProvider);
+    final keepAlive = ref.keepAlive();
+    try {
+      state = const AsyncValue.loading();
+      final result = await AsyncValue.guard(action);
+      final succeeded = !result.hasError;
+      if (!ref.mounted) return succeeded;
+
+      state = result;
+      if (succeeded) {
+        ref
+          ..invalidate(supplementRegimensProvider)
+          ..invalidate(supplementDailyProvider)
+          ..invalidate(supplementHistoryProvider);
+      }
+      return succeeded;
+    } finally {
+      keepAlive.close();
     }
-    return !state.hasError;
   }
 }

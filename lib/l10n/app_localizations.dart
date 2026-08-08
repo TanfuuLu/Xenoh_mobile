@@ -1562,6 +1562,30 @@ abstract class AppLocalizations {
   /// **'Cycle day {day}'**
   String cycleDayLabel(int day);
 
+  /// No description provided for @cycleDayMetricLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cycle day'**
+  String get cycleDayMetricLabel;
+
+  /// No description provided for @cycleUntilPeriodMetricLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Until period'**
+  String get cycleUntilPeriodMetricLabel;
+
+  /// No description provided for @cycleConfidenceMetricLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Confidence'**
+  String get cycleConfidenceMetricLabel;
+
+  /// No description provided for @cycleDaysValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{days} days'**
+  String cycleDaysValue(int days);
+
   /// No description provided for @cycleNextPeriodMissingLabel.
   ///
   /// In en, this message translates to:
@@ -4034,6 +4058,42 @@ abstract class AppLocalizations {
   /// **'How well this plan distributes training across the body.'**
   String get trainingAiBalanceCheckSubtitle;
 
+  /// No description provided for @trainingPlanProgressInsightTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'AI plan progress'**
+  String get trainingPlanProgressInsightTitle;
+
+  /// No description provided for @trainingPlanProgressInsightSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A focused read on this plan\'s trajectory and the best next block.'**
+  String get trainingPlanProgressInsightSubtitle;
+
+  /// No description provided for @trainingAnalyzingProgressMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Analyzing plan progress…'**
+  String get trainingAnalyzingProgressMessage;
+
+  /// No description provided for @trainingWhatsWorkingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s working'**
+  String get trainingWhatsWorkingTitle;
+
+  /// No description provided for @trainingFocusAreasTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Focus areas'**
+  String get trainingFocusAreasTitle;
+
+  /// No description provided for @trainingNextBlockTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Next block'**
+  String get trainingNextBlockTitle;
+
   /// No description provided for @trainingReviewingPlanMessage.
   ///
   /// In en, this message translates to:
@@ -4111,6 +4171,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Avg days/wk'**
   String get trainingAvgDaysPerWeekLabel;
+
+  /// No description provided for @trainingLongestTrainingStreakLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Longest training streak'**
+  String get trainingLongestTrainingStreakLabel;
+
+  /// No description provided for @trainingAvgExercisesPerDayLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg exercises/day'**
+  String get trainingAvgExercisesPerDayLabel;
+
+  /// No description provided for @trainingMovementPatternsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Movement pattern coverage'**
+  String get trainingMovementPatternsTitle;
+
+  /// No description provided for @trainingPatternCoverageStats.
+  ///
+  /// In en, this message translates to:
+  /// **'{exercises} exercises · {sets} sets'**
+  String trainingPatternCoverageStats(String exercises, String sets);
+
+  /// No description provided for @trainingExerciseVarietyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Exercise variety'**
+  String get trainingExerciseVarietyTitle;
+
+  /// No description provided for @trainingUniqueExercisesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Unique exercises'**
+  String get trainingUniqueExercisesLabel;
+
+  /// No description provided for @trainingRepeatedExercisesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Repeated exercises'**
+  String get trainingRepeatedExercisesLabel;
 
   /// No description provided for @trainingWorkloadLabel.
   ///
@@ -4549,6 +4651,48 @@ abstract class AppLocalizations {
   /// **'Set {number}'**
   String trainingSetLabel(int number);
 
+  /// No description provided for @trainingEditSetPlanTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit set target'**
+  String get trainingEditSetPlanTooltip;
+
+  /// No description provided for @trainingEditSetPlanTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit set {number}'**
+  String trainingEditSetPlanTitle(int number);
+
+  /// No description provided for @trainingPlannedRepsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Planned reps'**
+  String get trainingPlannedRepsLabel;
+
+  /// No description provided for @trainingPlannedWeightLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Planned weight'**
+  String get trainingPlannedWeightLabel;
+
+  /// No description provided for @trainingSetRepsRangeError.
+  ///
+  /// In en, this message translates to:
+  /// **'Reps must be between 1 and 1000.'**
+  String get trainingSetRepsRangeError;
+
+  /// No description provided for @trainingSetWeightRangeError.
+  ///
+  /// In en, this message translates to:
+  /// **'Weight must be between 0 and 10000 kg.'**
+  String get trainingSetWeightRangeError;
+
+  /// No description provided for @trainingLastPerformanceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Last time'**
+  String get trainingLastPerformanceLabel;
+
   /// No description provided for @trainingMarkDoneTooltip.
   ///
   /// In en, this message translates to:
@@ -4815,13 +4959,13 @@ abstract class AppLocalizations {
   /// No description provided for @nutritionDayCreateSegment.
   ///
   /// In en, this message translates to:
-  /// **'Day Create'**
+  /// **'One day'**
   String get nutritionDayCreateSegment;
 
   /// No description provided for @nutritionWeeklyCreateSegment.
   ///
   /// In en, this message translates to:
-  /// **'Weekly Create'**
+  /// **'Whole week'**
   String get nutritionWeeklyCreateSegment;
 
   /// No description provided for @nutritionCreateForLabel.
@@ -4901,6 +5045,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Create day'**
   String get nutritionCreateDayCta;
+
+  /// No description provided for @nutritionCreateWeekCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Create week'**
+  String get nutritionCreateWeekCta;
 
   /// No description provided for @nutritionSelectFoodTitle.
   ///
@@ -5301,14 +5451,20 @@ abstract class AppLocalizations {
   /// No description provided for @insightsHeaderTitle.
   ///
   /// In en, this message translates to:
-  /// **'AI training analysis'**
+  /// **'AI coach review'**
   String get insightsHeaderTitle;
 
   /// No description provided for @insightsHeaderSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Pro-gated analysis, coach tips, cached results, and quota states.'**
+  /// **'Training signals, body trends, and the next decisions from your latest data.'**
   String get insightsHeaderSubtitle;
+
+  /// No description provided for @insightsTrainingDecisionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Training assessment and decisions'**
+  String get insightsTrainingDecisionLabel;
 
   /// No description provided for @insightsCoachTipTitle.
   ///
@@ -5381,6 +5537,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'COACH SUGGESTIONS'**
   String get insightsCoachSuggestionsLabel;
+
+  /// No description provided for @insightsEvidenceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Evidence'**
+  String get insightsEvidenceLabel;
+
+  /// No description provided for @insightsWhyItMattersLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Why it matters'**
+  String get insightsWhyItMattersLabel;
+
+  /// No description provided for @insightsNextActionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Next action'**
+  String get insightsNextActionLabel;
+
+  /// No description provided for @insightsDataSummaryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Data summary'**
+  String get insightsDataSummaryLabel;
+
+  /// No description provided for @insightsGoalFitLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal fit'**
+  String get insightsGoalFitLabel;
+
+  /// No description provided for @insightsDeloadLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Deload decision'**
+  String get insightsDeloadLabel;
+
+  /// No description provided for @insightsLoadProgressionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Load progression'**
+  String get insightsLoadProgressionLabel;
+
+  /// No description provided for @insightsRpeGuidanceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'RPE guidance'**
+  String get insightsRpeGuidanceLabel;
+
+  /// No description provided for @insightsVolumeGuidanceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Volume guidance'**
+  String get insightsVolumeGuidanceLabel;
+
+  /// No description provided for @insightsPrioritiesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Priorities'**
+  String get insightsPrioritiesLabel;
 
   /// No description provided for @insightsLastAnalyzedAtLabel.
   ///
@@ -5548,6 +5764,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You\'ve used your AI quota for now. Try again later.'**
   String get aiCoachChatQuotaReachedMessage;
+
+  /// No description provided for @aiCoachChatConversationsTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Conversations'**
+  String get aiCoachChatConversationsTooltip;
+
+  /// No description provided for @aiCoachChatNewConversationTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'New conversation'**
+  String get aiCoachChatNewConversationTooltip;
+
+  /// No description provided for @aiCoachChatConversationsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Conversations'**
+  String get aiCoachChatConversationsTitle;
+
+  /// No description provided for @aiCoachChatUntitledConversation.
+  ///
+  /// In en, this message translates to:
+  /// **'New conversation'**
+  String get aiCoachChatUntitledConversation;
+
+  /// No description provided for @aiCoachChatMessageCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} messages'**
+  String aiCoachChatMessageCount(String count);
 
   /// No description provided for @powerliftingAnalysisTitle.
   ///
@@ -5954,7 +6200,7 @@ abstract class AppLocalizations {
   /// No description provided for @coachCurrentTrainingBlockFallback.
   ///
   /// In en, this message translates to:
-  /// **'Current training block'**
+  /// **'Current plan'**
   String get coachCurrentTrainingBlockFallback;
 
   /// No description provided for @coachClientPlanProgressLabel.
@@ -5966,7 +6212,7 @@ abstract class AppLocalizations {
   /// No description provided for @coachNoPlanCreatedMessage.
   ///
   /// In en, this message translates to:
-  /// **'No plan created for this client yet.'**
+  /// **'No current plan for this client.'**
   String get coachNoPlanCreatedMessage;
 
   /// No description provided for @coachClientDetailTitle.
@@ -6058,6 +6304,222 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Nutrition'**
   String get coachNutritionTitle;
+
+  /// No description provided for @coachClientNutritionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Client nutrition'**
+  String get coachClientNutritionTitle;
+
+  /// No description provided for @coachNutritionSelectedIntakeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily intake'**
+  String get coachNutritionSelectedIntakeTitle;
+
+  /// No description provided for @coachNutritionHistoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'7-day history'**
+  String get coachNutritionHistoryTitle;
+
+  /// No description provided for @coachNutritionNoLogMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'No nutrition intake was recorded for this date.'**
+  String get coachNutritionNoLogMessage;
+
+  /// No description provided for @coachNutritionNoHistoryMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'No nutrition history is available for this period.'**
+  String get coachNutritionNoHistoryMessage;
+
+  /// No description provided for @coachNutritionReadOnlyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Nutrition intake is read-only for coaches. The client records their own daily totals.'**
+  String get coachNutritionReadOnlyMessage;
+
+  /// No description provided for @nutritionInsightTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Nutrition insight'**
+  String get nutritionInsightTitle;
+
+  /// No description provided for @nutritionInsightSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A practical read of the last 14 days against the current calorie and macro targets.'**
+  String get nutritionInsightSubtitle;
+
+  /// No description provided for @nutritionInsightLast14Days.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 14 days'**
+  String get nutritionInsightLast14Days;
+
+  /// No description provided for @nutritionInsightLockedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Advanced nutrition analysis'**
+  String get nutritionInsightLockedTitle;
+
+  /// No description provided for @nutritionInsightLockedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade to Pro and record enough nutrition data to unlock trends and recommendations.'**
+  String get nutritionInsightLockedMessage;
+
+  /// No description provided for @nutritionInsightInsufficientMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'There is not enough recorded intake yet. Keep logging daily calories and macros to build a useful insight.'**
+  String get nutritionInsightInsufficientMessage;
+
+  /// No description provided for @nutritionInsightWeightGap.
+  ///
+  /// In en, this message translates to:
+  /// **'Weight gap'**
+  String get nutritionInsightWeightGap;
+
+  /// No description provided for @nutritionInsightCalorieConsistency.
+  ///
+  /// In en, this message translates to:
+  /// **'Calorie consistency'**
+  String get nutritionInsightCalorieConsistency;
+
+  /// No description provided for @nutritionInsightMacroBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Macro balance'**
+  String get nutritionInsightMacroBalance;
+
+  /// No description provided for @nutritionInsightNextMove.
+  ///
+  /// In en, this message translates to:
+  /// **'Next moves'**
+  String get nutritionInsightNextMove;
+
+  /// No description provided for @nutritionInsightAverageMacros.
+  ///
+  /// In en, this message translates to:
+  /// **'Average daily macros'**
+  String get nutritionInsightAverageMacros;
+
+  /// No description provided for @nutritionInsightStrategies.
+  ///
+  /// In en, this message translates to:
+  /// **'Macro strategies'**
+  String get nutritionInsightStrategies;
+
+  /// No description provided for @nutritionInsightRecommended.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended'**
+  String get nutritionInsightRecommended;
+
+  /// No description provided for @nutritionInsightMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'Not available'**
+  String get nutritionInsightMissing;
+
+  /// No description provided for @nutritionInsightCaloriesHoldTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Hold calories steady'**
+  String get nutritionInsightCaloriesHoldTitle;
+
+  /// No description provided for @nutritionInsightCaloriesHoldBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Average intake is within 150 kcal of target. Keep the same target and improve consistency.'**
+  String get nutritionInsightCaloriesHoldBody;
+
+  /// No description provided for @nutritionInsightCaloriesReduceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reduce average intake'**
+  String get nutritionInsightCaloriesReduceTitle;
+
+  /// No description provided for @nutritionInsightCaloriesReduceBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Average intake is above target. Tighten portions gradually instead of making a large cut.'**
+  String get nutritionInsightCaloriesReduceBody;
+
+  /// No description provided for @nutritionInsightCaloriesAddTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add calories gradually'**
+  String get nutritionInsightCaloriesAddTitle;
+
+  /// No description provided for @nutritionInsightCaloriesAddBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Average intake is below target. Add a repeatable meal or snack to close the gap.'**
+  String get nutritionInsightCaloriesAddBody;
+
+  /// No description provided for @nutritionInsightCaloriesSetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Set a calorie target'**
+  String get nutritionInsightCaloriesSetTitle;
+
+  /// No description provided for @nutritionInsightCaloriesSetBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete the nutrition profile so intake can be compared with a daily target.'**
+  String get nutritionInsightCaloriesSetBody;
+
+  /// No description provided for @nutritionInsightProteinTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Prioritize protein'**
+  String get nutritionInsightProteinTitle;
+
+  /// No description provided for @nutritionInsightProteinBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Average protein is below 90% of target. Build each main meal around a protein source.'**
+  String get nutritionInsightProteinBody;
+
+  /// No description provided for @nutritionInsightTimingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep macro timing consistent'**
+  String get nutritionInsightTimingTitle;
+
+  /// No description provided for @nutritionInsightTimingBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Protein is on track. Distribute macros around training and recovery needs.'**
+  String get nutritionInsightTimingBody;
+
+  /// No description provided for @nutritionInsightTargetWeightTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Set a target weight'**
+  String get nutritionInsightTargetWeightTitle;
+
+  /// No description provided for @nutritionInsightTargetWeightBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a target weight to connect nutrition decisions to the intended direction.'**
+  String get nutritionInsightTargetWeightBody;
+
+  /// No description provided for @nutritionInsightWeightDirectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow the weight direction'**
+  String get nutritionInsightWeightDirectionTitle;
+
+  /// No description provided for @nutritionInsightWeightDirectionBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Use the weight gap and weekly trend to decide whether calories should change.'**
+  String get nutritionInsightWeightDirectionBody;
 
   /// No description provided for @coachCaloriesLabel.
   ///
@@ -6161,6 +6623,12 @@ abstract class AppLocalizations {
   /// **'{count} entries'**
   String coachEntriesChip(int count);
 
+  /// No description provided for @coachAverageChangeChip.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg {value}'**
+  String coachAverageChangeChip(String value);
+
   /// No description provided for @coachLast90DaysChip.
   ///
   /// In en, this message translates to:
@@ -6184,6 +6652,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No additional AI insight sections returned.'**
   String get coachNoAdditionalAiInsightMessage;
+
+  /// No description provided for @coachSuggestedMessageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggested message to client'**
+  String get coachSuggestedMessageTitle;
 
   /// No description provided for @coachCachedLabel.
   ///
@@ -6509,6 +6983,174 @@ abstract class AppLocalizations {
   /// **'{months, plural, =1{1 month} other{{months} months}}'**
   String subscriptionMonthsLabel(int months);
 
+  /// No description provided for @subscriptionChoosePlanTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose your plan'**
+  String get subscriptionChoosePlanTitle;
+
+  /// No description provided for @subscriptionChoosePlanSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Prepaid fixed terms. Plans do not renew automatically.'**
+  String get subscriptionChoosePlanSubtitle;
+
+  /// No description provided for @subscriptionCatalogEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No subscription offers are available right now.'**
+  String get subscriptionCatalogEmpty;
+
+  /// No description provided for @subscriptionUnlimitedClients.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlimited coaching clients'**
+  String get subscriptionUnlimitedClients;
+
+  /// No description provided for @subscriptionPromotionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Promotion code'**
+  String get subscriptionPromotionLabel;
+
+  /// No description provided for @subscriptionPromotionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter code'**
+  String get subscriptionPromotionHint;
+
+  /// No description provided for @subscriptionApplyPromotion.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply'**
+  String get subscriptionApplyPromotion;
+
+  /// No description provided for @subscriptionPromotionApplied.
+  ///
+  /// In en, this message translates to:
+  /// **'Code {code} applied. New total: {amount}'**
+  String subscriptionPromotionApplied(String code, String amount);
+
+  /// No description provided for @subscriptionPromotionInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'This promotion code is not valid.'**
+  String get subscriptionPromotionInvalid;
+
+  /// No description provided for @subscriptionAcceptTerms.
+  ///
+  /// In en, this message translates to:
+  /// **'I agree to the Terms of Service and Refund Policy.'**
+  String get subscriptionAcceptTerms;
+
+  /// No description provided for @subscriptionViewTerms.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of Service'**
+  String get subscriptionViewTerms;
+
+  /// No description provided for @subscriptionViewRefundPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Refund Policy'**
+  String get subscriptionViewRefundPolicy;
+
+  /// No description provided for @subscriptionCreateOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'Create payment order'**
+  String get subscriptionCreateOrder;
+
+  /// No description provided for @subscriptionPaymentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank transfer payment'**
+  String get subscriptionPaymentTitle;
+
+  /// No description provided for @subscriptionPaymentInstruction.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer the exact amount using the details below before the order expires.'**
+  String get subscriptionPaymentInstruction;
+
+  /// No description provided for @subscriptionPaymentBank.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank'**
+  String get subscriptionPaymentBank;
+
+  /// No description provided for @subscriptionPaymentAccountNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Account number'**
+  String get subscriptionPaymentAccountNumber;
+
+  /// No description provided for @subscriptionPaymentAccountName.
+  ///
+  /// In en, this message translates to:
+  /// **'Account name'**
+  String get subscriptionPaymentAccountName;
+
+  /// No description provided for @subscriptionPaymentAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get subscriptionPaymentAmount;
+
+  /// No description provided for @subscriptionPaymentContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer content'**
+  String get subscriptionPaymentContent;
+
+  /// No description provided for @subscriptionPaymentExpires.
+  ///
+  /// In en, this message translates to:
+  /// **'Order expires'**
+  String get subscriptionPaymentExpires;
+
+  /// No description provided for @subscriptionPaymentCopy.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy'**
+  String get subscriptionPaymentCopy;
+
+  /// No description provided for @subscriptionPaymentCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Copied to clipboard.'**
+  String get subscriptionPaymentCopied;
+
+  /// No description provided for @subscriptionPaymentClose.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get subscriptionPaymentClose;
+
+  /// No description provided for @coachClientTodayWorkoutTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Client\'s workout today'**
+  String get coachClientTodayWorkoutTitle;
+
+  /// No description provided for @coachClientNoActivePlanMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This client has no active training plan.'**
+  String get coachClientNoActivePlanMessage;
+
+  /// No description provided for @coachClientNoWorkoutDayMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'No workout day was found for today in this plan.'**
+  String get coachClientNoWorkoutDayMessage;
+
+  /// No description provided for @coachClientWorkoutCoachViewLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Coach view: workout completion remains with the client.'**
+  String get coachClientWorkoutCoachViewLabel;
+
   /// No description provided for @marketingCreateAccountCta.
   ///
   /// In en, this message translates to:
@@ -6724,6 +7366,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Suspend user'**
   String get adminSuspendUserTooltip;
+
+  /// No description provided for @adminAccountStatusLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Account status'**
+  String get adminAccountStatusLabel;
+
+  /// No description provided for @adminAccountActiveLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get adminAccountActiveLabel;
+
+  /// No description provided for @adminSuspendConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Suspend this user?'**
+  String get adminSuspendConfirmTitle;
+
+  /// No description provided for @adminSuspendConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'The user will be signed out and unable to sign in until an administrator restores the account.'**
+  String get adminSuspendConfirmMessage;
+
+  /// No description provided for @adminUnsuspendConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore this user?'**
+  String get adminUnsuspendConfirmTitle;
+
+  /// No description provided for @adminUnsuspendConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'The user will be allowed to sign in again.'**
+  String get adminUnsuspendConfirmMessage;
+
+  /// No description provided for @adminSuspensionUpdatedSnackbar.
+  ///
+  /// In en, this message translates to:
+  /// **'Account status updated.'**
+  String get adminSuspensionUpdatedSnackbar;
 
   /// No description provided for @adminPlanAnalyticsTitle.
   ///
@@ -7552,6 +8236,1614 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Delete account'**
   String get accountDeletionConfirmLabel;
+
+  /// No description provided for @accountDeletionVerifyingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirming deletion'**
+  String get accountDeletionVerifyingTitle;
+
+  /// No description provided for @accountDeletionVerifyingBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Please wait while we verify your request.'**
+  String get accountDeletionVerifyingBody;
+
+  /// No description provided for @accountDeletionCompleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Account deletion completed'**
+  String get accountDeletionCompleteTitle;
+
+  /// No description provided for @accountDeletionCompleteBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Xenoh account has been permanently deleted and you have been signed out.'**
+  String get accountDeletionCompleteBody;
+
+  /// No description provided for @accountDeletionFailedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'This deletion link is invalid or expired'**
+  String get accountDeletionFailedTitle;
+
+  /// No description provided for @accountDeletionFailedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Request a new account deletion email to continue.'**
+  String get accountDeletionFailedBody;
+
+  /// No description provided for @accountDeletionBackLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Return to account deletion'**
+  String get accountDeletionBackLabel;
+
+  /// No description provided for @notificationsUnavailableTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Destination unavailable'**
+  String get notificationsUnavailableTitle;
+
+  /// No description provided for @notificationsUnavailableMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This notification is safe to read here, but its full mobile feature is not available yet.'**
+  String get notificationsUnavailableMessage;
+
+  /// No description provided for @nutritionHistoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Nutrition history'**
+  String get nutritionHistoryTitle;
+
+  /// No description provided for @nutritionHistoryAverage.
+  ///
+  /// In en, this message translates to:
+  /// **'Average daily intake'**
+  String get nutritionHistoryAverage;
+
+  /// No description provided for @nutritionHistoryEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No nutrition logs in this date range.'**
+  String get nutritionHistoryEmpty;
+
+  /// No description provided for @progressVolumeHistoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Training volume'**
+  String get progressVolumeHistoryTitle;
+
+  /// No description provided for @progressVolumeHistorySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed monthly volume in {unit}'**
+  String progressVolumeHistorySubtitle(String unit);
+
+  /// No description provided for @progressVolumeMonths.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} months'**
+  String progressVolumeMonths(int count);
+
+  /// No description provided for @progressVolumeHistoryEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No completed training volume yet.'**
+  String get progressVolumeHistoryEmpty;
+
+  /// No description provided for @progressVolumeHistoryLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load volume history.'**
+  String get progressVolumeHistoryLoadError;
+
+  /// No description provided for @communityReportShareTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Report training share'**
+  String get communityReportShareTitle;
+
+  /// No description provided for @communityReportShareHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Explain what is wrong with this share'**
+  String get communityReportShareHint;
+
+  /// No description provided for @communityReportSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Report'**
+  String get communityReportSubmit;
+
+  /// No description provided for @communityReportShareSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Share reported for review.'**
+  String get communityReportShareSuccess;
+
+  /// No description provided for @communityCopyWorkoutTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy workout structure'**
+  String get communityCopyWorkoutTitle;
+
+  /// No description provided for @communityCopyWorkoutWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a target day. Existing exercises will be replaced; performance and private metrics are never copied.'**
+  String get communityCopyWorkoutWarning;
+
+  /// No description provided for @communitySelectPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Select plan'**
+  String get communitySelectPlan;
+
+  /// No description provided for @communitySelectWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Select week'**
+  String get communitySelectWeek;
+
+  /// No description provided for @communitySelectDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Select training day'**
+  String get communitySelectDay;
+
+  /// No description provided for @communityCopyWorkoutAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy workout'**
+  String get communityCopyWorkoutAction;
+
+  /// No description provided for @communityCopyWorkoutSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} exercises copied.'**
+  String communityCopyWorkoutSuccess(int count);
+
+  /// No description provided for @communityShareActionsTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Share actions'**
+  String get communityShareActionsTooltip;
+
+  /// No description provided for @challengesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Fitness challenges'**
+  String get challengesTitle;
+
+  /// No description provided for @challengesCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'Create challenge'**
+  String get challengesCreate;
+
+  /// No description provided for @challengesMineTab.
+  ///
+  /// In en, this message translates to:
+  /// **'My challenges'**
+  String get challengesMineTab;
+
+  /// No description provided for @challengesDiscoverTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Discover'**
+  String get challengesDiscoverTab;
+
+  /// No description provided for @challengesEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No challenges here yet.'**
+  String get challengesEmpty;
+
+  /// No description provided for @challengeDetailTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Challenge details'**
+  String get challengeDetailTitle;
+
+  /// No description provided for @challengeAccept.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
+  String get challengeAccept;
+
+  /// No description provided for @challengeDecline.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline'**
+  String get challengeDecline;
+
+  /// No description provided for @challengeJoin.
+  ///
+  /// In en, this message translates to:
+  /// **'Join challenge'**
+  String get challengeJoin;
+
+  /// No description provided for @challengeLeave.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave'**
+  String get challengeLeave;
+
+  /// No description provided for @challengeCheckIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Check in'**
+  String get challengeCheckIn;
+
+  /// No description provided for @challengeUndoCheckIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo check-in'**
+  String get challengeUndoCheckIn;
+
+  /// No description provided for @challengeInvite.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite members'**
+  String get challengeInvite;
+
+  /// No description provided for @challengeCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel challenge'**
+  String get challengeCancel;
+
+  /// No description provided for @challengeCancelConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel this challenge for all members?'**
+  String get challengeCancelConfirm;
+
+  /// No description provided for @challengeMembers.
+  ///
+  /// In en, this message translates to:
+  /// **'Members'**
+  String get challengeMembers;
+
+  /// No description provided for @challengeStandings.
+  ///
+  /// In en, this message translates to:
+  /// **'Standings'**
+  String get challengeStandings;
+
+  /// No description provided for @challengeBaselineRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Baseline required'**
+  String get challengeBaselineRequired;
+
+  /// No description provided for @challengeCreator.
+  ///
+  /// In en, this message translates to:
+  /// **'Creator'**
+  String get challengeCreator;
+
+  /// No description provided for @challengeRemoveMember.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove member'**
+  String get challengeRemoveMember;
+
+  /// No description provided for @challengeTitleLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Title'**
+  String get challengeTitleLabel;
+
+  /// No description provided for @challengeTitleValidation.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter 3 to 80 characters.'**
+  String get challengeTitleValidation;
+
+  /// No description provided for @challengeDescriptionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get challengeDescriptionLabel;
+
+  /// No description provided for @challengeMetricLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Metric'**
+  String get challengeMetricLabel;
+
+  /// No description provided for @challengeAccessLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Access'**
+  String get challengeAccessLabel;
+
+  /// No description provided for @challengeWeeklyTarget.
+  ///
+  /// In en, this message translates to:
+  /// **'Sessions per week'**
+  String get challengeWeeklyTarget;
+
+  /// No description provided for @challengeCheckInPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Check-in prompt'**
+  String get challengeCheckInPrompt;
+
+  /// No description provided for @challengeCapacity.
+  ///
+  /// In en, this message translates to:
+  /// **'Participant capacity'**
+  String get challengeCapacity;
+
+  /// No description provided for @challengeStartDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Start date'**
+  String get challengeStartDate;
+
+  /// No description provided for @challengeEndDate.
+  ///
+  /// In en, this message translates to:
+  /// **'End date'**
+  String get challengeEndDate;
+
+  /// No description provided for @competitionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Competitions'**
+  String get competitionsTitle;
+
+  /// No description provided for @organizerHomeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Organizer home'**
+  String get organizerHomeTitle;
+
+  /// No description provided for @organizerHomeEyebrow.
+  ///
+  /// In en, this message translates to:
+  /// **'EVENT OPERATIONS'**
+  String get organizerHomeEyebrow;
+
+  /// No description provided for @organizerHomeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Run registrations, payments, and results from one clear workspace.'**
+  String get organizerHomeSubtitle;
+
+  /// No description provided for @organizerEventsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Events'**
+  String get organizerEventsTitle;
+
+  /// No description provided for @organizerRosterTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Roster'**
+  String get organizerRosterTitle;
+
+  /// No description provided for @organizerResultsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Results'**
+  String get organizerResultsTitle;
+
+  /// No description provided for @organizerProfileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Organizer profile'**
+  String get organizerProfileTitle;
+
+  /// No description provided for @organizerApplicationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Become an organizer'**
+  String get organizerApplicationTitle;
+
+  /// No description provided for @organizerApplicationSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit your organization details and evidence for review.'**
+  String get organizerApplicationSubtitle;
+
+  /// No description provided for @organizerPendingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Application under review'**
+  String get organizerPendingTitle;
+
+  /// No description provided for @organizerPendingSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Event tools unlock after an administrator approves your application.'**
+  String get organizerPendingSubtitle;
+
+  /// No description provided for @organizerRejectedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Application needs changes'**
+  String get organizerRejectedTitle;
+
+  /// No description provided for @organizerSuspendedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Organizer access suspended'**
+  String get organizerSuspendedTitle;
+
+  /// No description provided for @organizerNoEvents.
+  ///
+  /// In en, this message translates to:
+  /// **'No managed events yet.'**
+  String get organizerNoEvents;
+
+  /// No description provided for @organizerCreateEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Create event'**
+  String get organizerCreateEvent;
+
+  /// No description provided for @organizerReviewApplications.
+  ///
+  /// In en, this message translates to:
+  /// **'Review applications'**
+  String get organizerReviewApplications;
+
+  /// No description provided for @organizerApprovedAthletes.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved athletes'**
+  String get organizerApprovedAthletes;
+
+  /// No description provided for @organizerCapacityFilled.
+  ///
+  /// In en, this message translates to:
+  /// **'Capacity filled'**
+  String get organizerCapacityFilled;
+
+  /// No description provided for @organizerNextEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Next event'**
+  String get organizerNextEvent;
+
+  /// No description provided for @organizerSelectEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Select event'**
+  String get organizerSelectEvent;
+
+  /// No description provided for @organizerNoRegistrations.
+  ///
+  /// In en, this message translates to:
+  /// **'No registrations match this event.'**
+  String get organizerNoRegistrations;
+
+  /// No description provided for @organizerApprove.
+  ///
+  /// In en, this message translates to:
+  /// **'Approve'**
+  String get organizerApprove;
+
+  /// No description provided for @organizerReject.
+  ///
+  /// In en, this message translates to:
+  /// **'Reject'**
+  String get organizerReject;
+
+  /// No description provided for @organizerPublish.
+  ///
+  /// In en, this message translates to:
+  /// **'Publish event'**
+  String get organizerPublish;
+
+  /// No description provided for @organizerPublishResults.
+  ///
+  /// In en, this message translates to:
+  /// **'Publish results'**
+  String get organizerPublishResults;
+
+  /// No description provided for @organizerPublished.
+  ///
+  /// In en, this message translates to:
+  /// **'Published'**
+  String get organizerPublished;
+
+  /// No description provided for @organizerDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft'**
+  String get organizerDraft;
+
+  /// No description provided for @organizerRegistrationStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Registration'**
+  String get organizerRegistrationStatus;
+
+  /// No description provided for @organizerPaymentStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment'**
+  String get organizerPaymentStatus;
+
+  /// No description provided for @organizerResultsReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Results ready'**
+  String get organizerResultsReady;
+
+  /// No description provided for @organizerResultsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Select an approved athlete to record discipline-specific results.'**
+  String get organizerResultsHint;
+
+  /// No description provided for @organizerOrganizationName.
+  ///
+  /// In en, this message translates to:
+  /// **'Organization name'**
+  String get organizerOrganizationName;
+
+  /// No description provided for @organizerContactEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact email'**
+  String get organizerContactEmail;
+
+  /// No description provided for @organizerContactPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact phone'**
+  String get organizerContactPhone;
+
+  /// No description provided for @organizerAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Venue address'**
+  String get organizerAddress;
+
+  /// No description provided for @organizerWebsite.
+  ///
+  /// In en, this message translates to:
+  /// **'Website'**
+  String get organizerWebsite;
+
+  /// No description provided for @organizerNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes'**
+  String get organizerNotes;
+
+  /// No description provided for @organizerEvidence.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification document'**
+  String get organizerEvidence;
+
+  /// No description provided for @organizerSubmitApplication.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit for review'**
+  String get organizerSubmitApplication;
+
+  /// No description provided for @organizerApplicationSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Organizer application submitted.'**
+  String get organizerApplicationSaved;
+
+  /// No description provided for @organizerEvidenceRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a verification document first.'**
+  String get organizerEvidenceRequired;
+
+  /// No description provided for @organizerEventPublished.
+  ///
+  /// In en, this message translates to:
+  /// **'Event published.'**
+  String get organizerEventPublished;
+
+  /// No description provided for @organizerDecisionSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Registration decision saved.'**
+  String get organizerDecisionSaved;
+
+  /// No description provided for @organizerResultsPublished.
+  ///
+  /// In en, this message translates to:
+  /// **'Results published.'**
+  String get organizerResultsPublished;
+
+  /// No description provided for @organizerBodyweightKg.
+  ///
+  /// In en, this message translates to:
+  /// **'Bodyweight (kg)'**
+  String get organizerBodyweightKg;
+
+  /// No description provided for @organizerBestSquatKg.
+  ///
+  /// In en, this message translates to:
+  /// **'Best squat (kg)'**
+  String get organizerBestSquatKg;
+
+  /// No description provided for @organizerBestBenchKg.
+  ///
+  /// In en, this message translates to:
+  /// **'Best bench (kg)'**
+  String get organizerBestBenchKg;
+
+  /// No description provided for @organizerBestDeadliftKg.
+  ///
+  /// In en, this message translates to:
+  /// **'Best deadlift (kg)'**
+  String get organizerBestDeadliftKg;
+
+  /// No description provided for @organizerPlace.
+  ///
+  /// In en, this message translates to:
+  /// **'Place'**
+  String get organizerPlace;
+
+  /// No description provided for @organizerResultState.
+  ///
+  /// In en, this message translates to:
+  /// **'Result state'**
+  String get organizerResultState;
+
+  /// No description provided for @organizerResultNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Result notes'**
+  String get organizerResultNotes;
+
+  /// No description provided for @organizerSaveResult.
+  ///
+  /// In en, this message translates to:
+  /// **'Save result'**
+  String get organizerSaveResult;
+
+  /// No description provided for @organizerResultSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Result saved.'**
+  String get organizerResultSaved;
+
+  /// No description provided for @organizerManageEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage event'**
+  String get organizerManageEvent;
+
+  /// No description provided for @organizerOverviewTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Overview'**
+  String get organizerOverviewTab;
+
+  /// No description provided for @organizerCategoriesTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Categories'**
+  String get organizerCategoriesTab;
+
+  /// No description provided for @organizerStaffTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Staff'**
+  String get organizerStaffTab;
+
+  /// No description provided for @organizerEditEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit event'**
+  String get organizerEditEvent;
+
+  /// No description provided for @organizerCloseRegistration.
+  ///
+  /// In en, this message translates to:
+  /// **'Close registration'**
+  String get organizerCloseRegistration;
+
+  /// No description provided for @organizerCancelEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel event'**
+  String get organizerCancelEvent;
+
+  /// No description provided for @organizerDeleteEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete event'**
+  String get organizerDeleteEvent;
+
+  /// No description provided for @organizerCancelReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancellation reason'**
+  String get organizerCancelReason;
+
+  /// No description provided for @organizerEventUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Event updated.'**
+  String get organizerEventUpdated;
+
+  /// No description provided for @organizerEventDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Event deleted.'**
+  String get organizerEventDeleted;
+
+  /// No description provided for @organizerRegistrationClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'Registration closed.'**
+  String get organizerRegistrationClosed;
+
+  /// No description provided for @organizerEventCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Event cancelled.'**
+  String get organizerEventCancelled;
+
+  /// No description provided for @organizerCategoryName.
+  ///
+  /// In en, this message translates to:
+  /// **'Category name'**
+  String get organizerCategoryName;
+
+  /// No description provided for @organizerCategoryCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Category code'**
+  String get organizerCategoryCode;
+
+  /// No description provided for @organizerCapacity.
+  ///
+  /// In en, this message translates to:
+  /// **'Capacity'**
+  String get organizerCapacity;
+
+  /// No description provided for @organizerAddCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Add category'**
+  String get organizerAddCategory;
+
+  /// No description provided for @organizerNoCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'No categories configured yet.'**
+  String get organizerNoCategories;
+
+  /// No description provided for @organizerCategoryAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Category added.'**
+  String get organizerCategoryAdded;
+
+  /// No description provided for @organizerCategoryRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'Category removed.'**
+  String get organizerCategoryRemoved;
+
+  /// No description provided for @organizerStaffUserId.
+  ///
+  /// In en, this message translates to:
+  /// **'Staff user ID'**
+  String get organizerStaffUserId;
+
+  /// No description provided for @organizerStaffPermissions.
+  ///
+  /// In en, this message translates to:
+  /// **'Staff permissions'**
+  String get organizerStaffPermissions;
+
+  /// No description provided for @organizerSaveStaff.
+  ///
+  /// In en, this message translates to:
+  /// **'Save staff access'**
+  String get organizerSaveStaff;
+
+  /// No description provided for @organizerRemoveStaff.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove staff access'**
+  String get organizerRemoveStaff;
+
+  /// No description provided for @organizerStaffSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Staff access saved.'**
+  String get organizerStaffSaved;
+
+  /// No description provided for @organizerStaffRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'Staff access removed.'**
+  String get organizerStaffRemoved;
+
+  /// No description provided for @organizerEventDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Event description'**
+  String get organizerEventDescription;
+
+  /// No description provided for @organizerVenueName.
+  ///
+  /// In en, this message translates to:
+  /// **'Venue name'**
+  String get organizerVenueName;
+
+  /// No description provided for @organizerStartsAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Starts at'**
+  String get organizerStartsAt;
+
+  /// No description provided for @organizerEndsAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Ends at'**
+  String get organizerEndsAt;
+
+  /// No description provided for @organizerRegistrationOpens.
+  ///
+  /// In en, this message translates to:
+  /// **'Registration opens'**
+  String get organizerRegistrationOpens;
+
+  /// No description provided for @organizerRegistrationCloses.
+  ///
+  /// In en, this message translates to:
+  /// **'Registration closes'**
+  String get organizerRegistrationCloses;
+
+  /// No description provided for @organizerRegistrationFee.
+  ///
+  /// In en, this message translates to:
+  /// **'Registration fee'**
+  String get organizerRegistrationFee;
+
+  /// No description provided for @organizerCurrency.
+  ///
+  /// In en, this message translates to:
+  /// **'Currency'**
+  String get organizerCurrency;
+
+  /// No description provided for @organizerBankName.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank name'**
+  String get organizerBankName;
+
+  /// No description provided for @organizerBankAccountNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank account number'**
+  String get organizerBankAccountNumber;
+
+  /// No description provided for @organizerBankAccountName.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank account name'**
+  String get organizerBankAccountName;
+
+  /// No description provided for @organizerTransferInstructions.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer instructions'**
+  String get organizerTransferInstructions;
+
+  /// No description provided for @organizerAddGuest.
+  ///
+  /// In en, this message translates to:
+  /// **'Add guest athlete'**
+  String get organizerAddGuest;
+
+  /// No description provided for @organizerAthleteName.
+  ///
+  /// In en, this message translates to:
+  /// **'Athlete name'**
+  String get organizerAthleteName;
+
+  /// No description provided for @organizerGuestAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Guest athlete added.'**
+  String get organizerGuestAdded;
+
+  /// No description provided for @organizerPromoteWaitlist.
+  ///
+  /// In en, this message translates to:
+  /// **'Promote from waitlist'**
+  String get organizerPromoteWaitlist;
+
+  /// No description provided for @organizerWaitlistPromoted.
+  ///
+  /// In en, this message translates to:
+  /// **'Athlete promoted.'**
+  String get organizerWaitlistPromoted;
+
+  /// No description provided for @organizerOpenReceipt.
+  ///
+  /// In en, this message translates to:
+  /// **'Open receipt'**
+  String get organizerOpenReceipt;
+
+  /// No description provided for @organizerApproveReceipt.
+  ///
+  /// In en, this message translates to:
+  /// **'Approve receipt'**
+  String get organizerApproveReceipt;
+
+  /// No description provided for @organizerRejectReceipt.
+  ///
+  /// In en, this message translates to:
+  /// **'Reject receipt'**
+  String get organizerRejectReceipt;
+
+  /// No description provided for @organizerReceiptReviewed.
+  ///
+  /// In en, this message translates to:
+  /// **'Receipt review saved.'**
+  String get organizerReceiptReviewed;
+
+  /// No description provided for @organizerLinkGuest.
+  ///
+  /// In en, this message translates to:
+  /// **'Link Xenoh account'**
+  String get organizerLinkGuest;
+
+  /// No description provided for @organizerUserId.
+  ///
+  /// In en, this message translates to:
+  /// **'Xenoh user ID'**
+  String get organizerUserId;
+
+  /// No description provided for @organizerGuestLinked.
+  ///
+  /// In en, this message translates to:
+  /// **'Guest registration linked.'**
+  String get organizerGuestLinked;
+
+  /// No description provided for @adminOrganizerVerification.
+  ///
+  /// In en, this message translates to:
+  /// **'Organizer verification'**
+  String get adminOrganizerVerification;
+
+  /// No description provided for @adminOrganizerVerificationSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Review evidence and record an auditable access decision.'**
+  String get adminOrganizerVerificationSubtitle;
+
+  /// No description provided for @adminOrganizerQueueEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No organizer applications in this state.'**
+  String get adminOrganizerQueueEmpty;
+
+  /// No description provided for @adminOrganizerEvidenceOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Review evidence'**
+  String get adminOrganizerEvidenceOpen;
+
+  /// No description provided for @adminOrganizerDecisionReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Audit reason'**
+  String get adminOrganizerDecisionReason;
+
+  /// No description provided for @adminOrganizerDecisionReasonHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Explain the evidence and policy basis for this decision.'**
+  String get adminOrganizerDecisionReasonHint;
+
+  /// No description provided for @adminOrganizerDecisionSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Organizer decision saved.'**
+  String get adminOrganizerDecisionSaved;
+
+  /// No description provided for @adminOrganizerSaveDecision.
+  ///
+  /// In en, this message translates to:
+  /// **'Save decision'**
+  String get adminOrganizerSaveDecision;
+
+  /// No description provided for @adminPaymentsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Payments & subscriptions'**
+  String get adminPaymentsTitle;
+
+  /// No description provided for @adminPaymentsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Monitor revenue, orders, and subscription access.'**
+  String get adminPaymentsSubtitle;
+
+  /// No description provided for @adminTotalRevenueLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Total revenue'**
+  String get adminTotalRevenueLabel;
+
+  /// No description provided for @adminPendingAmountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending amount'**
+  String get adminPendingAmountLabel;
+
+  /// No description provided for @adminCompletedOrdersLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed orders'**
+  String get adminCompletedOrdersLabel;
+
+  /// No description provided for @adminPaymentOrdersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment orders'**
+  String get adminPaymentOrdersTitle;
+
+  /// No description provided for @adminNoPaymentsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No payment orders'**
+  String get adminNoPaymentsTitle;
+
+  /// No description provided for @adminNoPaymentsMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'No payment orders match the current filters.'**
+  String get adminNoPaymentsMessage;
+
+  /// No description provided for @adminSubscriptionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscriptions'**
+  String get adminSubscriptionsTitle;
+
+  /// No description provided for @adminNoSubscriptionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No subscriptions'**
+  String get adminNoSubscriptionsTitle;
+
+  /// No description provided for @adminNoSubscriptionsMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'No subscriptions match the current filters.'**
+  String get adminNoSubscriptionsMessage;
+
+  /// No description provided for @adminAdjustSubscription.
+  ///
+  /// In en, this message translates to:
+  /// **'Adjust subscription'**
+  String get adminAdjustSubscription;
+
+  /// No description provided for @adminDurationMonths.
+  ///
+  /// In en, this message translates to:
+  /// **'Duration (months)'**
+  String get adminDurationMonths;
+
+  /// No description provided for @adminAuditReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Audit reason'**
+  String get adminAuditReason;
+
+  /// No description provided for @adminPromotionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Promotions'**
+  String get adminPromotionsTitle;
+
+  /// No description provided for @adminPromotionsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create and manage discount codes used at checkout.'**
+  String get adminPromotionsSubtitle;
+
+  /// No description provided for @adminNewPromotion.
+  ///
+  /// In en, this message translates to:
+  /// **'New code'**
+  String get adminNewPromotion;
+
+  /// No description provided for @adminEditPromotion.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit promotion'**
+  String get adminEditPromotion;
+
+  /// No description provided for @adminNoPromotionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No promotion codes'**
+  String get adminNoPromotionsTitle;
+
+  /// No description provided for @adminNoPromotionsMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Create the first checkout promotion code.'**
+  String get adminNoPromotionsMessage;
+
+  /// No description provided for @adminPromotionCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Promotion code'**
+  String get adminPromotionCode;
+
+  /// No description provided for @adminDiscountValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Discount value'**
+  String get adminDiscountValue;
+
+  /// No description provided for @adminAppliesToTier.
+  ///
+  /// In en, this message translates to:
+  /// **'Applies to tier'**
+  String get adminAppliesToTier;
+
+  /// No description provided for @adminMaxRedemptions.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum redemptions'**
+  String get adminMaxRedemptions;
+
+  /// No description provided for @commonActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get commonActive;
+
+  /// No description provided for @commonInactive.
+  ///
+  /// In en, this message translates to:
+  /// **'Inactive'**
+  String get commonInactive;
+
+  /// No description provided for @commonDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get commonDescription;
+
+  /// No description provided for @appShellNavHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get appShellNavHome;
+
+  /// No description provided for @appShellNavTraining.
+  ///
+  /// In en, this message translates to:
+  /// **'Training'**
+  String get appShellNavTraining;
+
+  /// No description provided for @appShellNavChat.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat'**
+  String get appShellNavChat;
+
+  /// No description provided for @appShellNavEvents.
+  ///
+  /// In en, this message translates to:
+  /// **'Events'**
+  String get appShellNavEvents;
+
+  /// No description provided for @appShellNavRoster.
+  ///
+  /// In en, this message translates to:
+  /// **'Roster'**
+  String get appShellNavRoster;
+
+  /// No description provided for @appShellNavResults.
+  ///
+  /// In en, this message translates to:
+  /// **'Results'**
+  String get appShellNavResults;
+
+  /// No description provided for @appShellNavOverview.
+  ///
+  /// In en, this message translates to:
+  /// **'Overview'**
+  String get appShellNavOverview;
+
+  /// No description provided for @appShellNavUsers.
+  ///
+  /// In en, this message translates to:
+  /// **'Users'**
+  String get appShellNavUsers;
+
+  /// No description provided for @appShellNavModeration.
+  ///
+  /// In en, this message translates to:
+  /// **'Moderation'**
+  String get appShellNavModeration;
+
+  /// No description provided for @appShellNavFinance.
+  ///
+  /// In en, this message translates to:
+  /// **'Finance'**
+  String get appShellNavFinance;
+
+  /// No description provided for @appShellNavMore.
+  ///
+  /// In en, this message translates to:
+  /// **'More'**
+  String get appShellNavMore;
+
+  /// No description provided for @competitionsMine.
+  ///
+  /// In en, this message translates to:
+  /// **'My competitions'**
+  String get competitionsMine;
+
+  /// No description provided for @competitionsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No competitions match this filter.'**
+  String get competitionsEmpty;
+
+  /// No description provided for @competitionsMineEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'You have not entered a competition yet.'**
+  String get competitionsMineEmpty;
+
+  /// No description provided for @competitionDetailTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Competition details'**
+  String get competitionDetailTitle;
+
+  /// No description provided for @competitionApply.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply to compete'**
+  String get competitionApply;
+
+  /// No description provided for @competitionCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'Categories'**
+  String get competitionCategories;
+
+  /// No description provided for @competitionCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get competitionCategory;
+
+  /// No description provided for @competitionChooseCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a category.'**
+  String get competitionChooseCategory;
+
+  /// No description provided for @competitionPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone number'**
+  String get competitionPhone;
+
+  /// No description provided for @competitionPhoneValidation.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter at least 7 characters.'**
+  String get competitionPhoneValidation;
+
+  /// No description provided for @competitionSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit application'**
+  String get competitionSubmit;
+
+  /// No description provided for @competitionSubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Application submitted.'**
+  String get competitionSubmitted;
+
+  /// No description provided for @competitionUploadReceipt.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload receipt'**
+  String get competitionUploadReceipt;
+
+  /// No description provided for @competitionReceiptSubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Receipt submitted for review.'**
+  String get competitionReceiptSubmitted;
+
+  /// No description provided for @competitionWithdraw.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdraw'**
+  String get competitionWithdraw;
+
+  /// No description provided for @competitionWithdrawConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdraw this competition application?'**
+  String get competitionWithdrawConfirm;
+
+  /// No description provided for @competitionWithdrawn.
+  ///
+  /// In en, this message translates to:
+  /// **'Application withdrawn.'**
+  String get competitionWithdrawn;
+
+  /// No description provided for @competitionDisciplinePowerlifting.
+  ///
+  /// In en, this message translates to:
+  /// **'Powerlifting'**
+  String get competitionDisciplinePowerlifting;
+
+  /// No description provided for @competitionDisciplineBodybuilding.
+  ///
+  /// In en, this message translates to:
+  /// **'Bodybuilding'**
+  String get competitionDisciplineBodybuilding;
+
+  /// No description provided for @competitionStatusDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft'**
+  String get competitionStatusDraft;
+
+  /// No description provided for @competitionStatusPublished.
+  ///
+  /// In en, this message translates to:
+  /// **'Published'**
+  String get competitionStatusPublished;
+
+  /// No description provided for @competitionStatusRegistrationClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'Registration closed'**
+  String get competitionStatusRegistrationClosed;
+
+  /// No description provided for @competitionStatusInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'In progress'**
+  String get competitionStatusInProgress;
+
+  /// No description provided for @competitionStatusCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get competitionStatusCompleted;
+
+  /// No description provided for @competitionStatusCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get competitionStatusCancelled;
+
+  /// No description provided for @competitionRegistrationSubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Submitted'**
+  String get competitionRegistrationSubmitted;
+
+  /// No description provided for @competitionRegistrationWaitlisted.
+  ///
+  /// In en, this message translates to:
+  /// **'Waitlisted'**
+  String get competitionRegistrationWaitlisted;
+
+  /// No description provided for @competitionRegistrationApproved.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved'**
+  String get competitionRegistrationApproved;
+
+  /// No description provided for @competitionRegistrationRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected'**
+  String get competitionRegistrationRejected;
+
+  /// No description provided for @competitionRegistrationWithdrawn.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdrawn'**
+  String get competitionRegistrationWithdrawn;
+
+  /// No description provided for @competitionPaymentNotRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Not required'**
+  String get competitionPaymentNotRequired;
+
+  /// No description provided for @competitionPaymentAwaitingReceipt.
+  ///
+  /// In en, this message translates to:
+  /// **'Awaiting receipt'**
+  String get competitionPaymentAwaitingReceipt;
+
+  /// No description provided for @competitionPaymentUnderReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Under review'**
+  String get competitionPaymentUnderReview;
+
+  /// No description provided for @competitionPaymentPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid'**
+  String get competitionPaymentPaid;
+
+  /// No description provided for @competitionPaymentReceiptRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Receipt rejected'**
+  String get competitionPaymentReceiptRejected;
+
+  /// No description provided for @competitionResultFinished.
+  ///
+  /// In en, this message translates to:
+  /// **'Finished'**
+  String get competitionResultFinished;
+
+  /// No description provided for @competitionResultDisqualified.
+  ///
+  /// In en, this message translates to:
+  /// **'Disqualified'**
+  String get competitionResultDisqualified;
+
+  /// No description provided for @competitionResultDidNotFinish.
+  ///
+  /// In en, this message translates to:
+  /// **'Did not finish'**
+  String get competitionResultDidNotFinish;
+
+  /// No description provided for @competitionOrganizerPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get competitionOrganizerPending;
+
+  /// No description provided for @competitionOrganizerApproved.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved'**
+  String get competitionOrganizerApproved;
+
+  /// No description provided for @competitionOrganizerRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected'**
+  String get competitionOrganizerRejected;
+
+  /// No description provided for @competitionOrganizerSuspended.
+  ///
+  /// In en, this message translates to:
+  /// **'Suspended'**
+  String get competitionOrganizerSuspended;
+
+  /// No description provided for @organizerPermissionManageEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage event'**
+  String get organizerPermissionManageEvent;
+
+  /// No description provided for @organizerPermissionManageCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage categories'**
+  String get organizerPermissionManageCategories;
+
+  /// No description provided for @organizerPermissionReviewRegistrations.
+  ///
+  /// In en, this message translates to:
+  /// **'Review registrations'**
+  String get organizerPermissionReviewRegistrations;
+
+  /// No description provided for @organizerPermissionReviewPayments.
+  ///
+  /// In en, this message translates to:
+  /// **'Review payments'**
+  String get organizerPermissionReviewPayments;
+
+  /// No description provided for @organizerPermissionManageResults.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage results'**
+  String get organizerPermissionManageResults;
+
+  /// No description provided for @organizerPermissionManageStaff.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage staff'**
+  String get organizerPermissionManageStaff;
+
+  /// No description provided for @storageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Files'**
+  String get storageTitle;
+
+  /// No description provided for @storageUsed.
+  ///
+  /// In en, this message translates to:
+  /// **'Storage used'**
+  String get storageUsed;
+
+  /// No description provided for @storageUpload.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload document'**
+  String get storageUpload;
+
+  /// No description provided for @storageMaxFileSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum file size: {size}'**
+  String storageMaxFileSize(String size);
+
+  /// No description provided for @storageFileTooLarge.
+  ///
+  /// In en, this message translates to:
+  /// **'This file exceeds the upload or remaining storage limit.'**
+  String get storageFileTooLarge;
+
+  /// No description provided for @storageMyFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'My files'**
+  String get storageMyFiles;
+
+  /// No description provided for @storageEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No files uploaded yet.'**
+  String get storageEmpty;
+
+  /// No description provided for @storageSharedWithMe.
+  ///
+  /// In en, this message translates to:
+  /// **'Shared with me'**
+  String get storageSharedWithMe;
+
+  /// No description provided for @storageDownload.
+  ///
+  /// In en, this message translates to:
+  /// **'Download / open'**
+  String get storageDownload;
+
+  /// No description provided for @storageShare.
+  ///
+  /// In en, this message translates to:
+  /// **'Share with client'**
+  String get storageShare;
+
+  /// No description provided for @storageDeleteConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete {name}?'**
+  String storageDeleteConfirm(String name);
 
   /// No description provided for @commonNotNow.
   ///

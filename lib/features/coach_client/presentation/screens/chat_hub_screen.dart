@@ -11,6 +11,7 @@ import '../../../../core/widgets/xn_section.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../shared_api/api_widgets.dart';
 import '../../../shared_api/xenoh_api.dart';
+import '../providers/chat_unread_controller.dart';
 import 'clients_screen.dart';
 
 final messagesProvider = FutureProvider.autoDispose
@@ -34,6 +35,8 @@ class ChatHubScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final clients = ref.watch(coachClientsProvider);
+    final unreadCounts =
+        ref.watch(chatUnreadControllerProvider).value ?? const {};
     return FeatureScreenFrame(
       title: l10n.coachChatTitle,
       onRefresh: () async => ref.invalidate(coachClientsProvider),
@@ -54,6 +57,12 @@ class ChatHubScreen extends ConsumerWidget {
               for (final rel in value)
                 _ChatClientCard(
                   relationship: rel,
+                  unreadCount:
+                      unreadCounts[textOf(rel, [
+                        'id',
+                        'relationshipId',
+                      ], fallback: '')] ??
+                      0,
                   onTap: () => _openThread(context, ref, rel),
                 ),
             ],
@@ -74,8 +83,8 @@ class ChatHubScreen extends ConsumerWidget {
     final clientName = textOf(relationship, ['clientName', 'fullName', 'name']);
     try {
       await ref
-          .read(xenohApiProvider)
-          .postVoid('/messages/relationships/$relationshipId/read');
+          .read(chatUnreadControllerProvider.notifier)
+          .markRead(relationshipId);
     } catch (_) {
       // Read receipts are non-critical; the thread still opens.
     }
@@ -93,10 +102,15 @@ class ChatHubScreen extends ConsumerWidget {
 }
 
 class _ChatClientCard extends StatelessWidget {
-  const _ChatClientCard({required this.relationship, required this.onTap});
+  const _ChatClientCard({
+    required this.relationship,
+    required this.onTap,
+    required this.unreadCount,
+  });
 
   final JsonMap relationship;
   final VoidCallback onTap;
+  final int unreadCount;
 
   @override
   Widget build(BuildContext context) {
@@ -174,6 +188,10 @@ class _ChatClientCard extends StatelessWidget {
             ),
           ),
           const SizedBox(width: AppSpacing.sm),
+          if (unreadCount > 0) ...[
+            Badge.count(count: unreadCount),
+            const SizedBox(width: AppSpacing.xs),
+          ],
           const Icon(
             Icons.chevron_right_rounded,
             color: AppColors.fg3,

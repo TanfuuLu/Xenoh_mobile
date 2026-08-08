@@ -5,8 +5,12 @@ bool isPublicLocation(String location) =>
     location == '/about' ||
     location == '/privacy' ||
     location == '/account-deletion' ||
+    location == '/account-deletion/verify' ||
     location == '/terms' ||
     location == '/refund-policy' ||
+    location == '/competitions' ||
+    (location.startsWith('/competitions/') &&
+        location != '/competitions/mine') ||
     location.startsWith('/share/pr/') ||
     location == '/forgot-password' ||
     location == '/auth/social-callback';

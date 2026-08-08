@@ -36,4 +36,15 @@ abstract interface class CommunityRepository {
   Future<TrainingDayShare> unloveShare(String shareId);
 
   Future<void> deleteShare(String shareId);
+
+  Future<void> reportShare({
+    required String shareId,
+    required String reason,
+    required String details,
+  });
+
+  Future<int> copyShare({
+    required String shareId,
+    required String targetDailyWorkoutId,
+  });
 }

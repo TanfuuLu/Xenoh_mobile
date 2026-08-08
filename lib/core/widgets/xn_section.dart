@@ -10,8 +10,8 @@ class XnSectionGroup extends StatelessWidget {
   const XnSectionGroup({
     required this.children,
     this.padding = const EdgeInsets.symmetric(
-      horizontal: AppSpacing.xl,
-      vertical: AppSpacing.lg,
+      horizontal: AppSpacing.lg,
+      vertical: AppSpacing.md,
     ),
     super.key,
   });
@@ -24,16 +24,14 @@ class XnSectionGroup extends StatelessWidget {
     return Container(
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-        color: AppColors.bg2.withValues(alpha: 0.94),
-        borderRadius: BorderRadius.circular(AppRadius.xxl),
-        border: Border.all(
-          color: AppColors.surfaceBorderSoft.withValues(alpha: 0.52),
-        ),
+        color: AppColors.bg2,
+        borderRadius: BorderRadius.circular(AppRadius.lg),
+        border: Border.all(color: AppColors.surfaceBorderSoft),
         boxShadow: const [
           BoxShadow(
             color: AppColors.shadow,
-            blurRadius: 16,
-            offset: Offset(0, 6),
+            blurRadius: 2,
+            offset: Offset(0, 1),
           ),
         ],
       ),
@@ -53,8 +51,8 @@ class XnSection extends StatefulWidget {
     required this.child,
     this.onTap,
     this.padding = const EdgeInsets.symmetric(
-      horizontal: AppSpacing.sm,
-      vertical: AppSpacing.xl,
+      horizontal: AppSpacing.xs,
+      vertical: AppSpacing.md,
     ),
     super.key,
   });
@@ -107,7 +105,7 @@ class _XnSectionState extends State<XnSection> {
 class XnSectionList extends StatelessWidget {
   const XnSectionList({
     required this.children,
-    this.padding = const EdgeInsets.all(AppSpacing.lg),
+    this.padding = const EdgeInsets.all(AppSpacing.md),
     super.key,
   });
 

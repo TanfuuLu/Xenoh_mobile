@@ -70,6 +70,16 @@ class RealtimeService {
         .withAutomaticReconnect(retryDelays: [2000, 5000, 10000, 20000])
         .build();
 
+    _registerEvents(connection);
+    return connection;
+  }
+
+  void _registerEvents(HubConnection connection) {
+    connection.onreconnected(
+      ({connectionId}) => _events.add(
+        const RealtimeEvent(name: 'RealtimeReconnected', payload: null),
+      ),
+    );
     for (final eventName in _eventNames) {
       connection.on(eventName, (arguments) {
         _events.add(
@@ -84,7 +94,6 @@ class RealtimeService {
         );
       });
     }
-    return connection;
   }
 }
 

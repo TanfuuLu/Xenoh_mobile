@@ -6,9 +6,16 @@ import '../../../../l10n/app_localizations.dart';
 import '../../../shared_api/api_widgets.dart';
 import '../providers/subscription_controllers.dart';
 import '../providers/tier_labels.dart';
+import '../widgets/subscription_checkout_section.dart';
 
 class SubscriptionStatusScreen extends ConsumerWidget {
   const SubscriptionStatusScreen({super.key});
+
+  static const termsCheckboxKey = SubscriptionCheckoutSection.termsCheckboxKey;
+  static const promotionInputKey =
+      SubscriptionCheckoutSection.promotionInputKey;
+  static const applyPromotionKey =
+      SubscriptionCheckoutSection.applyPromotionKey;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -41,6 +48,8 @@ class SubscriptionStatusScreen extends ConsumerWidget {
           ),
           _ => const LoadingList(),
         },
+        const SizedBox(height: AppSpacing.xl),
+        const SubscriptionCheckoutSection(),
       ],
     );
   }

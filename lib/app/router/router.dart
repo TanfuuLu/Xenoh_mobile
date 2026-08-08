@@ -6,6 +6,8 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../features/admin/presentation/screens/admin_analytics_screen.dart';
 import '../../features/admin/presentation/screens/admin_bug_reports_screen.dart';
 import '../../features/admin/presentation/screens/admin_dashboard_screen.dart';
+import '../../features/admin/presentation/screens/admin_finance_screens.dart';
+import '../../features/admin/presentation/screens/admin_hub_screens.dart';
 import '../../features/admin/presentation/screens/admin_plan_analytics_screen.dart';
 import '../../features/admin/presentation/screens/admin_plans_screen.dart';
 import '../../features/admin/presentation/screens/admin_reports_screen.dart';
@@ -14,14 +16,20 @@ import '../../features/admin/presentation/screens/admin_users_screen.dart';
 import '../../features/auth/presentation/providers/auth_controller.dart';
 import '../../features/auth/presentation/providers/auth_state.dart';
 import '../../features/auth/presentation/screens/account_deletion_request_screen.dart';
+import '../../features/auth/presentation/screens/account_deletion_verify_screen.dart';
 import '../../features/auth/presentation/screens/forgot_password_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/register_screen.dart';
 import '../../features/auth/presentation/screens/social_callback_screen.dart';
 import '../../features/blocks_reports/presentation/screens/blocklist_screen.dart';
 import '../../features/blocks_reports/presentation/screens/report_bug_screen.dart';
+import '../../features/challenges/presentation/challenge_detail_screen.dart';
+import '../../features/challenges/presentation/challenges_screen.dart';
+import '../../features/challenges/presentation/create_challenge_screen.dart';
 import '../../features/coach_client/presentation/screens/chat_hub_screen.dart';
 import '../../features/coach_client/presentation/screens/client_detail_screen.dart';
+import '../../features/coach_client/presentation/screens/client_nutrition_screen.dart';
+import '../../features/coach_client/presentation/screens/client_today_workout_screen.dart';
 import '../../features/coach_client/presentation/screens/clients_screen.dart';
 import '../../features/coach_client/presentation/screens/enter_coach_code_screen.dart';
 import '../../features/coach_client/presentation/screens/key_vault_screen.dart';
@@ -30,6 +38,11 @@ import '../../features/coach_client/presentation/screens/relationship_chat_scree
 import '../../features/community/presentation/screens/community_profile_screen.dart';
 import '../../features/community/presentation/screens/community_screen.dart';
 import '../../features/community/presentation/screens/friends_screen.dart';
+import '../../features/competitions/presentation/competition_detail_screen.dart';
+import '../../features/competitions/presentation/competitions_screen.dart';
+import '../../features/competitions/presentation/my_competitions_screen.dart';
+import '../../features/competitions/presentation/organizer_event_manage_screen.dart';
+import '../../features/competitions/presentation/organizer_screens.dart';
 import '../../features/cycle/presentation/screens/cycle_insight_screen.dart';
 import '../../features/cycle/presentation/screens/cycle_screen.dart';
 import '../../features/dashboard/presentation/screens/dashboard_screen.dart';
@@ -39,6 +52,8 @@ import '../../features/marketing/presentation/screens/about_screen.dart';
 import '../../features/marketing/presentation/screens/landing_screen.dart';
 import '../../features/marketing/presentation/screens/legal_screen.dart';
 import '../../features/notifications/presentation/screens/notification_center_screen.dart';
+import '../../features/nutrition/presentation/screens/nutrition_history_screen.dart';
+import '../../features/nutrition/presentation/screens/nutrition_insight_screen.dart';
 import '../../features/nutrition/presentation/screens/nutrition_screen.dart';
 import '../../features/profile/domain/entities/user_profile.dart';
 import '../../features/profile/presentation/screens/edit_profile_screen.dart';
@@ -49,6 +64,7 @@ import '../../features/progress/presentation/screens/progress_screen.dart';
 import '../../features/settings/presentation/screens/change_password_screen.dart';
 import '../../features/settings/presentation/screens/settings_screen.dart';
 import '../../features/sharing/presentation/screens/pr_share_screen.dart';
+import '../../features/storage/presentation/storage_screen.dart';
 import '../../features/subscription/presentation/screens/subscription_status_screen.dart';
 import '../../features/supplements/presentation/screens/supplements_screen.dart';
 import '../../features/training/presentation/screens/comments_screen.dart';
@@ -119,6 +135,14 @@ GoRouter router(Ref ref) {
       GoRoute(
         path: '/account-deletion',
         builder: (_, _) => _withMenu(const AccountDeletionRequestScreen()),
+      ),
+      GoRoute(
+        path: '/account-deletion/verify',
+        builder: (_, state) => _withMenu(
+          AccountDeletionVerifyScreen(
+            token: state.uri.queryParameters['token'],
+          ),
+        ),
       ),
       GoRoute(
         path: '/terms',
@@ -214,6 +238,25 @@ GoRouter router(Ref ref) {
                 ),
               ),
               GoRoute(
+                path: '/coach/clients/:clientId/today-workout',
+                builder: (_, state) => ClientTodayWorkoutScreen(
+                  clientId: state.pathParameters['clientId']!,
+                  planId: state.uri.queryParameters['planId'] ?? '',
+                ),
+              ),
+              GoRoute(
+                path: '/coach/clients/:clientId/nutrition',
+                builder: (_, state) => ClientNutritionScreen(
+                  clientId: state.pathParameters['clientId']!,
+                ),
+              ),
+              GoRoute(
+                path: '/coach/clients/:clientId/nutrition/insight',
+                builder: (_, state) => NutritionInsightScreen(
+                  clientId: state.pathParameters['clientId'],
+                ),
+              ),
+              GoRoute(
                 path: '/coach/clients/:clientId/supplements',
                 builder: (_, state) => SupplementsScreen(
                   clientId: state.pathParameters['clientId'],
@@ -264,6 +307,53 @@ GoRouter router(Ref ref) {
                 builder: (_, _) => const AdminUsersScreen(),
               ),
               GoRoute(
+                path: '/admin/moderation',
+                builder: (_, _) => const AdminModerationScreen(),
+              ),
+              GoRoute(
+                path: '/admin/organizers',
+                builder: (_, _) => const AdminOrganizerApplicationsScreen(),
+              ),
+              GoRoute(
+                path: '/admin/finance',
+                builder: (_, _) => const AdminFinanceScreen(),
+              ),
+              GoRoute(
+                path: '/admin/payments',
+                builder: (_, _) => const AdminPaymentsScreen(),
+              ),
+              GoRoute(
+                path: '/admin/promotions',
+                builder: (_, _) => const AdminPromotionsScreen(),
+              ),
+              GoRoute(
+                path: '/admin/more',
+                builder: (_, _) => const AdminMoreScreen(),
+              ),
+              GoRoute(
+                path: '/organizer',
+                builder: (_, _) => const OrganizerHomeScreen(),
+              ),
+              GoRoute(
+                path: '/organizer/events',
+                builder: (_, _) => const OrganizerEventsScreen(),
+              ),
+              GoRoute(
+                path: '/organizer/events/:eventId/:slug',
+                builder: (_, state) => OrganizerEventManageScreen(
+                  eventId: state.pathParameters['eventId']!,
+                  slug: state.pathParameters['slug']!,
+                ),
+              ),
+              GoRoute(
+                path: '/organizer/roster',
+                builder: (_, _) => const OrganizerRosterScreen(),
+              ),
+              GoRoute(
+                path: '/organizer/results',
+                builder: (_, _) => const OrganizerResultsScreen(),
+              ),
+              GoRoute(
                 path: '/admin/users/:userId',
                 builder: (_, state) => AdminUserDetailScreen(
                   userId: state.pathParameters['userId']!,
@@ -300,6 +390,12 @@ GoRouter router(Ref ref) {
                 ),
               ),
               GoRoute(
+                path: '/plans/:planId/progress-insight',
+                builder: (_, state) => PlanProgressInsightScreen(
+                  planId: state.pathParameters['planId']!,
+                ),
+              ),
+              GoRoute(
                 path: '/plans/:planId/design-analysis',
                 builder: (_, state) => PlanDesignAnalysisScreen(
                   planId: state.pathParameters['planId']!,
@@ -314,8 +410,11 @@ GoRouter router(Ref ref) {
               ),
               GoRoute(
                 path: '/plans/:planId',
-                builder: (_, state) =>
-                    PlanDetailScreen(planId: state.pathParameters['planId']!),
+                builder: (_, state) => PlanDetailScreen(
+                  planId: state.pathParameters['planId']!,
+                  coachView: state.uri.queryParameters['coachView'] == 'true',
+                  clientId: state.uri.queryParameters['clientId'],
+                ),
               ),
               GoRoute(
                 path: '/weeks/:weekId/comments',
@@ -332,13 +431,19 @@ GoRouter router(Ref ref) {
               ),
               GoRoute(
                 path: '/weeks/:weekId',
-                builder: (_, state) =>
-                    WeekScreen(weekId: state.pathParameters['weekId']!),
+                builder: (_, state) => WeekScreen(
+                  weekId: state.pathParameters['weekId']!,
+                  coachView: state.uri.queryParameters['coachView'] == 'true',
+                  clientId: state.uri.queryParameters['clientId'],
+                ),
               ),
               GoRoute(
                 path: '/days/:dayId',
-                builder: (_, state) =>
-                    DayScreen(dayId: state.pathParameters['dayId']!),
+                builder: (_, state) => DayScreen(
+                  dayId: state.pathParameters['dayId']!,
+                  canComplete: state.uri.queryParameters['coachView'] != 'true',
+                  clientId: state.uri.queryParameters['clientId'],
+                ),
               ),
             ],
           ),
@@ -347,6 +452,14 @@ GoRouter router(Ref ref) {
               GoRoute(
                 path: '/nutrition',
                 builder: (_, _) => const NutritionScreen(),
+              ),
+              GoRoute(
+                path: '/nutrition/insight',
+                builder: (_, _) => const NutritionInsightScreen(),
+              ),
+              GoRoute(
+                path: '/nutrition/history',
+                builder: (_, _) => const NutritionHistoryScreen(),
               ),
               GoRoute(
                 path: '/supplements',
@@ -384,6 +497,10 @@ GoRouter router(Ref ref) {
                 builder: (_, _) => const BlocklistScreen(),
               ),
               GoRoute(
+                path: '/storage',
+                builder: (_, _) => const StorageScreen(),
+              ),
+              GoRoute(
                 path: '/report-bug',
                 builder: (_, _) => const ReportBugScreen(),
               ),
@@ -417,6 +534,20 @@ GoRouter router(Ref ref) {
                 builder: (_, _) => const FriendsScreen(),
               ),
               GoRoute(
+                path: '/community/challenges',
+                builder: (_, _) => const ChallengesScreen(),
+              ),
+              GoRoute(
+                path: '/community/challenges/create',
+                builder: (_, _) => const CreateChallengeScreen(),
+              ),
+              GoRoute(
+                path: '/community/challenges/:challengeId',
+                builder: (_, state) => ChallengeDetailScreen(
+                  challengeId: state.pathParameters['challengeId']!,
+                ),
+              ),
+              GoRoute(
                 path: '/community/users/:userId',
                 builder: (_, state) => CommunityProfileScreen(
                   userId: state.pathParameters['userId']!,
@@ -447,6 +578,20 @@ GoRouter router(Ref ref) {
             userId: state.pathParameters['userId']!,
             exerciseTemplateId: state.pathParameters['exerciseTemplateId']!,
           ),
+        ),
+      ),
+      GoRoute(
+        path: '/competitions',
+        builder: (_, _) => const CompetitionsScreen(),
+      ),
+      GoRoute(
+        path: '/competitions/mine',
+        builder: (_, _) => const MyCompetitionsScreen(),
+      ),
+      GoRoute(
+        path: '/competitions/:slug',
+        builder: (_, state) => CompetitionDetailScreen(
+          slug: state.pathParameters['slug']!,
         ),
       ),
     ],

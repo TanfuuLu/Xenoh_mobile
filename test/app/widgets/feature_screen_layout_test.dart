@@ -3,6 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:xenoh_mobile/app/home_shell.dart';
 import 'package:xenoh_mobile/app/theme/app_theme.dart';
+import 'package:xenoh_mobile/core/widgets/xn_card.dart';
 import 'package:xenoh_mobile/features/shared_api/api_widgets.dart';
 import 'package:xenoh_mobile/l10n/app_localizations.dart';
 
@@ -59,8 +60,30 @@ void main() {
 
           expect(tester.takeException(), isNull);
           expect(find.byType(HomeShellMenuButton), findsOneWidget);
+          expect(find.byType(XnCard), findsNothing);
         },
       );
     }
   }
+
+  testWidgets('feature frame can opt into a wide desktop canvas', (
+    tester,
+  ) async {
+    tester.view
+      ..physicalSize = const Size(1400, 900)
+      ..devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: FeatureScreenFrame(
+          title: 'Client information',
+          contentMaxWidth: 1120,
+          children: [SizedBox()],
+        ),
+      ),
+    );
+
+    expect(tester.getSize(find.byType(ListView)).width, 1120);
+  });
 }

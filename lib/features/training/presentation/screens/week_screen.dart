@@ -17,6 +17,7 @@ import '../../../../l10n/app_localizations.dart';
 import '../../../profile/presentation/providers/profile_controller.dart';
 import '../../domain/entities/daily_workout.dart';
 import '../../domain/entities/exercise.dart';
+import '../navigation/training_route_scope.dart';
 import '../providers/cycle_day_markers_provider.dart';
 import '../providers/days_controller.dart';
 import '../providers/exercises_controller.dart';
@@ -52,9 +53,16 @@ Color? _cycleMarkerAccent(String? marker) => switch (marker) {
 };
 
 class WeekScreen extends ConsumerWidget {
-  const WeekScreen({required this.weekId, super.key});
+  const WeekScreen({
+    required this.weekId,
+    this.coachView = false,
+    this.clientId,
+    super.key,
+  });
 
   final String weekId;
+  final bool coachView;
+  final String? clientId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -154,6 +162,8 @@ class WeekScreen extends ConsumerWidget {
                             days: items,
                             weekId: weekId,
                             cycleMarkers: markers,
+                            coachView: coachView,
+                            clientId: clientId,
                           ),
                         ),
                       ),
@@ -180,12 +190,16 @@ class _DayTimelineList extends StatefulWidget {
     required this.days,
     required this.weekId,
     required this.initialIndex,
+    required this.coachView,
+    this.clientId,
     this.cycleMarkers,
   });
 
   final List<DailyWorkout> days;
   final String weekId;
   final int initialIndex;
+  final bool coachView;
+  final String? clientId;
   final Map<String, String>? cycleMarkers;
 
   @override
@@ -246,7 +260,13 @@ class _DayTimelineListState extends State<_DayTimelineList> {
                       weekId: widget.weekId,
                       isLast: true,
                       expanded: true,
-                      onTap: () => context.push('/days/${day.id}'),
+                      onTap: () => context.push(
+                        trainingRouteLocation(
+                          '/days/${day.id}',
+                          coachView: widget.coachView,
+                          clientId: widget.clientId,
+                        ),
+                      ),
                       cycleMarker:
                           widget.cycleMarkers?[DateOnly.format(day.date)],
                     ),

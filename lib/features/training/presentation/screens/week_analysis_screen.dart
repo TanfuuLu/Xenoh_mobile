@@ -185,8 +185,6 @@ class _MobileSummaryCard extends StatelessWidget {
     final volumePercent = (analysis.volumeRate * 100).round();
     return XnCard(
       padding: const EdgeInsets.all(AppSpacing.xl),
-      color: AppColors.bgInverse,
-      border: Border.all(color: AppColors.accent.withValues(alpha: 0.16)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -197,12 +195,12 @@ class _MobileSummaryCard extends StatelessWidget {
                 width: 46,
                 height: 46,
                 decoration: BoxDecoration(
-                  color: AppColors.clay200.withValues(alpha: 0.24),
+                  color: AppColors.accentSoft,
                   borderRadius: BorderRadius.circular(AppRadius.lg),
                 ),
                 child: const Icon(
                   Icons.insights_rounded,
-                  color: AppColors.clay100,
+                  color: AppColors.accent,
                   size: 25,
                 ),
               ),
@@ -217,8 +215,8 @@ class _MobileSummaryCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: AppTypography.display(
                         21,
-                        color: AppColors.fgOnClay,
-                        weight: FontWeight.w500,
+                        color: AppColors.fg1,
+                        weight: FontWeight.w700,
                         letterSpacing: 0,
                         height: 1.08,
                       ),
@@ -227,7 +225,7 @@ class _MobileSummaryCard extends StatelessWidget {
                     Text(
                       dateRange,
                       style: const TextStyle(
-                        color: AppColors.clay200,
+                        color: AppColors.fg3,
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                       ),
@@ -266,14 +264,14 @@ class _MobileSummaryCard extends StatelessWidget {
             label: _t(context, 'Week completion', 'Tiến độ tuần'),
             value: completionRate,
             trailing: '$completionPercent%',
-            color: AppColors.clay200,
+            color: AppColors.accent,
           ),
           const SizedBox(height: AppSpacing.md),
           _SummaryProgressLine(
             label: _t(context, 'Volume vs plan', 'KL so kế hoạch'),
             value: volumeRate,
             trailing: '$volumePercent%',
-            color: AppColors.sage100,
+            color: AppColors.sage500,
           ),
         ],
       ),
@@ -295,9 +293,9 @@ class _SummaryScore extends StatelessWidget {
         vertical: AppSpacing.sm,
       ),
       decoration: BoxDecoration(
-        color: AppColors.clay100.withValues(alpha: 0.16),
+        color: AppColors.accentSoft,
         borderRadius: BorderRadius.circular(AppRadius.md),
-        border: Border.all(color: AppColors.clay200.withValues(alpha: 0.2)),
+        border: Border.all(color: AppColors.surfaceBorderSoft),
       ),
       child: Column(
         children: [
@@ -305,14 +303,14 @@ class _SummaryScore extends StatelessWidget {
             value,
             style: AppTypography.mono(
               16,
-              color: AppColors.fgOnClay,
+              color: AppColors.fg1,
               weight: FontWeight.w500,
             ),
           ),
           Text(
             label,
             style: const TextStyle(
-              color: AppColors.clay200,
+              color: AppColors.fg3,
               fontSize: 10,
               fontWeight: FontWeight.w500,
             ),
@@ -340,7 +338,7 @@ class _HeroNumber extends StatelessWidget {
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: const TextStyle(
-            color: AppColors.clay200,
+            color: AppColors.fg3,
             fontSize: 11,
             fontWeight: FontWeight.w500,
           ),
@@ -357,7 +355,7 @@ class _HeroNumber extends StatelessWidget {
                   value,
                   style: AppTypography.mono(
                     25,
-                    color: AppColors.fgOnClay,
+                    color: AppColors.fg1,
                     weight: FontWeight.w500,
                   ),
                 ),
@@ -370,7 +368,7 @@ class _HeroNumber extends StatelessWidget {
                 child: Text(
                   suffix!,
                   style: const TextStyle(
-                    color: AppColors.clay200,
+                    color: AppColors.fg3,
                     fontSize: 10,
                     fontWeight: FontWeight.w500,
                   ),
@@ -408,7 +406,7 @@ class _SummaryProgressLine extends StatelessWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(
-              color: AppColors.clay200,
+              color: AppColors.fg3,
               fontSize: 11,
               fontWeight: FontWeight.w500,
             ),
@@ -420,7 +418,7 @@ class _SummaryProgressLine extends StatelessWidget {
             child: XnAnimatedLinearProgress(
               value: value.clamp(0.0, 1.0),
               minHeight: 8,
-              backgroundColor: AppColors.clay100.withValues(alpha: 0.18),
+              backgroundColor: AppColors.bg3,
               color: color,
             ),
           ),
@@ -433,7 +431,7 @@ class _SummaryProgressLine extends StatelessWidget {
             textAlign: TextAlign.right,
             style: AppTypography.mono(
               11,
-              color: AppColors.fgOnClay,
+              color: AppColors.fg1,
               weight: FontWeight.w500,
             ),
           ),

@@ -4,6 +4,7 @@ import '../../../../core/error/api_exception.dart';
 import '../../domain/entities/bodyweight_log.dart';
 import '../../domain/entities/training_activity.dart';
 import '../../domain/entities/user_profile.dart';
+import '../../domain/entities/volume_history_point.dart';
 import '../../domain/repositories/profile_repository.dart';
 import '../datasources/profile_remote_data_source.dart';
 
@@ -30,6 +31,18 @@ class ProfileRepositoryImpl implements ProfileRepository {
     try {
       final dto = await _remote.getTrainingActivity(year: year, month: month);
       return dto.toEntity();
+    } on DioException catch (e) {
+      throw failureFromDio(e);
+    }
+  }
+
+  @override
+  Future<List<VolumeHistoryPoint>> getVolumeHistory({
+    required int months,
+  }) async {
+    try {
+      final points = await _remote.getVolumeHistory(months: months);
+      return points.map((point) => point.toEntity()).toList();
     } on DioException catch (e) {
       throw failureFromDio(e);
     }

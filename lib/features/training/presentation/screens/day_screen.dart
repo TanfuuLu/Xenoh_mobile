@@ -13,6 +13,8 @@ import '../../../../core/widgets/rpe_picker_sheet.dart';
 import '../../../../core/widgets/xn_card.dart';
 import '../../../../core/widgets/xn_chip.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../auth/presentation/providers/auth_controller.dart';
+import '../../../auth/presentation/providers/auth_state.dart';
 import '../../../dashboard/presentation/providers/dashboard_controller.dart';
 import '../../../profile/presentation/providers/preferences_provider.dart';
 import '../../domain/entities/exercise.dart';
@@ -22,9 +24,16 @@ import '../widgets/exercise_form_sheet.dart';
 import '../widgets/exercise_template_picker_sheet.dart';
 
 class DayScreen extends ConsumerStatefulWidget {
-  const DayScreen({required this.dayId, super.key});
+  const DayScreen({
+    required this.dayId,
+    this.canComplete = true,
+    this.clientId,
+    super.key,
+  });
 
   final String dayId;
+  final bool canComplete;
+  final String? clientId;
 
   @override
   ConsumerState<DayScreen> createState() => _DayScreenState();
@@ -34,13 +43,21 @@ class _DayScreenState extends ConsumerState<DayScreen> {
   bool _reorderMode = false;
   bool _resultDialogShown = false;
 
+  bool get _canComplete {
+    final isCoach =
+        ref.read(authControllerProvider).sessionOrNull?.user.isCoach ?? false;
+    return widget.canComplete && !isCoach;
+  }
+
   Future<void> _addExercise() async {
     final l10n = AppLocalizations.of(context);
     final template = await showModalBottomSheet<ExerciseTemplate>(
       context: context,
       isScrollControlled: true,
       backgroundColor: AppColors.bgPage,
-      builder: (_) => const ExerciseTemplatePickerSheet(),
+      builder: (_) => ExerciseTemplatePickerSheet(
+        clientId: _canComplete ? null : widget.clientId,
+      ),
     );
     if (template == null || !mounted) return;
 
@@ -77,69 +94,75 @@ class _DayScreenState extends ConsumerState<DayScreen> {
     final exercisesProvider = exercisesControllerProvider(widget.dayId);
     final exercises = ref.watch(exercisesProvider);
     final unit = ref.watch(weightUnitProvider);
+    final isCoach =
+        ref.watch(authControllerProvider).sessionOrNull?.user.isCoach ?? false;
+    final canComplete = widget.canComplete && !isCoach;
     final currentStreak = ref
         .watch(dashboardControllerProvider)
         .value
         ?.profile
         .currentStreak;
 
-    ref.listen<AsyncValue<List<Exercise>>>(exercisesProvider, (
-      previous,
-      next,
-    ) {
-      final nextItems = next.value;
-      if (nextItems == null || nextItems.isEmpty) {
-        return;
-      }
-      if (!_dayResolved(nextItems)) {
-        _resultDialogShown = false;
-        return;
-      }
-      if (_resultDialogShown) return;
-      _resultDialogShown = true;
+    if (canComplete) {
+      ref.listen<AsyncValue<List<Exercise>>>(exercisesProvider, (
+        previous,
+        next,
+      ) {
+        final nextItems = next.value;
+        if (nextItems == null || nextItems.isEmpty) {
+          return;
+        }
+        if (!_dayResolved(nextItems)) {
+          _resultDialogShown = false;
+          return;
+        }
+        if (_resultDialogShown) return;
+        _resultDialogShown = true;
 
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
-        if (!mounted || !context.mounted) return;
-        var dialogStreak = ref
-            .read(dashboardControllerProvider)
-            .value
-            ?.profile
-            .currentStreak;
-        await ref.read(dashboardControllerProvider.notifier).refresh();
-        dialogStreak =
-            ref
-                .read(dashboardControllerProvider)
-                .value
-                ?.profile
-                .currentStreak ??
-            dialogStreak;
-        if (!mounted || !context.mounted) return;
-        unawaited(
-          showDialog<void>(
-            context: context,
-            builder: (_) => _TrainingResultDialog(
-              result: _TrainingResult.fromExercises(nextItems),
-              unit: ref.read(weightUnitProvider),
-              currentStreak: dialogStreak ?? 0,
+        WidgetsBinding.instance.addPostFrameCallback((_) async {
+          if (!mounted || !context.mounted) return;
+          var dialogStreak = ref
+              .read(dashboardControllerProvider)
+              .value
+              ?.profile
+              .currentStreak;
+          await ref.read(dashboardControllerProvider.notifier).refresh();
+          dialogStreak =
+              ref
+                  .read(dashboardControllerProvider)
+                  .value
+                  ?.profile
+                  .currentStreak ??
+              dialogStreak;
+          if (!mounted || !context.mounted) return;
+          unawaited(
+            showDialog<void>(
+              context: context,
+              builder: (_) => _TrainingResultDialog(
+                result: _TrainingResult.fromExercises(nextItems),
+                unit: ref.read(weightUnitProvider),
+                currentStreak: dialogStreak ?? 0,
+              ),
             ),
-          ),
-        );
+          );
+        });
       });
-    });
+    }
 
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.trainingWorkoutTitle),
         actions: [
-          IconButton(
-            tooltip: l10n.trainingCompleteAllTooltip,
-            icon: const Icon(Icons.done_all_rounded),
-            onPressed: () => unawaited(
-              ref
-                  .read(exercisesControllerProvider(widget.dayId).notifier)
-                  .completeDay(),
+          if (canComplete)
+            IconButton(
+              tooltip: l10n.trainingCompleteAllTooltip,
+              icon: const Icon(Icons.done_all_rounded),
+              onPressed: () => unawaited(
+                ref
+                    .read(exercisesControllerProvider(widget.dayId).notifier)
+                    .completeDay(),
+              ),
             ),
-          ),
           if ((exercises.value?.length ?? 0) > 1)
             IconButton(
               tooltip: _reorderMode
@@ -152,6 +175,23 @@ class _DayScreenState extends ConsumerState<DayScreen> {
             ),
         ],
       ),
+      bottomNavigationBar: canComplete
+          ? null
+          : SafeArea(
+              child: Container(
+                padding: const EdgeInsets.all(AppSpacing.sm),
+                color: AppColors.accentSoft,
+                child: Text(
+                  l10n.coachClientWorkoutCoachViewLabel,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    color: AppColors.fg2,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
       body: RefreshIndicator(
         color: AppColors.accent,
         onRefresh: () => ref
@@ -208,6 +248,7 @@ class _DayScreenState extends ConsumerState<DayScreen> {
                       exercise: items[i],
                       dayId: widget.dayId,
                       reorderMode: true,
+                      canComplete: canComplete,
                     ),
                   ),
                 )
@@ -241,6 +282,7 @@ class _DayScreenState extends ConsumerState<DayScreen> {
                     return _ExerciseTile(
                       exercise: items[exerciseIndex],
                       dayId: widget.dayId,
+                      canComplete: canComplete,
                     );
                   },
                 ),
@@ -700,11 +742,13 @@ class _ExerciseTile extends ConsumerWidget {
     required this.exercise,
     required this.dayId,
     this.reorderMode = false,
+    this.canComplete = true,
   });
 
   final Exercise exercise;
   final String dayId;
   final bool reorderMode;
+  final bool canComplete;
 
   Future<void> _delete(BuildContext context, WidgetRef ref) async {
     final l10n = AppLocalizations.of(context);
@@ -898,7 +942,7 @@ class _ExerciseTile extends ConsumerWidget {
                     onEdit: exerciseDisabled
                         ? null
                         : () => _editExercise(context, ref),
-                    onSkip: () => _skip(context, ref),
+                    onSkip: canComplete ? () => _skip(context, ref) : null,
                     onDelete: exerciseDisabled
                         ? null
                         : () => _delete(context, ref),
@@ -915,7 +959,14 @@ class _ExerciseTile extends ConsumerWidget {
                   : () => _editExercise(context, ref),
             ),
           ],
-          if (controlsEnabled) ...[
+          if (exercise.exerciseKind.toLowerCase() != 'cardio') ...[
+            const SizedBox(height: AppSpacing.sm),
+            _LastPerformanceLine(
+              exerciseTemplateId: exercise.exerciseTemplateId,
+              dailyWorkoutId: dayId,
+            ),
+          ],
+          if (controlsEnabled && canComplete) ...[
             const SizedBox(height: AppSpacing.sm),
             if (exercise.isCompleted &&
                 exercise.startedAtUtc == null &&
@@ -939,7 +990,8 @@ class _ExerciseTile extends ConsumerWidget {
               set: set,
               exercise: exercise,
               dayId: dayId,
-              enabled: controlsEnabled,
+              canEditPlan: controlsEnabled,
+              canComplete: controlsEnabled && canComplete,
               isLast: index == exercise.sets.length - 1,
             ),
         ],
@@ -1012,6 +1064,61 @@ class _ExerciseNoteLine extends StatelessWidget {
   }
 }
 
+class _LastPerformanceLine extends ConsumerWidget {
+  const _LastPerformanceLine({
+    required this.exerciseTemplateId,
+    required this.dailyWorkoutId,
+  });
+
+  final String exerciseTemplateId;
+  final String dailyWorkoutId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final value = ref.watch(
+      lastExercisePerformanceProvider((
+        exerciseTemplateId: exerciseTemplateId,
+        dailyWorkoutId: dailyWorkoutId,
+      )),
+    );
+    final performance = value.value;
+    if (performance == null || !performance.hasPerformance) {
+      return const SizedBox.shrink();
+    }
+    final unit = ref.watch(weightUnitProvider);
+    final details = <String>[
+      '${formatWeight(unit.fromKg(performance.lastActualWeight!))} ${unit.suffix}',
+      if (performance.lastActualReps != null) '× ${performance.lastActualReps}',
+      if (performance.lastRpe != null)
+        'RPE ${_formatAverageRpe(performance.lastRpe)}',
+      if (performance.workoutDate != null)
+        _formatPerformanceDate(performance.workoutDate!),
+    ];
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.md,
+        vertical: AppSpacing.sm,
+      ),
+      decoration: BoxDecoration(
+        color: AppColors.bg3.withValues(alpha: 0.36),
+        borderRadius: BorderRadius.circular(AppRadius.md),
+      ),
+      child: Text(
+        '${AppLocalizations.of(context).trainingLastPerformanceLabel}: '
+        '${details.join(' · ')}',
+        style: const TextStyle(color: AppColors.fg3, fontSize: 12),
+      ),
+    );
+  }
+}
+
+String _formatPerformanceDate(DateTime date) => [
+  date.day.toString().padLeft(2, '0'),
+  date.month.toString().padLeft(2, '0'),
+  date.year.toString(),
+].join('/');
+
 class _ExerciseActionButtons extends StatelessWidget {
   const _ExerciseActionButtons({
     required this.disabled,
@@ -1022,7 +1129,7 @@ class _ExerciseActionButtons extends StatelessWidget {
 
   final bool disabled;
   final VoidCallback? onEdit;
-  final VoidCallback onSkip;
+  final VoidCallback? onSkip;
   final VoidCallback? onDelete;
 
   @override
@@ -1483,7 +1590,8 @@ class _SetLogRow extends ConsumerStatefulWidget {
     required this.set,
     required this.exercise,
     required this.dayId,
-    required this.enabled,
+    required this.canEditPlan,
+    required this.canComplete,
     required this.isLast,
     super.key,
   });
@@ -1491,7 +1599,8 @@ class _SetLogRow extends ConsumerStatefulWidget {
   final ExerciseSet set;
   final Exercise exercise;
   final String dayId;
-  final bool enabled;
+  final bool canEditPlan;
+  final bool canComplete;
   final bool isLast;
 
   @override
@@ -1502,6 +1611,7 @@ class _SetLogRowState extends ConsumerState<_SetLogRow> {
   late final TextEditingController _reps;
   late final TextEditingController _weight;
   late final TextEditingController _rpe;
+  late WeightUnit _displayWeightUnit;
   bool _saving = false;
 
   static const _inputGap = AppSpacing.md;
@@ -1534,17 +1644,34 @@ class _SetLogRowState extends ConsumerState<_SetLogRow> {
 
   void _syncControllers() {
     final set = widget.set;
+    _displayWeightUnit = ref.read(weightUnitProvider);
     _reps.text = (set.actualReps ?? set.plannedReps).toString();
     final weightKg =
         set.actualWeight ?? set.plannedWeight ?? widget.exercise.plannedWeight;
     _weight.text = weightKg == null
         ? ''
-        : formatWeight(ref.read(weightUnitProvider).fromKg(weightKg));
+        : formatWeight(_displayWeightUnit.fromKg(weightKg));
     _rpe.text = set.rpe?.toString() ?? '';
   }
 
+  void _updateDisplayedWeightUnit(WeightUnit unit) {
+    if (unit == _displayWeightUnit) return;
+
+    final enteredWeight = double.tryParse(_weight.text.trim());
+    if (enteredWeight != null) {
+      final converted = formatWeight(
+        unit.fromKg(_displayWeightUnit.toKg(enteredWeight)),
+      );
+      _weight.value = TextEditingValue(
+        text: converted,
+        selection: TextSelection.collapsed(offset: converted.length),
+      );
+    }
+    _displayWeightUnit = unit;
+  }
+
   Future<void> _complete() async {
-    if (widget.set.isCompleted || !widget.enabled || _saving) return;
+    if (widget.set.isCompleted || !widget.canComplete || _saving) return;
 
     final rpe = await showModalBottomSheet<double>(
       context: context,
@@ -1581,12 +1708,35 @@ class _SetLogRowState extends ConsumerState<_SetLogRow> {
     }
   }
 
+  Future<void> _editPlan() async {
+    if (widget.set.isCompleted || !widget.canEditPlan || _saving) return;
+    final unit = ref.read(weightUnitProvider);
+    await showDialog<void>(
+      context: context,
+      builder: (_) => _SetPlanDialog(
+        set: widget.set,
+        unit: unit,
+        onSave: (plannedReps, plannedWeight) async {
+          await ref
+              .read(exercisesControllerProvider(widget.dayId).notifier)
+              .updateSetPlan(
+                widget.set.id,
+                plannedReps: plannedReps,
+                plannedWeight: plannedWeight,
+              );
+        },
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final set = widget.set;
     final done = set.isCompleted;
-    final controlsEnabled = widget.enabled && !done && !_saving;
+    final completionEnabled = widget.canComplete && !done && !_saving;
+    final planEditingEnabled = widget.canEditPlan && !done && !_saving;
     final unit = ref.watch(weightUnitProvider);
+    _updateDisplayedWeightUnit(unit);
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -1613,14 +1763,18 @@ class _SetLogRowState extends ConsumerState<_SetLogRow> {
           child: Row(
             children: [
               SizedBox(
-                width: compact ? 44 : 52,
-                child: _SetLabel(setNumber: set.setNumber, done: done),
+                width: compact ? 56 : 64,
+                child: _SetLabel(
+                  setNumber: set.setNumber,
+                  done: done,
+                  onEdit: planEditingEnabled ? _editPlan : null,
+                ),
               ),
-              const SizedBox(width: _inputGap),
+              const SizedBox(width: AppSpacing.sm),
               Expanded(
                 child: _InlineSetInput(
                   controller: _reps,
-                  enabled: controlsEnabled,
+                  enabled: completionEnabled,
                   suffix: AppLocalizations.of(context).trainingRepsSuffix,
                   keyboardType: TextInputType.number,
                 ),
@@ -1629,7 +1783,7 @@ class _SetLogRowState extends ConsumerState<_SetLogRow> {
               Expanded(
                 child: _InlineSetInput(
                   controller: _weight,
-                  enabled: controlsEnabled,
+                  enabled: completionEnabled,
                   suffix: unit.suffix,
                   keyboardType: const TextInputType.numberWithOptions(
                     decimal: true,
@@ -1640,7 +1794,7 @@ class _SetLogRowState extends ConsumerState<_SetLogRow> {
               Expanded(
                 child: _InlineSetInput(
                   controller: _rpe,
-                  enabled: controlsEnabled,
+                  enabled: completionEnabled,
                   hint: '-',
                   suffix: '',
                   keyboardType: const TextInputType.numberWithOptions(
@@ -1648,13 +1802,15 @@ class _SetLogRowState extends ConsumerState<_SetLogRow> {
                   ),
                 ),
               ),
-              const SizedBox(width: _inputGap),
-              _SetDoneButton(
-                done: done,
-                saving: _saving,
-                enabled: controlsEnabled,
-                onPressed: _complete,
-              ),
+              if (widget.canComplete) ...[
+                const SizedBox(width: _inputGap),
+                _SetDoneButton(
+                  done: done,
+                  saving: _saving,
+                  enabled: completionEnabled,
+                  onPressed: _complete,
+                ),
+              ],
             ],
           ),
         );
@@ -1663,20 +1819,170 @@ class _SetLogRowState extends ConsumerState<_SetLogRow> {
   }
 }
 
-class _SetLabel extends StatelessWidget {
-  const _SetLabel({required this.setNumber, required this.done});
+class _SetPlanDialog extends StatefulWidget {
+  const _SetPlanDialog({
+    required this.set,
+    required this.unit,
+    required this.onSave,
+  });
 
-  final int setNumber;
-  final bool done;
+  final ExerciseSet set;
+  final WeightUnit unit;
+  final Future<void> Function(int plannedReps, double? plannedWeight) onSave;
+
+  @override
+  State<_SetPlanDialog> createState() => _SetPlanDialogState();
+}
+
+class _SetPlanDialogState extends State<_SetPlanDialog> {
+  late final TextEditingController _reps;
+  late final TextEditingController _weight;
+  String? _error;
+  var _saving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _reps = TextEditingController(text: widget.set.plannedReps.toString());
+    _weight = TextEditingController(
+      text: widget.set.plannedWeight == null
+          ? ''
+          : formatWeight(widget.unit.fromKg(widget.set.plannedWeight!)),
+    );
+  }
+
+  @override
+  void dispose() {
+    _reps.dispose();
+    _weight.dispose();
+    super.dispose();
+  }
+
+  Future<void> _save() async {
+    final l10n = AppLocalizations.of(context);
+    final reps = int.tryParse(_reps.text.trim());
+    if (reps == null || reps < 1 || reps > 1000) {
+      setState(() => _error = l10n.trainingSetRepsRangeError);
+      return;
+    }
+    final enteredWeight = _weight.text.trim().isEmpty
+        ? null
+        : double.tryParse(_weight.text.trim());
+    final weightKg = enteredWeight == null
+        ? null
+        : widget.unit.toKg(enteredWeight);
+    if (_weight.text.trim().isNotEmpty &&
+        (weightKg == null || weightKg < 0 || weightKg > 10000)) {
+      setState(() => _error = l10n.trainingSetWeightRangeError);
+      return;
+    }
+    setState(() {
+      _saving = true;
+      _error = null;
+    });
+    try {
+      await widget.onSave(reps, weightKg);
+      if (mounted) Navigator.pop(context);
+    } catch (error) {
+      if (mounted) setState(() => _error = '$error');
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Text(
+    final l10n = AppLocalizations.of(context);
+    return AlertDialog(
+      title: Text(l10n.trainingEditSetPlanTitle(widget.set.setNumber)),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          TextField(
+            controller: _reps,
+            enabled: !_saving,
+            keyboardType: TextInputType.number,
+            decoration: InputDecoration(
+              labelText: l10n.trainingPlannedRepsLabel,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.md),
+          TextField(
+            controller: _weight,
+            enabled: !_saving,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            decoration: InputDecoration(
+              labelText: l10n.trainingPlannedWeightLabel,
+              suffixText: widget.unit.suffix,
+            ),
+          ),
+          if (_error != null) ...[
+            const SizedBox(height: AppSpacing.sm),
+            Text(
+              _error!,
+              style: const TextStyle(color: AppColors.danger, fontSize: 12),
+            ),
+          ],
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: _saving ? null : () => Navigator.pop(context),
+          child: Text(l10n.commonCancel),
+        ),
+        FilledButton(
+          onPressed: _saving ? null : _save,
+          child: _saving
+              ? const SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : Text(l10n.commonSave),
+        ),
+      ],
+    );
+  }
+}
+
+class _SetLabel extends StatelessWidget {
+  const _SetLabel({
+    required this.setNumber,
+    required this.done,
+    required this.onEdit,
+  });
+
+  final int setNumber;
+  final bool done;
+  final VoidCallback? onEdit;
+
+  @override
+  Widget build(BuildContext context) {
+    final label = Text(
       AppLocalizations.of(context).trainingSetLabel(setNumber),
+      maxLines: 1,
+      softWrap: false,
+      overflow: TextOverflow.ellipsis,
       style: AppTypography.mono(
         13,
         weight: FontWeight.w500,
         color: done ? AppColors.success : AppColors.fg1,
+      ),
+    );
+    if (onEdit == null) return label;
+    return Tooltip(
+      message: AppLocalizations.of(context).trainingEditSetPlanTooltip,
+      child: InkWell(
+        onTap: onEdit,
+        borderRadius: BorderRadius.circular(AppRadius.xs),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Flexible(child: label),
+            const SizedBox(width: 2),
+            const Icon(Icons.edit_outlined, size: 11, color: AppColors.fg3),
+          ],
+        ),
       ),
     );
   }

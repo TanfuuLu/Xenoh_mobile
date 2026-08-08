@@ -7,6 +7,7 @@ import '../../../../app/theme/app_typography.dart';
 import '../../../../core/widgets/xn_chip.dart';
 import '../../../../core/widgets/xn_section.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../insights/domain/ai_response_models.dart';
 import '../../../profile/presentation/providers/preferences_provider.dart';
 import '../../../shared_api/ai_widgets.dart';
 import '../../../shared_api/api_widgets.dart';
@@ -32,6 +33,19 @@ final planDesignAnalysisProvider = FutureProvider.autoDispose
           .getObject(
             '/plans/$planId/design-analysis?lang=$lang',
           );
+    });
+
+final planProgressInsightProvider = FutureProvider.autoDispose
+    .family<PlanProgressInsightResponse, ({String planId, String lang})>((
+      ref,
+      args,
+    ) async {
+      final json = await ref
+          .watch(xenohApiProvider)
+          .getObject(
+            '/insights/plan/${args.planId}/progress?lang=${args.lang}',
+          );
+      return PlanProgressInsightResponse.fromJson(json);
     });
 
 XnChipTone _severityTone(String severity) {
@@ -172,6 +186,131 @@ class _BalanceBody extends StatelessWidget {
   }
 }
 
+class PlanProgressInsightScreen extends ConsumerWidget {
+  const PlanProgressInsightScreen({required this.planId, super.key});
+
+  final String planId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final lang = ref.watch(appLocaleProvider)?.languageCode ?? 'en';
+    final args = (planId: planId, lang: lang);
+    final insight = ref.watch(planProgressInsightProvider(args));
+
+    return Scaffold(
+      appBar: AppBar(title: Text(l10n.trainingPlanProgressInsightTitle)),
+      body: RefreshIndicator(
+        color: AppColors.accent,
+        onRefresh: () async =>
+            ref.invalidate(planProgressInsightProvider(args)),
+        child: ListView(
+          padding: const EdgeInsets.all(AppSpacing.lg),
+          children: [
+            FeatureHeader(
+              title: l10n.trainingPlanProgressInsightTitle,
+              subtitle: l10n.trainingPlanProgressInsightSubtitle,
+              icon: Icons.auto_graph_rounded,
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            switch (insight) {
+              AsyncData(:final value) => _ProgressInsightBody(value: value),
+              AsyncError(:final error) => AiErrorView(
+                error: error,
+                onRetry: () =>
+                    ref.invalidate(planProgressInsightProvider(args)),
+              ),
+              _ => _Thinking(l10n.trainingAnalyzingProgressMessage),
+            },
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ProgressInsightBody extends StatelessWidget {
+  const _ProgressInsightBody({required this.value});
+
+  final PlanProgressInsightResponse value;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return XnSectionList(
+      children: [
+        XnSection(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Wrap(
+                spacing: AppSpacing.sm,
+                runSpacing: AppSpacing.xs,
+                children: [
+                  if (value.planName.isNotEmpty)
+                    XnChip(label: value.planName, compact: true),
+                  if (value.trajectory.isNotEmpty)
+                    XnChip(
+                      label: value.trajectory,
+                      tone: _trajectoryTone(value.trajectory),
+                      compact: true,
+                    ),
+                ],
+              ),
+              const SizedBox(height: AppSpacing.md),
+              Text(
+                value.headline,
+                style: AppTypography.display(22, letterSpacing: 0),
+              ),
+              if (value.summary.isNotEmpty) ...[
+                const SizedBox(height: AppSpacing.sm),
+                Text(
+                  value.summary,
+                  style: const TextStyle(color: AppColors.fg2, height: 1.4),
+                ),
+              ],
+            ],
+          ),
+        ),
+        if (value.whatsWorking.isNotEmpty)
+          _BulletCard(
+            title: l10n.trainingWhatsWorkingTitle,
+            icon: Icons.check_circle_outline_rounded,
+            iconColor: AppColors.success,
+            items: value.whatsWorking,
+          ),
+        if (value.focusAreas.isNotEmpty)
+          _BulletCard(
+            title: l10n.trainingFocusAreasTitle,
+            icon: Icons.center_focus_strong_outlined,
+            iconColor: AppColors.warning,
+            items: value.focusAreas,
+          ),
+        if (value.nextBlock.isNotEmpty)
+          _BulletCard(
+            title: l10n.trainingNextBlockTitle,
+            icon: Icons.arrow_forward_rounded,
+            iconColor: AppColors.accent,
+            items: value.nextBlock,
+          ),
+      ],
+    );
+  }
+}
+
+XnChipTone _trajectoryTone(String trajectory) {
+  switch (trajectory.toLowerCase()) {
+    case 'improving':
+      return XnChipTone.sage;
+    case 'declining':
+      return XnChipTone.danger;
+    case 'plateauing':
+      return XnChipTone.warn;
+    default:
+      return XnChipTone.neutral;
+  }
+}
+
 /// AI structural design analysis for a plan (non-AI Pro endpoint).
 class PlanDesignAnalysisScreen extends ConsumerWidget {
   const PlanDesignAnalysisScreen({required this.planId, super.key});
@@ -229,6 +368,11 @@ class _DesignBody extends StatelessWidget {
     final recoveryRisks = (value['recoveryRisks'] as List<dynamic>? ?? const [])
         .whereType<JsonMap>()
         .toList();
+    final movementPatterns =
+        (value['movementPatterns'] as List<dynamic>? ?? const [])
+            .whereType<JsonMap>()
+            .toList();
+    final variety = value['variety'];
     final balance = value['balance'];
     final dominant = balance is JsonMap
         ? _stringList(balance['dominantMuscleGroups'])
@@ -287,6 +431,10 @@ class _DesignBody extends StatelessWidget {
                 l10n.trainingAvgDaysPerWeekLabel,
                 textOf(structure, ['avgTrainingDaysPerWeek']),
               ),
+              _MetricData(
+                l10n.trainingLongestTrainingStreakLabel,
+                textOf(structure, ['longestTrainingStreak']),
+              ),
             ],
           ),
           const SizedBox(height: AppSpacing.lg),
@@ -312,6 +460,10 @@ class _DesignBody extends StatelessWidget {
                 l10n.trainingTonnageLabel,
                 textOf(workload, ['plannedTonnage']),
               ),
+              _MetricData(
+                l10n.trainingAvgExercisesPerDayLabel,
+                textOf(workload, ['avgExercisesPerTrainingDay']),
+              ),
             ],
           ),
           const SizedBox(height: AppSpacing.lg),
@@ -327,19 +479,33 @@ class _DesignBody extends StatelessWidget {
           _BalanceChips(balance),
           const SizedBox(height: AppSpacing.lg),
         ],
+        if (movementPatterns.isNotEmpty) ...[
+          _MovementCoverageCard(patterns: movementPatterns),
+          const SizedBox(height: AppSpacing.lg),
+        ],
+        if (variety is JsonMap) ...[
+          _VarietyCard(variety: variety),
+          const SizedBox(height: AppSpacing.lg),
+        ],
         if (recoveryRisks.isNotEmpty) ...[
           _AnalysisInsightsPanel(
             title: l10n.trainingRecoveryRisksTitle,
             icon: Icons.health_and_safety_outlined,
             iconColor: AppColors.warning,
             items: [
-              for (final r in recoveryRisks) textOf(r, ['message', 'type']),
+              for (final r in recoveryRisks) _recoveryRiskText(r),
             ],
           ),
         ],
       ],
     );
   }
+}
+
+String _recoveryRiskText(JsonMap risk) {
+  final message = textOf(risk, ['message', 'type']);
+  final metric = optionalTextOf(risk, ['metric']);
+  return metric == null ? message : '$message · $metric';
 }
 
 class _DesignHeroHeader extends StatelessWidget {
@@ -350,64 +516,51 @@ class _DesignHeroHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      clipBehavior: Clip.antiAlias,
-      decoration: BoxDecoration(
-        color: AppColors.bgInverse,
-        borderRadius: BorderRadius.circular(AppRadius.xl),
-        border: Border.all(color: AppColors.accentPress),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.xs,
+        AppSpacing.sm,
+        AppSpacing.xs,
+        AppSpacing.md,
       ),
-      child: Stack(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Positioned(
-            right: -16,
-            top: -20,
-            child: Icon(
-              Icons.architecture_rounded,
-              size: 128,
-              color: AppColors.clay100.withValues(alpha: 0.12),
+          Container(
+            width: 44,
+            height: 44,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: Colors.transparent,
+              borderRadius: BorderRadius.circular(AppRadius.md),
+              border: Border.all(color: AppColors.surfaceBorderSoft),
+            ),
+            child: const Icon(
+              Icons.insights_outlined,
+              color: AppColors.accent,
+              size: 21,
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(AppSpacing.xl),
-            child: Row(
+          const SizedBox(width: AppSpacing.md),
+          Expanded(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  width: 42,
-                  height: 42,
-                  decoration: BoxDecoration(
-                    color: AppColors.clay800,
-                    borderRadius: BorderRadius.circular(AppRadius.md),
-                  ),
-                  child: const Icon(
-                    Icons.insights_rounded,
-                    color: AppColors.fgOnClay,
-                    size: 22,
+                Text(
+                  title,
+                  style: AppTypography.display(
+                    24,
+                    color: AppColors.fg1,
+                    weight: FontWeight.w700,
+                    height: 1.15,
                   ),
                 ),
-                const SizedBox(width: AppSpacing.xl),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        title,
-                        style: AppTypography.display(
-                          24,
-                          color: AppColors.fgOnClay,
-                          height: 1.15,
-                        ),
-                      ),
-                      const SizedBox(height: AppSpacing.md),
-                      Text(
-                        subtitle,
-                        style: TextStyle(
-                          color: AppColors.ink050.withValues(alpha: 0.78),
-                          height: 1.4,
-                        ),
-                      ),
-                    ],
+                const SizedBox(height: AppSpacing.sm),
+                Text(
+                  subtitle,
+                  style: const TextStyle(
+                    color: AppColors.fg2,
+                    height: 1.4,
                   ),
                 ),
               ],
@@ -914,6 +1067,139 @@ class _AnalysisInsightsPanel extends StatelessWidget {
                 ),
               ],
             ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _MovementCoverageCard extends StatelessWidget {
+  const _MovementCoverageCard({required this.patterns});
+
+  final List<JsonMap> patterns;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return XnSection(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _PanelHeader(
+            title: l10n.trainingMovementPatternsTitle,
+            icon: Icons.route_outlined,
+          ),
+          const SizedBox(height: AppSpacing.md),
+          for (var index = 0; index < patterns.length; index++) ...[
+            Builder(
+              builder: (context) {
+                final pattern = patterns[index];
+                final covered = pattern['isCovered'] == true;
+                return Row(
+                  children: [
+                    Icon(
+                      covered
+                          ? Icons.check_circle_rounded
+                          : Icons.cancel_outlined,
+                      size: 19,
+                      color: covered ? AppColors.success : AppColors.danger,
+                    ),
+                    const SizedBox(width: AppSpacing.sm),
+                    Expanded(
+                      child: Text(
+                        textOf(pattern, ['pattern']),
+                        style: const TextStyle(
+                          color: AppColors.fg1,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      l10n.trainingPatternCoverageStats(
+                        textOf(pattern, ['exerciseCount'], fallback: '0'),
+                        textOf(pattern, ['plannedSets'], fallback: '0'),
+                      ),
+                      style: const TextStyle(
+                        color: AppColors.fg3,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
+            if (index != patterns.length - 1)
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: AppSpacing.sm),
+                child: Divider(height: 1),
+              ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _VarietyCard extends StatelessWidget {
+  const _VarietyCard({required this.variety});
+
+  final JsonMap variety;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final repeated =
+        (variety['topRepeatedExercises'] as List<dynamic>? ?? const [])
+            .whereType<JsonMap>()
+            .toList();
+    return XnSection(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _PanelHeader(
+            title: l10n.trainingExerciseVarietyTitle,
+            icon: Icons.shuffle_rounded,
+          ),
+          const SizedBox(height: AppSpacing.md),
+          _MetricGrid(
+            items: [
+              _MetricData(
+                l10n.trainingUniqueExercisesLabel,
+                textOf(variety, ['uniqueExercises'], fallback: '0'),
+              ),
+              _MetricData(
+                l10n.trainingRepeatedExercisesLabel,
+                textOf(variety, ['repeatedExerciseCount'], fallback: '0'),
+              ),
+            ],
+          ),
+          if (repeated.isNotEmpty) ...[
+            const SizedBox(height: AppSpacing.md),
+            for (final exercise in repeated)
+              Padding(
+                padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.replay_rounded,
+                      size: 17,
+                      color: AppColors.fg3,
+                    ),
+                    const SizedBox(width: AppSpacing.sm),
+                    Expanded(
+                      child: Text(
+                        textOf(exercise, ['exerciseName']),
+                        style: const TextStyle(color: AppColors.fg1),
+                      ),
+                    ),
+                    XnChip(
+                      label: '×${textOf(exercise, ['count'], fallback: '0')}',
+                      compact: true,
+                    ),
+                  ],
+                ),
+              ),
           ],
         ],
       ),

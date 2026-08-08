@@ -177,6 +177,7 @@ _TrainingDayShareDto _$TrainingDayShareDtoFromJson(
           )
           .toList() ??
       const <TrainingDayShareExerciseDto>[],
+  isReusable: json['isReusable'] as bool? ?? false,
   userAvatarUrl: json['userAvatarUrl'] as String?,
   averageRpe: (json['averageRpe'] as num?)?.toDouble(),
   caption: json['caption'] as String?,
@@ -201,6 +202,7 @@ Map<String, dynamic> _$TrainingDayShareDtoToJson(
   'loveCount': instance.loveCount,
   'lovedByCurrentUser': instance.lovedByCurrentUser,
   'exercises': instance.exercises,
+  'isReusable': instance.isReusable,
   'userAvatarUrl': instance.userAvatarUrl,
   'averageRpe': instance.averageRpe,
   'caption': instance.caption,

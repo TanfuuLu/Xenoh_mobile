@@ -129,6 +129,7 @@ abstract class TrainingDayShare with _$TrainingDayShare {
     required bool lovedByCurrentUser,
     required DateTime createdAt,
     required List<TrainingDayShareExercise> exercises,
+    @Default(false) bool isReusable,
     String? userAvatarUrl,
     double? averageRpe,
     String? caption,

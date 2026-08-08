@@ -12,7 +12,6 @@ import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_dimens.dart';
 import '../../../../app/theme/app_typography.dart';
 import '../../../../core/widgets/async_value_view.dart';
-import '../../../../core/widgets/synced_background_card.dart';
 import '../../../../core/widgets/xn_button.dart';
 import '../../../../core/widgets/xn_card.dart';
 import '../../../../core/widgets/xn_chip.dart';
@@ -20,11 +19,11 @@ import '../../../../core/widgets/xn_dropdown.dart';
 import '../../../../core/widgets/xn_input.dart';
 import '../../../../core/widgets/xn_section.dart';
 import '../../../../l10n/app_localizations.dart';
-import '../../../profile/data/repositories/profile_background_repository.dart';
 import '../../../profile/domain/entities/user_profile.dart';
 import '../../../profile/presentation/providers/profile_controller.dart';
 import '../../domain/entities/cycle_models.dart';
 import '../providers/cycle_controllers.dart';
+import '../widgets/cycle_phase_card.dart';
 
 class CycleScreen extends ConsumerWidget {
   const CycleScreen({super.key});
@@ -36,21 +35,6 @@ class CycleScreen extends ConsumerWidget {
     final today = DateTime.now();
     final from = DateTime(today.year, today.month, today.day - 120);
     final to = DateTime(today.year, today.month, today.day + 1);
-    final backgroundPath = ref
-        .watch(
-          profileBackgroundPathProvider(ProfileBackgroundRepository.deviceKey),
-        )
-        .value;
-    final backgroundAlignment =
-        ref
-            .watch(
-              profileBackgroundAlignmentProvider(
-                ProfileBackgroundRepository.deviceKey,
-              ),
-            )
-            .value ??
-        Alignment.center;
-
     return Scaffold(
       appBar: AppBar(
         leading: const HomeShellMenuButton(),
@@ -96,8 +80,6 @@ class CycleScreen extends ConsumerWidget {
                     overview: overview,
                     logs: ref.watch(cycleLogsProvider(from: from, to: to)),
                     today: today,
-                    backgroundImagePath: backgroundPath,
-                    backgroundAlignment: backgroundAlignment,
                   ),
                 ),
               ],
@@ -114,15 +96,11 @@ class _OverviewContent extends ConsumerWidget {
     required this.overview,
     required this.logs,
     required this.today,
-    required this.backgroundImagePath,
-    this.backgroundAlignment = Alignment.center,
   });
 
   final CycleOverview overview;
   final AsyncValue<List<CycleDailyLog>> logs;
   final DateTime today;
-  final String? backgroundImagePath;
-  final Alignment backgroundAlignment;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -131,93 +109,27 @@ class _OverviewContent extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SyncedBackgroundCard(
-          backgroundImagePath: backgroundImagePath,
-          backgroundAlignment: backgroundAlignment,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  const Icon(
-                    Icons.water_drop_outlined,
-                    color: AppColors.fgOnClay,
-                  ),
-                  const SizedBox(width: AppSpacing.sm),
-                  Text(
-                    overview.currentPhase,
-                    style: AppTypography.display(
-                      28,
-                      letterSpacing: 0,
-                      color: AppColors.fgOnClay,
-                      weight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppSpacing.sm),
-              Text(
-                overview.needsData
-                    ? l10n.cycleLogImprovePredictionsMessage
-                    : _phaseSubtitle(overview, l10n, locale),
-                style: TextStyle(
-                  color: AppColors.fgOnClay.withValues(alpha: 0.82),
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              const SizedBox(height: AppSpacing.lg),
-              Wrap(
-                spacing: AppSpacing.sm,
-                runSpacing: AppSpacing.sm,
-                children: [
-                  XnChip(
-                    label: overview.cycleDay == null
-                        ? l10n.cycleDayMissingLabel
-                        : l10n.cycleDayLabel(overview.cycleDay!),
-                  ),
-                  XnChip(
-                    label: overview.daysUntilNextPeriod == null
-                        ? l10n.cycleNextPeriodMissingLabel
-                        : l10n.cycleDaysToPeriodLabel(
-                            overview.daysUntilNextPeriod!,
-                          ),
-                    tone: XnChipTone.sage,
-                  ),
-                  if (overview.daysLate != null && overview.daysLate! > 0)
-                    XnChip(
-                      label: l10n.cycleDaysLateLabel(overview.daysLate!),
-                      tone: XnChipTone.warn,
-                    ),
-                  XnChip(
-                    label: overview.confidence,
-                    tone: overview.needsData
-                        ? XnChipTone.warn
-                        : XnChipTone.info,
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppSpacing.lg),
-              Row(
-                children: [
-                  Expanded(
-                    child: XnButton(
-                      label: l10n.cycleLogTodayButton,
-                      icon: Icons.add_rounded,
-                      onPressed: () => unawaited(
-                        _openLogSheet(context, ref, today, null),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: AppSpacing.sm),
-                  IconButton.filledTonal(
-                    tooltip: l10n.cycleSettingsTooltip,
-                    onPressed: () => unawaited(_openSettings(context, ref)),
-                    icon: const Icon(Icons.tune_rounded),
-                  ),
-                ],
-              ),
-            ],
-          ),
+        CyclePhaseCard(
+          phase: overview.currentPhase,
+          subtitle: overview.needsData
+              ? l10n.cycleLogImprovePredictionsMessage
+              : _phaseSubtitle(overview, l10n, locale),
+          cycleDayLabel: l10n.cycleDayMetricLabel,
+          cycleDayValue: overview.cycleDay?.toString() ?? '—',
+          untilPeriodLabel: l10n.cycleUntilPeriodMetricLabel,
+          untilPeriodValue: overview.daysUntilNextPeriod == null
+              ? '—'
+              : l10n.cycleDaysValue(overview.daysUntilNextPeriod!),
+          confidenceLabel: l10n.cycleConfidenceMetricLabel,
+          confidenceValue: overview.confidence,
+          lateLabel: overview.daysLate != null && overview.daysLate! > 0
+              ? l10n.cycleDaysLateLabel(overview.daysLate!)
+              : null,
+          needsData: overview.needsData,
+          logTodayLabel: l10n.cycleLogTodayButton,
+          settingsTooltip: l10n.cycleSettingsTooltip,
+          onLogToday: () => unawaited(_openLogSheet(context, ref, today, null)),
+          onSettings: () => unawaited(_openSettings(context, ref)),
         ),
         const SizedBox(height: AppSpacing.lg),
         AsyncValueView(
@@ -860,7 +772,7 @@ class _SymptomBars extends StatelessWidget {
           ),
         ),
         const SizedBox(height: AppSpacing.md),
-        for (final entry in counts) ...[
+        for (final (index, entry) in counts.indexed) ...[
           Row(
             children: [
               SizedBox(
@@ -883,7 +795,7 @@ class _SymptomBars extends StatelessWidget {
                         widthFactor: max == 0 ? 0 : entry.value / max,
                         child: Container(
                           height: 20,
-                          color: AppColors.accent,
+                          color: AppColors.dataColor(index),
                         ),
                       ),
                     ],

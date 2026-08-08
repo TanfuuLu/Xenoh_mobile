@@ -166,6 +166,17 @@ class AuthController extends _$AuthController {
       Err(:final failure) => failure,
     };
   }
+
+  Future<Failure?> verifyAccountDeletion(String token) async {
+    final result = await _repo.verifyAccountDeletion(token);
+    switch (result) {
+      case Ok():
+        state = const AuthState.unauthenticated();
+        return null;
+      case Err(:final failure):
+        return failure;
+    }
+  }
 }
 
 /// Cheap, independent flag: true once the startup silent-refresh attempt

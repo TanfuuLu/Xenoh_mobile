@@ -13,6 +13,7 @@ import '../../../../core/widgets/xn_section.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../profile/presentation/providers/preferences_provider.dart';
 import '../../domain/entities/community_models.dart';
+import 'share_action_dialogs.dart';
 
 class CommunityAvatar extends StatelessWidget {
   const CommunityAvatar({
@@ -248,6 +249,36 @@ class TrainingDayShareCard extends ConsumerWidget {
                 ),
               ),
               XnChip(label: share.dayStatus, compact: true),
+              if (!canDelete)
+                PopupMenuButton<String>(
+                  tooltip: l10n.communityShareActionsTooltip,
+                  onSelected: (action) async {
+                    if (action == 'report') {
+                      await showReportShareDialog(context, ref, share.id);
+                    } else if (action == 'copy') {
+                      await showCopyWorkoutSheet(context, ref, share.id);
+                    }
+                  },
+                  itemBuilder: (_) => [
+                    if (share.isReusable)
+                      PopupMenuItem(
+                        value: 'copy',
+                        child: ListTile(
+                          leading: const Icon(Icons.copy_all_outlined),
+                          title: Text(l10n.communityCopyWorkoutAction),
+                          contentPadding: EdgeInsets.zero,
+                        ),
+                      ),
+                    PopupMenuItem(
+                      value: 'report',
+                      child: ListTile(
+                        leading: const Icon(Icons.flag_outlined),
+                        title: Text(l10n.communityReportSubmit),
+                        contentPadding: EdgeInsets.zero,
+                      ),
+                    ),
+                  ],
+                ),
             ],
           ),
           if (share.caption?.isNotEmpty == true) ...[

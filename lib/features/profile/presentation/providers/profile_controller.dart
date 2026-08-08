@@ -1,9 +1,12 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../data/repositories/profile_repository_provider.dart';
 import '../../domain/entities/bodyweight_log.dart';
 import '../../domain/entities/training_activity.dart';
 import '../../domain/entities/user_profile.dart';
+import '../../domain/entities/volume_history_point.dart';
 
 part 'profile_controller.g.dart';
 
@@ -52,11 +55,17 @@ class MyProfileController extends _$MyProfileController {
   }
 
   Future<void> uploadAvatar(String filePath) async {
+    final previousUrl = state.value?.avatarUrl;
     final updated = await ref
         .read(profileRepositoryProvider)
         .uploadAvatar(
           filePath,
         );
+    for (final url in {previousUrl, updated.avatarUrl}) {
+      if (url?.trim().isNotEmpty == true) {
+        await NetworkImage(url!.trim()).evict();
+      }
+    }
     state = AsyncValue.data(updated);
   }
 }
@@ -78,3 +87,10 @@ Future<TrainingActivity> trainingActivity(
 }) => ref
     .watch(profileRepositoryProvider)
     .getTrainingActivity(year: year, month: month);
+
+final volumeHistoryProvider = FutureProvider.autoDispose
+    .family<List<VolumeHistoryPoint>, int>((ref, months) {
+      return ref
+          .watch(profileRepositoryProvider)
+          .getVolumeHistory(months: months);
+    });

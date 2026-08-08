@@ -5,7 +5,8 @@ import 'app_colors.dart';
 /// Typography for Xenoh.
 abstract final class AppTypography {
   static const fontFamily = 'BeVietnamPro';
-  static const displayFontFamily = 'Fraunces';
+  static const displayFontFamily = fontFamily;
+  static const editorialFontFamily = 'Fraunces';
 
   static FontWeight textWeight(FontWeight weight) => weight;
 
@@ -19,6 +20,22 @@ abstract final class AppTypography {
     double? height,
   }) => TextStyle(
     fontFamily: displayFontFamily,
+    fontSize: size,
+    fontWeight: textWeight(weight),
+    color: color,
+    letterSpacing: tracking(letterSpacing),
+    height: height,
+  );
+
+  /// Serif display style reserved for editorial and marketing moments.
+  static TextStyle editorial(
+    double size, {
+    FontWeight weight = FontWeight.w600,
+    Color color = AppColors.fg1,
+    double letterSpacing = 0,
+    double? height,
+  }) => TextStyle(
+    fontFamily: editorialFontFamily,
     fontSize: size,
     fontWeight: textWeight(weight),
     color: color,

@@ -36,7 +36,7 @@ final class ExerciseTemplatesControllerProvider
   // API/Redis cache every time the user leaves and reopens the exercise library.
   ExerciseTemplatesControllerProvider._({
     required ExerciseTemplatesControllerFamily super.from,
-    required String? super.argument,
+    required ({String? muscleGroup, String? clientId}) super.argument,
   }) : super(
          retry: null,
          name: r'exerciseTemplatesControllerProvider',
@@ -52,7 +52,7 @@ final class ExerciseTemplatesControllerProvider
   String toString() {
     return r'exerciseTemplatesControllerProvider'
         ''
-        '($argument)';
+        '$argument';
   }
 
   @$internal
@@ -72,7 +72,7 @@ final class ExerciseTemplatesControllerProvider
 }
 
 String _$exerciseTemplatesControllerHash() =>
-    r'54eed55fdb285b02db74fe83daeb2c16bac6222b';
+    r'29aa74246c2c43d012714e12859a7ffcad1bc3ca';
 
 /// Exercise templates for the add-exercise picker, optionally filtered by
 /// muscle group (enum name, e.g. `Chest`).
@@ -87,7 +87,7 @@ final class ExerciseTemplatesControllerFamily extends $Family
           AsyncValue<List<ExerciseTemplate>>,
           List<ExerciseTemplate>,
           FutureOr<List<ExerciseTemplate>>,
-          String?
+          ({String? muscleGroup, String? clientId})
         > {
   ExerciseTemplatesControllerFamily._()
     : super(
@@ -104,8 +104,13 @@ final class ExerciseTemplatesControllerFamily extends $Family
   // pull-to-refresh. Keeping each filter result alive avoids a round-trip to the
   // API/Redis cache every time the user leaves and reopens the exercise library.
 
-  ExerciseTemplatesControllerProvider call({String? muscleGroup}) =>
-      ExerciseTemplatesControllerProvider._(argument: muscleGroup, from: this);
+  ExerciseTemplatesControllerProvider call({
+    String? muscleGroup,
+    String? clientId,
+  }) => ExerciseTemplatesControllerProvider._(
+    argument: (muscleGroup: muscleGroup, clientId: clientId),
+    from: this,
+  );
 
   @override
   String toString() => r'exerciseTemplatesControllerProvider';
@@ -119,10 +124,14 @@ final class ExerciseTemplatesControllerFamily extends $Family
 
 abstract class _$ExerciseTemplatesController
     extends $AsyncNotifier<List<ExerciseTemplate>> {
-  late final _$args = ref.$arg as String?;
-  String? get muscleGroup => _$args;
+  late final _$args = ref.$arg as ({String? muscleGroup, String? clientId});
+  String? get muscleGroup => _$args.muscleGroup;
+  String? get clientId => _$args.clientId;
 
-  FutureOr<List<ExerciseTemplate>> build({String? muscleGroup});
+  FutureOr<List<ExerciseTemplate>> build({
+    String? muscleGroup,
+    String? clientId,
+  });
   @$mustCallSuper
   @override
   void runBuild() {
@@ -140,6 +149,9 @@ abstract class _$ExerciseTemplatesController
               Object?,
               Object?
             >;
-    element.handleCreate(ref, () => build(muscleGroup: _$args));
+    element.handleCreate(
+      ref,
+      () => build(muscleGroup: _$args.muscleGroup, clientId: _$args.clientId),
+    );
   }
 }

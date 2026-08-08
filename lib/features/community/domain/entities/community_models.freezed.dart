@@ -1452,7 +1452,7 @@ as DateTime?,
 /// @nodoc
 mixin _$TrainingDayShare {
 
- String get id; String get userId; String get userFullName; String get sourceDailyWorkoutId; DateTime get workoutDate; String get dayOfWeek; String get dayStatus; int get exerciseCount; int get completedSets; double get totalVolume; int get totalDurationSeconds; bool get hasPersonalRecord; int get loveCount; bool get lovedByCurrentUser; DateTime get createdAt; List<TrainingDayShareExercise> get exercises; String? get userAvatarUrl; double? get averageRpe; String? get caption;
+ String get id; String get userId; String get userFullName; String get sourceDailyWorkoutId; DateTime get workoutDate; String get dayOfWeek; String get dayStatus; int get exerciseCount; int get completedSets; double get totalVolume; int get totalDurationSeconds; bool get hasPersonalRecord; int get loveCount; bool get lovedByCurrentUser; DateTime get createdAt; List<TrainingDayShareExercise> get exercises; bool get isReusable; String? get userAvatarUrl; double? get averageRpe; String? get caption;
 /// Create a copy of TrainingDayShare
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -1463,16 +1463,16 @@ $TrainingDayShareCopyWith<TrainingDayShare> get copyWith => _$TrainingDayShareCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TrainingDayShare&&(identical(other.id, id) || other.id == id)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.userFullName, userFullName) || other.userFullName == userFullName)&&(identical(other.sourceDailyWorkoutId, sourceDailyWorkoutId) || other.sourceDailyWorkoutId == sourceDailyWorkoutId)&&(identical(other.workoutDate, workoutDate) || other.workoutDate == workoutDate)&&(identical(other.dayOfWeek, dayOfWeek) || other.dayOfWeek == dayOfWeek)&&(identical(other.dayStatus, dayStatus) || other.dayStatus == dayStatus)&&(identical(other.exerciseCount, exerciseCount) || other.exerciseCount == exerciseCount)&&(identical(other.completedSets, completedSets) || other.completedSets == completedSets)&&(identical(other.totalVolume, totalVolume) || other.totalVolume == totalVolume)&&(identical(other.totalDurationSeconds, totalDurationSeconds) || other.totalDurationSeconds == totalDurationSeconds)&&(identical(other.hasPersonalRecord, hasPersonalRecord) || other.hasPersonalRecord == hasPersonalRecord)&&(identical(other.loveCount, loveCount) || other.loveCount == loveCount)&&(identical(other.lovedByCurrentUser, lovedByCurrentUser) || other.lovedByCurrentUser == lovedByCurrentUser)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&const DeepCollectionEquality().equals(other.exercises, exercises)&&(identical(other.userAvatarUrl, userAvatarUrl) || other.userAvatarUrl == userAvatarUrl)&&(identical(other.averageRpe, averageRpe) || other.averageRpe == averageRpe)&&(identical(other.caption, caption) || other.caption == caption));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TrainingDayShare&&(identical(other.id, id) || other.id == id)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.userFullName, userFullName) || other.userFullName == userFullName)&&(identical(other.sourceDailyWorkoutId, sourceDailyWorkoutId) || other.sourceDailyWorkoutId == sourceDailyWorkoutId)&&(identical(other.workoutDate, workoutDate) || other.workoutDate == workoutDate)&&(identical(other.dayOfWeek, dayOfWeek) || other.dayOfWeek == dayOfWeek)&&(identical(other.dayStatus, dayStatus) || other.dayStatus == dayStatus)&&(identical(other.exerciseCount, exerciseCount) || other.exerciseCount == exerciseCount)&&(identical(other.completedSets, completedSets) || other.completedSets == completedSets)&&(identical(other.totalVolume, totalVolume) || other.totalVolume == totalVolume)&&(identical(other.totalDurationSeconds, totalDurationSeconds) || other.totalDurationSeconds == totalDurationSeconds)&&(identical(other.hasPersonalRecord, hasPersonalRecord) || other.hasPersonalRecord == hasPersonalRecord)&&(identical(other.loveCount, loveCount) || other.loveCount == loveCount)&&(identical(other.lovedByCurrentUser, lovedByCurrentUser) || other.lovedByCurrentUser == lovedByCurrentUser)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&const DeepCollectionEquality().equals(other.exercises, exercises)&&(identical(other.isReusable, isReusable) || other.isReusable == isReusable)&&(identical(other.userAvatarUrl, userAvatarUrl) || other.userAvatarUrl == userAvatarUrl)&&(identical(other.averageRpe, averageRpe) || other.averageRpe == averageRpe)&&(identical(other.caption, caption) || other.caption == caption));
 }
 
 
 @override
-int get hashCode => Object.hashAll([runtimeType,id,userId,userFullName,sourceDailyWorkoutId,workoutDate,dayOfWeek,dayStatus,exerciseCount,completedSets,totalVolume,totalDurationSeconds,hasPersonalRecord,loveCount,lovedByCurrentUser,createdAt,const DeepCollectionEquality().hash(exercises),userAvatarUrl,averageRpe,caption]);
+int get hashCode => Object.hashAll([runtimeType,id,userId,userFullName,sourceDailyWorkoutId,workoutDate,dayOfWeek,dayStatus,exerciseCount,completedSets,totalVolume,totalDurationSeconds,hasPersonalRecord,loveCount,lovedByCurrentUser,createdAt,const DeepCollectionEquality().hash(exercises),isReusable,userAvatarUrl,averageRpe,caption]);
 
 @override
 String toString() {
-  return 'TrainingDayShare(id: $id, userId: $userId, userFullName: $userFullName, sourceDailyWorkoutId: $sourceDailyWorkoutId, workoutDate: $workoutDate, dayOfWeek: $dayOfWeek, dayStatus: $dayStatus, exerciseCount: $exerciseCount, completedSets: $completedSets, totalVolume: $totalVolume, totalDurationSeconds: $totalDurationSeconds, hasPersonalRecord: $hasPersonalRecord, loveCount: $loveCount, lovedByCurrentUser: $lovedByCurrentUser, createdAt: $createdAt, exercises: $exercises, userAvatarUrl: $userAvatarUrl, averageRpe: $averageRpe, caption: $caption)';
+  return 'TrainingDayShare(id: $id, userId: $userId, userFullName: $userFullName, sourceDailyWorkoutId: $sourceDailyWorkoutId, workoutDate: $workoutDate, dayOfWeek: $dayOfWeek, dayStatus: $dayStatus, exerciseCount: $exerciseCount, completedSets: $completedSets, totalVolume: $totalVolume, totalDurationSeconds: $totalDurationSeconds, hasPersonalRecord: $hasPersonalRecord, loveCount: $loveCount, lovedByCurrentUser: $lovedByCurrentUser, createdAt: $createdAt, exercises: $exercises, isReusable: $isReusable, userAvatarUrl: $userAvatarUrl, averageRpe: $averageRpe, caption: $caption)';
 }
 
 
@@ -1483,7 +1483,7 @@ abstract mixin class $TrainingDayShareCopyWith<$Res>  {
   factory $TrainingDayShareCopyWith(TrainingDayShare value, $Res Function(TrainingDayShare) _then) = _$TrainingDayShareCopyWithImpl;
 @useResult
 $Res call({
- String id, String userId, String userFullName, String sourceDailyWorkoutId, DateTime workoutDate, String dayOfWeek, String dayStatus, int exerciseCount, int completedSets, double totalVolume, int totalDurationSeconds, bool hasPersonalRecord, int loveCount, bool lovedByCurrentUser, DateTime createdAt, List<TrainingDayShareExercise> exercises, String? userAvatarUrl, double? averageRpe, String? caption
+ String id, String userId, String userFullName, String sourceDailyWorkoutId, DateTime workoutDate, String dayOfWeek, String dayStatus, int exerciseCount, int completedSets, double totalVolume, int totalDurationSeconds, bool hasPersonalRecord, int loveCount, bool lovedByCurrentUser, DateTime createdAt, List<TrainingDayShareExercise> exercises, bool isReusable, String? userAvatarUrl, double? averageRpe, String? caption
 });
 
 
@@ -1500,7 +1500,7 @@ class _$TrainingDayShareCopyWithImpl<$Res>
 
 /// Create a copy of TrainingDayShare
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? userId = null,Object? userFullName = null,Object? sourceDailyWorkoutId = null,Object? workoutDate = null,Object? dayOfWeek = null,Object? dayStatus = null,Object? exerciseCount = null,Object? completedSets = null,Object? totalVolume = null,Object? totalDurationSeconds = null,Object? hasPersonalRecord = null,Object? loveCount = null,Object? lovedByCurrentUser = null,Object? createdAt = null,Object? exercises = null,Object? userAvatarUrl = freezed,Object? averageRpe = freezed,Object? caption = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? userId = null,Object? userFullName = null,Object? sourceDailyWorkoutId = null,Object? workoutDate = null,Object? dayOfWeek = null,Object? dayStatus = null,Object? exerciseCount = null,Object? completedSets = null,Object? totalVolume = null,Object? totalDurationSeconds = null,Object? hasPersonalRecord = null,Object? loveCount = null,Object? lovedByCurrentUser = null,Object? createdAt = null,Object? exercises = null,Object? isReusable = null,Object? userAvatarUrl = freezed,Object? averageRpe = freezed,Object? caption = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
@@ -1518,7 +1518,8 @@ as bool,loveCount: null == loveCount ? _self.loveCount : loveCount // ignore: ca
 as int,lovedByCurrentUser: null == lovedByCurrentUser ? _self.lovedByCurrentUser : lovedByCurrentUser // ignore: cast_nullable_to_non_nullable
 as bool,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,exercises: null == exercises ? _self.exercises : exercises // ignore: cast_nullable_to_non_nullable
-as List<TrainingDayShareExercise>,userAvatarUrl: freezed == userAvatarUrl ? _self.userAvatarUrl : userAvatarUrl // ignore: cast_nullable_to_non_nullable
+as List<TrainingDayShareExercise>,isReusable: null == isReusable ? _self.isReusable : isReusable // ignore: cast_nullable_to_non_nullable
+as bool,userAvatarUrl: freezed == userAvatarUrl ? _self.userAvatarUrl : userAvatarUrl // ignore: cast_nullable_to_non_nullable
 as String?,averageRpe: freezed == averageRpe ? _self.averageRpe : averageRpe // ignore: cast_nullable_to_non_nullable
 as double?,caption: freezed == caption ? _self.caption : caption // ignore: cast_nullable_to_non_nullable
 as String?,
@@ -1606,10 +1607,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String userId,  String userFullName,  String sourceDailyWorkoutId,  DateTime workoutDate,  String dayOfWeek,  String dayStatus,  int exerciseCount,  int completedSets,  double totalVolume,  int totalDurationSeconds,  bool hasPersonalRecord,  int loveCount,  bool lovedByCurrentUser,  DateTime createdAt,  List<TrainingDayShareExercise> exercises,  String? userAvatarUrl,  double? averageRpe,  String? caption)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String userId,  String userFullName,  String sourceDailyWorkoutId,  DateTime workoutDate,  String dayOfWeek,  String dayStatus,  int exerciseCount,  int completedSets,  double totalVolume,  int totalDurationSeconds,  bool hasPersonalRecord,  int loveCount,  bool lovedByCurrentUser,  DateTime createdAt,  List<TrainingDayShareExercise> exercises,  bool isReusable,  String? userAvatarUrl,  double? averageRpe,  String? caption)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _TrainingDayShare() when $default != null:
-return $default(_that.id,_that.userId,_that.userFullName,_that.sourceDailyWorkoutId,_that.workoutDate,_that.dayOfWeek,_that.dayStatus,_that.exerciseCount,_that.completedSets,_that.totalVolume,_that.totalDurationSeconds,_that.hasPersonalRecord,_that.loveCount,_that.lovedByCurrentUser,_that.createdAt,_that.exercises,_that.userAvatarUrl,_that.averageRpe,_that.caption);case _:
+return $default(_that.id,_that.userId,_that.userFullName,_that.sourceDailyWorkoutId,_that.workoutDate,_that.dayOfWeek,_that.dayStatus,_that.exerciseCount,_that.completedSets,_that.totalVolume,_that.totalDurationSeconds,_that.hasPersonalRecord,_that.loveCount,_that.lovedByCurrentUser,_that.createdAt,_that.exercises,_that.isReusable,_that.userAvatarUrl,_that.averageRpe,_that.caption);case _:
   return orElse();
 
 }
@@ -1627,10 +1628,10 @@ return $default(_that.id,_that.userId,_that.userFullName,_that.sourceDailyWorkou
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String userId,  String userFullName,  String sourceDailyWorkoutId,  DateTime workoutDate,  String dayOfWeek,  String dayStatus,  int exerciseCount,  int completedSets,  double totalVolume,  int totalDurationSeconds,  bool hasPersonalRecord,  int loveCount,  bool lovedByCurrentUser,  DateTime createdAt,  List<TrainingDayShareExercise> exercises,  String? userAvatarUrl,  double? averageRpe,  String? caption)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String userId,  String userFullName,  String sourceDailyWorkoutId,  DateTime workoutDate,  String dayOfWeek,  String dayStatus,  int exerciseCount,  int completedSets,  double totalVolume,  int totalDurationSeconds,  bool hasPersonalRecord,  int loveCount,  bool lovedByCurrentUser,  DateTime createdAt,  List<TrainingDayShareExercise> exercises,  bool isReusable,  String? userAvatarUrl,  double? averageRpe,  String? caption)  $default,) {final _that = this;
 switch (_that) {
 case _TrainingDayShare():
-return $default(_that.id,_that.userId,_that.userFullName,_that.sourceDailyWorkoutId,_that.workoutDate,_that.dayOfWeek,_that.dayStatus,_that.exerciseCount,_that.completedSets,_that.totalVolume,_that.totalDurationSeconds,_that.hasPersonalRecord,_that.loveCount,_that.lovedByCurrentUser,_that.createdAt,_that.exercises,_that.userAvatarUrl,_that.averageRpe,_that.caption);case _:
+return $default(_that.id,_that.userId,_that.userFullName,_that.sourceDailyWorkoutId,_that.workoutDate,_that.dayOfWeek,_that.dayStatus,_that.exerciseCount,_that.completedSets,_that.totalVolume,_that.totalDurationSeconds,_that.hasPersonalRecord,_that.loveCount,_that.lovedByCurrentUser,_that.createdAt,_that.exercises,_that.isReusable,_that.userAvatarUrl,_that.averageRpe,_that.caption);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -1647,10 +1648,10 @@ return $default(_that.id,_that.userId,_that.userFullName,_that.sourceDailyWorkou
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String userId,  String userFullName,  String sourceDailyWorkoutId,  DateTime workoutDate,  String dayOfWeek,  String dayStatus,  int exerciseCount,  int completedSets,  double totalVolume,  int totalDurationSeconds,  bool hasPersonalRecord,  int loveCount,  bool lovedByCurrentUser,  DateTime createdAt,  List<TrainingDayShareExercise> exercises,  String? userAvatarUrl,  double? averageRpe,  String? caption)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String userId,  String userFullName,  String sourceDailyWorkoutId,  DateTime workoutDate,  String dayOfWeek,  String dayStatus,  int exerciseCount,  int completedSets,  double totalVolume,  int totalDurationSeconds,  bool hasPersonalRecord,  int loveCount,  bool lovedByCurrentUser,  DateTime createdAt,  List<TrainingDayShareExercise> exercises,  bool isReusable,  String? userAvatarUrl,  double? averageRpe,  String? caption)?  $default,) {final _that = this;
 switch (_that) {
 case _TrainingDayShare() when $default != null:
-return $default(_that.id,_that.userId,_that.userFullName,_that.sourceDailyWorkoutId,_that.workoutDate,_that.dayOfWeek,_that.dayStatus,_that.exerciseCount,_that.completedSets,_that.totalVolume,_that.totalDurationSeconds,_that.hasPersonalRecord,_that.loveCount,_that.lovedByCurrentUser,_that.createdAt,_that.exercises,_that.userAvatarUrl,_that.averageRpe,_that.caption);case _:
+return $default(_that.id,_that.userId,_that.userFullName,_that.sourceDailyWorkoutId,_that.workoutDate,_that.dayOfWeek,_that.dayStatus,_that.exerciseCount,_that.completedSets,_that.totalVolume,_that.totalDurationSeconds,_that.hasPersonalRecord,_that.loveCount,_that.lovedByCurrentUser,_that.createdAt,_that.exercises,_that.isReusable,_that.userAvatarUrl,_that.averageRpe,_that.caption);case _:
   return null;
 
 }
@@ -1662,7 +1663,7 @@ return $default(_that.id,_that.userId,_that.userFullName,_that.sourceDailyWorkou
 
 
 class _TrainingDayShare implements TrainingDayShare {
-  const _TrainingDayShare({required this.id, required this.userId, required this.userFullName, required this.sourceDailyWorkoutId, required this.workoutDate, required this.dayOfWeek, required this.dayStatus, required this.exerciseCount, required this.completedSets, required this.totalVolume, required this.totalDurationSeconds, required this.hasPersonalRecord, required this.loveCount, required this.lovedByCurrentUser, required this.createdAt, required final  List<TrainingDayShareExercise> exercises, this.userAvatarUrl, this.averageRpe, this.caption}): _exercises = exercises;
+  const _TrainingDayShare({required this.id, required this.userId, required this.userFullName, required this.sourceDailyWorkoutId, required this.workoutDate, required this.dayOfWeek, required this.dayStatus, required this.exerciseCount, required this.completedSets, required this.totalVolume, required this.totalDurationSeconds, required this.hasPersonalRecord, required this.loveCount, required this.lovedByCurrentUser, required this.createdAt, required final  List<TrainingDayShareExercise> exercises, this.isReusable = false, this.userAvatarUrl, this.averageRpe, this.caption}): _exercises = exercises;
   
 
 @override final  String id;
@@ -1687,6 +1688,7 @@ class _TrainingDayShare implements TrainingDayShare {
   return EqualUnmodifiableListView(_exercises);
 }
 
+@override@JsonKey() final  bool isReusable;
 @override final  String? userAvatarUrl;
 @override final  double? averageRpe;
 @override final  String? caption;
@@ -1701,16 +1703,16 @@ _$TrainingDayShareCopyWith<_TrainingDayShare> get copyWith => __$TrainingDayShar
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TrainingDayShare&&(identical(other.id, id) || other.id == id)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.userFullName, userFullName) || other.userFullName == userFullName)&&(identical(other.sourceDailyWorkoutId, sourceDailyWorkoutId) || other.sourceDailyWorkoutId == sourceDailyWorkoutId)&&(identical(other.workoutDate, workoutDate) || other.workoutDate == workoutDate)&&(identical(other.dayOfWeek, dayOfWeek) || other.dayOfWeek == dayOfWeek)&&(identical(other.dayStatus, dayStatus) || other.dayStatus == dayStatus)&&(identical(other.exerciseCount, exerciseCount) || other.exerciseCount == exerciseCount)&&(identical(other.completedSets, completedSets) || other.completedSets == completedSets)&&(identical(other.totalVolume, totalVolume) || other.totalVolume == totalVolume)&&(identical(other.totalDurationSeconds, totalDurationSeconds) || other.totalDurationSeconds == totalDurationSeconds)&&(identical(other.hasPersonalRecord, hasPersonalRecord) || other.hasPersonalRecord == hasPersonalRecord)&&(identical(other.loveCount, loveCount) || other.loveCount == loveCount)&&(identical(other.lovedByCurrentUser, lovedByCurrentUser) || other.lovedByCurrentUser == lovedByCurrentUser)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&const DeepCollectionEquality().equals(other._exercises, _exercises)&&(identical(other.userAvatarUrl, userAvatarUrl) || other.userAvatarUrl == userAvatarUrl)&&(identical(other.averageRpe, averageRpe) || other.averageRpe == averageRpe)&&(identical(other.caption, caption) || other.caption == caption));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TrainingDayShare&&(identical(other.id, id) || other.id == id)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.userFullName, userFullName) || other.userFullName == userFullName)&&(identical(other.sourceDailyWorkoutId, sourceDailyWorkoutId) || other.sourceDailyWorkoutId == sourceDailyWorkoutId)&&(identical(other.workoutDate, workoutDate) || other.workoutDate == workoutDate)&&(identical(other.dayOfWeek, dayOfWeek) || other.dayOfWeek == dayOfWeek)&&(identical(other.dayStatus, dayStatus) || other.dayStatus == dayStatus)&&(identical(other.exerciseCount, exerciseCount) || other.exerciseCount == exerciseCount)&&(identical(other.completedSets, completedSets) || other.completedSets == completedSets)&&(identical(other.totalVolume, totalVolume) || other.totalVolume == totalVolume)&&(identical(other.totalDurationSeconds, totalDurationSeconds) || other.totalDurationSeconds == totalDurationSeconds)&&(identical(other.hasPersonalRecord, hasPersonalRecord) || other.hasPersonalRecord == hasPersonalRecord)&&(identical(other.loveCount, loveCount) || other.loveCount == loveCount)&&(identical(other.lovedByCurrentUser, lovedByCurrentUser) || other.lovedByCurrentUser == lovedByCurrentUser)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&const DeepCollectionEquality().equals(other._exercises, _exercises)&&(identical(other.isReusable, isReusable) || other.isReusable == isReusable)&&(identical(other.userAvatarUrl, userAvatarUrl) || other.userAvatarUrl == userAvatarUrl)&&(identical(other.averageRpe, averageRpe) || other.averageRpe == averageRpe)&&(identical(other.caption, caption) || other.caption == caption));
 }
 
 
 @override
-int get hashCode => Object.hashAll([runtimeType,id,userId,userFullName,sourceDailyWorkoutId,workoutDate,dayOfWeek,dayStatus,exerciseCount,completedSets,totalVolume,totalDurationSeconds,hasPersonalRecord,loveCount,lovedByCurrentUser,createdAt,const DeepCollectionEquality().hash(_exercises),userAvatarUrl,averageRpe,caption]);
+int get hashCode => Object.hashAll([runtimeType,id,userId,userFullName,sourceDailyWorkoutId,workoutDate,dayOfWeek,dayStatus,exerciseCount,completedSets,totalVolume,totalDurationSeconds,hasPersonalRecord,loveCount,lovedByCurrentUser,createdAt,const DeepCollectionEquality().hash(_exercises),isReusable,userAvatarUrl,averageRpe,caption]);
 
 @override
 String toString() {
-  return 'TrainingDayShare(id: $id, userId: $userId, userFullName: $userFullName, sourceDailyWorkoutId: $sourceDailyWorkoutId, workoutDate: $workoutDate, dayOfWeek: $dayOfWeek, dayStatus: $dayStatus, exerciseCount: $exerciseCount, completedSets: $completedSets, totalVolume: $totalVolume, totalDurationSeconds: $totalDurationSeconds, hasPersonalRecord: $hasPersonalRecord, loveCount: $loveCount, lovedByCurrentUser: $lovedByCurrentUser, createdAt: $createdAt, exercises: $exercises, userAvatarUrl: $userAvatarUrl, averageRpe: $averageRpe, caption: $caption)';
+  return 'TrainingDayShare(id: $id, userId: $userId, userFullName: $userFullName, sourceDailyWorkoutId: $sourceDailyWorkoutId, workoutDate: $workoutDate, dayOfWeek: $dayOfWeek, dayStatus: $dayStatus, exerciseCount: $exerciseCount, completedSets: $completedSets, totalVolume: $totalVolume, totalDurationSeconds: $totalDurationSeconds, hasPersonalRecord: $hasPersonalRecord, loveCount: $loveCount, lovedByCurrentUser: $lovedByCurrentUser, createdAt: $createdAt, exercises: $exercises, isReusable: $isReusable, userAvatarUrl: $userAvatarUrl, averageRpe: $averageRpe, caption: $caption)';
 }
 
 
@@ -1721,7 +1723,7 @@ abstract mixin class _$TrainingDayShareCopyWith<$Res> implements $TrainingDaySha
   factory _$TrainingDayShareCopyWith(_TrainingDayShare value, $Res Function(_TrainingDayShare) _then) = __$TrainingDayShareCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String userId, String userFullName, String sourceDailyWorkoutId, DateTime workoutDate, String dayOfWeek, String dayStatus, int exerciseCount, int completedSets, double totalVolume, int totalDurationSeconds, bool hasPersonalRecord, int loveCount, bool lovedByCurrentUser, DateTime createdAt, List<TrainingDayShareExercise> exercises, String? userAvatarUrl, double? averageRpe, String? caption
+ String id, String userId, String userFullName, String sourceDailyWorkoutId, DateTime workoutDate, String dayOfWeek, String dayStatus, int exerciseCount, int completedSets, double totalVolume, int totalDurationSeconds, bool hasPersonalRecord, int loveCount, bool lovedByCurrentUser, DateTime createdAt, List<TrainingDayShareExercise> exercises, bool isReusable, String? userAvatarUrl, double? averageRpe, String? caption
 });
 
 
@@ -1738,7 +1740,7 @@ class __$TrainingDayShareCopyWithImpl<$Res>
 
 /// Create a copy of TrainingDayShare
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? userId = null,Object? userFullName = null,Object? sourceDailyWorkoutId = null,Object? workoutDate = null,Object? dayOfWeek = null,Object? dayStatus = null,Object? exerciseCount = null,Object? completedSets = null,Object? totalVolume = null,Object? totalDurationSeconds = null,Object? hasPersonalRecord = null,Object? loveCount = null,Object? lovedByCurrentUser = null,Object? createdAt = null,Object? exercises = null,Object? userAvatarUrl = freezed,Object? averageRpe = freezed,Object? caption = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? userId = null,Object? userFullName = null,Object? sourceDailyWorkoutId = null,Object? workoutDate = null,Object? dayOfWeek = null,Object? dayStatus = null,Object? exerciseCount = null,Object? completedSets = null,Object? totalVolume = null,Object? totalDurationSeconds = null,Object? hasPersonalRecord = null,Object? loveCount = null,Object? lovedByCurrentUser = null,Object? createdAt = null,Object? exercises = null,Object? isReusable = null,Object? userAvatarUrl = freezed,Object? averageRpe = freezed,Object? caption = freezed,}) {
   return _then(_TrainingDayShare(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
@@ -1756,7 +1758,8 @@ as bool,loveCount: null == loveCount ? _self.loveCount : loveCount // ignore: ca
 as int,lovedByCurrentUser: null == lovedByCurrentUser ? _self.lovedByCurrentUser : lovedByCurrentUser // ignore: cast_nullable_to_non_nullable
 as bool,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,exercises: null == exercises ? _self._exercises : exercises // ignore: cast_nullable_to_non_nullable
-as List<TrainingDayShareExercise>,userAvatarUrl: freezed == userAvatarUrl ? _self.userAvatarUrl : userAvatarUrl // ignore: cast_nullable_to_non_nullable
+as List<TrainingDayShareExercise>,isReusable: null == isReusable ? _self.isReusable : isReusable // ignore: cast_nullable_to_non_nullable
+as bool,userAvatarUrl: freezed == userAvatarUrl ? _self.userAvatarUrl : userAvatarUrl // ignore: cast_nullable_to_non_nullable
 as String?,averageRpe: freezed == averageRpe ? _self.averageRpe : averageRpe // ignore: cast_nullable_to_non_nullable
 as double?,caption: freezed == caption ? _self.caption : caption // ignore: cast_nullable_to_non_nullable
 as String?,

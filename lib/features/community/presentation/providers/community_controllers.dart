@@ -161,6 +161,43 @@ class ShareActionController extends _$ShareActionController {
     _invalidateShares();
   }
 
+  Future<void> reportShare({
+    required String shareId,
+    required String reason,
+    required String details,
+  }) async {
+    state = const AsyncValue.loading();
+    state = await AsyncValue.guard(
+      () => ref
+          .read(communityRepositoryProvider)
+          .reportShare(
+            shareId: shareId,
+            reason: reason,
+            details: details,
+          ),
+    );
+  }
+
+  Future<int> copyShare({
+    required String shareId,
+    required String targetDailyWorkoutId,
+  }) async {
+    state = const AsyncValue.loading();
+    try {
+      final copied = await ref
+          .read(communityRepositoryProvider)
+          .copyShare(
+            shareId: shareId,
+            targetDailyWorkoutId: targetDailyWorkoutId,
+          );
+      state = const AsyncValue.data(null);
+      return copied;
+    } catch (error, stackTrace) {
+      state = AsyncValue.error(error, stackTrace);
+      rethrow;
+    }
+  }
+
   void _invalidateShares() {
     ref
       ..invalidate(communityFeedControllerProvider)

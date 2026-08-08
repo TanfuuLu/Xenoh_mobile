@@ -28,6 +28,7 @@ class AiCoachChatScreen extends ConsumerStatefulWidget {
 class _AiCoachChatScreenState extends ConsumerState<AiCoachChatScreen> {
   final _prompt = TextEditingController();
   final _messages = <({String role, String content})>[];
+  final _conversations = <JsonMap>[];
   String? _conversationId;
   bool _initializing = true;
   Object? _initError;
@@ -53,18 +54,23 @@ class _AiCoachChatScreenState extends ConsumerState<AiCoachChatScreen> {
     try {
       final api = ref.read(xenohApiProvider);
       final page = await api.getObject(
-        '/insights/me/coach-chat/conversations?take=1',
+        '/insights/me/coach-chat/conversations?take=20',
       );
       final items = page['items'];
-      var conversation =
-          items is List && items.isNotEmpty && items.first is JsonMap
-          ? items.first as JsonMap
-          : null;
+      final conversations = items is List
+          ? items
+                .whereType<JsonMap>()
+                .where((item) => item['isArchived'] != true)
+                .toList()
+          : <JsonMap>[];
+      var conversation = conversations.isEmpty ? null : conversations.first;
       conversation ??= await api.postObject(
         '/insights/me/coach-chat/conversations',
         const {},
       );
+      if (conversations.isEmpty) conversations.add(conversation);
       final id = textOf(conversation, ['id'], fallback: '');
+      if (id.isEmpty) throw const FormatException('Missing conversation id');
       final history = await api.getObject(
         '/insights/me/coach-chat/conversations/$id/messages?take=30',
       );
@@ -80,14 +86,19 @@ class _AiCoachChatScreenState extends ConsumerState<AiCoachChatScreen> {
             );
       if (!mounted) return;
       setState(() {
+        _conversations
+          ..clear()
+          ..addAll(conversations);
         _conversationId = id;
-        _messages.addAll([
-          for (final m in messages)
-            (
-              role: textOf(m, ['role'], fallback: 'assistant'),
-              content: textOf(m, ['content']),
-            ),
-        ]);
+        _messages
+          ..clear()
+          ..addAll([
+            for (final m in messages)
+              (
+                role: textOf(m, ['role'], fallback: 'assistant'),
+                content: textOf(m, ['content']),
+              ),
+          ]);
         _initializing = false;
       });
     } catch (e) {
@@ -103,7 +114,23 @@ class _AiCoachChatScreenState extends ConsumerState<AiCoachChatScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.aiCoachChatTitle)),
+      appBar: AppBar(
+        title: Text(l10n.aiCoachChatTitle),
+        actions: [
+          if (!_initializing && _conversations.isNotEmpty)
+            IconButton(
+              tooltip: l10n.aiCoachChatConversationsTooltip,
+              icon: const Icon(Icons.history_rounded),
+              onPressed: () => unawaited(_showConversations()),
+            ),
+          if (!_initializing)
+            IconButton(
+              tooltip: l10n.aiCoachChatNewConversationTooltip,
+              icon: const Icon(Icons.add_comment_outlined),
+              onPressed: () => unawaited(_createConversation()),
+            ),
+        ],
+      ),
       body: Column(
         children: [
           Expanded(child: _body(l10n)),
@@ -212,6 +239,150 @@ class _AiCoachChatScreenState extends ConsumerState<AiCoachChatScreen> {
           ? l10n.aiCoachChatQuotaReachedMessage
           : apiErrorMessage(e, context);
       setState(() => _messages.add((role: 'assistant', content: message)));
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  Future<void> _showConversations() async {
+    final selected = await showModalBottomSheet<JsonMap>(
+      context: context,
+      backgroundColor: AppColors.bgPage,
+      showDragHandle: true,
+      builder: (context) {
+        final l10n = AppLocalizations.of(context);
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(
+              AppSpacing.lg,
+              0,
+              AppSpacing.lg,
+              AppSpacing.lg,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.aiCoachChatConversationsTitle,
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+                const SizedBox(height: AppSpacing.md),
+                Flexible(
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    itemCount: _conversations.length,
+                    separatorBuilder: (_, _) => const Divider(height: 1),
+                    itemBuilder: (context, index) {
+                      final item = _conversations[index];
+                      final id = textOf(item, ['id'], fallback: '');
+                      final count = textOf(item, [
+                        'messageCount',
+                      ], fallback: '0');
+                      return ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        leading: Icon(
+                          id == _conversationId
+                              ? Icons.chat_rounded
+                              : Icons.chat_bubble_outline_rounded,
+                          color: id == _conversationId
+                              ? AppColors.accent
+                              : AppColors.fg3,
+                        ),
+                        title: Text(
+                          textOf(
+                            item,
+                            ['title'],
+                            fallback: l10n.aiCoachChatUntitledConversation,
+                          ),
+                        ),
+                        subtitle: Text(
+                          l10n.aiCoachChatMessageCount(count),
+                          style: const TextStyle(color: AppColors.fg3),
+                        ),
+                        trailing: id == _conversationId
+                            ? const Icon(Icons.check_rounded)
+                            : null,
+                        onTap: () => Navigator.of(context).pop(item),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+    if (selected == null || !mounted) return;
+    final id = textOf(selected, ['id'], fallback: '');
+    if (id.isEmpty || id == _conversationId) return;
+    await _loadConversation(id);
+  }
+
+  Future<void> _loadConversation(String id) async {
+    setState(() {
+      _initializing = true;
+      _initError = null;
+    });
+    try {
+      final history = await ref
+          .read(xenohApiProvider)
+          .getObject(
+            '/insights/me/coach-chat/conversations/$id/messages?take=30',
+          );
+      final items = history['items'];
+      final messages =
+          (items is List ? items.whereType<JsonMap>().toList() : <JsonMap>[])
+            ..sort(
+              (a, b) => _createdAt(
+                a['createdAt'],
+              ).compareTo(_createdAt(b['createdAt'])),
+            );
+      if (!mounted) return;
+      setState(() {
+        _conversationId = id;
+        _messages
+          ..clear()
+          ..addAll([
+            for (final message in messages)
+              (
+                role: textOf(message, ['role'], fallback: 'assistant'),
+                content: textOf(message, ['content']),
+              ),
+          ]);
+        _initializing = false;
+      });
+    } catch (error) {
+      if (!mounted) return;
+      setState(() {
+        _initError = error;
+        _initializing = false;
+      });
+    }
+  }
+
+  Future<void> _createConversation() async {
+    if (_loading) return;
+    setState(() => _loading = true);
+    try {
+      final conversation = await ref
+          .read(xenohApiProvider)
+          .postObject(
+            '/insights/me/coach-chat/conversations',
+            const {},
+          );
+      final id = textOf(conversation, ['id'], fallback: '');
+      if (id.isEmpty) throw const FormatException('Missing conversation id');
+      if (!mounted) return;
+      setState(() {
+        _conversations.insert(0, conversation);
+        _conversationId = id;
+        _messages.clear();
+      });
+    } catch (error) {
+      if (!mounted) return;
+      setState(() => _initError = error);
     } finally {
       if (mounted) setState(() => _loading = false);
     }

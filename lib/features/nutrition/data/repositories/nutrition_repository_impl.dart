@@ -24,6 +24,58 @@ class NutritionRepositoryImpl implements NutritionRepository {
   }
 
   @override
+  Future<List<NutritionDailyLog>> getHistory({
+    required DateTime from,
+    required DateTime to,
+  }) async {
+    try {
+      final items = await _remote.getHistory(from: from, to: to);
+      return items.map((item) => item.toEntity()).toList();
+    } on DioException catch (e) {
+      throw failureFromDio(e);
+    }
+  }
+
+  @override
+  Future<NutritionSummary> getClientSummary(String clientId) async {
+    try {
+      return (await _remote.getClientSummary(clientId)).toEntity();
+    } on DioException catch (e) {
+      throw failureFromDio(e);
+    }
+  }
+
+  @override
+  Future<NutritionDailyLog?> getClientDailyLog(
+    String clientId,
+    DateTime date,
+  ) async {
+    try {
+      return (await _remote.getClientDailyLog(clientId, date))?.toEntity();
+    } on DioException catch (e) {
+      throw failureFromDio(e);
+    }
+  }
+
+  @override
+  Future<List<NutritionDailyLog>> getClientHistory(
+    String clientId, {
+    required DateTime from,
+    required DateTime to,
+  }) async {
+    try {
+      final items = await _remote.getClientHistory(
+        clientId,
+        from: from,
+        to: to,
+      );
+      return items.map((item) => item.toEntity()).toList();
+    } on DioException catch (e) {
+      throw failureFromDio(e);
+    }
+  }
+
+  @override
   Future<NutritionProfile> updateProfile({
     required String activityLevel,
     required String goal,

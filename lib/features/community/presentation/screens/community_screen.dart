@@ -39,6 +39,16 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
         title: Text(l10n.communityTitle),
         actions: [
           IconButton(
+            tooltip: l10n.competitionsTitle,
+            onPressed: () => unawaited(context.push('/competitions')),
+            icon: const Icon(Icons.emoji_events_outlined),
+          ),
+          IconButton(
+            tooltip: l10n.challengesTitle,
+            onPressed: () => unawaited(context.push('/community/challenges')),
+            icon: const Icon(Icons.flag_outlined),
+          ),
+          IconButton(
             tooltip: l10n.communityFriendsTitle,
             onPressed: () => unawaited(context.push('/community/friends')),
             icon: const Icon(Icons.people_alt_outlined),

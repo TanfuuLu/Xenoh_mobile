@@ -159,6 +159,39 @@ void main() {
     expect(exercises.single.sets.single.isCompleted, isTrue);
   });
 
+  test(
+    'updateSetPlan patches planned reps and weight without completing',
+    () async {
+      final repo = MockTrainingRepository();
+      when(
+        () => repo.getExercisesByDay('d1'),
+      ).thenAnswer((_) async => [_exercise(completed: false)]);
+      when(
+        () => repo.updateSetPlan(
+          's1',
+          plannedReps: 6,
+          plannedWeight: 102.5,
+        ),
+      ).thenAnswer(
+        (_) async => _exercise(
+          completed: false,
+          set: _set.copyWith(plannedReps: 6, plannedWeight: 102.5),
+        ),
+      );
+
+      final container = _container(repo);
+      await container.read(exercisesControllerProvider('d1').future);
+      await container
+          .read(exercisesControllerProvider('d1').notifier)
+          .updateSetPlan('s1', plannedReps: 6, plannedWeight: 102.5);
+
+      final updated = container.read(exercisesControllerProvider('d1')).value!;
+      expect(updated.single.sets.single.plannedReps, 6);
+      expect(updated.single.sets.single.plannedWeight, 102.5);
+      expect(updated.single.sets.single.isCompleted, isFalse);
+    },
+  );
+
   test('duplicatePlan delegates and refreshes the plan list', () async {
     final repo = MockTrainingRepository();
     when(
@@ -255,7 +288,7 @@ void main() {
     () async {
       final repo = MockTrainingRepository();
       when(
-        () => repo.getExerciseTemplates(muscleGroup: null),
+        () => repo.getExerciseTemplates(muscleGroup: null, clientId: null),
       ).thenAnswer((_) async => [_template('t1'), _template('t2')]);
       when(
         () => repo.deleteCustomExerciseTemplate('t1'),
@@ -275,6 +308,106 @@ void main() {
 
       final templates = sub.read().value!;
       expect(templates.map((t) => t.id), ['t2']);
+    },
+  );
+
+  test(
+    'ExerciseTemplatesController creates a client-scoped template in place',
+    () async {
+      final repo = MockTrainingRepository();
+      final created = _template(
+        'client-template',
+      ).copyWith(primaryMuscleGroup: 'Quads');
+      when(
+        () => repo.getExerciseTemplates(
+          muscleGroup: 'Quads',
+          clientId: 'client-1',
+        ),
+      ).thenAnswer((_) async => const []);
+      when(
+        () => repo.createCustomExerciseTemplate(
+          name: 'Client squat',
+          primaryMuscleGroup: 'Quads',
+          secondaryMuscleGroups: const [],
+          exerciseKind: 'Strength',
+          description: null,
+          clientId: 'client-1',
+        ),
+      ).thenAnswer((_) async => created);
+
+      final container = _container(repo);
+      final provider = exerciseTemplatesControllerProvider(
+        muscleGroup: 'Quads',
+        clientId: 'client-1',
+      );
+      final sub = container.listen(provider, (_, _) {});
+      addTearDown(sub.close);
+
+      await container.read(provider.future);
+      await container
+          .read(provider.notifier)
+          .createCustom(
+            name: 'Client squat',
+            primaryMuscleGroup: 'Quads',
+            secondaryMuscleGroups: const [],
+            exerciseKind: 'Strength',
+          );
+
+      expect(sub.read().value, [created]);
+      verify(
+        () => repo.createCustomExerciseTemplate(
+          name: 'Client squat',
+          primaryMuscleGroup: 'Quads',
+          secondaryMuscleGroups: const [],
+          exerciseKind: 'Strength',
+          description: null,
+          clientId: 'client-1',
+        ),
+      ).called(1);
+    },
+  );
+
+  test(
+    'created templates do not leak into a different muscle filter',
+    () async {
+      final repo = MockTrainingRepository();
+      final created = _template('chest-template');
+      when(
+        () => repo.getExerciseTemplates(
+          muscleGroup: 'Quads',
+          clientId: 'client-1',
+        ),
+      ).thenAnswer((_) async => const []);
+      when(
+        () => repo.createCustomExerciseTemplate(
+          name: 'Chest press',
+          primaryMuscleGroup: 'Chest',
+          secondaryMuscleGroups: const [],
+          exerciseKind: 'Strength',
+          description: null,
+          clientId: 'client-1',
+        ),
+      ).thenAnswer((_) async => created);
+
+      final container = _container(repo);
+      final provider = exerciseTemplatesControllerProvider(
+        muscleGroup: 'Quads',
+        clientId: 'client-1',
+      );
+      final sub = container.listen(provider, (_, _) {});
+      addTearDown(sub.close);
+
+      await container.read(provider.future);
+      await container
+          .read(provider.notifier)
+          .createCustom(
+            name: 'Chest press',
+            primaryMuscleGroup: 'Chest',
+            secondaryMuscleGroups: const [],
+            exerciseKind: 'Strength',
+          );
+
+      expect(sub.read().value, isEmpty);
     },
   );
 }

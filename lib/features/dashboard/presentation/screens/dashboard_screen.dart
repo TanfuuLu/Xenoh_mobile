@@ -8,11 +8,10 @@ import '../../../../app/theme/app_dimens.dart';
 import '../../../../core/realtime/realtime_service.dart';
 import '../../../../core/utils/weight_units.dart';
 import '../../../../core/widgets/async_value_view.dart';
-import '../../../../core/widgets/xn_section.dart';
+import '../../../../core/widgets/xn_card.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../notifications/presentation/screens/notification_center_screen.dart';
 import '../../../nutrition/presentation/providers/nutrition_controller.dart';
-import '../../../profile/data/repositories/profile_background_repository.dart';
 import '../../../profile/data/repositories/profile_repository_provider.dart';
 import '../../../profile/presentation/providers/preferences_provider.dart';
 import '../../../profile/presentation/providers/profile_controller.dart';
@@ -20,7 +19,6 @@ import '../../../profile/presentation/widgets/bodyweight_card.dart';
 import '../../../profile/presentation/widgets/log_bodyweight_dialog.dart';
 import '../../domain/entities/personal_dashboard.dart';
 import '../providers/dashboard_controller.dart';
-import '../utils/dashboard_localization.dart';
 import '../widgets/dashboard_hero.dart';
 import '../widgets/nutrition_card.dart';
 import '../widgets/plate_calculator_card.dart';
@@ -49,20 +47,6 @@ class DashboardScreen extends ConsumerWidget {
     });
 
     final dashboard = ref.watch(dashboardControllerProvider);
-    final backgroundPath = ref
-        .watch(
-          profileBackgroundPathProvider(ProfileBackgroundRepository.deviceKey),
-        )
-        .value;
-    final backgroundAlignment =
-        ref
-            .watch(
-              profileBackgroundAlignmentProvider(
-                ProfileBackgroundRepository.deviceKey,
-              ),
-            )
-            .value ??
-        Alignment.center;
     final unreadNotifications = ref
         .watch(notificationsProvider)
         .value
@@ -104,8 +88,6 @@ class DashboardScreen extends ConsumerWidget {
           onRetry: () => ref.invalidate(dashboardControllerProvider),
           data: (data) => _DashboardBody(
             data: data,
-            backgroundImagePath: backgroundPath,
-            backgroundAlignment: backgroundAlignment,
             unit: ref.watch(weightUnitProvider),
           ),
         ),
@@ -161,14 +143,10 @@ class _DashboardBody extends StatelessWidget {
   const _DashboardBody({
     required this.data,
     required this.unit,
-    this.backgroundImagePath,
-    this.backgroundAlignment = Alignment.center,
   });
 
   final PersonalDashboard data;
   final WeightUnit unit;
-  final String? backgroundImagePath;
-  final Alignment backgroundAlignment;
 
   @override
   Widget build(BuildContext context) {
@@ -177,38 +155,30 @@ class _DashboardBody extends StatelessWidget {
       children: [
         DashboardHero(
           profile: data.profile,
-          backgroundImagePath: backgroundImagePath,
-          backgroundAlignment: backgroundAlignment,
           onOpenPlateCalculator: () => _openPlateCalculator(context),
         ),
         const SizedBox(height: AppSpacing.md),
-        XnSectionGroup(
-          children: [
-            TodayWorkoutCard(
-              workout: data.todayWorkout,
-              currentStreak: data.profile.currentStreak,
-              unit: unit,
-              onOpen: data.todayWorkout != null
-                  ? () => context.push('/days/${data.todayWorkout!.id}')
-                  : null,
-            ),
-            const XnSectionDivider(),
-            const NutritionCard(),
-            const XnSectionDivider(),
-            const TodayMealPlanCard(),
-            const XnSectionDivider(),
-            const _DashboardBodyweight(),
-            if (data.nextActions.isNotEmpty) ...[
-              const XnSectionDivider(),
-              _NextActions(actions: data.nextActions),
-            ],
-            if (!data.proInsights.isUnlocked ||
-                data.proInsights.items.isNotEmpty) ...[
-              const XnSectionDivider(),
-              ProInsightsCard(insights: data.proInsights),
-            ],
-          ],
+        _DashboardPanel(
+          child: TodayWorkoutCard(
+            workout: data.todayWorkout,
+            currentStreak: data.profile.currentStreak,
+            unit: unit,
+            onOpen: data.todayWorkout != null
+                ? () => context.push('/days/${data.todayWorkout!.id}')
+                : null,
+          ),
         ),
+        const SizedBox(height: AppSpacing.md),
+        const _DashboardPanel(child: NutritionCard()),
+        const SizedBox(height: AppSpacing.md),
+        const _DashboardPanel(child: TodayMealPlanCard()),
+        const SizedBox(height: AppSpacing.md),
+        const _DashboardPanel(child: _DashboardBodyweight()),
+        if (!data.proInsights.isUnlocked ||
+            data.proInsights.items.isNotEmpty) ...[
+          const SizedBox(height: AppSpacing.md),
+          _DashboardPanel(child: ProInsightsCard(insights: data.proInsights)),
+        ],
         const SizedBox(height: AppSpacing.lg),
       ],
     );
@@ -233,6 +203,20 @@ class _DashboardBody extends StatelessWidget {
           child: const SingleChildScrollView(child: PlateCalculatorCard()),
         );
       },
+    );
+  }
+}
+
+class _DashboardPanel extends StatelessWidget {
+  const _DashboardPanel({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return XnCard(
+      padding: const EdgeInsets.all(AppSpacing.md),
+      child: child,
     );
   }
 }
@@ -289,91 +273,5 @@ class _DashboardBodyweight extends ConsumerWidget {
         ..hideCurrentSnackBar()
         ..showSnackBar(SnackBar(content: Text('$e')));
     }
-  }
-}
-
-class _NextActions extends StatelessWidget {
-  const _NextActions({required this.actions});
-
-  final List<NextAction> actions;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    final sorted = [...actions]
-      ..sort((a, b) => a.priority.compareTo(b.priority));
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(
-            AppSpacing.sm,
-            AppSpacing.xl,
-            AppSpacing.sm,
-            AppSpacing.md,
-          ),
-          child: Text(
-            l10n.dashboardNextActionsTitle,
-            style: const TextStyle(
-              color: AppColors.fg3,
-              fontSize: 11,
-              fontWeight: FontWeight.w500,
-              letterSpacing: 0.6,
-            ),
-          ),
-        ),
-        for (final action in sorted)
-          Padding(
-            padding: EdgeInsets.only(
-              left: AppSpacing.sm,
-              right: AppSpacing.sm,
-              bottom: action == sorted.last ? AppSpacing.xl : AppSpacing.md,
-            ),
-            child: _NextActionRow(action: action),
-          ),
-      ],
-    );
-  }
-}
-
-class _NextActionRow extends StatelessWidget {
-  const _NextActionRow({required this.action});
-
-  final NextAction action;
-
-  @override
-  Widget build(BuildContext context) {
-    final localized = localizeDashboardNextAction(
-      action,
-      AppLocalizations.of(context),
-      Localizations.localeOf(context).languageCode,
-    );
-    return Row(
-      children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                localized.label,
-                style: const TextStyle(
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.fg1,
-                ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                localized.description,
-                style: const TextStyle(
-                  color: AppColors.fg2,
-                  fontSize: 13,
-                ),
-              ),
-            ],
-          ),
-        ),
-        const Icon(Icons.chevron_right_rounded, color: AppColors.fg3),
-      ],
-    );
   }
 }

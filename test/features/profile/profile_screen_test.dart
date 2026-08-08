@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:xenoh_mobile/app/theme/app_dimens.dart';
 import 'package:xenoh_mobile/features/profile/data/repositories/profile_repository_provider.dart';
 import 'package:xenoh_mobile/features/profile/domain/entities/bodyweight_log.dart';
 import 'package:xenoh_mobile/features/profile/domain/entities/training_activity.dart';
@@ -74,6 +75,14 @@ void main() {
     // only in the level-card pill.
     expect(find.text('BODYWEIGHT'), findsNothing);
     expect(find.text('80 kg'), findsOneWidget);
+    expect(
+      find.byWidgetPredicate(
+        (widget) =>
+            widget is Container &&
+            widget.constraints?.minHeight == AppLayout.heroCardMinHeight,
+      ),
+      findsNothing,
+    );
 
     // Scroll the calendar (grid) into view to exercise its layout too.
     await tester.scrollUntilVisible(
