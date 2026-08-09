@@ -21,6 +21,14 @@ class ChallengeRemoteDataSource {
 
   Future<Challenge> create(ChallengeInput input) =>
       _challengePost(_base, input.toJson());
+  Future<Challenge> update(String id, ChallengeInput input) async {
+    final response = await _dio.put<Map<String, dynamic>>(
+      '$_base/$id',
+      data: input.toJson(),
+    );
+    return Challenge.fromJson(response.data!);
+  }
+
   Future<Challenge> accept(String id) => _challengePost('$_base/$id/accept');
   Future<Challenge> join(String id) => _challengePost('$_base/$id/join');
   Future<Challenge> checkIn(String id, String? note) =>

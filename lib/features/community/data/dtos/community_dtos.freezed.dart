@@ -924,7 +924,7 @@ as double?,
 /// @nodoc
 mixin _$FriendDto {
 
- String get userId; String get fullName; String get email; String get friendsSince; String? get avatarUrl; String? get bio;
+ String get userId; String get fullName; String get friendsSince; String? get email; String? get avatarUrl; String? get bio;
 /// Create a copy of FriendDto
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -937,16 +937,16 @@ $FriendDtoCopyWith<FriendDto> get copyWith => _$FriendDtoCopyWithImpl<FriendDto>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is FriendDto&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.fullName, fullName) || other.fullName == fullName)&&(identical(other.email, email) || other.email == email)&&(identical(other.friendsSince, friendsSince) || other.friendsSince == friendsSince)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl)&&(identical(other.bio, bio) || other.bio == bio));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is FriendDto&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.fullName, fullName) || other.fullName == fullName)&&(identical(other.friendsSince, friendsSince) || other.friendsSince == friendsSince)&&(identical(other.email, email) || other.email == email)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl)&&(identical(other.bio, bio) || other.bio == bio));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,userId,fullName,email,friendsSince,avatarUrl,bio);
+int get hashCode => Object.hash(runtimeType,userId,fullName,friendsSince,email,avatarUrl,bio);
 
 @override
 String toString() {
-  return 'FriendDto(userId: $userId, fullName: $fullName, email: $email, friendsSince: $friendsSince, avatarUrl: $avatarUrl, bio: $bio)';
+  return 'FriendDto(userId: $userId, fullName: $fullName, friendsSince: $friendsSince, email: $email, avatarUrl: $avatarUrl, bio: $bio)';
 }
 
 
@@ -957,7 +957,7 @@ abstract mixin class $FriendDtoCopyWith<$Res>  {
   factory $FriendDtoCopyWith(FriendDto value, $Res Function(FriendDto) _then) = _$FriendDtoCopyWithImpl;
 @useResult
 $Res call({
- String userId, String fullName, String email, String friendsSince, String? avatarUrl, String? bio
+ String userId, String fullName, String friendsSince, String? email, String? avatarUrl, String? bio
 });
 
 
@@ -974,13 +974,13 @@ class _$FriendDtoCopyWithImpl<$Res>
 
 /// Create a copy of FriendDto
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? userId = null,Object? fullName = null,Object? email = null,Object? friendsSince = null,Object? avatarUrl = freezed,Object? bio = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? userId = null,Object? fullName = null,Object? friendsSince = null,Object? email = freezed,Object? avatarUrl = freezed,Object? bio = freezed,}) {
   return _then(_self.copyWith(
 userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
 as String,fullName: null == fullName ? _self.fullName : fullName // ignore: cast_nullable_to_non_nullable
-as String,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
 as String,friendsSince: null == friendsSince ? _self.friendsSince : friendsSince // ignore: cast_nullable_to_non_nullable
-as String,avatarUrl: freezed == avatarUrl ? _self.avatarUrl : avatarUrl // ignore: cast_nullable_to_non_nullable
+as String,email: freezed == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
+as String?,avatarUrl: freezed == avatarUrl ? _self.avatarUrl : avatarUrl // ignore: cast_nullable_to_non_nullable
 as String?,bio: freezed == bio ? _self.bio : bio // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
@@ -1067,10 +1067,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String userId,  String fullName,  String email,  String friendsSince,  String? avatarUrl,  String? bio)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String userId,  String fullName,  String friendsSince,  String? email,  String? avatarUrl,  String? bio)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _FriendDto() when $default != null:
-return $default(_that.userId,_that.fullName,_that.email,_that.friendsSince,_that.avatarUrl,_that.bio);case _:
+return $default(_that.userId,_that.fullName,_that.friendsSince,_that.email,_that.avatarUrl,_that.bio);case _:
   return orElse();
 
 }
@@ -1088,10 +1088,10 @@ return $default(_that.userId,_that.fullName,_that.email,_that.friendsSince,_that
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String userId,  String fullName,  String email,  String friendsSince,  String? avatarUrl,  String? bio)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String userId,  String fullName,  String friendsSince,  String? email,  String? avatarUrl,  String? bio)  $default,) {final _that = this;
 switch (_that) {
 case _FriendDto():
-return $default(_that.userId,_that.fullName,_that.email,_that.friendsSince,_that.avatarUrl,_that.bio);case _:
+return $default(_that.userId,_that.fullName,_that.friendsSince,_that.email,_that.avatarUrl,_that.bio);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -1108,10 +1108,10 @@ return $default(_that.userId,_that.fullName,_that.email,_that.friendsSince,_that
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String userId,  String fullName,  String email,  String friendsSince,  String? avatarUrl,  String? bio)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String userId,  String fullName,  String friendsSince,  String? email,  String? avatarUrl,  String? bio)?  $default,) {final _that = this;
 switch (_that) {
 case _FriendDto() when $default != null:
-return $default(_that.userId,_that.fullName,_that.email,_that.friendsSince,_that.avatarUrl,_that.bio);case _:
+return $default(_that.userId,_that.fullName,_that.friendsSince,_that.email,_that.avatarUrl,_that.bio);case _:
   return null;
 
 }
@@ -1123,13 +1123,13 @@ return $default(_that.userId,_that.fullName,_that.email,_that.friendsSince,_that
 @JsonSerializable()
 
 class _FriendDto extends FriendDto {
-  const _FriendDto({required this.userId, required this.fullName, required this.email, required this.friendsSince, this.avatarUrl, this.bio}): super._();
+  const _FriendDto({required this.userId, required this.fullName, required this.friendsSince, this.email, this.avatarUrl, this.bio}): super._();
   factory _FriendDto.fromJson(Map<String, dynamic> json) => _$FriendDtoFromJson(json);
 
 @override final  String userId;
 @override final  String fullName;
-@override final  String email;
 @override final  String friendsSince;
+@override final  String? email;
 @override final  String? avatarUrl;
 @override final  String? bio;
 
@@ -1146,16 +1146,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _FriendDto&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.fullName, fullName) || other.fullName == fullName)&&(identical(other.email, email) || other.email == email)&&(identical(other.friendsSince, friendsSince) || other.friendsSince == friendsSince)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl)&&(identical(other.bio, bio) || other.bio == bio));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _FriendDto&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.fullName, fullName) || other.fullName == fullName)&&(identical(other.friendsSince, friendsSince) || other.friendsSince == friendsSince)&&(identical(other.email, email) || other.email == email)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl)&&(identical(other.bio, bio) || other.bio == bio));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,userId,fullName,email,friendsSince,avatarUrl,bio);
+int get hashCode => Object.hash(runtimeType,userId,fullName,friendsSince,email,avatarUrl,bio);
 
 @override
 String toString() {
-  return 'FriendDto(userId: $userId, fullName: $fullName, email: $email, friendsSince: $friendsSince, avatarUrl: $avatarUrl, bio: $bio)';
+  return 'FriendDto(userId: $userId, fullName: $fullName, friendsSince: $friendsSince, email: $email, avatarUrl: $avatarUrl, bio: $bio)';
 }
 
 
@@ -1166,7 +1166,7 @@ abstract mixin class _$FriendDtoCopyWith<$Res> implements $FriendDtoCopyWith<$Re
   factory _$FriendDtoCopyWith(_FriendDto value, $Res Function(_FriendDto) _then) = __$FriendDtoCopyWithImpl;
 @override @useResult
 $Res call({
- String userId, String fullName, String email, String friendsSince, String? avatarUrl, String? bio
+ String userId, String fullName, String friendsSince, String? email, String? avatarUrl, String? bio
 });
 
 
@@ -1183,13 +1183,13 @@ class __$FriendDtoCopyWithImpl<$Res>
 
 /// Create a copy of FriendDto
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? userId = null,Object? fullName = null,Object? email = null,Object? friendsSince = null,Object? avatarUrl = freezed,Object? bio = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? userId = null,Object? fullName = null,Object? friendsSince = null,Object? email = freezed,Object? avatarUrl = freezed,Object? bio = freezed,}) {
   return _then(_FriendDto(
 userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
 as String,fullName: null == fullName ? _self.fullName : fullName // ignore: cast_nullable_to_non_nullable
-as String,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
 as String,friendsSince: null == friendsSince ? _self.friendsSince : friendsSince // ignore: cast_nullable_to_non_nullable
-as String,avatarUrl: freezed == avatarUrl ? _self.avatarUrl : avatarUrl // ignore: cast_nullable_to_non_nullable
+as String,email: freezed == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
+as String?,avatarUrl: freezed == avatarUrl ? _self.avatarUrl : avatarUrl // ignore: cast_nullable_to_non_nullable
 as String?,bio: freezed == bio ? _self.bio : bio // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
@@ -1202,7 +1202,7 @@ as String?,
 /// @nodoc
 mixin _$FriendRequestDto {
 
- String get id; String get userId; String get fullName; String get email; String get direction; String get status; String get createdAt; String? get avatarUrl; String? get respondedAt;
+ String get id; String get userId; String get fullName; String get direction; String get status; String get createdAt; String? get email; String? get avatarUrl; String? get respondedAt;
 /// Create a copy of FriendRequestDto
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -1215,16 +1215,16 @@ $FriendRequestDtoCopyWith<FriendRequestDto> get copyWith => _$FriendRequestDtoCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is FriendRequestDto&&(identical(other.id, id) || other.id == id)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.fullName, fullName) || other.fullName == fullName)&&(identical(other.email, email) || other.email == email)&&(identical(other.direction, direction) || other.direction == direction)&&(identical(other.status, status) || other.status == status)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl)&&(identical(other.respondedAt, respondedAt) || other.respondedAt == respondedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is FriendRequestDto&&(identical(other.id, id) || other.id == id)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.fullName, fullName) || other.fullName == fullName)&&(identical(other.direction, direction) || other.direction == direction)&&(identical(other.status, status) || other.status == status)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.email, email) || other.email == email)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl)&&(identical(other.respondedAt, respondedAt) || other.respondedAt == respondedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,userId,fullName,email,direction,status,createdAt,avatarUrl,respondedAt);
+int get hashCode => Object.hash(runtimeType,id,userId,fullName,direction,status,createdAt,email,avatarUrl,respondedAt);
 
 @override
 String toString() {
-  return 'FriendRequestDto(id: $id, userId: $userId, fullName: $fullName, email: $email, direction: $direction, status: $status, createdAt: $createdAt, avatarUrl: $avatarUrl, respondedAt: $respondedAt)';
+  return 'FriendRequestDto(id: $id, userId: $userId, fullName: $fullName, direction: $direction, status: $status, createdAt: $createdAt, email: $email, avatarUrl: $avatarUrl, respondedAt: $respondedAt)';
 }
 
 
@@ -1235,7 +1235,7 @@ abstract mixin class $FriendRequestDtoCopyWith<$Res>  {
   factory $FriendRequestDtoCopyWith(FriendRequestDto value, $Res Function(FriendRequestDto) _then) = _$FriendRequestDtoCopyWithImpl;
 @useResult
 $Res call({
- String id, String userId, String fullName, String email, String direction, String status, String createdAt, String? avatarUrl, String? respondedAt
+ String id, String userId, String fullName, String direction, String status, String createdAt, String? email, String? avatarUrl, String? respondedAt
 });
 
 
@@ -1252,16 +1252,16 @@ class _$FriendRequestDtoCopyWithImpl<$Res>
 
 /// Create a copy of FriendRequestDto
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? userId = null,Object? fullName = null,Object? email = null,Object? direction = null,Object? status = null,Object? createdAt = null,Object? avatarUrl = freezed,Object? respondedAt = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? userId = null,Object? fullName = null,Object? direction = null,Object? status = null,Object? createdAt = null,Object? email = freezed,Object? avatarUrl = freezed,Object? respondedAt = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
 as String,fullName: null == fullName ? _self.fullName : fullName // ignore: cast_nullable_to_non_nullable
-as String,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
 as String,direction: null == direction ? _self.direction : direction // ignore: cast_nullable_to_non_nullable
 as String,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as String,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
-as String,avatarUrl: freezed == avatarUrl ? _self.avatarUrl : avatarUrl // ignore: cast_nullable_to_non_nullable
+as String,email: freezed == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
+as String?,avatarUrl: freezed == avatarUrl ? _self.avatarUrl : avatarUrl // ignore: cast_nullable_to_non_nullable
 as String?,respondedAt: freezed == respondedAt ? _self.respondedAt : respondedAt // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
@@ -1348,10 +1348,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String userId,  String fullName,  String email,  String direction,  String status,  String createdAt,  String? avatarUrl,  String? respondedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String userId,  String fullName,  String direction,  String status,  String createdAt,  String? email,  String? avatarUrl,  String? respondedAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _FriendRequestDto() when $default != null:
-return $default(_that.id,_that.userId,_that.fullName,_that.email,_that.direction,_that.status,_that.createdAt,_that.avatarUrl,_that.respondedAt);case _:
+return $default(_that.id,_that.userId,_that.fullName,_that.direction,_that.status,_that.createdAt,_that.email,_that.avatarUrl,_that.respondedAt);case _:
   return orElse();
 
 }
@@ -1369,10 +1369,10 @@ return $default(_that.id,_that.userId,_that.fullName,_that.email,_that.direction
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String userId,  String fullName,  String email,  String direction,  String status,  String createdAt,  String? avatarUrl,  String? respondedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String userId,  String fullName,  String direction,  String status,  String createdAt,  String? email,  String? avatarUrl,  String? respondedAt)  $default,) {final _that = this;
 switch (_that) {
 case _FriendRequestDto():
-return $default(_that.id,_that.userId,_that.fullName,_that.email,_that.direction,_that.status,_that.createdAt,_that.avatarUrl,_that.respondedAt);case _:
+return $default(_that.id,_that.userId,_that.fullName,_that.direction,_that.status,_that.createdAt,_that.email,_that.avatarUrl,_that.respondedAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -1389,10 +1389,10 @@ return $default(_that.id,_that.userId,_that.fullName,_that.email,_that.direction
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String userId,  String fullName,  String email,  String direction,  String status,  String createdAt,  String? avatarUrl,  String? respondedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String userId,  String fullName,  String direction,  String status,  String createdAt,  String? email,  String? avatarUrl,  String? respondedAt)?  $default,) {final _that = this;
 switch (_that) {
 case _FriendRequestDto() when $default != null:
-return $default(_that.id,_that.userId,_that.fullName,_that.email,_that.direction,_that.status,_that.createdAt,_that.avatarUrl,_that.respondedAt);case _:
+return $default(_that.id,_that.userId,_that.fullName,_that.direction,_that.status,_that.createdAt,_that.email,_that.avatarUrl,_that.respondedAt);case _:
   return null;
 
 }
@@ -1404,16 +1404,16 @@ return $default(_that.id,_that.userId,_that.fullName,_that.email,_that.direction
 @JsonSerializable()
 
 class _FriendRequestDto extends FriendRequestDto {
-  const _FriendRequestDto({required this.id, required this.userId, required this.fullName, required this.email, required this.direction, required this.status, required this.createdAt, this.avatarUrl, this.respondedAt}): super._();
+  const _FriendRequestDto({required this.id, required this.userId, required this.fullName, required this.direction, required this.status, required this.createdAt, this.email, this.avatarUrl, this.respondedAt}): super._();
   factory _FriendRequestDto.fromJson(Map<String, dynamic> json) => _$FriendRequestDtoFromJson(json);
 
 @override final  String id;
 @override final  String userId;
 @override final  String fullName;
-@override final  String email;
 @override final  String direction;
 @override final  String status;
 @override final  String createdAt;
+@override final  String? email;
 @override final  String? avatarUrl;
 @override final  String? respondedAt;
 
@@ -1430,16 +1430,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _FriendRequestDto&&(identical(other.id, id) || other.id == id)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.fullName, fullName) || other.fullName == fullName)&&(identical(other.email, email) || other.email == email)&&(identical(other.direction, direction) || other.direction == direction)&&(identical(other.status, status) || other.status == status)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl)&&(identical(other.respondedAt, respondedAt) || other.respondedAt == respondedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _FriendRequestDto&&(identical(other.id, id) || other.id == id)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.fullName, fullName) || other.fullName == fullName)&&(identical(other.direction, direction) || other.direction == direction)&&(identical(other.status, status) || other.status == status)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.email, email) || other.email == email)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl)&&(identical(other.respondedAt, respondedAt) || other.respondedAt == respondedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,userId,fullName,email,direction,status,createdAt,avatarUrl,respondedAt);
+int get hashCode => Object.hash(runtimeType,id,userId,fullName,direction,status,createdAt,email,avatarUrl,respondedAt);
 
 @override
 String toString() {
-  return 'FriendRequestDto(id: $id, userId: $userId, fullName: $fullName, email: $email, direction: $direction, status: $status, createdAt: $createdAt, avatarUrl: $avatarUrl, respondedAt: $respondedAt)';
+  return 'FriendRequestDto(id: $id, userId: $userId, fullName: $fullName, direction: $direction, status: $status, createdAt: $createdAt, email: $email, avatarUrl: $avatarUrl, respondedAt: $respondedAt)';
 }
 
 
@@ -1450,7 +1450,7 @@ abstract mixin class _$FriendRequestDtoCopyWith<$Res> implements $FriendRequestD
   factory _$FriendRequestDtoCopyWith(_FriendRequestDto value, $Res Function(_FriendRequestDto) _then) = __$FriendRequestDtoCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String userId, String fullName, String email, String direction, String status, String createdAt, String? avatarUrl, String? respondedAt
+ String id, String userId, String fullName, String direction, String status, String createdAt, String? email, String? avatarUrl, String? respondedAt
 });
 
 
@@ -1467,16 +1467,16 @@ class __$FriendRequestDtoCopyWithImpl<$Res>
 
 /// Create a copy of FriendRequestDto
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? userId = null,Object? fullName = null,Object? email = null,Object? direction = null,Object? status = null,Object? createdAt = null,Object? avatarUrl = freezed,Object? respondedAt = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? userId = null,Object? fullName = null,Object? direction = null,Object? status = null,Object? createdAt = null,Object? email = freezed,Object? avatarUrl = freezed,Object? respondedAt = freezed,}) {
   return _then(_FriendRequestDto(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
 as String,fullName: null == fullName ? _self.fullName : fullName // ignore: cast_nullable_to_non_nullable
-as String,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
 as String,direction: null == direction ? _self.direction : direction // ignore: cast_nullable_to_non_nullable
 as String,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as String,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
-as String,avatarUrl: freezed == avatarUrl ? _self.avatarUrl : avatarUrl // ignore: cast_nullable_to_non_nullable
+as String,email: freezed == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
+as String?,avatarUrl: freezed == avatarUrl ? _self.avatarUrl : avatarUrl // ignore: cast_nullable_to_non_nullable
 as String?,respondedAt: freezed == respondedAt ? _self.respondedAt : respondedAt // ignore: cast_nullable_to_non_nullable
 as String?,
   ));

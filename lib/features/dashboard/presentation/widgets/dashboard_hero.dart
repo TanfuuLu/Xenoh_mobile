@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_dimens.dart';
 import '../../../../app/theme/app_typography.dart';
+import '../../../../core/widgets/synced_background_card.dart';
 import '../../../../core/widgets/xn_animated_number.dart';
-import '../../../../core/widgets/xn_card.dart';
 import '../../../../core/widgets/xn_progress.dart';
+import '../../../../core/widgets/xn_user_avatar.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../domain/entities/personal_dashboard.dart';
 
@@ -13,11 +14,15 @@ import '../../domain/entities/personal_dashboard.dart';
 class DashboardHero extends StatelessWidget {
   const DashboardHero({
     required this.profile,
+    this.backgroundImagePath,
+    this.backgroundAlignment = Alignment.center,
     this.onOpenPlateCalculator,
     super.key,
   });
 
   final DashboardProfile profile;
+  final String? backgroundImagePath;
+  final Alignment backgroundAlignment;
   final VoidCallback? onOpenPlateCalculator;
 
   @override
@@ -28,118 +33,108 @@ class DashboardHero extends StatelessWidget {
         ? 0.0
         : (profile.totalXp / xpTotal).clamp(0.0, 1.0);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            _Avatar(profile: profile),
-            const SizedBox(width: AppSpacing.md),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    l10n.dashboardTodayInTraining,
-                    style: const TextStyle(
-                      color: AppColors.fg2,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    profile.firstName,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: AppTypography.display(
-                      28,
-                      weight: FontWeight.w700,
-                      color: AppColors.fg1,
-                      height: 1.05,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: AppSpacing.sm),
-            _StreakBadge(streak: profile.currentStreak),
-          ],
-        ),
-        if (onOpenPlateCalculator != null) ...[
-          const SizedBox(height: AppSpacing.lg),
-          _HeroActionButton(onPressed: onOpenPlateCalculator!),
-        ],
-        const SizedBox(height: AppSpacing.lg),
-        XnCard(
-          padding: const EdgeInsets.all(AppSpacing.lg),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    return SyncedBackgroundCard(
+      backgroundImagePath: backgroundImagePath,
+      backgroundAlignment: backgroundAlignment,
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Row(
-                      children: [
-                        Text(
-                          '${l10n.dashboardLevelPrefix} ',
-                          style: const TextStyle(
-                            color: AppColors.fg2,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        XnAnimatedNumber(
-                          value: profile.level.toDouble(),
-                          formatter: formatAnimatedInt,
-                          style: AppTypography.mono(
-                            13,
-                            weight: FontWeight.w700,
-                            color: AppColors.fg1,
-                          ),
-                        ),
-                        Flexible(
-                          child: Text(
-                            '  ${profile.title}',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              color: AppColors.fg1,
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ],
+              _Avatar(profile: profile),
+              const SizedBox(width: AppSpacing.md),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.dashboardTodayInTraining,
+                      style: TextStyle(
+                        color: AppColors.fgOnClay.withValues(alpha: 0.76),
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
-                  ),
-                  XnAnimatedNumber(
-                    value: profile.xpToNextLevel.toDouble(),
-                    formatter: (value) =>
-                        '${formatAnimatedThousands(value)} XP',
-                    style: AppTypography.mono(
-                      12,
-                      color: AppColors.fg2,
-                      weight: FontWeight.w600,
+                    const SizedBox(height: AppSpacing.xs),
+                    Text(
+                      profile.firstName,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTypography.display(
+                        30,
+                        weight: FontWeight.w800,
+                        color: AppColors.fgOnClay,
+                        letterSpacing: -0.4,
+                        height: 1,
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppSpacing.md),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(AppRadius.pill),
-                child: XnAnimatedLinearProgress(
-                  value: xpProgress,
-                  minHeight: 7,
-                  backgroundColor: AppColors.bg3,
-                  color: AppColors.accent,
+                  ],
                 ),
               ),
+              const SizedBox(width: AppSpacing.sm),
+              _StreakBadge(streak: profile.currentStreak),
             ],
           ),
-        ),
-      ],
+          if (onOpenPlateCalculator != null) ...[
+            const SizedBox(height: AppSpacing.md),
+            _HeroActionButton(onPressed: onOpenPlateCalculator!),
+          ],
+          const SizedBox(height: AppSpacing.md),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(AppSpacing.md),
+            decoration: BoxDecoration(
+              color: AppColors.fgOnClay.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(AppRadius.lg),
+              border: Border.all(
+                color: AppColors.fgOnClay.withValues(alpha: 0.14),
+              ),
+            ),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        '${l10n.dashboardLevelPrefix} ${profile.level}  ${profile.title}',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          color: AppColors.fgOnClay,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                    XnAnimatedNumber(
+                      value: profile.xpToNextLevel.toDouble(),
+                      formatter: (value) =>
+                          '${formatAnimatedThousands(value)} XP',
+                      style: AppTypography.mono(
+                        12,
+                        color: AppColors.fgOnClay.withValues(alpha: 0.84),
+                        weight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.md),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(AppRadius.pill),
+                  child: XnAnimatedLinearProgress(
+                    value: xpProgress,
+                    minHeight: 7,
+                    backgroundColor: AppColors.fgOnClay.withValues(alpha: 0.18),
+                    color: AppColors.clay200,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -151,31 +146,14 @@ class _Avatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final url = profile.avatarUrl;
-    return Container(
-      width: 48,
-      height: 48,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(AppRadius.md),
-        border: Border.all(color: AppColors.surfaceBorderSoft),
-        image: (url != null && url.isNotEmpty)
-            ? DecorationImage(image: NetworkImage(url), fit: BoxFit.cover)
-            : null,
-      ),
-      child: (url == null || url.isEmpty)
-          ? Text(
-              profile.firstName.isEmpty
-                  ? '?'
-                  : profile.firstName.characters.first.toUpperCase(),
-              style: const TextStyle(
-                color: AppColors.fg1,
-                fontWeight: FontWeight.w700,
-                fontSize: 19,
-              ),
-            )
-          : null,
+    return XnUserAvatar(
+      name: profile.firstName,
+      imageUrl: profile.avatarUrl,
+      size: 56,
+      backgroundColor: AppColors.fgOnClay.withValues(alpha: 0.14),
+      foregroundColor: AppColors.fgOnClay,
+      borderColor: AppColors.fgOnClay.withValues(alpha: 0.18),
+      borderRadius: AppRadius.lg,
     );
   }
 }
@@ -189,7 +167,7 @@ class _HeroActionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return Material(
-      color: Colors.transparent,
+      color: AppColors.fgOnClay.withValues(alpha: 0.1),
       borderRadius: BorderRadius.circular(AppRadius.md),
       child: InkWell(
         onTap: onPressed,
@@ -200,12 +178,6 @@ class _HeroActionButton extends StatelessWidget {
             horizontal: AppSpacing.lg,
             vertical: AppSpacing.md,
           ),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(AppRadius.md),
-            border: Border.all(
-              color: AppColors.surfaceBorderSoft,
-            ),
-          ),
           child: Row(
             children: [
               Container(
@@ -213,12 +185,12 @@ class _HeroActionButton extends StatelessWidget {
                 height: 42,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: AppColors.accentSoft,
+                  color: AppColors.fgOnClay.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(AppRadius.md),
                 ),
                 child: const Icon(
                   Icons.fitness_center_rounded,
-                  color: AppColors.accent,
+                  color: AppColors.fgOnClay,
                   size: 22,
                 ),
               ),
@@ -232,7 +204,7 @@ class _HeroActionButton extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
-                        color: AppColors.fg1,
+                        color: AppColors.fgOnClay,
                         fontSize: 15,
                         fontWeight: FontWeight.w500,
                       ),
@@ -243,7 +215,7 @@ class _HeroActionButton extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
-                        color: AppColors.fg2,
+                        color: AppColors.fgOnClay,
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                       ),
@@ -254,7 +226,7 @@ class _HeroActionButton extends StatelessWidget {
               const SizedBox(width: AppSpacing.sm),
               const Icon(
                 Icons.chevron_right_rounded,
-                color: AppColors.fg3,
+                color: AppColors.fgOnClay,
               ),
             ],
           ),
@@ -274,9 +246,11 @@ class _StreakBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
-        color: AppColors.warningBg,
+        color: AppColors.fgOnClay.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(AppRadius.md),
-        border: Border.all(color: AppColors.warning.withValues(alpha: 0.16)),
+        border: Border.all(
+          color: AppColors.fgOnClay.withValues(alpha: 0.16),
+        ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -293,7 +267,7 @@ class _StreakBadge extends StatelessWidget {
             style: AppTypography.mono(
               16,
               weight: FontWeight.w500,
-              color: AppColors.fg1,
+              color: AppColors.fgOnClay,
             ),
           ),
         ],

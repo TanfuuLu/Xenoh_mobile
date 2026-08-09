@@ -10,19 +10,25 @@ import '../../../../core/utils/weight_units.dart';
 import '../../../../core/widgets/async_value_view.dart';
 import '../../../../core/widgets/xn_card.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../community/domain/entities/community_models.dart';
+import '../../../community/presentation/providers/community_controllers.dart';
 import '../../../notifications/presentation/screens/notification_center_screen.dart';
 import '../../../nutrition/presentation/providers/nutrition_controller.dart';
+import '../../../profile/data/repositories/profile_background_repository.dart';
 import '../../../profile/data/repositories/profile_repository_provider.dart';
 import '../../../profile/presentation/providers/preferences_provider.dart';
 import '../../../profile/presentation/providers/profile_controller.dart';
 import '../../../profile/presentation/widgets/bodyweight_card.dart';
 import '../../../profile/presentation/widgets/log_bodyweight_dialog.dart';
+import '../../../supplements/presentation/providers/supplement_controllers.dart';
 import '../../domain/entities/personal_dashboard.dart';
 import '../providers/dashboard_controller.dart';
+import '../widgets/community_dashboard_card.dart';
 import '../widgets/dashboard_hero.dart';
 import '../widgets/nutrition_card.dart';
 import '../widgets/plate_calculator_card.dart';
 import '../widgets/pro_insights_card.dart';
+import '../widgets/supplements_card.dart';
 import '../widgets/today_meal_plan_card.dart';
 import '../widgets/today_workout_card.dart';
 
@@ -47,6 +53,20 @@ class DashboardScreen extends ConsumerWidget {
     });
 
     final dashboard = ref.watch(dashboardControllerProvider);
+    final backgroundPath = ref
+        .watch(
+          profileBackgroundPathProvider(ProfileBackgroundRepository.deviceKey),
+        )
+        .value;
+    final backgroundAlignment =
+        ref
+            .watch(
+              profileBackgroundAlignmentProvider(
+                ProfileBackgroundRepository.deviceKey,
+              ),
+            )
+            .value ??
+        Alignment.center;
     final unreadNotifications = ref
         .watch(notificationsProvider)
         .value
@@ -81,7 +101,8 @@ class DashboardScreen extends ConsumerWidget {
           final today = _todayKey();
           ref
             ..invalidate(foodLogsProvider(today))
-            ..invalidate(mealPlanProvider(today));
+            ..invalidate(mealPlanProvider(today))
+            ..invalidate(supplementDailyProvider(date: today));
         },
         child: AsyncValueView(
           value: dashboard,
@@ -89,6 +110,8 @@ class DashboardScreen extends ConsumerWidget {
           data: (data) => _DashboardBody(
             data: data,
             unit: ref.watch(weightUnitProvider),
+            backgroundImagePath: backgroundPath,
+            backgroundAlignment: backgroundAlignment,
           ),
         ),
       ),
@@ -139,22 +162,31 @@ class _NotificationBell extends StatelessWidget {
   }
 }
 
-class _DashboardBody extends StatelessWidget {
+class _DashboardBody extends ConsumerWidget {
   const _DashboardBody({
     required this.data,
     required this.unit,
+    required this.backgroundAlignment,
+    this.backgroundImagePath,
   });
 
   final PersonalDashboard data;
   final WeightUnit unit;
+  final String? backgroundImagePath;
+  final Alignment backgroundAlignment;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final incomingRequests = ref.watch(
+      friendRequestsProvider(RequestDirection.incoming),
+    );
     return ListView(
       padding: const EdgeInsets.all(AppSpacing.lg),
       children: [
         DashboardHero(
           profile: data.profile,
+          backgroundImagePath: backgroundImagePath,
+          backgroundAlignment: backgroundAlignment,
           onOpenPlateCalculator: () => _openPlateCalculator(context),
         ),
         const SizedBox(height: AppSpacing.md),
@@ -169,11 +201,22 @@ class _DashboardBody extends StatelessWidget {
           ),
         ),
         const SizedBox(height: AppSpacing.md),
+        const _DashboardPanel(child: _DashboardBodyweight()),
+        const SizedBox(height: AppSpacing.md),
+        _DashboardPanel(
+          child: CommunityDashboardCard(
+            incomingRequestCount: incomingRequests.value?.length ?? 0,
+            onOpenCommunity: () => context.go('/community'),
+            onOpenFriends: () => context.push('/community/friends'),
+            onOpenChallenges: () => context.push('/community/challenges'),
+          ),
+        ),
+        const SizedBox(height: AppSpacing.md),
         const _DashboardPanel(child: NutritionCard()),
         const SizedBox(height: AppSpacing.md),
         const _DashboardPanel(child: TodayMealPlanCard()),
         const SizedBox(height: AppSpacing.md),
-        const _DashboardPanel(child: _DashboardBodyweight()),
+        const _DashboardPanel(child: SupplementsCard()),
         if (!data.proInsights.isUnlocked ||
             data.proInsights.items.isNotEmpty) ...[
           const SizedBox(height: AppSpacing.md),

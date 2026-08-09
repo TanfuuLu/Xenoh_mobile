@@ -1612,6 +1612,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dashboardNutritionLoadError => 'Couldn\'t load nutrition.';
 
   @override
+  String get dashboardSupplementsLoadError =>
+      'Couldn\'t load today\'s supplements.';
+
+  @override
   String get dashboardMacroProtein => 'Protein';
 
   @override
@@ -3685,6 +3689,37 @@ class AppLocalizationsEn extends AppLocalizations {
   String get communityTitle => 'Community';
 
   @override
+  String get communityPrivacyTitle => 'Community privacy';
+
+  @override
+  String get communityPrivacyTooltip => 'Community privacy';
+
+  @override
+  String get communityPrivacyDescription =>
+      'Choose who can view your training statistics on your community profile.';
+
+  @override
+  String get communityPrivacyFriendsTitle => 'Friends can view stats';
+
+  @override
+  String get communityPrivacyFriendsDescription =>
+      'Accepted friends can view your bodyweight, training metrics, streak and personal records.';
+
+  @override
+  String get communityPrivacyOnlyMeTitle => 'Only me';
+
+  @override
+  String get communityPrivacyOnlyMeDescription =>
+      'Keep your training statistics private. Your public profile details remain visible.';
+
+  @override
+  String get communityPrivacySavedMessage => 'Privacy settings saved.';
+
+  @override
+  String get dashboardCommunitySubtitle =>
+      'Train together, share progress and take on challenges.';
+
+  @override
   String get communityEyebrowLabel => 'COMMUNITY';
 
   @override
@@ -4581,6 +4616,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get challengesCreate => 'Create challenge';
+
+  @override
+  String get challengeEdit => 'Edit challenge';
 
   @override
   String get challengesMineTab => 'My challenges';

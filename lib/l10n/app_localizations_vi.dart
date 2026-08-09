@@ -1624,6 +1624,10 @@ class AppLocalizationsVi extends AppLocalizations {
   String get dashboardNutritionLoadError => 'Không thể tải dữ liệu dinh dưỡng.';
 
   @override
+  String get dashboardSupplementsLoadError =>
+      'Không thể tải lịch thực phẩm bổ sung hôm nay.';
+
+  @override
   String get dashboardMacroProtein => 'Đạm';
 
   @override
@@ -3693,6 +3697,37 @@ class AppLocalizationsVi extends AppLocalizations {
   String get communityTitle => 'Cộng đồng';
 
   @override
+  String get communityPrivacyTitle => 'Quyền riêng tư cộng đồng';
+
+  @override
+  String get communityPrivacyTooltip => 'Quyền riêng tư cộng đồng';
+
+  @override
+  String get communityPrivacyDescription =>
+      'Chọn người có thể xem thống kê tập luyện trên hồ sơ cộng đồng của bạn.';
+
+  @override
+  String get communityPrivacyFriendsTitle => 'Bạn bè có thể xem thống kê';
+
+  @override
+  String get communityPrivacyFriendsDescription =>
+      'Bạn bè đã chấp nhận có thể xem cân nặng, chỉ số tập luyện, chuỗi ngày và kỷ lục cá nhân.';
+
+  @override
+  String get communityPrivacyOnlyMeTitle => 'Chỉ mình tôi';
+
+  @override
+  String get communityPrivacyOnlyMeDescription =>
+      'Giữ riêng tư các thống kê tập luyện. Thông tin hồ sơ công khai vẫn hiển thị.';
+
+  @override
+  String get communityPrivacySavedMessage => 'Đã lưu cài đặt quyền riêng tư.';
+
+  @override
+  String get dashboardCommunitySubtitle =>
+      'Tập luyện cùng nhau, chia sẻ tiến độ và tham gia thử thách.';
+
+  @override
   String get communityEyebrowLabel => 'CỘNG ĐỒNG';
 
   @override
@@ -4592,6 +4627,9 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get challengesCreate => 'Tạo thử thách';
+
+  @override
+  String get challengeEdit => 'Chỉnh sửa thử thách';
 
   @override
   String get challengesMineTab => 'Của tôi';

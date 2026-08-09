@@ -6,6 +6,7 @@ abstract interface class ChallengeRepository {
   Future<List<ChallengeInvitee>> getInvitees();
   Future<Challenge> getById(String id);
   Future<Challenge> create(ChallengeInput input);
+  Future<Challenge> update(String id, ChallengeInput input);
   Future<Challenge> accept(String id);
   Future<void> decline(String id);
   Future<Challenge> join(String id);

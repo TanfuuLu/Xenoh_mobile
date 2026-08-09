@@ -115,8 +115,8 @@ abstract class FriendDto with _$FriendDto {
   const factory FriendDto({
     required String userId,
     required String fullName,
-    required String email,
     required String friendsSince,
+    String? email,
     String? avatarUrl,
     String? bio,
   }) = _FriendDto;
@@ -142,10 +142,10 @@ abstract class FriendRequestDto with _$FriendRequestDto {
     required String id,
     required String userId,
     required String fullName,
-    required String email,
     required String direction,
     required String status,
     required String createdAt,
+    String? email,
     String? avatarUrl,
     String? respondedAt,
   }) = _FriendRequestDto;
@@ -304,5 +304,57 @@ String requestDirectionApiValue(RequestDirection direction) {
   return switch (direction) {
     RequestDirection.incoming => 'incoming',
     RequestDirection.outgoing => 'outgoing',
+  };
+}
+
+class TrainingDayFeedPageDto {
+  const TrainingDayFeedPageDto({
+    required this.items,
+    required this.nextCursor,
+  });
+
+  factory TrainingDayFeedPageDto.fromJson(Map<String, dynamic> json) {
+    return TrainingDayFeedPageDto(
+      items: (json['items'] as List<dynamic>? ?? const [])
+          .map(
+            (item) => TrainingDayShareDto.fromJson(
+              item as Map<String, dynamic>,
+            ),
+          )
+          .toList(growable: false),
+      nextCursor: json['nextCursor'] as String?,
+    );
+  }
+
+  final List<TrainingDayShareDto> items;
+  final String? nextCursor;
+}
+
+class CommunitySettingsDto {
+  const CommunitySettingsDto({required this.statsVisibility});
+
+  factory CommunitySettingsDto.fromJson(Map<String, dynamic> json) {
+    return CommunitySettingsDto(
+      statsVisibility: switch (json['statsVisibility']) {
+        'Friends' => CommunityStatsVisibility.friends,
+        'OnlyMe' => CommunityStatsVisibility.onlyMe,
+        final value => throw FormatException(
+          'Unsupported community stats visibility: $value',
+        ),
+      },
+    );
+  }
+
+  final CommunityStatsVisibility statsVisibility;
+
+  CommunitySettings toEntity() => CommunitySettings(
+    statsVisibility: statsVisibility,
+  );
+}
+
+String communityStatsVisibilityApiValue(CommunityStatsVisibility value) {
+  return switch (value) {
+    CommunityStatsVisibility.friends => 'Friends',
+    CommunityStatsVisibility.onlyMe => 'OnlyMe',
   };
 }

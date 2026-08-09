@@ -78,11 +78,35 @@ class CommunityRemoteDataSource {
     await _dio.delete<void>('/friends/$userId');
   }
 
-  Future<List<TrainingDayShareDto>> getFeed() async {
-    final res = await _dio.get<List<dynamic>>('/training-day-shares/feed');
-    return (res.data ?? const [])
-        .map((e) => TrainingDayShareDto.fromJson(e as Map<String, dynamic>))
-        .toList(growable: false);
+  Future<TrainingDayFeedPageDto> getFeed({
+    String scope = 'friends',
+    String? cursor,
+    int pageSize = 20,
+  }) async {
+    final res = await _dio.get<Map<String, dynamic>>(
+      '/training-day-shares/feed',
+      queryParameters: {
+        'scope': scope,
+        'cursor': ?cursor,
+        'pageSize': pageSize,
+      },
+    );
+    return TrainingDayFeedPageDto.fromJson(res.data ?? const {});
+  }
+
+  Future<CommunitySettingsDto> getSettings() async {
+    final res = await _dio.get<Map<String, dynamic>>('/community/settings');
+    return CommunitySettingsDto.fromJson(res.data ?? const {});
+  }
+
+  Future<CommunitySettingsDto> updateSettings(
+    CommunityStatsVisibility visibility,
+  ) async {
+    final res = await _dio.put<Map<String, dynamic>>(
+      '/community/settings',
+      data: {'statsVisibility': communityStatsVisibilityApiValue(visibility)},
+    );
+    return CommunitySettingsDto.fromJson(res.data ?? const {});
   }
 
   Future<List<TrainingDayShareDto>> getUserShares(String userId) async {

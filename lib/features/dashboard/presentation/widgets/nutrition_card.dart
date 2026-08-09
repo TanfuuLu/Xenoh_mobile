@@ -1,22 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_dimens.dart';
 import '../../../../app/theme/app_typography.dart';
-import '../../../../core/widgets/xn_animated_number.dart';
 import '../../../../core/widgets/xn_progress.dart';
 import '../../../../core/widgets/xn_section.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../nutrition/presentation/providers/nutrition_controller.dart';
 
-/// Today's nutrition: a calorie ring + macro bars. Prompts to complete the
-/// profile when targets aren't set.
-///
-/// Reads the same source of truth as the Nutrition screen — the nutrition
-/// summary (targets) plus today's food logs (consumed totals) — so the two
-/// screens always show identical numbers. Logging or deleting food on the
-/// Nutrition screen invalidates these providers, and this card updates with it.
+/// A glanceable view of today's food intake. The detailed food log and editing
+/// workflow remain on `/nutrition`.
 class NutritionCard extends ConsumerWidget {
   const NutritionCard({super.key});
 
@@ -24,21 +19,19 @@ class NutritionCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final summary = ref.watch(nutritionControllerProvider);
-    // Date-only key; equal DateTime values reuse the same provider instance.
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final logs = ref.watch(foodLogsProvider(today));
-
-    // Render from the latest value so a refresh keeps the populated card
-    // instead of flashing a spinner (matches the app-wide async convention).
     final data = summary.value;
+
     if (data == null) {
       return XnSection(
+        onTap: () => context.go('/nutrition'),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(l10n.dashboardNutritionTodayEyebrow, style: _eyebrow),
-            const SizedBox(height: AppSpacing.md),
+            const _FoodHeader(),
+            const SizedBox(height: AppSpacing.lg),
             if (summary.hasError)
               Text(
                 l10n.dashboardNutritionLoadError,
@@ -62,174 +55,229 @@ class NutritionCard extends ConsumerWidget {
 
     final calc = data.calculation;
     final totals = logs.value?.totals;
-    final loggedCalories =
-        totals?.totalCalories ?? data.todayLog?.calories ?? 0;
-    final loggedProtein = totals?.totalProteinG ?? data.todayLog?.proteinG ?? 0;
-    final loggedCarbs = totals?.totalCarbsG ?? data.todayLog?.carbsG ?? 0;
-    final loggedFat = totals?.totalFatG ?? data.todayLog?.fatG ?? 0;
-
+    final calories = totals?.totalCalories ?? data.todayLog?.calories ?? 0;
+    final protein = totals?.totalProteinG ?? data.todayLog?.proteinG ?? 0;
+    final carbs = totals?.totalCarbsG ?? data.todayLog?.carbsG ?? 0;
+    final fat = totals?.totalFatG ?? data.todayLog?.fatG ?? 0;
     final target = calc.calorieTarget;
     final hasTarget = target != null && target > 0;
-    final ratio = hasTarget ? (loggedCalories / target).clamp(0.0, 1.0) : 0.0;
+    final progress = hasTarget ? (calories / target).clamp(0.0, 1.0) : 0.0;
+    final remaining = hasTarget ? target - calories : null;
 
     return XnSection(
+      onTap: () => context.go('/nutrition'),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(l10n.dashboardNutritionTodayEyebrow, style: _eyebrow),
-          const SizedBox(height: AppSpacing.md),
+          const _FoodHeader(),
+          const SizedBox(height: AppSpacing.lg),
           Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              SizedBox(
-                width: 72,
-                height: 72,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    SizedBox(
-                      width: 72,
-                      height: 72,
-                      child: XnAnimatedCircularProgress(
-                        value: hasTarget ? ratio : null,
-                        indeterminate: !hasTarget,
-                        strokeWidth: 7,
-                        backgroundColor: AppColors.bg3,
-                        color: AppColors.accent,
-                      ),
-                    ),
-                    Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        XnAnimatedNumber(
-                          value: loggedCalories.toDouble(),
-                          formatter: formatAnimatedInt,
-                          style: AppTypography.mono(
-                            16,
-                            weight: FontWeight.w500,
-                          ),
-                        ),
-                        const Text(
-                          'kcal',
-                          style: TextStyle(
-                            color: AppColors.fg3,
-                            fontSize: 10,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+              Expanded(
+                child: Text(
+                  hasTarget
+                      ? '${_formatInt(calories)}/${_formatInt(target)} kcal'
+                      : '${_formatInt(calories)} kcal',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTypography.display(
+                    24,
+                    weight: FontWeight.w700,
+                    letterSpacing: -0.4,
+                  ),
                 ),
               ),
-              const SizedBox(width: AppSpacing.lg),
+              if (remaining != null)
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.md,
+                    vertical: AppSpacing.sm,
+                  ),
+                  decoration: BoxDecoration(
+                    color: remaining >= 0
+                        ? AppColors.successBg
+                        : AppColors.warningBg,
+                    borderRadius: BorderRadius.circular(AppRadius.pill),
+                  ),
+                  child: Text(
+                    remaining >= 0
+                        ? l10n.nutritionKcalRemaining(remaining)
+                        : l10n.nutritionKcalOverTarget(-remaining),
+                    style: const TextStyle(
+                      color: AppColors.fg2,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.md),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(AppRadius.pill),
+            child: XnAnimatedLinearProgress(
+              value: progress,
+              minHeight: 8,
+              backgroundColor: AppColors.bg3,
+              color: remaining != null && remaining < 0
+                  ? AppColors.warning
+                  : AppColors.accent,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          Row(
+            children: [
               Expanded(
-                child: Column(
-                  children: [
-                    _MacroBar(
-                      label: l10n.dashboardMacroProtein,
-                      logged: loggedProtein,
-                      target: calc.proteinG,
-                      color: AppColors.sage500,
-                    ),
-                    _MacroBar(
-                      label: l10n.dashboardMacroCarbs,
-                      logged: loggedCarbs,
-                      target: calc.carbsG,
-                      color: AppColors.warning,
-                    ),
-                    _MacroBar(
-                      label: l10n.dashboardMacroFat,
-                      logged: loggedFat,
-                      target: calc.fatG,
-                      color: AppColors.info,
-                    ),
-                  ],
+                child: _MacroTile(
+                  label: l10n.dashboardMacroProtein,
+                  value: protein,
+                  target: calc.proteinG,
+                  color: AppColors.dataTeal,
+                ),
+              ),
+              const SizedBox(width: AppSpacing.sm),
+              Expanded(
+                child: _MacroTile(
+                  label: l10n.dashboardMacroCarbs,
+                  value: carbs,
+                  target: calc.carbsG,
+                  color: AppColors.dataAmber,
+                ),
+              ),
+              const SizedBox(width: AppSpacing.sm),
+              Expanded(
+                child: _MacroTile(
+                  label: l10n.dashboardMacroFat,
+                  value: fat,
+                  target: calc.fatG,
+                  color: AppColors.dataBlue,
                 ),
               ),
             ],
           ),
-          if (hasTarget) ...[
-            const SizedBox(height: AppSpacing.md),
-            Text(
-              '$loggedCalories/$target kcal',
-              style: AppTypography.mono(
-                13,
-                weight: FontWeight.w500,
-                color: AppColors.fg2,
-              ),
-            ),
-          ] else ...[
+          if (!hasTarget) ...[
             const SizedBox(height: AppSpacing.md),
             Text(
               l10n.dashboardSetupNutritionMessage,
-              style: const TextStyle(color: AppColors.fg3, fontSize: 13),
+              style: const TextStyle(color: AppColors.fg3, fontSize: 12),
             ),
           ],
         ],
       ),
     );
   }
-
-  static const _eyebrow = TextStyle(
-    color: AppColors.fg3,
-    fontSize: 11,
-    fontWeight: FontWeight.w500,
-    letterSpacing: 0.6,
-  );
 }
 
-class _MacroBar extends StatelessWidget {
-  const _MacroBar({
+class _FoodHeader extends StatelessWidget {
+  const _FoodHeader();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return Row(
+      children: [
+        Container(
+          width: 40,
+          height: 40,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: AppColors.accentSoft,
+            borderRadius: BorderRadius.circular(AppRadius.md),
+          ),
+          child: const Icon(
+            Icons.restaurant_rounded,
+            color: AppColors.accent,
+            size: 21,
+          ),
+        ),
+        const SizedBox(width: AppSpacing.md),
+        Expanded(
+          child: Text(
+            l10n.dashboardNutritionTodayEyebrow,
+            style: const TextStyle(
+              color: AppColors.fg1,
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+        const Icon(Icons.chevron_right_rounded, color: AppColors.fg3),
+      ],
+    );
+  }
+}
+
+class _MacroTile extends StatelessWidget {
+  const _MacroTile({
     required this.label,
-    required this.logged,
+    required this.value,
     required this.target,
     required this.color,
   });
 
   final String label;
-  final double logged;
+  final double value;
   final double? target;
   final Color color;
 
   @override
   Widget build(BuildContext context) {
-    final t = target;
-    final ratio = (t != null && t > 0) ? (logged / t).clamp(0.0, 1.0) : 0.0;
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
-      child: Row(
+    final ratio = target != null && target! > 0
+        ? (value / target!).clamp(0.0, 1.0)
+        : 0.0;
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.md),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(AppRadius.md),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
-            width: 52,
-            child: Text(
-              label,
-              style: const TextStyle(color: AppColors.fg2, fontSize: 12),
+          Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              color: AppColors.fg3,
+              fontSize: 11,
+              fontWeight: FontWeight.w500,
             ),
           ),
-          Expanded(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(AppRadius.pill),
-              child: XnAnimatedLinearProgress(
-                value: ratio,
-                minHeight: 6,
-                backgroundColor: AppColors.bg3,
-                color: color,
-              ),
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            target != null
+                ? '${value.toStringAsFixed(0)}/${target!.toStringAsFixed(0)}g'
+                : '${value.toStringAsFixed(0)}g',
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: AppTypography.mono(
+              12,
+              color: AppColors.fg1,
+              weight: FontWeight.w600,
             ),
           ),
-          const SizedBox(width: 8),
-          SizedBox(
-            width: 64,
-            child: XnAnimatedNumber(
-              value: logged,
-              formatter: (value) => t != null
-                  ? '${value.toStringAsFixed(0)}/${t.toStringAsFixed(0)}g'
-                  : '${value.toStringAsFixed(0)}g',
-              textAlign: TextAlign.right,
-              style: AppTypography.mono(11, color: AppColors.fg3),
+          const SizedBox(height: AppSpacing.sm),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(AppRadius.pill),
+            child: LinearProgressIndicator(
+              value: ratio,
+              minHeight: 4,
+              backgroundColor: AppColors.bg3,
+              valueColor: AlwaysStoppedAnimation(color),
             ),
           ),
         ],
       ),
     );
   }
+}
+
+String _formatInt(num value) {
+  final digits = value.round().toString();
+  return digits.replaceAllMapped(
+    RegExp(r'\B(?=(\d{3})+(?!\d))'),
+    (_) => ',',
+  );
 }

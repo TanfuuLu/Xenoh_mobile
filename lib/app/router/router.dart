@@ -37,6 +37,7 @@ import '../../features/coach_client/presentation/screens/my_coach_screen.dart';
 import '../../features/coach_client/presentation/screens/relationship_chat_screen.dart';
 import '../../features/community/presentation/screens/community_profile_screen.dart';
 import '../../features/community/presentation/screens/community_screen.dart';
+import '../../features/community/presentation/screens/community_settings_screen.dart';
 import '../../features/community/presentation/screens/friends_screen.dart';
 import '../../features/competitions/presentation/competition_detail_screen.dart';
 import '../../features/competitions/presentation/competitions_screen.dart';
@@ -534,12 +535,22 @@ GoRouter router(Ref ref) {
                 builder: (_, _) => const FriendsScreen(),
               ),
               GoRoute(
+                path: '/community/settings',
+                builder: (_, _) => const CommunitySettingsScreen(),
+              ),
+              GoRoute(
                 path: '/community/challenges',
                 builder: (_, _) => const ChallengesScreen(),
               ),
               GoRoute(
                 path: '/community/challenges/create',
                 builder: (_, _) => const CreateChallengeScreen(),
+              ),
+              GoRoute(
+                path: '/community/challenges/:challengeId/edit',
+                builder: (_, state) => EditChallengeScreen(
+                  challengeId: state.pathParameters['challengeId']!,
+                ),
               ),
               GoRoute(
                 path: '/community/challenges/:challengeId',

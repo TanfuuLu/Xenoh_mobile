@@ -3062,6 +3062,12 @@ abstract class AppLocalizations {
   /// **'Couldn\'t load nutrition.'**
   String get dashboardNutritionLoadError;
 
+  /// Error message when the dashboard supplements card fails to load
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load today\'s supplements.'**
+  String get dashboardSupplementsLoadError;
+
   /// Protein macro label
   ///
   /// In en, this message translates to:
@@ -6803,6 +6809,60 @@ abstract class AppLocalizations {
   /// **'Community'**
   String get communityTitle;
 
+  /// No description provided for @communityPrivacyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Community privacy'**
+  String get communityPrivacyTitle;
+
+  /// No description provided for @communityPrivacyTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Community privacy'**
+  String get communityPrivacyTooltip;
+
+  /// No description provided for @communityPrivacyDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose who can view your training statistics on your community profile.'**
+  String get communityPrivacyDescription;
+
+  /// No description provided for @communityPrivacyFriendsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Friends can view stats'**
+  String get communityPrivacyFriendsTitle;
+
+  /// No description provided for @communityPrivacyFriendsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Accepted friends can view your bodyweight, training metrics, streak and personal records.'**
+  String get communityPrivacyFriendsDescription;
+
+  /// No description provided for @communityPrivacyOnlyMeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Only me'**
+  String get communityPrivacyOnlyMeTitle;
+
+  /// No description provided for @communityPrivacyOnlyMeDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep your training statistics private. Your public profile details remain visible.'**
+  String get communityPrivacyOnlyMeDescription;
+
+  /// No description provided for @communityPrivacySavedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy settings saved.'**
+  String get communityPrivacySavedMessage;
+
+  /// No description provided for @dashboardCommunitySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Train together, share progress and take on challenges.'**
+  String get dashboardCommunitySubtitle;
+
   /// No description provided for @communityEyebrowLabel.
   ///
   /// In en, this message translates to:
@@ -8422,6 +8482,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Create challenge'**
   String get challengesCreate;
+
+  /// No description provided for @challengeEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit challenge'**
+  String get challengeEdit;
 
   /// No description provided for @challengesMineTab.
   ///

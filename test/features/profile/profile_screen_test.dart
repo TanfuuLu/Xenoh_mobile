@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:xenoh_mobile/app/theme/app_dimens.dart';
+import 'package:xenoh_mobile/core/widgets/synced_background_card.dart';
 import 'package:xenoh_mobile/features/profile/data/repositories/profile_repository_provider.dart';
 import 'package:xenoh_mobile/features/profile/domain/entities/bodyweight_log.dart';
 import 'package:xenoh_mobile/features/profile/domain/entities/training_activity.dart';
@@ -81,7 +82,11 @@ void main() {
             widget is Container &&
             widget.constraints?.minHeight == AppLayout.heroCardMinHeight,
       ),
-      findsNothing,
+      findsOneWidget,
+    );
+    expect(
+      tester.getSize(find.byType(SyncedBackgroundCard)).height,
+      AppLayout.heroCardMinHeight,
     );
 
     // Scroll the calendar (grid) into view to exercise its layout too.

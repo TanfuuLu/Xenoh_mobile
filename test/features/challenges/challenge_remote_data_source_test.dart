@@ -59,6 +59,30 @@ void main() {
     expect(adapter.lastBody?['metricType'], 'TrainingSessions');
     expect(adapter.lastBody?['startsAtUtc'], '2026-08-05T02:00:00.000Z');
   });
+
+  test('updates an existing challenge with the full input contract', () async {
+    final adapter = _ChallengeAdapter();
+    final source = ChallengeRemoteDataSource(
+      Dio()..httpClientAdapter = adapter,
+    );
+    final input = ChallengeInput(
+      title: 'Updated consistency',
+      description: 'New description',
+      metricType: 'TrainingSessions',
+      accessType: 'Connections',
+      targetSessionsPerWeek: 4,
+      selectedLifts: const [],
+      capacity: 12,
+      startsAtUtc: DateTime.utc(2026, 8, 5, 2),
+      endsAtUtc: DateTime.utc(2026, 8, 19, 2),
+    );
+
+    final updated = await source.update('c1', input);
+
+    expect(adapter.paths.single, 'PUT /community/challenges/c1');
+    expect(adapter.lastBody?['title'], 'Updated consistency');
+    expect(updated.id, 'c1');
+  });
 }
 
 class _ChallengeAdapter implements HttpClientAdapter {

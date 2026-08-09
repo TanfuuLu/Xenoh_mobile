@@ -9,7 +9,9 @@ import '../domain/challenge_models.dart';
 import 'challenge_providers.dart';
 
 class CreateChallengeScreen extends ConsumerStatefulWidget {
-  const CreateChallengeScreen({super.key});
+  const CreateChallengeScreen({this.challenge, super.key});
+
+  final Challenge? challenge;
 
   @override
   ConsumerState<CreateChallengeScreen> createState() =>
@@ -18,17 +20,39 @@ class CreateChallengeScreen extends ConsumerStatefulWidget {
 
 class _CreateChallengeScreenState extends ConsumerState<CreateChallengeScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _title = TextEditingController();
-  final _description = TextEditingController();
-  final _prompt = TextEditingController();
-  var _metric = 'TrainingSessions';
-  var _access = 'Connections';
-  var _target = 3;
-  var _capacity = 10;
-  var _start = DateTime.now().add(const Duration(days: 1));
-  var _end = DateTime.now().add(const Duration(days: 8));
-  final _lifts = <String>{'Squat', 'Bench', 'Deadlift'};
+  late final TextEditingController _title;
+  late final TextEditingController _description;
+  late final TextEditingController _prompt;
+  late String _metric;
+  late String _access;
+  late int _target;
+  late int _capacity;
+  late DateTime _start;
+  late DateTime _end;
+  late final Set<String> _lifts;
   var _saving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    final challenge = widget.challenge;
+    _title = TextEditingController(text: challenge?.title);
+    _description = TextEditingController(text: challenge?.description);
+    _prompt = TextEditingController(text: challenge?.checkInPrompt);
+    _metric = challenge?.metricType ?? 'TrainingSessions';
+    _access = challenge?.accessType ?? 'Connections';
+    _target = challenge?.targetSessionsPerWeek ?? 3;
+    _capacity = challenge?.capacity ?? 10;
+    _start =
+        challenge?.startsAtUtc.toLocal() ??
+        DateTime.now().add(const Duration(days: 1));
+    _end =
+        challenge?.endsAtUtc.toLocal() ??
+        DateTime.now().add(const Duration(days: 8));
+    _lifts = challenge == null
+        ? <String>{'Squat', 'Bench', 'Deadlift'}
+        : challenge.selectedLifts.toSet();
+  }
 
   @override
   void dispose() {
@@ -42,7 +66,11 @@ class _CreateChallengeScreenState extends ConsumerState<CreateChallengeScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.challengesCreate)),
+      appBar: AppBar(
+        title: Text(
+          widget.challenge == null ? l10n.challengesCreate : l10n.challengeEdit,
+        ),
+      ),
       body: Form(
         key: _formKey,
         child: ListView(
@@ -162,7 +190,9 @@ class _CreateChallengeScreenState extends ConsumerState<CreateChallengeScreen> {
             ),
             const SizedBox(height: AppSpacing.xl),
             XnButton(
-              label: l10n.challengesCreate,
+              label: widget.challenge == null
+                  ? l10n.challengesCreate
+                  : l10n.commonSaveChanges,
               loading: _saving,
               onPressed: _save,
             ),
@@ -209,7 +239,12 @@ class _CreateChallengeScreenState extends ConsumerState<CreateChallengeScreen> {
       endsAtUtc: _end.toUtc(),
     );
     try {
-      await ref.read(challengeRepositoryProvider).create(input);
+      final repository = ref.read(challengeRepositoryProvider);
+      if (widget.challenge == null) {
+        await repository.create(input);
+      } else {
+        await repository.update(widget.challenge!.id, input);
+      }
       ref
         ..invalidate(myChallengesProvider)
         ..invalidate(discoverChallengesProvider);
@@ -222,6 +257,66 @@ class _CreateChallengeScreenState extends ConsumerState<CreateChallengeScreen> {
     } finally {
       if (mounted) setState(() => _saving = false);
     }
+  }
+}
+
+class EditChallengeScreen extends ConsumerWidget {
+  const EditChallengeScreen({required this.challengeId, super.key});
+
+  final String challengeId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final challenge = ref.watch(challengeDetailProvider(challengeId));
+    return challenge.when(
+      data: (value) => value.canManage
+          ? CreateChallengeScreen(challenge: value)
+          : _ChallengeEditStatus(
+              message: AppLocalizations.of(context).commonForbiddenError,
+            ),
+      loading: () => Scaffold(
+        appBar: AppBar(
+          title: Text(AppLocalizations.of(context).challengeEdit),
+        ),
+        body: const Center(child: CircularProgressIndicator()),
+      ),
+      error: (_, _) => _ChallengeEditStatus(
+        message: AppLocalizations.of(context).commonRequestFailed,
+        onRetry: () => ref.invalidate(
+          challengeDetailProvider(challengeId),
+        ),
+      ),
+    );
+  }
+}
+
+class _ChallengeEditStatus extends StatelessWidget {
+  const _ChallengeEditStatus({required this.message, this.onRetry});
+
+  final String message;
+  final VoidCallback? onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return Scaffold(
+      appBar: AppBar(title: Text(l10n.challengeEdit)),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.lg),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(message, textAlign: TextAlign.center),
+              if (onRetry != null) ...[
+                const SizedBox(height: AppSpacing.md),
+                TextButton(onPressed: onRetry, child: Text(l10n.commonRetry)),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
 

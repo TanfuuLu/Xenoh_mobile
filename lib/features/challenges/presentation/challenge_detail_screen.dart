@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../app/theme/app_colors.dart';
 import '../../../app/theme/app_dimens.dart';
@@ -25,7 +28,19 @@ class ChallengeDetailScreen extends ConsumerWidget {
     final challenge = ref.watch(challengeDetailProvider(challengeId));
     final l10n = AppLocalizations.of(context);
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.challengeDetailTitle)),
+      appBar: AppBar(
+        title: Text(l10n.challengeDetailTitle),
+        actions: [
+          if (challenge.value?.canManage == true)
+            IconButton(
+              tooltip: l10n.challengeEdit,
+              onPressed: () => unawaited(
+                context.push('/community/challenges/$challengeId/edit'),
+              ),
+              icon: const Icon(Icons.edit_outlined),
+            ),
+        ],
+      ),
       body: AsyncValueView(
         value: challenge,
         onRetry: () => ref.invalidate(challengeDetailProvider(challengeId)),

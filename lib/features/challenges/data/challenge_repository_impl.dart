@@ -30,6 +30,9 @@ class ChallengeRepositoryImpl implements ChallengeRepository {
   Future<Challenge> create(ChallengeInput input) =>
       _call(() => _remote.create(input));
   @override
+  Future<Challenge> update(String id, ChallengeInput input) =>
+      _call(() => _remote.update(id, input));
+  @override
   Future<Challenge> accept(String id) => _call(() => _remote.accept(id));
   @override
   Future<void> decline(String id) => _call(() => _remote.decline(id));

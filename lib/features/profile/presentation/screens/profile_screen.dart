@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -16,6 +14,7 @@ import '../../../../core/utils/date_only.dart';
 import '../../../../core/utils/safe_external_url.dart';
 import '../../../../core/utils/weight_units.dart';
 import '../../../../core/widgets/async_value_view.dart';
+import '../../../../core/widgets/synced_background_card.dart';
 import '../../../../core/widgets/xn_animated_number.dart';
 import '../../../../core/widgets/xn_card.dart';
 import '../../../../core/widgets/xn_section.dart';
@@ -297,17 +296,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             children: [
               _ProfileHeader(
                 profile: data,
+                latestWeight: latestWeight,
+                unit: unit,
                 backgroundImagePath: backgroundPath,
                 backgroundAlignment: backgroundAlignment,
                 onChangeBackground: () => _showBackgroundActions(data),
                 onChangeAvatar: _uploadAvatar,
                 onEditProfile: () => context.push('/profile/edit', extra: data),
-              ),
-              const SizedBox(height: AppSpacing.md),
-              _LevelCard(
-                profile: data,
-                latestWeight: latestWeight,
-                unit: unit,
                 onShowHistory: bodyweight.value?.isNotEmpty ?? false
                     ? () => _showHistory(bodyweight.value!)
                     : null,
@@ -389,205 +384,189 @@ enum _BackgroundAction { change, remove }
 class _ProfileHeader extends StatelessWidget {
   const _ProfileHeader({
     required this.profile,
+    required this.unit,
     this.backgroundImagePath,
     this.backgroundAlignment = Alignment.center,
+    this.latestWeight,
     this.onChangeBackground,
     this.onChangeAvatar,
     this.onEditProfile,
+    this.onShowHistory,
   });
 
   final UserProfile profile;
+  final WeightUnit unit;
   final String? backgroundImagePath;
   final Alignment backgroundAlignment;
+  final double? latestWeight;
   final VoidCallback? onChangeBackground;
   final VoidCallback? onChangeAvatar;
   final VoidCallback? onEditProfile;
+  final VoidCallback? onShowHistory;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final avatar = profile.avatarUrl;
     final hasAvatar = avatar != null && avatar.isNotEmpty;
-    final backgroundFile = backgroundImagePath == null
-        ? null
-        : File(backgroundImagePath!);
-    final hasBackground = backgroundFile != null && backgroundFile.existsSync();
     final socialLinks = _profileSocialLinks(profile);
 
-    return XnCard(
-      padding: EdgeInsets.zero,
+    return SyncedBackgroundCard(
+      backgroundImagePath: backgroundImagePath,
+      backgroundAlignment: backgroundAlignment,
+      padding: const EdgeInsets.all(AppSpacing.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (hasBackground)
-            SizedBox(
-              height: 72,
-              width: double.infinity,
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  Image.file(
-                    backgroundFile,
-                    fit: BoxFit.cover,
-                    alignment: backgroundAlignment,
-                    filterQuality: FilterQuality.medium,
-                  ),
-                  DecoratedBox(
-                    decoration: BoxDecoration(
-                      color: AppColors.ink900.withValues(alpha: 0.18),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              InkWell(
+                borderRadius: BorderRadius.circular(AppRadius.md),
+                onTap: onChangeAvatar,
+                child: Container(
+                  width: 56,
+                  height: 56,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: AppColors.fgOnClay.withValues(alpha: 0.14),
+                    borderRadius: BorderRadius.circular(AppRadius.md),
+                    border: Border.all(
+                      color: AppColors.fgOnClay.withValues(alpha: 0.18),
                     ),
+                    image: hasAvatar
+                        ? DecorationImage(
+                            image: NetworkImage(avatar),
+                            fit: BoxFit.cover,
+                          )
+                        : null,
                   ),
-                  Positioned(
-                    right: AppSpacing.sm,
-                    top: AppSpacing.sm,
-                    child: IconButton.filledTonal(
-                      tooltip: l10n.profileChangeBackgroundTooltip,
-                      icon: const Icon(Icons.wallpaper_outlined),
-                      onPressed: onChangeBackground,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          Padding(
-            padding: const EdgeInsets.all(AppSpacing.lg),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    InkWell(
-                      borderRadius: BorderRadius.circular(AppRadius.md),
-                      onTap: onChangeAvatar,
-                      child: Container(
-                        width: 58,
-                        height: 58,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: AppColors.accentSoft,
-                          borderRadius: BorderRadius.circular(AppRadius.md),
-                          border: Border.all(
-                            color: AppColors.surfaceBorderSoft,
+                  child: hasAvatar
+                      ? null
+                      : Text(
+                          _initials(profile.fullName),
+                          style: const TextStyle(
+                            color: AppColors.fgOnClay,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 19,
                           ),
-                          image: hasAvatar
-                              ? DecorationImage(
-                                  image: NetworkImage(avatar),
-                                  fit: BoxFit.cover,
-                                )
-                              : null,
                         ),
-                        child: hasAvatar
-                            ? null
-                            : Text(
-                                _initials(profile.fullName),
-                                style: const TextStyle(
-                                  color: AppColors.clay900,
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 19,
-                                ),
-                              ),
-                      ),
-                    ),
-                    const SizedBox(width: AppSpacing.md),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Flexible(
-                                child: Text(
-                                  profile.fullName.isEmpty
-                                      ? 'Xenoh'
-                                      : profile.fullName,
-                                  style: AppTypography.display(
-                                    23,
-                                    weight: FontWeight.w700,
-                                    letterSpacing: 0,
-                                    color: AppColors.fg1,
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                              if (onEditProfile != null)
-                                IconButton(
-                                  tooltip: l10n.profileEditTitle,
-                                  icon: const Icon(Icons.edit_outlined),
-                                  iconSize: 16,
-                                  color: AppColors.fg2,
-                                  visualDensity: VisualDensity.compact,
-                                  padding: EdgeInsets.zero,
-                                  constraints: const BoxConstraints(),
-                                  onPressed: onEditProfile,
-                                ),
-                            ],
-                          ),
-                          const SizedBox(height: AppSpacing.xs),
-                          Text(
-                            profile.email,
-                            style: const TextStyle(
-                              color: AppColors.fg3,
-                              fontSize: 14,
+                ),
+              ),
+              const SizedBox(width: AppSpacing.md),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            profile.fullName.isEmpty
+                                ? 'Xenoh'
+                                : profile.fullName,
+                            style: AppTypography.display(
+                              23,
+                              weight: FontWeight.w700,
+                              color: AppColors.fgOnClay,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
+                        ),
+                        if (onEditProfile != null) ...[
+                          const SizedBox(width: AppSpacing.sm),
+                          IconButton(
+                            tooltip: l10n.profileEditTitle,
+                            icon: const Icon(Icons.edit_outlined),
+                            iconSize: 16,
+                            color: AppColors.fgOnClay,
+                            visualDensity: VisualDensity.compact,
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                            onPressed: onEditProfile,
+                          ),
                         ],
-                      ),
+                      ],
                     ),
-                    if (!hasBackground)
-                      IconButton(
-                        tooltip: l10n.profileChangeBackgroundTooltip,
-                        icon: const Icon(Icons.wallpaper_outlined),
-                        color: AppColors.fg2,
-                        onPressed: onChangeBackground,
+                    const SizedBox(height: AppSpacing.xs),
+                    Text(
+                      profile.email,
+                      style: TextStyle(
+                        color: AppColors.fgOnClay.withValues(alpha: 0.74),
+                        fontSize: 14,
                       ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ],
                 ),
-                const SizedBox(height: AppSpacing.lg),
-                Text(
-                  l10n.profileBioLabel,
-                  style: _eyebrow,
+              ),
+              IconButton(
+                tooltip: l10n.profileChangeBackgroundTooltip,
+                icon: const Icon(Icons.wallpaper_outlined),
+                color: AppColors.fgOnClay,
+                onPressed: onChangeBackground,
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          Text.rich(
+            TextSpan(
+              children: [
+                TextSpan(
+                  text: '${l10n.profileBioLabel.toUpperCase()}  ',
+                  style: TextStyle(
+                    color: AppColors.fgOnClay.withValues(alpha: 0.68),
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.7,
+                  ),
                 ),
-                const SizedBox(height: 2),
-                Text(
-                  profile.bio?.isNotEmpty == true
+                TextSpan(
+                  text: profile.bio?.isNotEmpty == true
                       ? profile.bio!
                       : l10n.profileNoBioYet,
-                  style: const TextStyle(
-                    color: AppColors.fg2,
+                  style: TextStyle(
+                    color: AppColors.fgOnClay.withValues(alpha: 0.88),
                     fontSize: 14,
-                    height: 1.3,
                   ),
                 ),
-                if (socialLinks.isNotEmpty) ...[
-                  const SizedBox(height: AppSpacing.sm),
-                  Wrap(
-                    spacing: AppSpacing.xs,
-                    runSpacing: AppSpacing.xs,
-                    children: [
-                      for (final link in socialLinks)
-                        TextButton.icon(
-                          onPressed: () => unawaited(
-                            launchUrl(
-                              link.uri,
-                              mode: LaunchMode.externalApplication,
-                            ),
-                          ),
-                          icon: Icon(link.icon, size: 16),
-                          label: Text(link.label),
-                          style: TextButton.styleFrom(
-                            foregroundColor: AppColors.accent,
-                            visualDensity: VisualDensity.compact,
-                          ),
-                        ),
-                    ],
-                  ),
-                ],
               ],
             ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          if (socialLinks.isNotEmpty) ...[
+            const SizedBox(height: AppSpacing.sm),
+            Wrap(
+              spacing: AppSpacing.xs,
+              runSpacing: AppSpacing.xs,
+              children: [
+                for (final link in socialLinks)
+                  TextButton.icon(
+                    onPressed: () => unawaited(
+                      launchUrl(
+                        link.uri,
+                        mode: LaunchMode.externalApplication,
+                      ),
+                    ),
+                    icon: Icon(link.icon, size: 16),
+                    label: Text(link.label),
+                    style: TextButton.styleFrom(
+                      foregroundColor: AppColors.fgOnClay,
+                      visualDensity: VisualDensity.compact,
+                    ),
+                  ),
+              ],
+            ),
+          ],
+          const SizedBox(height: AppSpacing.sm),
+          _LevelCard(
+            profile: profile,
+            latestWeight: latestWeight,
+            unit: unit,
+            onShowHistory: onShowHistory,
           ),
         ],
       ),
@@ -646,8 +625,16 @@ class _LevelCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final percent = (profile.levelProgress * 100).round();
-    return XnCard(
-      color: AppColors.bg3,
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(AppSpacing.sm),
+      decoration: BoxDecoration(
+        color: AppColors.fgOnClay.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(AppRadius.lg),
+        border: Border.all(
+          color: AppColors.fgOnClay.withValues(alpha: 0.14),
+        ),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -655,17 +642,20 @@ class _LevelCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                width: 56,
-                height: 56,
+                width: 48,
+                height: 48,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: AppColors.bg2,
+                  color: AppColors.fgOnClay.withValues(alpha: 0.14),
                   borderRadius: BorderRadius.circular(AppRadius.lg),
                 ),
                 child: XnAnimatedNumber(
                   value: profile.level.toDouble(),
                   formatter: formatAnimatedInt,
-                  style: AppTypography.display(26),
+                  style: AppTypography.display(
+                    24,
+                    color: AppColors.fgOnClay,
+                  ),
                 ),
               ),
               const SizedBox(width: AppSpacing.md),
@@ -673,10 +663,21 @@ class _LevelCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(l10n.profileLevelEyebrow, style: _eyebrow),
+                    Text(
+                      l10n.profileLevelEyebrow,
+                      style: TextStyle(
+                        color: AppColors.fgOnClay.withValues(alpha: 0.68),
+                        fontSize: 11,
+                        fontWeight: FontWeight.w500,
+                        letterSpacing: 0.7,
+                      ),
+                    ),
                     Text(
                       profile.title,
-                      style: AppTypography.display(22, letterSpacing: 0),
+                      style: AppTypography.display(
+                        20,
+                        color: AppColors.fgOnClay,
+                      ),
                     ),
                   ],
                 ),
@@ -686,27 +687,38 @@ class _LevelCard extends StatelessWidget {
                   weight: latestWeight!,
                   unit: unit,
                   onTap: onShowHistory,
+                  inverse: true,
                 ),
             ],
           ),
-          const SizedBox(height: AppSpacing.md),
-          Text(l10n.profileXpEyebrow, style: _eyebrow),
-          const SizedBox(height: 2),
+          const SizedBox(height: AppSpacing.sm),
           Row(
             children: [
               XnAnimatedNumber(
                 value: profile.totalXp.toDouble(),
                 formatter: formatAnimatedThousands,
-                style: AppTypography.mono(15, weight: FontWeight.w500),
+                style: AppTypography.mono(
+                  13,
+                  weight: FontWeight.w500,
+                  color: AppColors.fgOnClay,
+                ),
               ),
               Text(
                 ' / ',
-                style: AppTypography.mono(15, weight: FontWeight.w500),
+                style: AppTypography.mono(
+                  13,
+                  weight: FontWeight.w500,
+                  color: AppColors.fgOnClay,
+                ),
               ),
               XnAnimatedNumber(
                 value: (profile.totalXp + profile.xpToNextLevel).toDouble(),
                 formatter: formatAnimatedThousands,
-                style: AppTypography.mono(15, weight: FontWeight.w500),
+                style: AppTypography.mono(
+                  13,
+                  weight: FontWeight.w500,
+                  color: AppColors.fgOnClay,
+                ),
               ),
             ],
           ),
@@ -718,9 +730,11 @@ class _LevelCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(AppRadius.pill),
                   child: LinearProgressIndicator(
                     value: profile.levelProgress,
-                    minHeight: 8,
-                    backgroundColor: AppColors.bg2,
-                    valueColor: const AlwaysStoppedAnimation(AppColors.accent),
+                    minHeight: 7,
+                    backgroundColor: AppColors.fgOnClay.withValues(alpha: 0.18),
+                    valueColor: const AlwaysStoppedAnimation(
+                      AppColors.clay200,
+                    ),
                   ),
                 ),
               ),
@@ -728,7 +742,10 @@ class _LevelCard extends StatelessWidget {
               XnAnimatedNumber(
                 value: percent.toDouble(),
                 formatter: (value) => '${value.round()}%',
-                style: AppTypography.mono(12, color: AppColors.fg3),
+                style: AppTypography.mono(
+                  12,
+                  color: AppColors.fgOnClay.withValues(alpha: 0.72),
+                ),
               ),
             ],
           ),
@@ -741,16 +758,24 @@ class _LevelCard extends StatelessWidget {
 /// Latest-bodyweight pill shown at the top-right of the level card; taps open
 /// the full history sheet.
 class _WeightPill extends StatelessWidget {
-  const _WeightPill({required this.weight, required this.unit, this.onTap});
+  const _WeightPill({
+    required this.weight,
+    required this.unit,
+    this.onTap,
+    this.inverse = false,
+  });
 
   final double weight;
   final WeightUnit unit;
   final VoidCallback? onTap;
+  final bool inverse;
 
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: AppColors.bg2,
+      color: inverse
+          ? AppColors.fgOnClay.withValues(alpha: 0.14)
+          : AppColors.bg2,
       borderRadius: BorderRadius.circular(AppRadius.pill),
       child: InkWell(
         onTap: onTap,
@@ -760,22 +785,26 @@ class _WeightPill extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(
+              Icon(
                 Icons.monitor_weight_outlined,
                 size: 14,
-                color: AppColors.fg3,
+                color: inverse ? AppColors.fgOnClay : AppColors.fg3,
               ),
               const SizedBox(width: 4),
               XnAnimatedNumber(
                 value: unit.fromKg(weight),
                 formatter: (value) => '${formatWeight(value)} ${unit.suffix}',
-                style: AppTypography.mono(12, weight: FontWeight.w500),
+                style: AppTypography.mono(
+                  12,
+                  weight: FontWeight.w500,
+                  color: inverse ? AppColors.fgOnClay : AppColors.fg1,
+                ),
               ),
               if (onTap != null)
-                const Icon(
+                Icon(
                   Icons.history_rounded,
                   size: 14,
-                  color: AppColors.fg3,
+                  color: inverse ? AppColors.fgOnClay : AppColors.fg3,
                 ),
             ],
           ),

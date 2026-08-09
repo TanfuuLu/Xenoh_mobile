@@ -6,6 +6,21 @@ enum FriendStatus { none, pending, accepted, rejected }
 
 enum RequestDirection { incoming, outgoing }
 
+enum CommunityStatsVisibility { friends, onlyMe }
+
+class CommunitySettings {
+  const CommunitySettings({required this.statsVisibility});
+
+  final CommunityStatsVisibility statsVisibility;
+}
+
+class TrainingDayFeedPage {
+  const TrainingDayFeedPage({required this.items, required this.nextCursor});
+
+  final List<TrainingDayShare> items;
+  final String? nextCursor;
+}
+
 @freezed
 abstract class CommunityUserSummary with _$CommunityUserSummary {
   const factory CommunityUserSummary({
@@ -88,8 +103,8 @@ abstract class Friend with _$Friend {
   const factory Friend({
     required String userId,
     required String fullName,
-    required String email,
     required DateTime friendsSince,
+    String? email,
     String? avatarUrl,
     String? bio,
   }) = _Friend;
@@ -101,10 +116,10 @@ abstract class FriendRequest with _$FriendRequest {
     required String id,
     required String userId,
     required String fullName,
-    required String email,
     required RequestDirection direction,
     required FriendStatus status,
     required DateTime createdAt,
+    String? email,
     String? avatarUrl,
     DateTime? respondedAt,
   }) = _FriendRequest;

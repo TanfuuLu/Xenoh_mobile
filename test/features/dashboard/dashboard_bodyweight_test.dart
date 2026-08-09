@@ -69,9 +69,8 @@ void main() {
 
     expect(tester.takeException(), isNull);
 
-    // The dashboard heading stays on the page surface instead of becoming a
-    // large dark, image-backed hero.
-    expect(find.byType(HeroCardBackground), findsNothing);
+    // Identity, quick action, and XP share the image-backed hero surface.
+    expect(find.byType(HeroCardBackground), findsOneWidget);
 
     await tester.scrollUntilVisible(
       find.text('BODYWEIGHT'),
