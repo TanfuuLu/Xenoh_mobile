@@ -47,6 +47,20 @@ void main() {
       ),
       isNull,
     );
+    expect(
+      routeAccessRedirect(
+        const AuthState.unauthenticated(),
+        '/competitions/open-2026',
+      ),
+      isNull,
+    );
+    expect(
+      routeAccessRedirect(
+        const AuthState.unauthenticated(),
+        '/account-deletion/verify',
+      ),
+      isNull,
+    );
   });
 
   test('protected routes require a session', () {

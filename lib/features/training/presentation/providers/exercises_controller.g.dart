@@ -54,7 +54,7 @@ final class ExercisesControllerProvider
 }
 
 String _$exercisesControllerHash() =>
-    r'5e97985d3ea19df7b982d42ecd3929592d1ed74b';
+    r'ad42844a531be604e3877e2a808f6101002cad87';
 
 /// Exercises (with their sets) for a daily workout.
 

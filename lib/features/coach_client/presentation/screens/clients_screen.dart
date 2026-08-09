@@ -12,6 +12,7 @@ import '../../../../core/utils/weight_units.dart';
 import '../../../../core/widgets/xn_card.dart';
 import '../../../../core/widgets/xn_chip.dart';
 import '../../../../core/widgets/xn_section.dart';
+import '../../../../core/widgets/xn_user_avatar.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../profile/presentation/providers/preferences_provider.dart';
 import '../../../shared_api/api_widgets.dart';
@@ -29,8 +30,8 @@ final coachPendingRequestsProvider = FutureProvider.autoDispose<List<JsonMap>>(
   },
 );
 
-final coachDashboardProvider = FutureProvider.autoDispose<JsonMap>((ref) {
-  return ref.watch(xenohApiProvider).getObject('/coach-client/dashboard');
+final coachDashboardProvider = FutureProvider.autoDispose<List<JsonMap>>((ref) {
+  return ref.watch(xenohApiProvider).getList('/coach-client/dashboard');
 });
 
 class ClientsScreen extends ConsumerWidget {
@@ -60,7 +61,7 @@ class ClientsScreen extends ConsumerWidget {
           onOpenVault: () => unawaited(context.push('/coach/key-vault')),
         ),
         const SizedBox(height: AppSpacing.lg),
-        _SchedulePanel(clients: clients),
+        _SchedulePanel(dashboard: dashboard),
         const SizedBox(height: AppSpacing.xl),
         _PendingRequestsSection(
           pending: pending,
@@ -69,6 +70,7 @@ class ClientsScreen extends ConsumerWidget {
         ),
         _ClientRosterSection(
           clients: clients,
+          dashboard: dashboard,
           onAction: (item, action) => _runAction(context, ref, item, action),
           onOpenClient: (item) => _openClient(context, item),
         ),
@@ -131,7 +133,7 @@ class _ManageClientsPanel extends StatelessWidget {
     required this.onOpenVault,
   });
 
-  final AsyncValue<JsonMap> dashboard;
+  final AsyncValue<List<JsonMap>> dashboard;
   final AsyncValue<List<JsonMap>> clients;
   final AsyncValue<List<JsonMap>> pending;
   final VoidCallback onOpenVault;
@@ -263,9 +265,9 @@ class _BoardMetricTile extends StatelessWidget {
 }
 
 class _SchedulePanel extends StatelessWidget {
-  const _SchedulePanel({required this.clients});
+  const _SchedulePanel({required this.dashboard});
 
-  final AsyncValue<List<JsonMap>> clients;
+  final AsyncValue<List<JsonMap>> dashboard;
 
   @override
   Widget build(BuildContext context) {
@@ -301,7 +303,7 @@ class _SchedulePanel extends StatelessWidget {
               ],
             ),
           ),
-          switch (clients) {
+          switch (dashboard) {
             AsyncData(:final value) when value.isEmpty => Padding(
               padding: const EdgeInsets.fromLTRB(
                 AppSpacing.lg,
@@ -314,7 +316,7 @@ class _SchedulePanel extends StatelessWidget {
                 style: const TextStyle(color: AppColors.fg3),
               ),
             ),
-            AsyncData(:final value) => _ScheduleGrid(clients: value),
+            AsyncData(:final value) => _ClientMonitoringList(items: value),
             AsyncError(:final error) => Padding(
               padding: const EdgeInsets.all(AppSpacing.lg),
               child: FeatureError(error: error),
@@ -330,137 +332,73 @@ class _SchedulePanel extends StatelessWidget {
   }
 }
 
-class _ScheduleGrid extends StatelessWidget {
-  const _ScheduleGrid({required this.clients});
+class _ClientMonitoringList extends StatelessWidget {
+  const _ClientMonitoringList({required this.items});
 
-  final List<JsonMap> clients;
+  final List<JsonMap> items;
 
   @override
   Widget build(BuildContext context) {
-    final visible = clients.take(3).toList();
-    final months = _monthLabels();
-
     return Column(
       children: [
-        Container(
-          decoration: const BoxDecoration(
-            border: Border(
-              top: BorderSide(color: AppColors.surfaceBorderSoft),
-              bottom: BorderSide(color: AppColors.surfaceBorderSoft),
-            ),
-          ),
-          child: Row(
-            children: [
-              const SizedBox(width: 88),
-              for (final month in months)
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: AppSpacing.sm,
-                    ),
-                    child: Text(
-                      month,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        color: AppColors.fg3,
-                        fontSize: 11,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ),
-            ],
-          ),
-        ),
-        for (final item in visible)
-          _ScheduleRow(
-            name: textOf(item, ['clientName', 'userName', 'fullName', 'name']),
-            capacity: _firstMetric(item, [
-              'capacity',
-              'planCount',
-            ], fallback: 1),
-          ),
+        for (final item in items.take(5)) _ClientMonitoringRow(item: item),
       ],
     );
   }
 }
 
-class _ScheduleRow extends StatelessWidget {
-  const _ScheduleRow({required this.name, required this.capacity});
+class _ClientMonitoringRow extends StatelessWidget {
+  const _ClientMonitoringRow({required this.item});
 
-  final String name;
-  final String capacity;
+  final JsonMap item;
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final progress =
+        (item['activePlanProgressPercent'] as num?)?.toInt() ??
+        (item['planProgressPercent'] as num?)?.toInt();
+    final completed = (item['activePlanCompletedWorkoutCount'] as num?)
+        ?.toInt();
+    final total = (item['activePlanTotalWorkoutCount'] as num?)?.toInt();
+    final planName = optionalTextOf(item, ['activePlanName']);
     return Container(
       decoration: const BoxDecoration(
         border: Border(bottom: BorderSide(color: AppColors.surfaceBorderSoft)),
       ),
-      child: Row(
-        children: [
-          SizedBox(
-            width: 88,
-            child: Padding(
-              padding: const EdgeInsets.all(AppSpacing.md),
-              child: Text(
-                name,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  color: AppColors.fg1,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-          ),
-          Expanded(
-            child: Stack(
-              alignment: Alignment.centerLeft,
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.md),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
               children: [
-                Row(
-                  children: [
-                    for (var i = 0; i < 6; i++)
-                      const Expanded(
-                        child: SizedBox(
-                          height: 44,
-                          child: DecoratedBox(
-                            decoration: BoxDecoration(
-                              border: Border(
-                                left: BorderSide(
-                                  color: AppColors.surfaceBorderSoft,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-                FractionallySizedBox(
-                  widthFactor: 0.86,
-                  child: Container(
-                    height: 18,
-                    margin: const EdgeInsets.only(left: AppSpacing.md),
-                    decoration: BoxDecoration(
-                      color: AppColors.sage500.withValues(alpha: 0.76),
-                      borderRadius: BorderRadius.circular(AppRadius.sm),
-                    ),
+                Expanded(
+                  child: Text(
+                    textOf(item, ['fullName'], fallback: '-'),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(fontWeight: FontWeight.w600),
                   ),
                 ),
+                if (completed != null && total != null)
+                  Text(
+                    '$completed/$total',
+                    style: AppTypography.mono(12, weight: FontWeight.w500),
+                  ),
               ],
             ),
-          ),
-          SizedBox(
-            width: 40,
-            child: Text(
-              capacity,
-              textAlign: TextAlign.center,
-              style: AppTypography.mono(12, weight: FontWeight.w500),
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              planName ?? l10n.coachMetricNoActivePlan,
+              style: const TextStyle(color: AppColors.fg3, fontSize: 12),
             ),
-          ),
-        ],
+            if (progress != null) ...[
+              const SizedBox(height: AppSpacing.sm),
+              LinearProgressIndicator(value: (progress / 100).clamp(0, 1)),
+            ],
+          ],
+        ),
       ),
     );
   }
@@ -503,11 +441,13 @@ class _PendingRequestsSection extends StatelessWidget {
 class _ClientRosterSection extends StatelessWidget {
   const _ClientRosterSection({
     required this.clients,
+    required this.dashboard,
     required this.onAction,
     required this.onOpenClient,
   });
 
   final AsyncValue<List<JsonMap>> clients;
+  final AsyncValue<List<JsonMap>> dashboard;
   final void Function(JsonMap item, _RelationshipAction action) onAction;
   final ValueChanged<JsonMap> onOpenClient;
 
@@ -526,7 +466,10 @@ class _ClientRosterSection extends StatelessWidget {
         children: [
           for (final item in value)
             _RelationshipCard(
-              item: item,
+              item: {
+                ...item,
+                ...?_dashboardForClient(dashboard.value, _clientIdOf(item)),
+              },
               onTap: () => onOpenClient(item),
               onAction: (action) => onAction(item, action),
             ),
@@ -604,115 +547,303 @@ class _RelationshipCard extends ConsumerWidget {
     );
     final name = textOf(item, ['clientName', 'userName', 'fullName', 'name']);
     final email = optionalTextOf(item, ['clientEmail', 'userEmail', 'email']);
-    final attention = item['needsAttention'] == true;
+    final avatarUrl = optionalTextOf(item, [
+      'clientAvatarUrl',
+      'userAvatarUrl',
+      'avatarUrl',
+      'profilePictureUrl',
+      'photoUrl',
+    ]);
+    final attentionLevel = textOf(
+      item,
+      ['attentionLevel'],
+      fallback: 'None',
+    );
+    final attention =
+        item['needsAttention'] == true || attentionLevel != 'None';
     final plan = optionalTextOf(item, [
       'activePlanName',
       'planName',
       'currentPlanName',
     ]);
     final weightKg = double.tryParse(
-      optionalTextOf(item, ['latestBodyweight', 'bodyweight', 'weightKg']) ??
+      optionalTextOf(item, [
+            'latestBodyweightKg',
+            'latestBodyweight',
+            'bodyweight',
+            'weightKg',
+          ]) ??
           '',
     );
+    final progress =
+        (item['activePlanProgressPercent'] as num?)?.toInt() ??
+        (item['planProgressPercent'] as num?)?.toInt();
+    final completedToday = item['completedWorkoutToday'] == true;
+    final clientId = _clientIdOf(item);
+    final relationshipKey = clientId.isNotEmpty
+        ? clientId
+        : textOf(item, ['relationshipId', 'id'], fallback: name);
+    final statusActive = status.toLowerCase() == 'active';
 
     return XnSection(
+      key: ValueKey('client-relationship-$relationshipKey'),
       onTap: onTap,
-      padding: const EdgeInsets.all(AppSpacing.md),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.md,
+        vertical: AppSpacing.lg,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          _AvatarMark(name: name, attention: attention),
-          const SizedBox(width: AppSpacing.md),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  name,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    color: AppColors.fg1,
-                    fontSize: 17,
-                    fontWeight: FontWeight.w500,
-                    height: 1.15,
-                  ),
-                ),
-                if (email != null) ...[
-                  const SizedBox(height: 4),
-                  Text(
-                    email,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(color: AppColors.fg2, fontSize: 13),
-                  ),
-                ],
-                const SizedBox(height: AppSpacing.sm),
-                Wrap(
-                  spacing: AppSpacing.xs,
-                  runSpacing: AppSpacing.xs,
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _AvatarMark(
+                name: name,
+                imageUrl: avatarUrl,
+                attention: attention,
+              ),
+              const SizedBox(width: AppSpacing.md),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    XnChip(label: status, compact: true),
-                    if (plan != null) XnChip(label: plan, compact: true),
-                    if (weightKg != null)
-                      XnChip(
-                        label:
-                            '${formatWeight(unit.fromKg(weightKg))} ${unit.suffix}',
-                        compact: true,
+                    Text(
+                      name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: AppColors.fg1,
+                        fontSize: 17,
+                        fontWeight: FontWeight.w600,
+                        height: 1.15,
                       ),
-                    if (attention)
-                      XnChip(
-                        label: l10n.coachNeedsAttentionLabel,
-                        tone: XnChipTone.warn,
-                        compact: true,
+                    ),
+                    if (email != null) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        email,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          color: AppColors.fg3,
+                          fontSize: 12,
+                        ),
                       ),
+                    ],
+                    const SizedBox(height: AppSpacing.sm),
+                    _ClientStatusLabel(
+                      label: status,
+                      active: statusActive,
+                    ),
                   ],
                 ),
-              ],
-            ),
-          ),
-          const SizedBox(width: AppSpacing.sm),
-          PopupMenuButton<_RelationshipAction>(
-            tooltip: l10n.coachRelationshipActionsTooltip,
-            onSelected: onAction,
-            itemBuilder: (_) => [
-              if (pending || status == 'Pending')
-                PopupMenuItem(
-                  value: _RelationshipAction.accept,
-                  child: Text(l10n.coachAcceptAction),
-                ),
-              PopupMenuItem(
-                value: _RelationshipAction.requestTermination,
-                child: Text(l10n.coachRequestTerminationAction),
               ),
-              PopupMenuItem(
-                value: _RelationshipAction.acceptTermination,
-                child: Text(l10n.coachAcceptTerminationAction),
-              ),
-              PopupMenuItem(
-                value: _RelationshipAction.rejectTermination,
-                child: Text(l10n.coachRejectTerminationAction),
-              ),
-              PopupMenuItem(
-                value: _RelationshipAction.requestRenewal,
-                child: Text(l10n.coachRequestRenewalAction),
-              ),
-              PopupMenuItem(
-                value: _RelationshipAction.acceptRenewal,
-                child: Text(l10n.coachAcceptRenewalAction),
-              ),
-              PopupMenuItem(
-                value: _RelationshipAction.rejectRenewal,
-                child: Text(l10n.coachRejectRenewalAction),
-              ),
-              PopupMenuItem(
-                value: _RelationshipAction.disconnect,
-                child: Text(l10n.coachDisconnectAction),
+              const SizedBox(width: AppSpacing.xs),
+              PopupMenuButton<_RelationshipAction>(
+                tooltip: l10n.coachRelationshipActionsTooltip,
+                icon: const Icon(Icons.more_horiz_rounded),
+                onSelected: onAction,
+                itemBuilder: (_) => [
+                  if (pending || status == 'Pending')
+                    PopupMenuItem(
+                      value: _RelationshipAction.accept,
+                      child: Text(l10n.coachAcceptAction),
+                    ),
+                  PopupMenuItem(
+                    value: _RelationshipAction.requestTermination,
+                    child: Text(l10n.coachRequestTerminationAction),
+                  ),
+                  PopupMenuItem(
+                    value: _RelationshipAction.acceptTermination,
+                    child: Text(l10n.coachAcceptTerminationAction),
+                  ),
+                  PopupMenuItem(
+                    value: _RelationshipAction.rejectTermination,
+                    child: Text(l10n.coachRejectTerminationAction),
+                  ),
+                  PopupMenuItem(
+                    value: _RelationshipAction.requestRenewal,
+                    child: Text(l10n.coachRequestRenewalAction),
+                  ),
+                  PopupMenuItem(
+                    value: _RelationshipAction.acceptRenewal,
+                    child: Text(l10n.coachAcceptRenewalAction),
+                  ),
+                  PopupMenuItem(
+                    value: _RelationshipAction.rejectRenewal,
+                    child: Text(l10n.coachRejectRenewalAction),
+                  ),
+                  PopupMenuItem(
+                    value: _RelationshipAction.disconnect,
+                    child: Text(l10n.coachDisconnectAction),
+                  ),
+                ],
               ),
             ],
           ),
+          if (plan != null || progress != null) ...[
+            const SizedBox(height: AppSpacing.md),
+            Container(
+              padding: const EdgeInsets.all(AppSpacing.md),
+              decoration: BoxDecoration(
+                color: AppColors.bg3.withValues(alpha: 0.42),
+                borderRadius: BorderRadius.circular(AppRadius.md),
+                border: Border.all(
+                  color: AppColors.surfaceBorderSoft.withValues(alpha: 0.75),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Icon(
+                        Icons.assignment_outlined,
+                        size: 17,
+                        color: AppColors.clay800,
+                      ),
+                      const SizedBox(width: AppSpacing.sm),
+                      Expanded(
+                        child: Text(
+                          plan ?? l10n.coachMetricNoActivePlan,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            color: AppColors.fg1,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            height: 1.25,
+                          ),
+                        ),
+                      ),
+                      if (progress != null) ...[
+                        const SizedBox(width: AppSpacing.sm),
+                        Text(
+                          '$progress%',
+                          style: AppTypography.mono(
+                            13,
+                            weight: FontWeight.w600,
+                            color: AppColors.clay800,
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                  if (progress != null) ...[
+                    const SizedBox(height: AppSpacing.sm),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(AppRadius.pill),
+                      child: LinearProgressIndicator(
+                        minHeight: 5,
+                        value: (progress / 100).clamp(0, 1).toDouble(),
+                        backgroundColor: AppColors.bg2,
+                        color: attention
+                            ? AppColors.warning
+                            : AppColors.sage700,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ],
+          if (completedToday || weightKg != null || attention) ...[
+            const SizedBox(height: AppSpacing.md),
+            Wrap(
+              spacing: AppSpacing.md,
+              runSpacing: AppSpacing.sm,
+              children: [
+                if (weightKg != null)
+                  _ClientMetaLabel(
+                    icon: Icons.monitor_weight_outlined,
+                    label:
+                        '${formatWeight(unit.fromKg(weightKg))} ${unit.suffix}',
+                  ),
+                if (completedToday)
+                  _ClientMetaLabel(
+                    icon: Icons.check_circle_outline_rounded,
+                    label: l10n.commonDone,
+                    color: AppColors.success,
+                  ),
+                if (attention)
+                  _ClientMetaLabel(
+                    icon: Icons.error_outline_rounded,
+                    label: l10n.coachNeedsAttentionLabel,
+                    color: AppColors.warning,
+                  ),
+              ],
+            ),
+          ],
         ],
       ),
+    );
+  }
+}
+
+class _ClientStatusLabel extends StatelessWidget {
+  const _ClientStatusLabel({required this.label, required this.active});
+
+  final String label;
+  final bool active;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = active ? AppColors.success : AppColors.fg3;
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 7,
+          height: 7,
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+        ),
+        const SizedBox(width: 6),
+        Flexible(
+          child: Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              color: color,
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _ClientMetaLabel extends StatelessWidget {
+  const _ClientMetaLabel({
+    required this.icon,
+    required this.label,
+    this.color = AppColors.fg3,
+  });
+
+  final IconData icon;
+  final String label;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 14, color: color),
+        const SizedBox(width: 5),
+        Text(
+          label,
+          style: TextStyle(
+            color: color,
+            fontSize: 11,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ],
     );
   }
 }
@@ -806,40 +937,28 @@ class _SkeletonBox extends StatelessWidget {
 }
 
 class _AvatarMark extends StatelessWidget {
-  const _AvatarMark({required this.name, required this.attention});
+  const _AvatarMark({
+    required this.name,
+    required this.attention,
+    this.imageUrl,
+  });
 
   final String name;
+  final String? imageUrl;
   final bool attention;
 
   @override
   Widget build(BuildContext context) {
-    final initials = name
-        .split(' ')
-        .where((part) => part.trim().isNotEmpty)
-        .take(2)
-        .map((part) => part.characters.first.toUpperCase())
-        .join();
-
-    return Container(
-      width: 46,
-      height: 46,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: attention ? AppColors.warningBg : AppColors.accentSoft,
-        borderRadius: BorderRadius.circular(AppRadius.lg),
-        border: Border.all(
-          color: attention
-              ? AppColors.warning.withValues(alpha: 0.22)
-              : AppColors.surfaceBorderSoft,
-        ),
-      ),
-      child: Text(
-        initials.isEmpty ? '-' : initials,
-        style: TextStyle(
-          color: attention ? AppColors.warning : AppColors.clay900,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
+    return XnUserAvatar(
+      name: name,
+      imageUrl: imageUrl,
+      size: 46,
+      backgroundColor: attention ? AppColors.warningBg : AppColors.accentSoft,
+      foregroundColor: attention ? AppColors.warning : AppColors.clay900,
+      borderColor: attention
+          ? AppColors.warning.withValues(alpha: 0.22)
+          : AppColors.surfaceBorderSoft,
+      borderRadius: AppRadius.lg,
     );
   }
 }
@@ -873,28 +992,18 @@ String _clientIdOf(JsonMap item) {
   return '';
 }
 
-String _firstMetric(JsonMap item, List<String> keys, {Object? fallback}) {
-  final value = textOf(item, keys, fallback: '');
-  if (value.isNotEmpty) return value;
-  return fallback?.toString() ?? '0';
-}
-
 List<_BoardMetric> _dashboardMetrics(
   AppLocalizations l10n,
-  JsonMap? dashboard,
+  List<JsonMap>? dashboard,
   List<JsonMap>? clients, {
   int? activeFallback,
   int? pendingFallback,
 }) {
   final activeCount = clients?.length ?? activeFallback;
-  final attentionCount = clients
-      ?.where(
-        (client) =>
-            client['needsAttention'] == true ||
-            optionalTextOf(client, ['attentionReason']) != null,
-      )
+  final attentionCount = dashboard
+      ?.where((client) => textOf(client, ['attentionLevel']) != 'None')
       .length;
-  final noActivePlanCount = clients
+  final noActivePlanCount = dashboard
       ?.where(
         (client) => !_hasAnyText(client, const [
           'activePlanId',
@@ -906,64 +1015,39 @@ List<_BoardMetric> _dashboardMetrics(
         ]),
       )
       .length;
-  final inactiveCount = clients
+  final inactiveCount = dashboard
       ?.where(
         (client) =>
-            textOf(client, ['status'], fallback: '').toLowerCase() ==
-            'inactive',
+            client['daysSinceLastWorkout'] == null ||
+            ((client['daysSinceLastWorkout'] as num?)?.toInt() ?? 0) > 5,
       )
       .length;
 
   return [
     _BoardMetric(
       l10n.coachMetricActiveClients,
-      dashboard == null
-          ? (activeCount?.toString() ?? '-')
-          : _firstMetric(dashboard, [
-              'activeClients',
-              'activeClientCount',
-              'clientCount',
-              'totalClients',
-            ], fallback: activeCount),
+      (dashboard?.length ?? activeCount)?.toString() ?? '-',
       Icons.groups_2_outlined,
       AppColors.accentSoft,
       AppColors.clay900,
     ),
     _BoardMetric(
       l10n.coachMetricNeedAttention,
-      dashboard == null
-          ? (attentionCount?.toString() ?? '0')
-          : _firstMetric(dashboard, [
-              'needAttention',
-              'needsAttention',
-              'attentionCount',
-            ], fallback: attentionCount),
+      attentionCount?.toString() ?? '0',
       Icons.warning_amber_rounded,
       AppColors.warningBg,
       AppColors.warning,
     ),
     _BoardMetric(
       l10n.coachMetricNoActivePlan,
-      dashboard == null
-          ? (noActivePlanCount?.toString() ?? '0')
-          : _firstMetric(
-              dashboard,
-              ['noActivePlan', 'withoutActivePlan'],
-              fallback: noActivePlanCount,
-            ),
+      noActivePlanCount?.toString() ?? '0',
       Icons.assignment_outlined,
       AppColors.infoBg,
       AppColors.info,
     ),
     _BoardMetric(
       l10n.coachMetricInactive,
-      dashboard == null
-          ? (inactiveCount?.toString() ?? '0')
-          : _firstMetric(
-              dashboard,
-              ['inactiveClients', 'inactiveCount'],
-              fallback: inactiveCount,
-            ),
+      inactiveCount?.toString() ?? '0',
       Icons.calendar_month_outlined,
       AppColors.dangerBg,
       AppColors.danger,
@@ -975,26 +1059,16 @@ bool _hasAnyText(JsonMap item, List<String> keys) {
   return optionalTextOf(item, keys) != null;
 }
 
-List<String> _monthLabels() {
-  const names = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
-  ];
-  final now = DateTime.now();
-  return List.generate(6, (index) {
-    final month = DateTime(now.year, now.month + index);
-    return names[month.month - 1];
-  });
+JsonMap? _dashboardForClient(List<JsonMap>? dashboard, String clientId) {
+  if (dashboard == null || clientId.isEmpty) {
+    return null;
+  }
+  for (final item in dashboard) {
+    if (textOf(item, ['clientId'], fallback: '') == clientId) {
+      return item;
+    }
+  }
+  return null;
 }
 
 enum _RelationshipAction {

@@ -91,6 +91,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     onTap: () => context.push('/report-bug'),
                   ),
                   _SettingsRow(
+                    icon: Icons.folder_outlined,
+                    label: l10n.storageTitle,
+                    onTap: () => context.push('/storage'),
+                  ),
+                  _SettingsRow(
                     icon: Icons.delete_forever_outlined,
                     label: l10n.accountDeletionSettingsLabel,
                     danger: true,
@@ -248,87 +253,58 @@ class _SettingsHero extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return Padding(
       padding: const EdgeInsets.fromLTRB(
-        AppSpacing.xl,
-        AppSpacing.xl,
-        AppSpacing.xl,
-        AppSpacing.xxl,
+        AppSpacing.xs,
+        AppSpacing.sm,
+        AppSpacing.xs,
+        AppSpacing.md,
       ),
-      decoration: BoxDecoration(
-        color: AppColors.ink900,
-        borderRadius: BorderRadius.circular(AppRadius.xxl),
-        border: Border.all(
-          color: AppColors.fgOnClay.withValues(alpha: 0.08),
-        ),
-        boxShadow: const [
-          BoxShadow(
-            color: AppColors.shadow,
-            blurRadius: 18,
-            offset: Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Stack(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Positioned(
-            right: -8,
-            bottom: -28,
-            child: Icon(
-              Icons.settings_rounded,
-              size: 112,
-              color: AppColors.fgOnClay.withValues(alpha: 0.055),
+          Container(
+            width: 44,
+            height: 44,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: Colors.transparent,
+              borderRadius: BorderRadius.circular(AppRadius.md),
+              border: Border.all(color: AppColors.surfaceBorderSoft),
+            ),
+            child: const Icon(
+              Icons.settings_outlined,
+              color: AppColors.accent,
+              size: 21,
             ),
           ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: 52,
-                height: 52,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: AppColors.paperAlt,
-                  borderRadius: BorderRadius.circular(AppRadius.md),
-                  border: Border.all(
-                    color: AppColors.fgOnClay.withValues(alpha: 0.12),
+          const SizedBox(width: AppSpacing.md),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: AppTypography.display(
+                    24,
+                    weight: FontWeight.w700,
+                    color: AppColors.fg1,
+                    letterSpacing: -0.25,
+                    height: 1.1,
                   ),
                 ),
-                child: const Icon(
-                  Icons.settings_rounded,
-                  color: AppColors.ink900,
-                  size: 23,
+                const SizedBox(height: AppSpacing.sm),
+                Text(
+                  subtitle,
+                  style: const TextStyle(
+                    color: AppColors.fg2,
+                    fontSize: 13,
+                    height: 1.34,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
-              ),
-              const SizedBox(width: AppSpacing.xl),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: AppTypography.display(
-                        26,
-                        weight: FontWeight.w600,
-                        color: AppColors.fgOnClay,
-                        letterSpacing: -0.35,
-                        height: 1.1,
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.lg),
-                    Text(
-                      subtitle,
-                      style: const TextStyle(
-                        color: AppColors.ink300,
-                        fontSize: 13,
-                        height: 1.34,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),

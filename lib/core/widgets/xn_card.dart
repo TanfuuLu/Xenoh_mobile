@@ -7,7 +7,7 @@ import '../../app/theme/app_dimens.dart';
 class XnCard extends StatefulWidget {
   const XnCard({
     required this.child,
-    this.padding = const EdgeInsets.all(AppSpacing.xl),
+    this.padding = const EdgeInsets.all(AppSpacing.lg),
     this.color = AppColors.bg2,
     this.onTap,
     this.border,
@@ -31,7 +31,7 @@ class _XnCardState extends State<XnCard> {
 
   @override
   Widget build(BuildContext context) {
-    final radius = BorderRadius.circular(AppRadius.xxl);
+    final radius = BorderRadius.circular(AppRadius.lg);
 
     return AnimatedScale(
       scale: widget.onTap != null && _pressed ? 0.985 : 1,
@@ -52,9 +52,14 @@ class _XnCardState extends State<XnCard> {
               borderRadius: radius,
               border:
                   widget.border ??
-                  Border.all(
-                    color: AppColors.surfaceBorderSoft.withValues(alpha: 0.82),
-                  ),
+                  Border.all(color: AppColors.surfaceBorderSoft),
+              boxShadow: const [
+                BoxShadow(
+                  color: AppColors.shadow,
+                  blurRadius: 2,
+                  offset: Offset(0, 1),
+                ),
+              ],
             ),
             child: Padding(
               padding: widget.padding,

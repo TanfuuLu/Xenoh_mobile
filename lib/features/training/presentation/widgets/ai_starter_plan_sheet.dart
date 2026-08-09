@@ -30,10 +30,10 @@ String _experienceLabel(String value, AppLocalizations l10n) => switch (value) {
 };
 
 String _splitLabel(String value, AppLocalizations l10n) => switch (value) {
-  'Full body' => l10n.trainingSplitFullBody,
-  'Upper / lower' => l10n.trainingSplitUpperLower,
-  'Push pull legs' => l10n.trainingSplitPushPullLegs,
-  'Bro split' => l10n.trainingSplitBroSplit,
+  'full_body' => l10n.trainingSplitFullBody,
+  'upper_lower' => l10n.trainingSplitUpperLower,
+  'push_pull_legs' => l10n.trainingSplitPushPullLegs,
+  'bro_split' => l10n.trainingSplitBroSplit,
   _ => value,
 };
 
@@ -53,7 +53,7 @@ class _AiStarterPlanSheetState extends ConsumerState<AiStarterPlanSheet> {
 
   String _goal = 'Build muscle';
   String _experience = 'Beginner';
-  String _split = 'Full body';
+  String _split = 'full_body';
   int _daysPerWeek = 3;
   int _sessionMinutes = 60;
   DateTime? _start;
@@ -69,10 +69,10 @@ class _AiStarterPlanSheetState extends ConsumerState<AiStarterPlanSheet> {
   ];
   static const _experiences = ['Beginner', 'Intermediate', 'Advanced'];
   static const _splits = [
-    'Full body',
-    'Upper / lower',
-    'Push pull legs',
-    'Bro split',
+    'full_body',
+    'upper_lower',
+    'push_pull_legs',
+    'bro_split',
   ];
 
   @override
@@ -172,9 +172,11 @@ class _AiStarterPlanSheetState extends ConsumerState<AiStarterPlanSheet> {
                     color: AppColors.accent,
                   ),
                   const SizedBox(width: AppSpacing.sm),
-                  Text(
-                    l10n.trainingAiGeneratePlanTitle,
-                    style: AppTypography.display(20, letterSpacing: 0),
+                  Expanded(
+                    child: Text(
+                      l10n.trainingAiGeneratePlanTitle,
+                      style: AppTypography.display(20, letterSpacing: 0),
+                    ),
                   ),
                 ],
               ),

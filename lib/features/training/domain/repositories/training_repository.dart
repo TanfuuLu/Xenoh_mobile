@@ -2,6 +2,7 @@ import '../../../../core/models/paged_result.dart';
 import '../entities/daily_workout.dart';
 import '../entities/exercise.dart';
 import '../entities/exercise_template.dart';
+import '../entities/last_exercise_performance.dart';
 import '../entities/plan.dart';
 import '../entities/weekly_workout.dart';
 
@@ -84,6 +85,17 @@ abstract interface class TrainingRepository {
     double? rpe,
   });
 
+  Future<Exercise> updateSetPlan(
+    String setId, {
+    int? plannedReps,
+    double? plannedWeight,
+  });
+
+  Future<LastExercisePerformance> getLastExercisePerformance({
+    required String exerciseTemplateId,
+    required String dailyWorkoutId,
+  });
+
   Future<Exercise> startExerciseTimer(String exerciseId);
 
   Future<Exercise> finishExerciseTimer(String exerciseId);
@@ -120,7 +132,10 @@ abstract interface class TrainingRepository {
 
   /// Exercise templates to pick from when adding an exercise. The backend
   /// returns the full list unpaginated.
-  Future<List<ExerciseTemplate>> getExerciseTemplates({String? muscleGroup});
+  Future<List<ExerciseTemplate>> getExerciseTemplates({
+    String? muscleGroup,
+    String? clientId,
+  });
 
   Future<ExerciseTemplate> createCustomExerciseTemplate({
     required String name,
@@ -128,6 +143,7 @@ abstract interface class TrainingRepository {
     required List<String> secondaryMuscleGroups,
     required String exerciseKind,
     String? description,
+    String? clientId,
   });
 
   Future<ExerciseTemplate> updateCustomExerciseTemplate({

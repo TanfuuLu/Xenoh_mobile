@@ -18,6 +18,61 @@ class NutritionRemoteDataSource {
     return NutritionSummaryDto.fromJson(res.data!);
   }
 
+  Future<List<NutritionDailyLogDto>> getHistory({
+    required DateTime from,
+    required DateTime to,
+  }) async {
+    final res = await _dio.get<List<dynamic>>(
+      '/nutrition/history',
+      queryParameters: {
+        'from': DateOnly.format(from),
+        'to': DateOnly.format(to),
+      },
+    );
+    return _dailyLogsFromJson(res.data);
+  }
+
+  /// Coach read-only view of a client's nutrition summary.
+  Future<NutritionSummaryDto> getClientSummary(String clientId) async {
+    final res = await _dio.get<Map<String, dynamic>>(
+      '/nutrition/clients/$clientId/summary',
+    );
+    return NutritionSummaryDto.fromJson(res.data!);
+  }
+
+  /// Coach read-only view of a client's manually recorded macro totals.
+  /// A missing log is a valid empty-day state, represented by `null`.
+  Future<NutritionDailyLogDto?> getClientDailyLog(
+    String clientId,
+    DateTime date,
+  ) async {
+    try {
+      final res = await _dio.get<Map<String, dynamic>>(
+        '/nutrition/clients/$clientId/logs/${DateOnly.format(date)}',
+      );
+      return NutritionDailyLogDto.fromJson(res.data!);
+    } on DioException catch (error) {
+      if (error.response?.statusCode == 404) return null;
+      rethrow;
+    }
+  }
+
+  /// Coach read-only nutrition history for the inclusive date range.
+  Future<List<NutritionDailyLogDto>> getClientHistory(
+    String clientId, {
+    required DateTime from,
+    required DateTime to,
+  }) async {
+    final res = await _dio.get<List<dynamic>>(
+      '/nutrition/clients/$clientId/history',
+      queryParameters: {
+        'from': DateOnly.format(from),
+        'to': DateOnly.format(to),
+      },
+    );
+    return _dailyLogsFromJson(res.data);
+  }
+
   /// `PUT /nutrition/profile` — update activity/goal/targets.
   Future<NutritionProfileDto> updateProfile({
     required String activityLevel,
@@ -168,4 +223,13 @@ class NutritionRemoteDataSource {
     );
     return MealPlanDayDto.fromJson(res.data!);
   }
+
+  List<NutritionDailyLogDto> _dailyLogsFromJson(List<dynamic>? data) =>
+      (data ?? const [])
+          .map(
+            (item) => NutritionDailyLogDto.fromJson(
+              item as Map<String, dynamic>,
+            ),
+          )
+          .toList();
 }

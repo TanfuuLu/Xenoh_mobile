@@ -61,6 +61,22 @@ void main() {
 
       expect(container.read(isProProvider), isFalse);
     });
+
+    test('Organizer is a distinct active subscription capability', () async {
+      final repo = MockSubscriptionRepository();
+      when(repo.getMySubscription).thenAnswer(
+        (_) async => _sub(tier: 'Organizer', active: true),
+      );
+
+      final container = _container(repo);
+      final listener = container.listen(subscriptionProvider, (_, _) {});
+      addTearDown(listener.close);
+      final subscription = await container.read(subscriptionProvider.future);
+
+      expect(subscription.isOrganizer, isTrue);
+      expect(subscription.isPro, isTrue);
+      expect(container.read(isOrganizerProvider), isTrue);
+    });
   });
 
   group('tier labels', () {

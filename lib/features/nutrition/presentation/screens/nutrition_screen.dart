@@ -12,11 +12,10 @@ import '../../../../core/utils/current_date_provider.dart';
 import '../../../../core/utils/date_only.dart';
 import '../../../../core/utils/weight_units.dart';
 import '../../../../core/widgets/error_view.dart';
-import '../../../../core/widgets/synced_background_card.dart';
+import '../../../../core/widgets/xn_card.dart';
 import '../../../../core/widgets/xn_chip.dart';
 import '../../../../core/widgets/xn_section.dart';
 import '../../../../l10n/app_localizations.dart';
-import '../../../profile/data/repositories/profile_background_repository.dart';
 import '../../../profile/presentation/providers/preferences_provider.dart';
 import '../../data/repositories/nutrition_repository_provider.dart';
 import '../../domain/entities/food_log.dart';
@@ -30,6 +29,10 @@ import '../widgets/nutrition_enums.dart';
 
 class NutritionScreen extends ConsumerStatefulWidget {
   const NutritionScreen({super.key});
+
+  static const desktopContentKey = ValueKey('nutrition-desktop-content');
+  static const mobileContentKey = ValueKey('nutrition-mobile-content');
+  static const mobileActionsKey = ValueKey('nutrition-mobile-actions');
 
   @override
   ConsumerState<NutritionScreen> createState() => _NutritionScreenState();
@@ -107,43 +110,94 @@ class _NutritionScreenState extends ConsumerState<NutritionScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final compactActions = MediaQuery.sizeOf(context).width < 560;
     final today = ref.watch(currentDateProvider);
     final selectedDate = _pinnedDate ?? today;
     final summary = ref.watch(nutritionControllerProvider);
     final logs = ref.watch(foodLogsProvider(selectedDate));
     final mealPlan = ref.watch(mealPlanProvider(selectedDate));
-    final backgroundPath = ref
-        .watch(
-          profileBackgroundPathProvider(ProfileBackgroundRepository.deviceKey),
-        )
-        .value;
-    final backgroundAlignment =
-        ref
-            .watch(
-              profileBackgroundAlignmentProvider(
-                ProfileBackgroundRepository.deviceKey,
-              ),
-            )
-            .value ??
-        Alignment.center;
-
     return Scaffold(
       appBar: AppBar(
         leading: const HomeShellMenuButton(),
         title: Text(l10n.nutritionScreenTitle),
-        actions: [
-          IconButton(
-            tooltip: l10n.supplementsTitle,
-            icon: const Icon(Icons.medication_outlined),
-            onPressed: () => unawaited(context.push('/supplements')),
-          ),
-          if (summary.value case final data?)
-            IconButton(
-              tooltip: l10n.nutritionEditProfileTooltip,
-              icon: const Icon(Icons.tune_rounded),
-              onPressed: () => _editProfile(data.profile),
-            ),
-        ],
+        actions: compactActions
+            ? [
+                PopupMenuButton<_NutritionAction>(
+                  key: NutritionScreen.mobileActionsKey,
+                  tooltip: MaterialLocalizations.of(context).moreButtonTooltip,
+                  icon: const Icon(Icons.more_horiz_rounded),
+                  onSelected: (action) {
+                    switch (action) {
+                      case _NutritionAction.insight:
+                        unawaited(context.push('/nutrition/insight'));
+                      case _NutritionAction.history:
+                        unawaited(context.push('/nutrition/history'));
+                      case _NutritionAction.supplements:
+                        unawaited(context.push('/supplements'));
+                      case _NutritionAction.editProfile:
+                        if (summary.value case final data?) {
+                          unawaited(_editProfile(data.profile));
+                        }
+                    }
+                  },
+                  itemBuilder: (context) => [
+                    PopupMenuItem(
+                      value: _NutritionAction.insight,
+                      child: _MenuActionLabel(
+                        icon: Icons.auto_awesome_rounded,
+                        label: l10n.nutritionInsightTitle,
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value: _NutritionAction.history,
+                      child: _MenuActionLabel(
+                        icon: Icons.show_chart_rounded,
+                        label: l10n.nutritionHistoryTitle,
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value: _NutritionAction.supplements,
+                      child: _MenuActionLabel(
+                        icon: Icons.medication_outlined,
+                        label: l10n.supplementsTitle,
+                      ),
+                    ),
+                    if (summary.value != null)
+                      PopupMenuItem(
+                        value: _NutritionAction.editProfile,
+                        child: _MenuActionLabel(
+                          icon: Icons.tune_rounded,
+                          label: l10n.nutritionEditProfileTooltip,
+                        ),
+                      ),
+                  ],
+                ),
+              ]
+            : [
+                IconButton(
+                  tooltip: l10n.nutritionInsightTitle,
+                  icon: const Icon(Icons.auto_awesome_rounded),
+                  onPressed: () =>
+                      unawaited(context.push('/nutrition/insight')),
+                ),
+                IconButton(
+                  tooltip: l10n.nutritionHistoryTitle,
+                  icon: const Icon(Icons.show_chart_rounded),
+                  onPressed: () =>
+                      unawaited(context.push('/nutrition/history')),
+                ),
+                IconButton(
+                  tooltip: l10n.supplementsTitle,
+                  icon: const Icon(Icons.medication_outlined),
+                  onPressed: () => unawaited(context.push('/supplements')),
+                ),
+                if (summary.value case final data?)
+                  IconButton(
+                    tooltip: l10n.nutritionEditProfileTooltip,
+                    icon: const Icon(Icons.tune_rounded),
+                    onPressed: () => _editProfile(data.profile),
+                  ),
+              ],
       ),
       body: RefreshIndicator(
         color: AppColors.accent,
@@ -159,8 +213,6 @@ class _NutritionScreenState extends ConsumerState<NutritionScreen> {
           summary,
           logs,
           mealPlan,
-          backgroundPath,
-          backgroundAlignment,
         ),
       ),
     );
@@ -175,8 +227,6 @@ class _NutritionScreenState extends ConsumerState<NutritionScreen> {
     AsyncValue<NutritionSummary> summary,
     AsyncValue<FoodLogsForDate> logs,
     AsyncValue<MealPlanDay> mealPlan,
-    String? backgroundImagePath,
-    Alignment backgroundAlignment,
   ) {
     final data = summary.value;
     final l10n = AppLocalizations.of(context);
@@ -202,15 +252,18 @@ class _NutritionScreenState extends ConsumerState<NutritionScreen> {
     final selectedIsToday = selectedDate == today;
     final weightUnit = ref.watch(weightUnitProvider);
     return ListView(
-      padding: const EdgeInsets.all(AppSpacing.lg),
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.md,
+        AppSpacing.sm,
+        AppSpacing.md,
+        AppSpacing.lg,
+      ),
       children: [
         _Header(
           summary: data,
           unit: weightUnit,
-          backgroundImagePath: backgroundImagePath,
-          backgroundAlignment: backgroundAlignment,
         ),
-        const SizedBox(height: AppSpacing.md),
+        const SizedBox(height: AppSpacing.sm),
         _DateSelector(
           date: selectedDate,
           isToday: selectedIsToday,
@@ -228,34 +281,67 @@ class _NutritionScreenState extends ConsumerState<NutritionScreen> {
           onPick: () => _pickDate(selectedDate),
         ),
         const SizedBox(height: AppSpacing.md),
-        XnSectionList(
-          children: [
-            _TodayCard(
-              title: selectedIsToday
-                  ? l10n.nutritionTodayEyebrow
-                  : DateOnly.format(selectedDate),
-              calc: data.calculation,
-              consumedCalories:
-                  totals?.totalCalories ?? data.todayLog?.calories ?? 0,
-              consumedProtein:
-                  totals?.totalProteinG ?? data.todayLog?.proteinG ?? 0,
-              consumedCarbs: totals?.totalCarbsG ?? data.todayLog?.carbsG ?? 0,
-              consumedFat: totals?.totalFatG ?? data.todayLog?.fatG ?? 0,
-            ),
-            _FoodLogCard(
-              title: selectedIsToday
-                  ? l10n.nutritionTodaysFoodEyebrow
-                  : l10n.nutritionFoodLogEyebrow,
-              logs: logs,
-              onDelete: (item) => _deleteLog(selectedDate, item),
-              onAdd: () => _addFood(selectedDate),
-            ),
-            _MealPlanCard(
-              date: selectedDate,
-              mealPlan: mealPlan,
-              onCreate: () => _createMealPlan(selectedDate, mealPlan.value),
-            ),
-          ],
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final dailyPanel = XnSectionGroup(
+              padding: EdgeInsets.zero,
+              children: [
+                _TodayCard(
+                  title: selectedIsToday
+                      ? l10n.nutritionTodayEyebrow
+                      : DateOnly.format(selectedDate),
+                  calc: data.calculation,
+                  consumedCalories:
+                      totals?.totalCalories ?? data.todayLog?.calories ?? 0,
+                  consumedProtein:
+                      totals?.totalProteinG ?? data.todayLog?.proteinG ?? 0,
+                  consumedCarbs:
+                      totals?.totalCarbsG ?? data.todayLog?.carbsG ?? 0,
+                  consumedFat: totals?.totalFatG ?? data.todayLog?.fatG ?? 0,
+                ),
+                const XnSectionDivider(),
+                _FoodLogCard(
+                  title: selectedIsToday
+                      ? l10n.nutritionTodaysFoodEyebrow
+                      : l10n.nutritionFoodLogEyebrow,
+                  logs: logs,
+                  onDelete: (item) => _deleteLog(selectedDate, item),
+                  onAdd: () => _addFood(selectedDate),
+                ),
+              ],
+            );
+            final mealPlanPanel = XnSectionGroup(
+              padding: EdgeInsets.zero,
+              children: [
+                _MealPlanCard(
+                  date: selectedDate,
+                  mealPlan: mealPlan,
+                  onCreate: () => _createMealPlan(selectedDate, mealPlan.value),
+                ),
+              ],
+            );
+
+            if (constraints.maxWidth >= 720) {
+              return Row(
+                key: NutritionScreen.desktopContentKey,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(child: dailyPanel),
+                  const SizedBox(width: AppSpacing.md),
+                  Expanded(child: mealPlanPanel),
+                ],
+              );
+            }
+
+            return Column(
+              key: NutritionScreen.mobileContentKey,
+              children: [
+                dailyPanel,
+                const SizedBox(height: AppSpacing.md),
+                mealPlanPanel,
+              ],
+            );
+          },
         ),
         if (!data.isProfileComplete) ...[
           const SizedBox(height: AppSpacing.md),
@@ -280,6 +366,26 @@ class _NutritionScreenState extends ConsumerState<NutritionScreen> {
   }
 }
 
+enum _NutritionAction { insight, history, supplements, editProfile }
+
+class _MenuActionLabel extends StatelessWidget {
+  const _MenuActionLabel({required this.icon, required this.label});
+
+  final IconData icon;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Icon(icon, size: 18, color: AppColors.fg2),
+        const SizedBox(width: AppSpacing.md),
+        Flexible(child: Text(label)),
+      ],
+    );
+  }
+}
+
 class _DateSelector extends StatelessWidget {
   const _DateSelector({
     required this.date,
@@ -300,13 +406,8 @@ class _DateSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return Container(
-      clipBehavior: Clip.antiAlias,
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.sm,
-        vertical: AppSpacing.xs,
-      ),
-      decoration: _panelDecoration,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
       child: Row(
         children: [
           IconButton(
@@ -387,12 +488,15 @@ class _MealPlanCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final data = mealPlan.value;
+    final plannedMeals =
+        data?.meals.where((meal) => meal.items.isNotEmpty).toList() ??
+        const <MealPlanMeal>[];
     return XnSection(
       padding: const EdgeInsets.fromLTRB(
+        AppSpacing.lg,
+        AppSpacing.lg,
+        AppSpacing.lg,
         AppSpacing.xl,
-        AppSpacing.xl,
-        AppSpacing.xl,
-        AppSpacing.xxl,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -411,7 +515,7 @@ class _MealPlanCard extends ConsumerWidget {
                       : l10n.nutritionMealPlanEditCta,
                 ),
               ),
-              const SizedBox(width: AppSpacing.lg),
+              const SizedBox(width: AppSpacing.xs),
               if (data != null && data.totalItemCount > 0)
                 XnChip(
                   label: '${data.checkedItemCount}/${data.totalItemCount}',
@@ -419,7 +523,7 @@ class _MealPlanCard extends ConsumerWidget {
                 ),
             ],
           ),
-          const SizedBox(height: AppSpacing.xl),
+          const SizedBox(height: AppSpacing.lg),
           if (data == null)
             if (mealPlan.hasError)
               Text(
@@ -457,7 +561,7 @@ class _MealPlanCard extends ConsumerWidget {
                 valueColor: const AlwaysStoppedAnimation(AppColors.sage500),
               ),
             ),
-            const SizedBox(height: AppSpacing.xl),
+            const SizedBox(height: AppSpacing.lg),
             Row(
               children: [
                 Expanded(
@@ -466,7 +570,7 @@ class _MealPlanCard extends ConsumerWidget {
                     totals: data.plannedTotals,
                   ),
                 ),
-                const SizedBox(width: AppSpacing.lg),
+                const SizedBox(width: AppSpacing.md),
                 Expanded(
                   child: _InlineMacro(
                     label: l10n.nutritionDoneLabel,
@@ -475,12 +579,11 @@ class _MealPlanCard extends ConsumerWidget {
                 ),
               ],
             ),
-            const SizedBox(height: AppSpacing.xl),
-            for (final meal in data.meals.where(
-              (meal) => meal.items.isNotEmpty,
-            )) ...[
-              _MealSection(date: date, meal: meal),
-              const SizedBox(height: AppSpacing.xl),
+            const SizedBox(height: AppSpacing.lg),
+            for (var index = 0; index < plannedMeals.length; index++) ...[
+              _MealSection(date: date, meal: plannedMeals[index]),
+              if (index < plannedMeals.length - 1)
+                const SizedBox(height: AppSpacing.lg),
             ],
           ],
         ],
@@ -681,17 +784,10 @@ List<_CalculationItem> _buildCalculationItems(
 }
 
 class _Header extends StatelessWidget {
-  const _Header({
-    required this.summary,
-    required this.unit,
-    this.backgroundImagePath,
-    this.backgroundAlignment = Alignment.center,
-  });
+  const _Header({required this.summary, required this.unit});
 
   final NutritionSummary summary;
   final WeightUnit unit;
-  final String? backgroundImagePath;
-  final Alignment backgroundAlignment;
 
   @override
   Widget build(BuildContext context) {
@@ -702,33 +798,57 @@ class _Header extends StatelessWidget {
       unit,
       summary.profile.targetWeightKg,
     );
-    return SyncedBackgroundCard(
-      backgroundImagePath: backgroundImagePath,
-      backgroundAlignment: backgroundAlignment,
+    return XnCard(
+      padding: const EdgeInsets.all(AppSpacing.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            l10n.nutritionScreenTitle.toUpperCase(),
-            style: _eyebrow.copyWith(
-              color: AppColors.fgOnClay.withValues(alpha: 0.68),
-            ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 36,
+                height: 36,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: AppColors.accentSoft.withValues(alpha: 0.58),
+                  borderRadius: BorderRadius.circular(AppRadius.md),
+                ),
+                child: const Icon(
+                  Icons.restaurant_rounded,
+                  size: 19,
+                  color: AppColors.accent,
+                ),
+              ),
+              const SizedBox(width: AppSpacing.md),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.nutritionScreenTitle.toUpperCase(),
+                      style: _eyebrow,
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      summary.calculation.calorieTarget != null
+                          ? l10n.nutritionCalorieTargetTitle(
+                              summary.calculation.calorieTarget!,
+                            )
+                          : l10n.nutritionDailyTitle,
+                      style: AppTypography.display(
+                        21,
+                        letterSpacing: -0.2,
+                        weight: FontWeight.w600,
+                        height: 1.2,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 6),
-          Text(
-            summary.calculation.calorieTarget != null
-                ? l10n.nutritionCalorieTargetTitle(
-                    summary.calculation.calorieTarget!,
-                  )
-                : l10n.nutritionDailyTitle,
-            style: AppTypography.display(
-              26,
-              letterSpacing: 0,
-              color: AppColors.fgOnClay,
-              weight: FontWeight.w500,
-            ),
-          ),
-          const SizedBox(height: AppSpacing.sm),
+          const SizedBox(height: AppSpacing.md),
           Wrap(
             spacing: 8,
             runSpacing: 8,
@@ -746,26 +866,18 @@ class _Header extends StatelessWidget {
             ],
           ),
           if (calculationItems.isNotEmpty) ...[
-            const SizedBox(height: AppSpacing.xxl),
-            Divider(
-              height: 1,
-              color: AppColors.fgOnClay.withValues(alpha: 0.22),
-            ),
-            const SizedBox(height: AppSpacing.xl),
+            const SizedBox(height: AppSpacing.md),
+            const Divider(height: 1),
+            const SizedBox(height: AppSpacing.md),
             Row(
               children: [
-                Icon(
+                const Icon(
                   Icons.calculate_outlined,
                   size: 16,
-                  color: AppColors.fgOnClay.withValues(alpha: 0.78),
+                  color: AppColors.fg3,
                 ),
                 const SizedBox(width: AppSpacing.md),
-                Text(
-                  l10n.nutritionCalculationEyebrow,
-                  style: _eyebrow.copyWith(
-                    color: AppColors.fgOnClay.withValues(alpha: 0.72),
-                  ),
-                ),
+                Text(l10n.nutritionCalculationEyebrow, style: _eyebrow),
               ],
             ),
             const SizedBox(height: AppSpacing.md),
@@ -787,7 +899,7 @@ class _IncompleteCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return Container(
-      padding: const EdgeInsets.all(AppSpacing.xl),
+      padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: _panelDecoration,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -868,10 +980,10 @@ class _TodayCard extends StatelessWidget {
 
     return XnSection(
       padding: const EdgeInsets.fromLTRB(
+        AppSpacing.lg,
+        AppSpacing.lg,
+        AppSpacing.lg,
         AppSpacing.xl,
-        AppSpacing.xl,
-        AppSpacing.xl,
-        AppSpacing.xxl,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -886,7 +998,7 @@ class _TodayCard extends StatelessWidget {
                 ),
             ],
           ),
-          const SizedBox(height: AppSpacing.xxl),
+          const SizedBox(height: AppSpacing.lg),
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -927,7 +1039,7 @@ class _TodayCard extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(width: AppSpacing.xxl),
+              const SizedBox(width: AppSpacing.lg),
               Expanded(
                 child: Column(
                   children: [
@@ -957,12 +1069,12 @@ class _TodayCard extends StatelessWidget {
             ],
           ),
           if (remaining != null) ...[
-            const SizedBox(height: AppSpacing.xxl),
+            const SizedBox(height: AppSpacing.lg),
             Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.xl,
-                vertical: AppSpacing.xl,
+                horizontal: AppSpacing.lg,
+                vertical: AppSpacing.md,
               ),
               decoration: BoxDecoration(
                 color: remaining >= 0
@@ -1001,6 +1113,7 @@ class _FoodLogCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return XnSection(
+      padding: const EdgeInsets.all(AppSpacing.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1173,9 +1286,7 @@ class _CalculationItem {
   final String value;
 }
 
-/// The BMR/TDEE/etc. calculation figures as a single translucent panel of
-/// de-carded stat tiles that read light-on-dark against the nutrition hero,
-/// separated by hairline rules rather than individual white cards.
+/// Compact calculation figures separated by hairlines inside the summary card.
 class _CalculationGrid extends StatelessWidget {
   const _CalculationGrid({required this.items});
 
@@ -1183,31 +1294,31 @@ class _CalculationGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hairline = AppColors.fgOnClay.withValues(alpha: 0.14);
+    const hairline = AppColors.surfaceBorderSoft;
     return Container(
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-        color: AppColors.fgOnClay.withValues(alpha: 0.06),
-        borderRadius: BorderRadius.circular(AppRadius.lg),
-        border: Border.all(color: AppColors.fgOnClay.withValues(alpha: 0.12)),
+        color: AppColors.bgPage,
+        borderRadius: BorderRadius.circular(AppRadius.md),
+        border: Border.all(color: hairline),
       ),
       child: LayoutBuilder(
         builder: (context, constraints) {
-          final twoCol = constraints.maxWidth >= 320;
-          final columns = twoCol ? 2 : 1;
+          final columns = constraints.maxWidth >= 300 ? 3 : 2;
           final rows = (items.length + columns - 1) ~/ columns;
 
           return Column(
             children: [
               for (var r = 0; r < rows; r++) ...[
-                if (r > 0) Divider(height: 1, thickness: 1, color: hairline),
+                if (r > 0)
+                  const Divider(height: 1, thickness: 1, color: hairline),
                 IntrinsicHeight(
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       for (var c = 0; c < columns; c++) ...[
                         if (c > 0 && r * columns + c < items.length)
-                          VerticalDivider(
+                          const VerticalDivider(
                             width: 1,
                             thickness: 1,
                             color: hairline,
@@ -1241,17 +1352,15 @@ class _CalculationStat extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.lg,
-        vertical: AppSpacing.lg,
+        horizontal: AppSpacing.md,
+        vertical: AppSpacing.md,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             item.label.toUpperCase(),
-            style: _eyebrow.copyWith(
-              color: AppColors.fgOnClay.withValues(alpha: 0.6),
-            ),
+            style: _eyebrow,
           ),
           const SizedBox(height: 6),
           Text(
@@ -1260,8 +1369,7 @@ class _CalculationStat extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             style: AppTypography.mono(
               16,
-              weight: FontWeight.w500,
-              color: AppColors.fgOnClay,
+              weight: FontWeight.w600,
             ),
           ),
         ],

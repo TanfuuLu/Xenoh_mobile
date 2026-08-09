@@ -9,13 +9,14 @@ import '../../../../core/error/failure.dart';
 import '../../../../core/utils/weight_units.dart';
 import '../../../../core/widgets/async_value_view.dart';
 import '../../../../core/widgets/pro_locked_view.dart';
+import '../../../../core/widgets/xn_card.dart';
 import '../../../../core/widgets/xn_section.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../profile/presentation/providers/preferences_provider.dart';
 import '../../domain/entities/plan_analytics.dart';
 import '../providers/progress_controllers.dart';
-import '../widgets/grouped_bar_chart.dart';
 import '../widgets/line_series_chart.dart';
+import '../widgets/weekly_completion_chart.dart';
 
 /// Pro-gated plan analytics: training score, summary metrics, insights, the
 /// weekly planned-vs-completed comparison and muscle-group distribution.
@@ -100,29 +101,47 @@ class PlanAnalyticsView extends StatelessWidget {
       children: [
         _ScoreHero(score: a.trainingScore, consistency: a.consistencyPercent),
         const SizedBox(height: AppSpacing.md),
-        XnSectionGroup(
-          children: [
-            _StatsSection(analytics: a, unit: unit),
-            if (a.insights.isNotEmpty) ...[
-              const XnSectionDivider(),
-              _InsightsSection(insights: a.insights),
-            ],
-            if (a.weeklyCompliance.isNotEmpty) ...[
-              const XnSectionDivider(),
-              _WeeklySection(weeks: a.weeklyCompliance),
-            ],
-            if (a.weeklyVolume.isNotEmpty) ...[
-              const XnSectionDivider(),
-              _WeeklyVolumeSection(weeks: a.weeklyVolume, unit: unit),
-            ],
-            if (a.muscleGroupVolume.isNotEmpty) ...[
-              const XnSectionDivider(),
-              _MuscleSection(points: a.muscleGroupVolume),
-            ],
-          ],
+        _AnalyticsPanel(
+          child: _StatsSection(analytics: a, unit: unit),
         ),
+        if (a.insights.isNotEmpty) ...[
+          const SizedBox(height: AppSpacing.md),
+          _AnalyticsPanel(child: _InsightsSection(insights: a.insights)),
+        ],
+        if (a.weeklyCompliance.isNotEmpty) ...[
+          const SizedBox(height: AppSpacing.md),
+          _AnalyticsPanel(
+            child: _WeeklySection(weeks: a.weeklyCompliance),
+          ),
+        ],
+        if (a.weeklyVolume.isNotEmpty) ...[
+          const SizedBox(height: AppSpacing.md),
+          _AnalyticsPanel(
+            child: _WeeklyVolumeSection(weeks: a.weeklyVolume, unit: unit),
+          ),
+        ],
+        if (a.muscleGroupVolume.isNotEmpty) ...[
+          const SizedBox(height: AppSpacing.md),
+          _AnalyticsPanel(
+            child: _MuscleSection(points: a.muscleGroupVolume),
+          ),
+        ],
         const SizedBox(height: AppSpacing.lg),
       ],
+    );
+  }
+}
+
+class _AnalyticsPanel extends StatelessWidget {
+  const _AnalyticsPanel({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return XnCard(
+      padding: const EdgeInsets.all(AppSpacing.md),
+      child: child,
     );
   }
 }
@@ -136,12 +155,8 @@ class _ScoreHero extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return Container(
+    return XnCard(
       padding: const EdgeInsets.all(AppSpacing.xl),
-      decoration: BoxDecoration(
-        color: AppColors.bgInverse,
-        borderRadius: BorderRadius.circular(AppRadius.xl),
-      ),
       child: Row(
         children: [
           Column(
@@ -150,7 +165,7 @@ class _ScoreHero extends StatelessWidget {
               Text(
                 l10n.progressTrainingScoreLabel,
                 style: const TextStyle(
-                  color: AppColors.clay100,
+                  color: AppColors.fg3,
                   fontSize: 11,
                   fontWeight: FontWeight.w500,
                   letterSpacing: 0.7,
@@ -165,12 +180,13 @@ class _ScoreHero extends StatelessWidget {
                     '$score',
                     style: AppTypography.display(
                       40,
-                      color: AppColors.fgOnClay,
+                      color: AppColors.fg1,
+                      weight: FontWeight.w700,
                     ),
                   ),
                   const Text(
                     ' / 100',
-                    style: TextStyle(color: AppColors.clay200, fontSize: 14),
+                    style: TextStyle(color: AppColors.fg3, fontSize: 14),
                   ),
                 ],
               ),
@@ -185,12 +201,12 @@ class _ScoreHero extends StatelessWidget {
                 style: AppTypography.mono(
                   22,
                   weight: FontWeight.w500,
-                  color: AppColors.fgOnClay,
+                  color: AppColors.fg1,
                 ),
               ),
               Text(
                 l10n.progressConsistencyLabel,
-                style: const TextStyle(color: AppColors.clay200, fontSize: 12),
+                style: const TextStyle(color: AppColors.fg3, fontSize: 12),
               ),
             ],
           ),
@@ -378,7 +394,7 @@ class _InsightRow extends StatelessWidget {
   }
 }
 
-/// Weekly planned-vs-completed bar chart inside a divided section.
+/// Weekly planned-vs-completed progress rows inside a divided section.
 class _WeeklySection extends StatelessWidget {
   const _WeeklySection({required this.weeks});
 
@@ -393,15 +409,13 @@ class _WeeklySection extends StatelessWidget {
         children: [
           XnSectionEyebrow(l10n.progressWeeklyTrainingTitle),
           const SizedBox(height: AppSpacing.lg),
-          GroupedBarChart(
-            seriesALabel: l10n.progressPlannedLabel,
-            seriesBLabel: l10n.progressCompletedLabel,
+          WeeklyCompletionChart(
             data: [
-              for (final w in weeks)
-                GroupedBarDatum(
-                  label: l10n.progressWeekShortLabel(w.weekNumber),
-                  valueA: w.totalDays.toDouble(),
-                  valueB: w.completedDays.toDouble(),
+              for (final week in weeks)
+                WeeklyCompletionDatum(
+                  label: l10n.progressWeekShortLabel(week.weekNumber),
+                  completed: week.completedDays,
+                  total: week.totalDays,
                 ),
             ],
           ),
@@ -474,7 +488,11 @@ class _MuscleSection extends StatelessWidget {
           const SizedBox(height: AppSpacing.lg),
           for (var i = 0; i < sorted.length; i++) ...[
             if (i > 0) const SizedBox(height: AppSpacing.md),
-            _MuscleRow(point: sorted[i], maxPct: maxPct),
+            _MuscleRow(
+              point: sorted[i],
+              maxPct: maxPct,
+              color: AppColors.dataColor(i),
+            ),
           ],
         ],
       ),
@@ -483,10 +501,15 @@ class _MuscleSection extends StatelessWidget {
 }
 
 class _MuscleRow extends StatelessWidget {
-  const _MuscleRow({required this.point, required this.maxPct});
+  const _MuscleRow({
+    required this.point,
+    required this.maxPct,
+    required this.color,
+  });
 
   final MuscleGroupVolumePoint point;
   final double maxPct;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
@@ -525,7 +548,7 @@ class _MuscleRow extends StatelessWidget {
             value: ratio.clamp(0.0, 1.0),
             minHeight: 8,
             backgroundColor: AppColors.bg3,
-            valueColor: const AlwaysStoppedAnimation(AppColors.accent),
+            valueColor: AlwaysStoppedAnimation(color),
           ),
         ),
       ],

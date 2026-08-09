@@ -184,6 +184,22 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
+  @override
+  Future<Result<void>> verifyAccountDeletion(String token) async {
+    try {
+      await _remote.verifyAccountDeletion(token);
+      // The verified request permanently deletes the account server-side.
+      // Any session cached on this device is therefore no longer usable.
+      await _tokens.clear();
+      await _cookieJar.deleteAll();
+      return const Ok(null);
+    } on DioException catch (e) {
+      return Err(failureFromDio(e));
+    } catch (_) {
+      return const Err(UnknownFailure());
+    }
+  }
+
   Future<void> _cacheSession(AuthSession session) async {
     _tokens.accessToken = session.accessToken;
     await _tokens.setUserId(session.user.id);

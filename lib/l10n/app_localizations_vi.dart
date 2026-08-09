@@ -796,6 +796,20 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
+  String get cycleDayMetricLabel => 'Ngày chu kỳ';
+
+  @override
+  String get cycleUntilPeriodMetricLabel => 'Còn đến kỳ';
+
+  @override
+  String get cycleConfidenceMetricLabel => 'Độ tin cậy';
+
+  @override
+  String cycleDaysValue(int days) {
+    return '$days ngày';
+  }
+
+  @override
   String get cycleNextPeriodMissingLabel => 'Kỳ tiếp theo -';
 
   @override
@@ -1610,6 +1624,10 @@ class AppLocalizationsVi extends AppLocalizations {
   String get dashboardNutritionLoadError => 'Không thể tải dữ liệu dinh dưỡng.';
 
   @override
+  String get dashboardSupplementsLoadError =>
+      'Không thể tải lịch thực phẩm bổ sung hôm nay.';
+
+  @override
   String get dashboardMacroProtein => 'Đạm';
 
   @override
@@ -2168,6 +2186,26 @@ class AppLocalizationsVi extends AppLocalizations {
       'Mức độ phân bổ tập luyện trên toàn cơ thể của kế hoạch này.';
 
   @override
+  String get trainingPlanProgressInsightTitle => 'Tiến trình kế hoạch AI';
+
+  @override
+  String get trainingPlanProgressInsightSubtitle =>
+      'Phân tích xu hướng của kế hoạch này và định hướng cho giai đoạn tiếp theo.';
+
+  @override
+  String get trainingAnalyzingProgressMessage =>
+      'Đang phân tích tiến trình kế hoạch…';
+
+  @override
+  String get trainingWhatsWorkingTitle => 'Điểm đang hiệu quả';
+
+  @override
+  String get trainingFocusAreasTitle => 'Điểm cần tập trung';
+
+  @override
+  String get trainingNextBlockTitle => 'Giai đoạn tiếp theo';
+
+  @override
   String get trainingReviewingPlanMessage => 'Đang xem xét kế hoạch của bạn…';
 
   @override
@@ -2208,6 +2246,29 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get trainingAvgDaysPerWeekLabel => 'TB ngày/tuần';
+
+  @override
+  String get trainingLongestTrainingStreakLabel => 'Chuỗi ngày tập dài nhất';
+
+  @override
+  String get trainingAvgExercisesPerDayLabel => 'TB bài tập/ngày';
+
+  @override
+  String get trainingMovementPatternsTitle => 'Độ phủ kiểu chuyển động';
+
+  @override
+  String trainingPatternCoverageStats(String exercises, String sets) {
+    return '$exercises bài · $sets hiệp';
+  }
+
+  @override
+  String get trainingExerciseVarietyTitle => 'Độ đa dạng bài tập';
+
+  @override
+  String get trainingUniqueExercisesLabel => 'Bài tập riêng biệt';
+
+  @override
+  String get trainingRepeatedExercisesLabel => 'Bài tập lặp lại';
 
   @override
   String get trainingWorkloadLabel => 'Khối lượng tập';
@@ -2463,6 +2524,29 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
+  String get trainingEditSetPlanTooltip => 'Sửa mục tiêu hiệp';
+
+  @override
+  String trainingEditSetPlanTitle(int number) {
+    return 'Sửa hiệp $number';
+  }
+
+  @override
+  String get trainingPlannedRepsLabel => 'Số reps dự kiến';
+
+  @override
+  String get trainingPlannedWeightLabel => 'Mức tạ dự kiến';
+
+  @override
+  String get trainingSetRepsRangeError => 'Số reps phải từ 1 đến 1000.';
+
+  @override
+  String get trainingSetWeightRangeError => 'Mức tạ phải từ 0 đến 10000 kg.';
+
+  @override
+  String get trainingLastPerformanceLabel => 'Lần trước';
+
+  @override
   String get trainingMarkDoneTooltip => 'Đánh dấu hoàn thành';
 
   @override
@@ -2618,10 +2702,10 @@ class AppLocalizationsVi extends AppLocalizations {
   String get nutritionCreateMealPlanTitle => 'Tạo kế hoạch bữa ăn';
 
   @override
-  String get nutritionDayCreateSegment => 'Tạo theo ngày';
+  String get nutritionDayCreateSegment => 'Theo ngày';
 
   @override
-  String get nutritionWeeklyCreateSegment => 'Tạo theo tuần';
+  String get nutritionWeeklyCreateSegment => 'Theo tuần';
 
   @override
   String get nutritionCreateForLabel => 'Tạo cho';
@@ -2661,6 +2745,9 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get nutritionCreateDayCta => 'Tạo cho ngày';
+
+  @override
+  String get nutritionCreateWeekCta => 'Tạo cho tuần';
 
   @override
   String get nutritionSelectFoodTitle => 'Chọn thực phẩm';
@@ -2875,11 +2962,15 @@ class AppLocalizationsVi extends AppLocalizations {
   String get insightsRefreshTooltip => 'Làm mới';
 
   @override
-  String get insightsHeaderTitle => 'Phân tích tập luyện AI';
+  String get insightsHeaderTitle => 'Ghi chú AI coach';
 
   @override
   String get insightsHeaderSubtitle =>
-      'Phân tích Pro, gợi ý từ HLV, kết quả lưu đệm và trạng thái hạn mức.';
+      'Tín hiệu tập luyện, xu hướng cơ thể và quyết định thực tế tiếp theo từ dữ liệu gần nhất.';
+
+  @override
+  String get insightsTrainingDecisionLabel =>
+      'Đánh giá và quyết định tập luyện';
 
   @override
   String get insightsCoachTipTitle => 'Gợi ý từ HLV';
@@ -2916,6 +3007,36 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get insightsCoachSuggestionsLabel => 'GỢI Ý TỪ HLV';
+
+  @override
+  String get insightsEvidenceLabel => 'Dữ liệu dẫn chứng';
+
+  @override
+  String get insightsWhyItMattersLabel => 'Vì sao quan trọng';
+
+  @override
+  String get insightsNextActionLabel => 'Hành động tiếp theo';
+
+  @override
+  String get insightsDataSummaryLabel => 'Tóm tắt dữ liệu';
+
+  @override
+  String get insightsGoalFitLabel => 'Mức độ phù hợp mục tiêu';
+
+  @override
+  String get insightsDeloadLabel => 'Quyết định giảm tải';
+
+  @override
+  String get insightsLoadProgressionLabel => 'Tiến triển mức tạ';
+
+  @override
+  String get insightsRpeGuidanceLabel => 'Hướng dẫn RPE';
+
+  @override
+  String get insightsVolumeGuidanceLabel => 'Hướng dẫn khối lượng';
+
+  @override
+  String get insightsPrioritiesLabel => 'Ưu tiên';
 
   @override
   String get insightsLastAnalyzedAtLabel => 'PHÂN TÍCH LẦN CUỐI LÚC';
@@ -3009,6 +3130,23 @@ class AppLocalizationsVi extends AppLocalizations {
   @override
   String get aiCoachChatQuotaReachedMessage =>
       'Bạn đã dùng hết hạn mức AI. Vui lòng thử lại sau.';
+
+  @override
+  String get aiCoachChatConversationsTooltip => 'Cuộc trò chuyện';
+
+  @override
+  String get aiCoachChatNewConversationTooltip => 'Cuộc trò chuyện mới';
+
+  @override
+  String get aiCoachChatConversationsTitle => 'Các cuộc trò chuyện';
+
+  @override
+  String get aiCoachChatUntitledConversation => 'Cuộc trò chuyện mới';
+
+  @override
+  String aiCoachChatMessageCount(String count) {
+    return '$count tin nhắn';
+  }
 
   @override
   String get powerliftingAnalysisTitle => 'Phân tích cử tạ';
@@ -3225,14 +3363,14 @@ class AppLocalizationsVi extends AppLocalizations {
   String get coachForThisClientChip => 'Của học viên này';
 
   @override
-  String get coachCurrentTrainingBlockFallback => 'Chu kỳ tập hiện tại';
+  String get coachCurrentTrainingBlockFallback => 'Kế hoạch hiện tại';
 
   @override
   String get coachClientPlanProgressLabel => 'Tiến độ kế hoạch học viên';
 
   @override
   String get coachNoPlanCreatedMessage =>
-      'Chưa tạo kế hoạch nào cho học viên này.';
+      'Học viên này chưa có kế hoạch hiện tại.';
 
   @override
   String get coachClientDetailTitle => 'Chi tiết học viên';
@@ -3278,6 +3416,129 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get coachNutritionTitle => 'Dinh dưỡng';
+
+  @override
+  String get coachClientNutritionTitle => 'Dinh dưỡng của client';
+
+  @override
+  String get coachNutritionSelectedIntakeTitle => 'Dinh dưỡng trong ngày';
+
+  @override
+  String get coachNutritionHistoryTitle => 'Lịch sử 7 ngày';
+
+  @override
+  String get coachNutritionNoLogMessage =>
+      'Client chưa ghi nhận dinh dưỡng cho ngày này.';
+
+  @override
+  String get coachNutritionNoHistoryMessage =>
+      'Chưa có lịch sử dinh dưỡng trong giai đoạn này.';
+
+  @override
+  String get coachNutritionReadOnlyMessage =>
+      'Coach chỉ xem dữ liệu dinh dưỡng. Client tự ghi nhận tổng dinh dưỡng hằng ngày.';
+
+  @override
+  String get nutritionInsightTitle => 'Phân tích dinh dưỡng';
+
+  @override
+  String get nutritionInsightSubtitle =>
+      'Đánh giá thực tế 14 ngày gần nhất so với mục tiêu calories và macros hiện tại.';
+
+  @override
+  String get nutritionInsightLast14Days => '14 ngày gần nhất';
+
+  @override
+  String get nutritionInsightLockedTitle => 'Phân tích dinh dưỡng nâng cao';
+
+  @override
+  String get nutritionInsightLockedMessage =>
+      'Nâng cấp Pro và ghi nhận đủ dữ liệu dinh dưỡng để mở khóa xu hướng và khuyến nghị.';
+
+  @override
+  String get nutritionInsightInsufficientMessage =>
+      'Chưa đủ dữ liệu. Hãy tiếp tục ghi nhận calories và macros mỗi ngày để tạo phân tích hữu ích.';
+
+  @override
+  String get nutritionInsightWeightGap => 'Chênh lệch cân nặng';
+
+  @override
+  String get nutritionInsightCalorieConsistency => 'Độ ổn định calories';
+
+  @override
+  String get nutritionInsightMacroBalance => 'Cân bằng macros';
+
+  @override
+  String get nutritionInsightNextMove => 'Việc nên làm tiếp theo';
+
+  @override
+  String get nutritionInsightAverageMacros => 'Macros trung bình mỗi ngày';
+
+  @override
+  String get nutritionInsightStrategies => 'Chiến lược macros';
+
+  @override
+  String get nutritionInsightRecommended => 'Khuyến nghị';
+
+  @override
+  String get nutritionInsightMissing => 'Chưa có';
+
+  @override
+  String get nutritionInsightCaloriesHoldTitle => 'Giữ nguyên calories';
+
+  @override
+  String get nutritionInsightCaloriesHoldBody =>
+      'Mức trung bình nằm trong khoảng 150 kcal so với mục tiêu. Hãy giữ mục tiêu và cải thiện độ ổn định.';
+
+  @override
+  String get nutritionInsightCaloriesReduceTitle => 'Giảm lượng nạp trung bình';
+
+  @override
+  String get nutritionInsightCaloriesReduceBody =>
+      'Mức trung bình đang cao hơn mục tiêu. Giảm khẩu phần từ từ thay vì cắt quá mạnh.';
+
+  @override
+  String get nutritionInsightCaloriesAddTitle => 'Tăng calories từ từ';
+
+  @override
+  String get nutritionInsightCaloriesAddBody =>
+      'Mức trung bình đang thấp hơn mục tiêu. Thêm một bữa ăn hoặc bữa phụ ổn định để bù khoảng thiếu.';
+
+  @override
+  String get nutritionInsightCaloriesSetTitle => 'Thiết lập mục tiêu calories';
+
+  @override
+  String get nutritionInsightCaloriesSetBody =>
+      'Hoàn thiện hồ sơ dinh dưỡng để so sánh lượng nạp với mục tiêu hằng ngày.';
+
+  @override
+  String get nutritionInsightProteinTitle => 'Ưu tiên protein';
+
+  @override
+  String get nutritionInsightProteinBody =>
+      'Protein trung bình dưới 90% mục tiêu. Hãy xây dựng mỗi bữa chính quanh một nguồn protein.';
+
+  @override
+  String get nutritionInsightTimingTitle => 'Giữ thời điểm nạp macros ổn định';
+
+  @override
+  String get nutritionInsightTimingBody =>
+      'Protein đang đúng hướng. Phân bổ macros phù hợp với buổi tập và nhu cầu hồi phục.';
+
+  @override
+  String get nutritionInsightTargetWeightTitle => 'Thiết lập cân nặng mục tiêu';
+
+  @override
+  String get nutritionInsightTargetWeightBody =>
+      'Thêm cân nặng mục tiêu để gắn quyết định dinh dưỡng với hướng phát triển mong muốn.';
+
+  @override
+  String get nutritionInsightWeightDirectionTitle =>
+      'Theo sát hướng thay đổi cân nặng';
+
+  @override
+  String get nutritionInsightWeightDirectionBody =>
+      'Dùng chênh lệch cân nặng và xu hướng hằng tuần để quyết định có cần đổi calories hay không.';
 
   @override
   String get coachCaloriesLabel => 'Calo';
@@ -3336,6 +3597,11 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
+  String coachAverageChangeChip(String value) {
+    return 'TB $value';
+  }
+
+  @override
   String get coachLast90DaysChip => '90 ngày qua';
 
   @override
@@ -3347,6 +3613,9 @@ class AppLocalizationsVi extends AppLocalizations {
   @override
   String get coachNoAdditionalAiInsightMessage =>
       'Không có thêm phần phân tích AI nào.';
+
+  @override
+  String get coachSuggestedMessageTitle => 'Tin nhắn gợi ý gửi học viên';
 
   @override
   String get coachCachedLabel => 'Đã lưu đệm';
@@ -3426,6 +3695,37 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get communityTitle => 'Cộng đồng';
+
+  @override
+  String get communityPrivacyTitle => 'Quyền riêng tư cộng đồng';
+
+  @override
+  String get communityPrivacyTooltip => 'Quyền riêng tư cộng đồng';
+
+  @override
+  String get communityPrivacyDescription =>
+      'Chọn người có thể xem thống kê tập luyện trên hồ sơ cộng đồng của bạn.';
+
+  @override
+  String get communityPrivacyFriendsTitle => 'Bạn bè có thể xem thống kê';
+
+  @override
+  String get communityPrivacyFriendsDescription =>
+      'Bạn bè đã chấp nhận có thể xem cân nặng, chỉ số tập luyện, chuỗi ngày và kỷ lục cá nhân.';
+
+  @override
+  String get communityPrivacyOnlyMeTitle => 'Chỉ mình tôi';
+
+  @override
+  String get communityPrivacyOnlyMeDescription =>
+      'Giữ riêng tư các thống kê tập luyện. Thông tin hồ sơ công khai vẫn hiển thị.';
+
+  @override
+  String get communityPrivacySavedMessage => 'Đã lưu cài đặt quyền riêng tư.';
+
+  @override
+  String get dashboardCommunitySubtitle =>
+      'Tập luyện cùng nhau, chia sẻ tiến độ và tham gia thử thách.';
 
   @override
   String get communityEyebrowLabel => 'CỘNG ĐỒNG';
@@ -3534,6 +3834,98 @@ class AppLocalizationsVi extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get subscriptionChoosePlanTitle => 'Chọn gói của bạn';
+
+  @override
+  String get subscriptionChoosePlanSubtitle =>
+      'Thanh toán trước theo kỳ hạn cố định. Gói không tự động gia hạn.';
+
+  @override
+  String get subscriptionCatalogEmpty => 'Hiện chưa có gói đăng ký khả dụng.';
+
+  @override
+  String get subscriptionUnlimitedClients => 'Không giới hạn học viên coaching';
+
+  @override
+  String get subscriptionPromotionLabel => 'Mã khuyến mãi';
+
+  @override
+  String get subscriptionPromotionHint => 'Nhập mã';
+
+  @override
+  String get subscriptionApplyPromotion => 'Áp dụng';
+
+  @override
+  String subscriptionPromotionApplied(String code, String amount) {
+    return 'Đã áp dụng mã $code. Tổng mới: $amount';
+  }
+
+  @override
+  String get subscriptionPromotionInvalid => 'Mã khuyến mãi không hợp lệ.';
+
+  @override
+  String get subscriptionAcceptTerms =>
+      'Tôi đồng ý với Điều khoản dịch vụ và Chính sách hoàn tiền.';
+
+  @override
+  String get subscriptionViewTerms => 'Điều khoản dịch vụ';
+
+  @override
+  String get subscriptionViewRefundPolicy => 'Chính sách hoàn tiền';
+
+  @override
+  String get subscriptionCreateOrder => 'Tạo đơn thanh toán';
+
+  @override
+  String get subscriptionPaymentTitle => 'Thanh toán chuyển khoản';
+
+  @override
+  String get subscriptionPaymentInstruction =>
+      'Chuyển chính xác số tiền theo thông tin bên dưới trước khi đơn hết hạn.';
+
+  @override
+  String get subscriptionPaymentBank => 'Ngân hàng';
+
+  @override
+  String get subscriptionPaymentAccountNumber => 'Số tài khoản';
+
+  @override
+  String get subscriptionPaymentAccountName => 'Tên tài khoản';
+
+  @override
+  String get subscriptionPaymentAmount => 'Số tiền';
+
+  @override
+  String get subscriptionPaymentContent => 'Nội dung chuyển khoản';
+
+  @override
+  String get subscriptionPaymentExpires => 'Đơn hết hạn';
+
+  @override
+  String get subscriptionPaymentCopy => 'Sao chép';
+
+  @override
+  String get subscriptionPaymentCopied => 'Đã sao chép.';
+
+  @override
+  String get subscriptionPaymentClose => 'Đóng';
+
+  @override
+  String get coachClientTodayWorkoutTitle => 'Buổi tập hôm nay của client';
+
+  @override
+  String get coachClientNoActivePlanMessage =>
+      'Client này chưa có kế hoạch tập đang hoạt động.';
+
+  @override
+  String get coachClientNoWorkoutDayMessage =>
+      'Không tìm thấy buổi tập hôm nay trong kế hoạch này.';
+
+  @override
+  String get coachClientWorkoutCoachViewLabel =>
+      'Chế độ HLV: quyền hoàn thành buổi tập vẫn thuộc về client.';
 
   @override
   String get marketingCreateAccountCta => 'Tạo tài khoản';
@@ -3650,6 +4042,30 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get adminSuspendUserTooltip => 'Đình chỉ người dùng';
+
+  @override
+  String get adminAccountStatusLabel => 'Trạng thái tài khoản';
+
+  @override
+  String get adminAccountActiveLabel => 'Đang hoạt động';
+
+  @override
+  String get adminSuspendConfirmTitle => 'Đình chỉ người dùng này?';
+
+  @override
+  String get adminSuspendConfirmMessage =>
+      'Người dùng sẽ bị đăng xuất và không thể đăng nhập cho đến khi quản trị viên khôi phục tài khoản.';
+
+  @override
+  String get adminUnsuspendConfirmTitle => 'Khôi phục người dùng này?';
+
+  @override
+  String get adminUnsuspendConfirmMessage =>
+      'Người dùng sẽ được phép đăng nhập lại.';
+
+  @override
+  String get adminSuspensionUpdatedSnackbar =>
+      'Đã cập nhật trạng thái tài khoản.';
 
   @override
   String get adminPlanAnalyticsTitle => 'Thống kê kế hoạch';
@@ -4102,6 +4518,847 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get accountDeletionConfirmLabel => 'Xóa tài khoản';
+
+  @override
+  String get accountDeletionVerifyingTitle => 'Đang xác nhận xóa tài khoản';
+
+  @override
+  String get accountDeletionVerifyingBody =>
+      'Vui lòng chờ trong khi chúng tôi xác minh yêu cầu của bạn.';
+
+  @override
+  String get accountDeletionCompleteTitle => 'Đã xóa tài khoản';
+
+  @override
+  String get accountDeletionCompleteBody =>
+      'Tài khoản Xenoh của bạn đã được xóa vĩnh viễn và bạn đã được đăng xuất.';
+
+  @override
+  String get accountDeletionFailedTitle =>
+      'Liên kết xóa tài khoản không hợp lệ hoặc đã hết hạn';
+
+  @override
+  String get accountDeletionFailedBody =>
+      'Hãy yêu cầu email xóa tài khoản mới để tiếp tục.';
+
+  @override
+  String get accountDeletionBackLabel => 'Quay lại trang xóa tài khoản';
+
+  @override
+  String get notificationsUnavailableTitle => 'Chưa có màn hình đích';
+
+  @override
+  String get notificationsUnavailableMessage =>
+      'Bạn vẫn có thể đọc thông báo tại đây, nhưng tính năng đầy đủ chưa có trên ứng dụng di động.';
+
+  @override
+  String get nutritionHistoryTitle => 'Lịch sử dinh dưỡng';
+
+  @override
+  String get nutritionHistoryAverage => 'Lượng nạp trung bình mỗi ngày';
+
+  @override
+  String get nutritionHistoryEmpty =>
+      'Không có nhật ký dinh dưỡng trong khoảng ngày này.';
+
+  @override
+  String get progressVolumeHistoryTitle => 'Khối lượng tập luyện';
+
+  @override
+  String progressVolumeHistorySubtitle(String unit) {
+    return 'Tổng khối lượng hoàn thành mỗi tháng theo $unit';
+  }
+
+  @override
+  String progressVolumeMonths(int count) {
+    return '$count tháng';
+  }
+
+  @override
+  String get progressVolumeHistoryEmpty =>
+      'Chưa có khối lượng tập luyện đã hoàn thành.';
+
+  @override
+  String get progressVolumeHistoryLoadError =>
+      'Không thể tải lịch sử khối lượng.';
+
+  @override
+  String get communityReportShareTitle => 'Báo cáo bài chia sẻ tập luyện';
+
+  @override
+  String get communityReportShareHint =>
+      'Giải thích vấn đề với bài chia sẻ này';
+
+  @override
+  String get communityReportSubmit => 'Báo cáo';
+
+  @override
+  String get communityReportShareSuccess => 'Đã gửi bài chia sẻ để xét duyệt.';
+
+  @override
+  String get communityCopyWorkoutTitle => 'Sao chép cấu trúc buổi tập';
+
+  @override
+  String get communityCopyWorkoutWarning =>
+      'Chọn ngày đích. Các bài tập hiện có sẽ bị thay thế; thành tích và chỉ số riêng tư không được sao chép.';
+
+  @override
+  String get communitySelectPlan => 'Chọn kế hoạch';
+
+  @override
+  String get communitySelectWeek => 'Chọn tuần';
+
+  @override
+  String get communitySelectDay => 'Chọn ngày tập';
+
+  @override
+  String get communityCopyWorkoutAction => 'Sao chép buổi tập';
+
+  @override
+  String communityCopyWorkoutSuccess(int count) {
+    return 'Đã sao chép $count bài tập.';
+  }
+
+  @override
+  String get communityShareActionsTooltip => 'Thao tác bài chia sẻ';
+
+  @override
+  String get challengesTitle => 'Thử thách thể chất';
+
+  @override
+  String get challengesCreate => 'Tạo thử thách';
+
+  @override
+  String get challengeEdit => 'Chỉnh sửa thử thách';
+
+  @override
+  String get challengesMineTab => 'Của tôi';
+
+  @override
+  String get challengesDiscoverTab => 'Khám phá';
+
+  @override
+  String get challengesEmpty => 'Chưa có thử thách nào.';
+
+  @override
+  String get challengeDetailTitle => 'Chi tiết thử thách';
+
+  @override
+  String get challengeAccept => 'Chấp nhận';
+
+  @override
+  String get challengeDecline => 'Từ chối';
+
+  @override
+  String get challengeJoin => 'Tham gia';
+
+  @override
+  String get challengeLeave => 'Rời thử thách';
+
+  @override
+  String get challengeCheckIn => 'Check-in';
+
+  @override
+  String get challengeUndoCheckIn => 'Hoàn tác check-in';
+
+  @override
+  String get challengeInvite => 'Mời thành viên';
+
+  @override
+  String get challengeCancel => 'Hủy thử thách';
+
+  @override
+  String get challengeCancelConfirm =>
+      'Hủy thử thách này cho tất cả thành viên?';
+
+  @override
+  String get challengeMembers => 'Thành viên';
+
+  @override
+  String get challengeStandings => 'Bảng xếp hạng';
+
+  @override
+  String get challengeBaselineRequired => 'Cần thiết lập mốc ban đầu';
+
+  @override
+  String get challengeCreator => 'Người tạo';
+
+  @override
+  String get challengeRemoveMember => 'Xóa thành viên';
+
+  @override
+  String get challengeTitleLabel => 'Tiêu đề';
+
+  @override
+  String get challengeTitleValidation => 'Nhập từ 3 đến 80 ký tự.';
+
+  @override
+  String get challengeDescriptionLabel => 'Mô tả';
+
+  @override
+  String get challengeMetricLabel => 'Chỉ số';
+
+  @override
+  String get challengeAccessLabel => 'Quyền tham gia';
+
+  @override
+  String get challengeWeeklyTarget => 'Buổi mỗi tuần';
+
+  @override
+  String get challengeCheckInPrompt => 'Lời nhắc check-in';
+
+  @override
+  String get challengeCapacity => 'Số người tối đa';
+
+  @override
+  String get challengeStartDate => 'Ngày bắt đầu';
+
+  @override
+  String get challengeEndDate => 'Ngày kết thúc';
+
+  @override
+  String get competitionsTitle => 'Giải đấu';
+
+  @override
+  String get organizerHomeTitle => 'Trang chủ ban tổ chức';
+
+  @override
+  String get organizerHomeEyebrow => 'VẬN HÀNH SỰ KIỆN';
+
+  @override
+  String get organizerHomeSubtitle =>
+      'Quản lý đăng ký, thanh toán và kết quả trong một không gian rõ ràng.';
+
+  @override
+  String get organizerEventsTitle => 'Sự kiện';
+
+  @override
+  String get organizerRosterTitle => 'Danh sách';
+
+  @override
+  String get organizerResultsTitle => 'Kết quả';
+
+  @override
+  String get organizerProfileTitle => 'Hồ sơ ban tổ chức';
+
+  @override
+  String get organizerApplicationTitle => 'Trở thành ban tổ chức';
+
+  @override
+  String get organizerApplicationSubtitle =>
+      'Gửi thông tin tổ chức và tài liệu xác minh để xét duyệt.';
+
+  @override
+  String get organizerPendingTitle => 'Đơn đang được xét duyệt';
+
+  @override
+  String get organizerPendingSubtitle =>
+      'Công cụ sự kiện sẽ mở sau khi quản trị viên phê duyệt.';
+
+  @override
+  String get organizerRejectedTitle => 'Đơn cần chỉnh sửa';
+
+  @override
+  String get organizerSuspendedTitle => 'Quyền ban tổ chức bị tạm ngưng';
+
+  @override
+  String get organizerNoEvents => 'Chưa có sự kiện được quản lý.';
+
+  @override
+  String get organizerCreateEvent => 'Tạo sự kiện';
+
+  @override
+  String get organizerReviewApplications => 'Duyệt đăng ký';
+
+  @override
+  String get organizerApprovedAthletes => 'Vận động viên đã duyệt';
+
+  @override
+  String get organizerCapacityFilled => 'Sức chứa đã dùng';
+
+  @override
+  String get organizerNextEvent => 'Sự kiện tiếp theo';
+
+  @override
+  String get organizerSelectEvent => 'Chọn sự kiện';
+
+  @override
+  String get organizerNoRegistrations => 'Sự kiện này chưa có đăng ký phù hợp.';
+
+  @override
+  String get organizerApprove => 'Duyệt';
+
+  @override
+  String get organizerReject => 'Từ chối';
+
+  @override
+  String get organizerPublish => 'Công bố sự kiện';
+
+  @override
+  String get organizerPublishResults => 'Công bố kết quả';
+
+  @override
+  String get organizerPublished => 'Đã công bố';
+
+  @override
+  String get organizerDraft => 'Bản nháp';
+
+  @override
+  String get organizerRegistrationStatus => 'Đăng ký';
+
+  @override
+  String get organizerPaymentStatus => 'Thanh toán';
+
+  @override
+  String get organizerResultsReady => 'Kết quả sẵn sàng';
+
+  @override
+  String get organizerResultsHint =>
+      'Chọn vận động viên đã duyệt để nhập kết quả theo bộ môn.';
+
+  @override
+  String get organizerOrganizationName => 'Tên tổ chức';
+
+  @override
+  String get organizerContactEmail => 'Email liên hệ';
+
+  @override
+  String get organizerContactPhone => 'Số điện thoại';
+
+  @override
+  String get organizerAddress => 'Địa chỉ địa điểm';
+
+  @override
+  String get organizerWebsite => 'Trang web';
+
+  @override
+  String get organizerNotes => 'Ghi chú';
+
+  @override
+  String get organizerEvidence => 'Tài liệu xác minh';
+
+  @override
+  String get organizerSubmitApplication => 'Gửi xét duyệt';
+
+  @override
+  String get organizerApplicationSaved => 'Đã gửi đơn ban tổ chức.';
+
+  @override
+  String get organizerEvidenceRequired => 'Hãy chọn tài liệu xác minh trước.';
+
+  @override
+  String get organizerEventPublished => 'Đã công bố sự kiện.';
+
+  @override
+  String get organizerDecisionSaved => 'Đã lưu quyết định đăng ký.';
+
+  @override
+  String get organizerResultsPublished => 'Đã công bố kết quả.';
+
+  @override
+  String get organizerBodyweightKg => 'Cân nặng (kg)';
+
+  @override
+  String get organizerBestSquatKg => 'Squat tốt nhất (kg)';
+
+  @override
+  String get organizerBestBenchKg => 'Bench tốt nhất (kg)';
+
+  @override
+  String get organizerBestDeadliftKg => 'Deadlift tốt nhất (kg)';
+
+  @override
+  String get organizerPlace => 'Thứ hạng';
+
+  @override
+  String get organizerResultState => 'Trạng thái kết quả';
+
+  @override
+  String get organizerResultNotes => 'Ghi chú kết quả';
+
+  @override
+  String get organizerSaveResult => 'Lưu kết quả';
+
+  @override
+  String get organizerResultSaved => 'Đã lưu kết quả.';
+
+  @override
+  String get organizerManageEvent => 'Quản lý sự kiện';
+
+  @override
+  String get organizerOverviewTab => 'Tổng quan';
+
+  @override
+  String get organizerCategoriesTab => 'Hạng mục';
+
+  @override
+  String get organizerStaffTab => 'Nhân sự';
+
+  @override
+  String get organizerEditEvent => 'Sửa sự kiện';
+
+  @override
+  String get organizerCloseRegistration => 'Đóng đăng ký';
+
+  @override
+  String get organizerCancelEvent => 'Hủy sự kiện';
+
+  @override
+  String get organizerDeleteEvent => 'Xóa sự kiện';
+
+  @override
+  String get organizerCancelReason => 'Lý do hủy';
+
+  @override
+  String get organizerEventUpdated => 'Đã cập nhật sự kiện.';
+
+  @override
+  String get organizerEventDeleted => 'Đã xóa sự kiện.';
+
+  @override
+  String get organizerRegistrationClosed => 'Đã đóng đăng ký.';
+
+  @override
+  String get organizerEventCancelled => 'Đã hủy sự kiện.';
+
+  @override
+  String get organizerCategoryName => 'Tên hạng mục';
+
+  @override
+  String get organizerCategoryCode => 'Mã hạng mục';
+
+  @override
+  String get organizerCapacity => 'Sức chứa';
+
+  @override
+  String get organizerAddCategory => 'Thêm hạng mục';
+
+  @override
+  String get organizerNoCategories => 'Chưa cấu hình hạng mục.';
+
+  @override
+  String get organizerCategoryAdded => 'Đã thêm hạng mục.';
+
+  @override
+  String get organizerCategoryRemoved => 'Đã xóa hạng mục.';
+
+  @override
+  String get organizerStaffUserId => 'Mã người dùng nhân sự';
+
+  @override
+  String get organizerStaffPermissions => 'Quyền nhân sự';
+
+  @override
+  String get organizerSaveStaff => 'Lưu quyền nhân sự';
+
+  @override
+  String get organizerRemoveStaff => 'Xóa quyền nhân sự';
+
+  @override
+  String get organizerStaffSaved => 'Đã lưu quyền nhân sự.';
+
+  @override
+  String get organizerStaffRemoved => 'Đã xóa quyền nhân sự.';
+
+  @override
+  String get organizerEventDescription => 'Mô tả sự kiện';
+
+  @override
+  String get organizerVenueName => 'Tên địa điểm';
+
+  @override
+  String get organizerStartsAt => 'Bắt đầu';
+
+  @override
+  String get organizerEndsAt => 'Kết thúc';
+
+  @override
+  String get organizerRegistrationOpens => 'Mở đăng ký';
+
+  @override
+  String get organizerRegistrationCloses => 'Đóng đăng ký';
+
+  @override
+  String get organizerRegistrationFee => 'Lệ phí đăng ký';
+
+  @override
+  String get organizerCurrency => 'Tiền tệ';
+
+  @override
+  String get organizerBankName => 'Tên ngân hàng';
+
+  @override
+  String get organizerBankAccountNumber => 'Số tài khoản ngân hàng';
+
+  @override
+  String get organizerBankAccountName => 'Tên chủ tài khoản';
+
+  @override
+  String get organizerTransferInstructions => 'Hướng dẫn chuyển khoản';
+
+  @override
+  String get organizerAddGuest => 'Thêm vận động viên khách';
+
+  @override
+  String get organizerAthleteName => 'Tên vận động viên';
+
+  @override
+  String get organizerGuestAdded => 'Đã thêm vận động viên khách.';
+
+  @override
+  String get organizerPromoteWaitlist => 'Đưa khỏi danh sách chờ';
+
+  @override
+  String get organizerWaitlistPromoted => 'Đã đưa vận động viên vào danh sách.';
+
+  @override
+  String get organizerOpenReceipt => 'Mở biên lai';
+
+  @override
+  String get organizerApproveReceipt => 'Duyệt biên lai';
+
+  @override
+  String get organizerRejectReceipt => 'Từ chối biên lai';
+
+  @override
+  String get organizerReceiptReviewed => 'Đã lưu xét duyệt biên lai.';
+
+  @override
+  String get organizerLinkGuest => 'Liên kết tài khoản Xenoh';
+
+  @override
+  String get organizerUserId => 'Mã người dùng Xenoh';
+
+  @override
+  String get organizerGuestLinked => 'Đã liên kết đăng ký khách.';
+
+  @override
+  String get adminOrganizerVerification => 'Xác minh ban tổ chức';
+
+  @override
+  String get adminOrganizerVerificationSubtitle =>
+      'Xem bằng chứng và lưu quyết định quyền truy cập có thể kiểm toán.';
+
+  @override
+  String get adminOrganizerQueueEmpty =>
+      'Không có hồ sơ ban tổ chức ở trạng thái này.';
+
+  @override
+  String get adminOrganizerEvidenceOpen => 'Xem bằng chứng';
+
+  @override
+  String get adminOrganizerDecisionReason => 'Lý do kiểm toán';
+
+  @override
+  String get adminOrganizerDecisionReasonHint =>
+      'Giải thích bằng chứng và cơ sở chính sách cho quyết định.';
+
+  @override
+  String get adminOrganizerDecisionSaved => 'Đã lưu quyết định ban tổ chức.';
+
+  @override
+  String get adminOrganizerSaveDecision => 'Lưu quyết định';
+
+  @override
+  String get adminPaymentsTitle => 'Thanh toán và gói dịch vụ';
+
+  @override
+  String get adminPaymentsSubtitle =>
+      'Theo dõi doanh thu, đơn hàng và quyền truy cập gói dịch vụ.';
+
+  @override
+  String get adminTotalRevenueLabel => 'Tổng doanh thu';
+
+  @override
+  String get adminPendingAmountLabel => 'Số tiền đang chờ';
+
+  @override
+  String get adminCompletedOrdersLabel => 'Đơn đã hoàn tất';
+
+  @override
+  String get adminPaymentOrdersTitle => 'Đơn thanh toán';
+
+  @override
+  String get adminNoPaymentsTitle => 'Không có đơn thanh toán';
+
+  @override
+  String get adminNoPaymentsMessage =>
+      'Không có đơn thanh toán phù hợp bộ lọc.';
+
+  @override
+  String get adminSubscriptionsTitle => 'Gói dịch vụ';
+
+  @override
+  String get adminNoSubscriptionsTitle => 'Không có gói dịch vụ';
+
+  @override
+  String get adminNoSubscriptionsMessage =>
+      'Không có gói dịch vụ phù hợp bộ lọc.';
+
+  @override
+  String get adminAdjustSubscription => 'Điều chỉnh gói dịch vụ';
+
+  @override
+  String get adminDurationMonths => 'Thời hạn (tháng)';
+
+  @override
+  String get adminAuditReason => 'Lý do kiểm toán';
+
+  @override
+  String get adminPromotionsTitle => 'Khuyến mãi';
+
+  @override
+  String get adminPromotionsSubtitle =>
+      'Tạo và quản lý mã giảm giá dùng khi thanh toán.';
+
+  @override
+  String get adminNewPromotion => 'Mã mới';
+
+  @override
+  String get adminEditPromotion => 'Sửa khuyến mãi';
+
+  @override
+  String get adminNoPromotionsTitle => 'Chưa có mã khuyến mãi';
+
+  @override
+  String get adminNoPromotionsMessage =>
+      'Tạo mã khuyến mãi thanh toán đầu tiên.';
+
+  @override
+  String get adminPromotionCode => 'Mã khuyến mãi';
+
+  @override
+  String get adminDiscountValue => 'Giá trị giảm';
+
+  @override
+  String get adminAppliesToTier => 'Áp dụng cho gói';
+
+  @override
+  String get adminMaxRedemptions => 'Số lượt dùng tối đa';
+
+  @override
+  String get commonActive => 'Hoạt động';
+
+  @override
+  String get commonInactive => 'Không hoạt động';
+
+  @override
+  String get commonDescription => 'Mô tả';
+
+  @override
+  String get appShellNavHome => 'Trang chủ';
+
+  @override
+  String get appShellNavTraining => 'Luyện tập';
+
+  @override
+  String get appShellNavChat => 'Trò chuyện';
+
+  @override
+  String get appShellNavEvents => 'Sự kiện';
+
+  @override
+  String get appShellNavRoster => 'Danh sách';
+
+  @override
+  String get appShellNavResults => 'Kết quả';
+
+  @override
+  String get appShellNavOverview => 'Tổng quan';
+
+  @override
+  String get appShellNavUsers => 'Người dùng';
+
+  @override
+  String get appShellNavModeration => 'Kiểm duyệt';
+
+  @override
+  String get appShellNavFinance => 'Tài chính';
+
+  @override
+  String get appShellNavMore => 'Thêm';
+
+  @override
+  String get competitionsMine => 'Giải đấu của tôi';
+
+  @override
+  String get competitionsEmpty => 'Không có giải đấu phù hợp bộ lọc.';
+
+  @override
+  String get competitionsMineEmpty => 'Bạn chưa đăng ký giải đấu nào.';
+
+  @override
+  String get competitionDetailTitle => 'Chi tiết giải đấu';
+
+  @override
+  String get competitionApply => 'Đăng ký thi đấu';
+
+  @override
+  String get competitionCategories => 'Hạng mục';
+
+  @override
+  String get competitionCategory => 'Hạng mục';
+
+  @override
+  String get competitionChooseCategory => 'Vui lòng chọn hạng mục.';
+
+  @override
+  String get competitionPhone => 'Số điện thoại';
+
+  @override
+  String get competitionPhoneValidation => 'Nhập ít nhất 7 ký tự.';
+
+  @override
+  String get competitionSubmit => 'Gửi đơn đăng ký';
+
+  @override
+  String get competitionSubmitted => 'Đã gửi đơn đăng ký.';
+
+  @override
+  String get competitionUploadReceipt => 'Tải biên lai';
+
+  @override
+  String get competitionReceiptSubmitted => 'Đã gửi biên lai để xét duyệt.';
+
+  @override
+  String get competitionWithdraw => 'Rút đơn';
+
+  @override
+  String get competitionWithdrawConfirm => 'Rút đơn đăng ký giải đấu này?';
+
+  @override
+  String get competitionWithdrawn => 'Đã rút đơn đăng ký.';
+
+  @override
+  String get competitionDisciplinePowerlifting => 'Powerlifting';
+
+  @override
+  String get competitionDisciplineBodybuilding => 'Thể hình';
+
+  @override
+  String get competitionStatusDraft => 'Bản nháp';
+
+  @override
+  String get competitionStatusPublished => 'Đã công bố';
+
+  @override
+  String get competitionStatusRegistrationClosed => 'Đã đóng đăng ký';
+
+  @override
+  String get competitionStatusInProgress => 'Đang diễn ra';
+
+  @override
+  String get competitionStatusCompleted => 'Đã hoàn tất';
+
+  @override
+  String get competitionStatusCancelled => 'Đã hủy';
+
+  @override
+  String get competitionRegistrationSubmitted => 'Đã gửi';
+
+  @override
+  String get competitionRegistrationWaitlisted => 'Danh sách chờ';
+
+  @override
+  String get competitionRegistrationApproved => 'Đã duyệt';
+
+  @override
+  String get competitionRegistrationRejected => 'Đã từ chối';
+
+  @override
+  String get competitionRegistrationWithdrawn => 'Đã rút';
+
+  @override
+  String get competitionPaymentNotRequired => 'Không yêu cầu';
+
+  @override
+  String get competitionPaymentAwaitingReceipt => 'Chờ biên lai';
+
+  @override
+  String get competitionPaymentUnderReview => 'Đang duyệt';
+
+  @override
+  String get competitionPaymentPaid => 'Đã thanh toán';
+
+  @override
+  String get competitionPaymentReceiptRejected => 'Biên lai bị từ chối';
+
+  @override
+  String get competitionResultFinished => 'Hoàn thành';
+
+  @override
+  String get competitionResultDisqualified => 'Bị loại';
+
+  @override
+  String get competitionResultDidNotFinish => 'Không hoàn thành';
+
+  @override
+  String get competitionOrganizerPending => 'Đang chờ';
+
+  @override
+  String get competitionOrganizerApproved => 'Đã duyệt';
+
+  @override
+  String get competitionOrganizerRejected => 'Đã từ chối';
+
+  @override
+  String get competitionOrganizerSuspended => 'Đã đình chỉ';
+
+  @override
+  String get organizerPermissionManageEvent => 'Quản lý sự kiện';
+
+  @override
+  String get organizerPermissionManageCategories => 'Quản lý hạng mục';
+
+  @override
+  String get organizerPermissionReviewRegistrations => 'Duyệt đăng ký';
+
+  @override
+  String get organizerPermissionReviewPayments => 'Duyệt thanh toán';
+
+  @override
+  String get organizerPermissionManageResults => 'Quản lý kết quả';
+
+  @override
+  String get organizerPermissionManageStaff => 'Quản lý nhân sự';
+
+  @override
+  String get storageTitle => 'Tệp';
+
+  @override
+  String get storageUsed => 'Dung lượng đã dùng';
+
+  @override
+  String get storageUpload => 'Tải tài liệu lên';
+
+  @override
+  String storageMaxFileSize(String size) {
+    return 'Kích thước tệp tối đa: $size';
+  }
+
+  @override
+  String get storageFileTooLarge =>
+      'Tệp vượt quá giới hạn tải lên hoặc dung lượng còn lại.';
+
+  @override
+  String get storageMyFiles => 'Tệp của tôi';
+
+  @override
+  String get storageEmpty => 'Chưa tải tệp nào lên.';
+
+  @override
+  String get storageSharedWithMe => 'Được chia sẻ với tôi';
+
+  @override
+  String get storageDownload => 'Tải xuống / mở';
+
+  @override
+  String get storageShare => 'Chia sẻ với client';
+
+  @override
+  String storageDeleteConfirm(String name) {
+    return 'Xóa $name?';
+  }
 
   @override
   String get commonNotNow => 'Để sau';

@@ -7,11 +7,13 @@ class XnPageList extends StatelessWidget {
   const XnPageList({
     required this.children,
     this.onRefresh,
+    this.maxContentWidth = AppLayout.contentMaxWidth,
     super.key,
   });
 
   final List<Widget> children;
   final Future<void> Function()? onRefresh;
+  final double maxContentWidth;
 
   @override
   Widget build(BuildContext context) {
@@ -28,9 +30,7 @@ class XnPageList extends StatelessWidget {
     );
     final content = Center(
       child: ConstrainedBox(
-        constraints: const BoxConstraints(
-          maxWidth: AppLayout.contentMaxWidth,
-        ),
+        constraints: BoxConstraints(maxWidth: maxContentWidth),
         child: list,
       ),
     );

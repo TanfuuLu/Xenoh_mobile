@@ -13,7 +13,7 @@ abstract final class AppRadius {
   static const xs = 4.0;
   static const sm = 6.0;
   static const md = 12.0;
-  static const lg = 16.0;
+  static const lg = 14.0;
   static const xl = 18.0;
   static const xxl = 22.0;
   static const pill = 999.0;
@@ -21,7 +21,7 @@ abstract final class AppRadius {
 
 abstract final class AppLayout {
   /// Maximum width of a complete screen on tablets, desktop, and web.
-  static const screenMaxWidth = 900.0;
+  static const screenMaxWidth = 1120.0;
 
   /// Maximum width for reading-focused lists and forms.
   static const contentMaxWidth = 760.0;

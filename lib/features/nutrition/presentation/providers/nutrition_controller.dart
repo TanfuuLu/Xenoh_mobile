@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../profile/presentation/providers/preferences_provider.dart';
@@ -35,6 +36,15 @@ Future<FoodLogsForDate> foodLogs(Ref ref, DateTime date) {
   ref.watch(appLocaleProvider);
   return ref.watch(nutritionRepositoryProvider).getFoodLogs(date);
 }
+
+typedef NutritionHistoryRange = ({DateTime from, DateTime to});
+
+final nutritionHistoryProvider = FutureProvider.autoDispose
+    .family<List<NutritionDailyLog>, NutritionHistoryRange>((ref, range) {
+      return ref
+          .watch(nutritionRepositoryProvider)
+          .getHistory(from: range.from, to: range.to);
+    });
 
 /// Food-database search results for [query] (empty for short queries).
 @riverpod

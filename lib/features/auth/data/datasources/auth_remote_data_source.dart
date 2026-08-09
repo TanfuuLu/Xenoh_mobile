@@ -112,4 +112,12 @@ class AuthRemoteDataSource {
       data: {'email': email},
     );
   }
+
+  /// Completes a deletion request from the one-time email link.
+  Future<void> verifyAccountDeletion(String token) async {
+    await _dio.post<void>(
+      '/auth/account-deletion-requests/verify',
+      data: {'token': token},
+    );
+  }
 }

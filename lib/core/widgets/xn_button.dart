@@ -75,10 +75,11 @@ class XnButton extends StatelessWidget {
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.danger,
           foregroundColor: AppColors.fgOnClay,
-          minimumSize: const Size(64, 48),
+          minimumSize: const Size(64, 44),
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
           padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.xl,
-            vertical: AppSpacing.md,
+            horizontal: AppSpacing.lg,
+            vertical: AppSpacing.sm,
           ),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppRadius.md),
@@ -95,7 +96,7 @@ class XnButton extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Icon(icon, size: 18),
-        const SizedBox(width: 8),
+        const SizedBox(width: 6),
         Text(label),
       ],
     );

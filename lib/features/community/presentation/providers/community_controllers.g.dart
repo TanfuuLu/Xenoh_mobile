@@ -168,6 +168,55 @@ final class CommunityProfileFamily extends $Family
   String toString() => r'communityProfileProvider';
 }
 
+@ProviderFor(CommunitySettingsController)
+final communitySettingsControllerProvider =
+    CommunitySettingsControllerProvider._();
+
+final class CommunitySettingsControllerProvider
+    extends
+        $AsyncNotifierProvider<CommunitySettingsController, CommunitySettings> {
+  CommunitySettingsControllerProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'communitySettingsControllerProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$communitySettingsControllerHash();
+
+  @$internal
+  @override
+  CommunitySettingsController create() => CommunitySettingsController();
+}
+
+String _$communitySettingsControllerHash() =>
+    r'040f395f71df28c53634e7bd79793dcf233439ad';
+
+abstract class _$CommunitySettingsController
+    extends $AsyncNotifier<CommunitySettings> {
+  FutureOr<CommunitySettings> build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref =
+        this.ref as $Ref<AsyncValue<CommunitySettings>, CommunitySettings>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<CommunitySettings>, CommunitySettings>,
+              AsyncValue<CommunitySettings>,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}
+
 @ProviderFor(userTrainingDayShares)
 final userTrainingDaySharesProvider = UserTrainingDaySharesFamily._();
 
@@ -258,10 +307,7 @@ final communityFeedControllerProvider = CommunityFeedControllerProvider._();
 
 final class CommunityFeedControllerProvider
     extends
-        $AsyncNotifierProvider<
-          CommunityFeedController,
-          List<TrainingDayShare>
-        > {
+        $AsyncNotifierProvider<CommunityFeedController, CommunityFeedState> {
   CommunityFeedControllerProvider._()
     : super(
         from: null,
@@ -282,25 +328,21 @@ final class CommunityFeedControllerProvider
 }
 
 String _$communityFeedControllerHash() =>
-    r'a8df36242ff46cf314c99824cde4c3ee3515e8f1';
+    r'f1c6d42f581f6b84ab9f447345760ee0f59cb104';
 
 abstract class _$CommunityFeedController
-    extends $AsyncNotifier<List<TrainingDayShare>> {
-  FutureOr<List<TrainingDayShare>> build();
+    extends $AsyncNotifier<CommunityFeedState> {
+  FutureOr<CommunityFeedState> build();
   @$mustCallSuper
   @override
   void runBuild() {
     final ref =
-        this.ref
-            as $Ref<AsyncValue<List<TrainingDayShare>>, List<TrainingDayShare>>;
+        this.ref as $Ref<AsyncValue<CommunityFeedState>, CommunityFeedState>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<
-                AsyncValue<List<TrainingDayShare>>,
-                List<TrainingDayShare>
-              >,
-              AsyncValue<List<TrainingDayShare>>,
+              AnyNotifier<AsyncValue<CommunityFeedState>, CommunityFeedState>,
+              AsyncValue<CommunityFeedState>,
               Object?,
               Object?
             >;
@@ -503,7 +545,7 @@ final class ShareActionControllerProvider
 }
 
 String _$shareActionControllerHash() =>
-    r'1bfb60e2cfc48957376c7b57a9f3ef3f8b3615d6';
+    r'c1fd35aca26995705cab32fb5c0f91c64f4d5f6f';
 
 abstract class _$ShareActionController extends $AsyncNotifier<void> {
   FutureOr<void> build();

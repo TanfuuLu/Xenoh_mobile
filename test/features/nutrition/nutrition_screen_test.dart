@@ -35,6 +35,10 @@ void main() {
   testWidgets('renders targets, today totals, and a logged food', (
     tester,
   ) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+
     final repo = MockNutritionRepository();
     when(repo.getSummary).thenAnswer((_) async => _summary);
     when(() => repo.getFoodLogs(any())).thenAnswer(
@@ -75,6 +79,9 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(tester.takeException(), isNull);
+    expect(find.byKey(NutritionScreen.mobileContentKey), findsOneWidget);
+    expect(find.byKey(NutritionScreen.desktopContentKey), findsNothing);
+    expect(find.byKey(NutritionScreen.mobileActionsKey), findsOneWidget);
     expect(find.text('3050 kcal target'), findsOneWidget);
     expect(find.text('3145'), findsOneWidget); // consumed from food totals
     expect(find.text('CALCULATION'), findsOneWidget);
@@ -87,6 +94,49 @@ void main() {
     expect(find.text("TODAY'S FOOD"), findsOneWidget);
     expect(find.text('White rice'), findsOneWidget);
     expect(find.text('Add food'), findsOneWidget);
+  });
+
+  testWidgets('uses a balanced two-column content layout on web', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1200, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+
+    final repo = MockNutritionRepository();
+    when(repo.getSummary).thenAnswer((_) async => _summary);
+    when(() => repo.getFoodLogs(any())).thenAnswer(
+      (_) async => FoodLogsForDate(
+        date: DateTime(2026, 6, 8),
+        totals: const FoodLogTotals(
+          totalCalories: 0,
+          totalProteinG: 0,
+          totalCarbsG: 0,
+          totalFatG: 0,
+        ),
+        items: const [],
+      ),
+    );
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [nutritionRepositoryProvider.overrideWithValue(repo)],
+        child: const MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: NutritionScreen(),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      find.byKey(NutritionScreen.desktopContentKey),
+      findsOneWidget,
+    );
+    expect(find.byKey(NutritionScreen.mobileContentKey), findsNothing);
+    expect(find.byKey(NutritionScreen.mobileActionsKey), findsNothing);
+    expect(tester.takeException(), isNull);
   });
 
   test('food log display names follow the requested language', () {

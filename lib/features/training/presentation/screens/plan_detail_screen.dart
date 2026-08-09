@@ -14,6 +14,7 @@ import '../../../../core/widgets/xn_progress.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../domain/entities/plan.dart';
 import '../../domain/entities/weekly_workout.dart';
+import '../navigation/training_route_scope.dart';
 import '../providers/plan_detail_controller.dart';
 import '../providers/plans_controller.dart';
 import '../providers/week_analysis_provider.dart';
@@ -21,6 +22,7 @@ import '../widgets/create_plan_sheet.dart';
 
 enum _PlanAction {
   analytics,
+  progressInsight,
   balanceCheck,
   designAnalysis,
   comments,
@@ -61,9 +63,16 @@ PopupMenuItem<_PlanAction> _menuItem(
 }
 
 class PlanDetailScreen extends ConsumerWidget {
-  const PlanDetailScreen({required this.planId, super.key});
+  const PlanDetailScreen({
+    required this.planId,
+    this.coachView = false,
+    this.clientId,
+    super.key,
+  });
 
   final String planId;
+  final bool coachView;
+  final String? clientId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -88,6 +97,11 @@ class PlanDetailScreen extends ConsumerWidget {
                   _PlanAction.analytics,
                   Icons.insights_rounded,
                   l10n.commonAnalytics,
+                ),
+                _menuItem(
+                  _PlanAction.progressInsight,
+                  Icons.auto_graph_rounded,
+                  l10n.trainingPlanProgressInsightTitle,
                 ),
                 _menuItem(
                   _PlanAction.balanceCheck,
@@ -200,6 +214,8 @@ class PlanDetailScreen extends ConsumerWidget {
                             planId: planId,
                             currentWeekId: currentWeekId,
                             initialIndex: _currentWeekIndex(items),
+                            coachView: coachView,
+                            clientId: clientId,
                           ),
                         ),
                       ),
@@ -223,6 +239,8 @@ class PlanDetailScreen extends ConsumerWidget {
     switch (action) {
       case _PlanAction.analytics:
         unawaited(context.push('/plans/${plan.id}/analytics'));
+      case _PlanAction.progressInsight:
+        unawaited(context.push('/plans/${plan.id}/progress-insight'));
       case _PlanAction.balanceCheck:
         unawaited(context.push('/plans/${plan.id}/balance-check'));
       case _PlanAction.designAnalysis:
@@ -370,12 +388,16 @@ class _WeekTimelineCarousel extends StatefulWidget {
     required this.planId,
     required this.currentWeekId,
     required this.initialIndex,
+    required this.coachView,
+    this.clientId,
   });
 
   final List<WeeklyWorkout> weeks;
   final String planId;
   final String? currentWeekId;
   final int initialIndex;
+  final bool coachView;
+  final String? clientId;
 
   @override
   State<_WeekTimelineCarousel> createState() => _WeekTimelineCarouselState();
@@ -435,7 +457,13 @@ class _WeekTimelineCarouselState extends State<_WeekTimelineCarousel> {
                       isCurrent: week.id == widget.currentWeekId,
                       isLast: true,
                       expanded: true,
-                      onTap: () => context.push('/weeks/${week.id}'),
+                      onTap: () => context.push(
+                        trainingRouteLocation(
+                          '/weeks/${week.id}',
+                          coachView: widget.coachView,
+                          clientId: widget.clientId,
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -529,7 +557,7 @@ class _WeekCard extends ConsumerWidget {
     final surface = isCurrent
         ? AppColors.bg2
         : week.isCompleted
-        ? AppColors.successBg.withValues(alpha: 0.46)
+        ? AppColors.successBg
         : AppColors.clay050;
     final cardRadius = BorderRadius.circular(
       expanded ? AppRadius.xxl : AppRadius.lg,
@@ -744,17 +772,20 @@ class _WeekAtGlance extends ConsumerWidget {
             rows: [
               _WeekAtGlanceRow(
                 icon: Icons.trending_up_rounded,
+                color: AppColors.success,
                 label: l10n.progressVolumeLabel,
                 value:
                     '${_formatWeekVolume(context, data.actualVolume)} kg-reps',
               ),
               _WeekAtGlanceRow(
                 icon: Icons.layers_outlined,
+                color: AppColors.warning,
                 label: l10n.progressCompletedSetsLabel,
                 value: '${data.completedSets}/${data.totalSets}',
               ),
               _WeekAtGlanceRow(
                 icon: Icons.timer_outlined,
+                color: AppColors.info,
                 label: l10n.progressTimeTrainedLabel,
                 value: _formatWeekDuration(l10n, data.totalDurationSeconds),
               ),
@@ -838,11 +869,13 @@ class _WeekAtGlanceContent extends StatelessWidget {
 class _WeekAtGlanceRow extends StatelessWidget {
   const _WeekAtGlanceRow({
     required this.icon,
+    required this.color,
     required this.label,
     required this.value,
   });
 
   final IconData icon;
+  final Color color;
   final String label;
   final String value;
 
@@ -850,7 +883,7 @@ class _WeekAtGlanceRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(icon, size: 18, color: AppColors.fg3),
+        Icon(icon, size: 18, color: color),
         const SizedBox(width: AppSpacing.lg),
         Expanded(
           child: Text(

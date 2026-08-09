@@ -899,7 +899,7 @@ as double?,
 /// @nodoc
 mixin _$Friend {
 
- String get userId; String get fullName; String get email; DateTime get friendsSince; String? get avatarUrl; String? get bio;
+ String get userId; String get fullName; DateTime get friendsSince; String? get email; String? get avatarUrl; String? get bio;
 /// Create a copy of Friend
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -910,16 +910,16 @@ $FriendCopyWith<Friend> get copyWith => _$FriendCopyWithImpl<Friend>(this as Fri
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Friend&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.fullName, fullName) || other.fullName == fullName)&&(identical(other.email, email) || other.email == email)&&(identical(other.friendsSince, friendsSince) || other.friendsSince == friendsSince)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl)&&(identical(other.bio, bio) || other.bio == bio));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Friend&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.fullName, fullName) || other.fullName == fullName)&&(identical(other.friendsSince, friendsSince) || other.friendsSince == friendsSince)&&(identical(other.email, email) || other.email == email)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl)&&(identical(other.bio, bio) || other.bio == bio));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,userId,fullName,email,friendsSince,avatarUrl,bio);
+int get hashCode => Object.hash(runtimeType,userId,fullName,friendsSince,email,avatarUrl,bio);
 
 @override
 String toString() {
-  return 'Friend(userId: $userId, fullName: $fullName, email: $email, friendsSince: $friendsSince, avatarUrl: $avatarUrl, bio: $bio)';
+  return 'Friend(userId: $userId, fullName: $fullName, friendsSince: $friendsSince, email: $email, avatarUrl: $avatarUrl, bio: $bio)';
 }
 
 
@@ -930,7 +930,7 @@ abstract mixin class $FriendCopyWith<$Res>  {
   factory $FriendCopyWith(Friend value, $Res Function(Friend) _then) = _$FriendCopyWithImpl;
 @useResult
 $Res call({
- String userId, String fullName, String email, DateTime friendsSince, String? avatarUrl, String? bio
+ String userId, String fullName, DateTime friendsSince, String? email, String? avatarUrl, String? bio
 });
 
 
@@ -947,13 +947,13 @@ class _$FriendCopyWithImpl<$Res>
 
 /// Create a copy of Friend
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? userId = null,Object? fullName = null,Object? email = null,Object? friendsSince = null,Object? avatarUrl = freezed,Object? bio = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? userId = null,Object? fullName = null,Object? friendsSince = null,Object? email = freezed,Object? avatarUrl = freezed,Object? bio = freezed,}) {
   return _then(_self.copyWith(
 userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
 as String,fullName: null == fullName ? _self.fullName : fullName // ignore: cast_nullable_to_non_nullable
-as String,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
 as String,friendsSince: null == friendsSince ? _self.friendsSince : friendsSince // ignore: cast_nullable_to_non_nullable
-as DateTime,avatarUrl: freezed == avatarUrl ? _self.avatarUrl : avatarUrl // ignore: cast_nullable_to_non_nullable
+as DateTime,email: freezed == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
+as String?,avatarUrl: freezed == avatarUrl ? _self.avatarUrl : avatarUrl // ignore: cast_nullable_to_non_nullable
 as String?,bio: freezed == bio ? _self.bio : bio // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
@@ -1040,10 +1040,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String userId,  String fullName,  String email,  DateTime friendsSince,  String? avatarUrl,  String? bio)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String userId,  String fullName,  DateTime friendsSince,  String? email,  String? avatarUrl,  String? bio)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Friend() when $default != null:
-return $default(_that.userId,_that.fullName,_that.email,_that.friendsSince,_that.avatarUrl,_that.bio);case _:
+return $default(_that.userId,_that.fullName,_that.friendsSince,_that.email,_that.avatarUrl,_that.bio);case _:
   return orElse();
 
 }
@@ -1061,10 +1061,10 @@ return $default(_that.userId,_that.fullName,_that.email,_that.friendsSince,_that
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String userId,  String fullName,  String email,  DateTime friendsSince,  String? avatarUrl,  String? bio)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String userId,  String fullName,  DateTime friendsSince,  String? email,  String? avatarUrl,  String? bio)  $default,) {final _that = this;
 switch (_that) {
 case _Friend():
-return $default(_that.userId,_that.fullName,_that.email,_that.friendsSince,_that.avatarUrl,_that.bio);case _:
+return $default(_that.userId,_that.fullName,_that.friendsSince,_that.email,_that.avatarUrl,_that.bio);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -1081,10 +1081,10 @@ return $default(_that.userId,_that.fullName,_that.email,_that.friendsSince,_that
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String userId,  String fullName,  String email,  DateTime friendsSince,  String? avatarUrl,  String? bio)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String userId,  String fullName,  DateTime friendsSince,  String? email,  String? avatarUrl,  String? bio)?  $default,) {final _that = this;
 switch (_that) {
 case _Friend() when $default != null:
-return $default(_that.userId,_that.fullName,_that.email,_that.friendsSince,_that.avatarUrl,_that.bio);case _:
+return $default(_that.userId,_that.fullName,_that.friendsSince,_that.email,_that.avatarUrl,_that.bio);case _:
   return null;
 
 }
@@ -1096,13 +1096,13 @@ return $default(_that.userId,_that.fullName,_that.email,_that.friendsSince,_that
 
 
 class _Friend implements Friend {
-  const _Friend({required this.userId, required this.fullName, required this.email, required this.friendsSince, this.avatarUrl, this.bio});
+  const _Friend({required this.userId, required this.fullName, required this.friendsSince, this.email, this.avatarUrl, this.bio});
   
 
 @override final  String userId;
 @override final  String fullName;
-@override final  String email;
 @override final  DateTime friendsSince;
+@override final  String? email;
 @override final  String? avatarUrl;
 @override final  String? bio;
 
@@ -1116,16 +1116,16 @@ _$FriendCopyWith<_Friend> get copyWith => __$FriendCopyWithImpl<_Friend>(this, _
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Friend&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.fullName, fullName) || other.fullName == fullName)&&(identical(other.email, email) || other.email == email)&&(identical(other.friendsSince, friendsSince) || other.friendsSince == friendsSince)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl)&&(identical(other.bio, bio) || other.bio == bio));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Friend&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.fullName, fullName) || other.fullName == fullName)&&(identical(other.friendsSince, friendsSince) || other.friendsSince == friendsSince)&&(identical(other.email, email) || other.email == email)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl)&&(identical(other.bio, bio) || other.bio == bio));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,userId,fullName,email,friendsSince,avatarUrl,bio);
+int get hashCode => Object.hash(runtimeType,userId,fullName,friendsSince,email,avatarUrl,bio);
 
 @override
 String toString() {
-  return 'Friend(userId: $userId, fullName: $fullName, email: $email, friendsSince: $friendsSince, avatarUrl: $avatarUrl, bio: $bio)';
+  return 'Friend(userId: $userId, fullName: $fullName, friendsSince: $friendsSince, email: $email, avatarUrl: $avatarUrl, bio: $bio)';
 }
 
 
@@ -1136,7 +1136,7 @@ abstract mixin class _$FriendCopyWith<$Res> implements $FriendCopyWith<$Res> {
   factory _$FriendCopyWith(_Friend value, $Res Function(_Friend) _then) = __$FriendCopyWithImpl;
 @override @useResult
 $Res call({
- String userId, String fullName, String email, DateTime friendsSince, String? avatarUrl, String? bio
+ String userId, String fullName, DateTime friendsSince, String? email, String? avatarUrl, String? bio
 });
 
 
@@ -1153,13 +1153,13 @@ class __$FriendCopyWithImpl<$Res>
 
 /// Create a copy of Friend
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? userId = null,Object? fullName = null,Object? email = null,Object? friendsSince = null,Object? avatarUrl = freezed,Object? bio = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? userId = null,Object? fullName = null,Object? friendsSince = null,Object? email = freezed,Object? avatarUrl = freezed,Object? bio = freezed,}) {
   return _then(_Friend(
 userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
 as String,fullName: null == fullName ? _self.fullName : fullName // ignore: cast_nullable_to_non_nullable
-as String,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
 as String,friendsSince: null == friendsSince ? _self.friendsSince : friendsSince // ignore: cast_nullable_to_non_nullable
-as DateTime,avatarUrl: freezed == avatarUrl ? _self.avatarUrl : avatarUrl // ignore: cast_nullable_to_non_nullable
+as DateTime,email: freezed == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
+as String?,avatarUrl: freezed == avatarUrl ? _self.avatarUrl : avatarUrl // ignore: cast_nullable_to_non_nullable
 as String?,bio: freezed == bio ? _self.bio : bio // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
@@ -1171,7 +1171,7 @@ as String?,
 /// @nodoc
 mixin _$FriendRequest {
 
- String get id; String get userId; String get fullName; String get email; RequestDirection get direction; FriendStatus get status; DateTime get createdAt; String? get avatarUrl; DateTime? get respondedAt;
+ String get id; String get userId; String get fullName; RequestDirection get direction; FriendStatus get status; DateTime get createdAt; String? get email; String? get avatarUrl; DateTime? get respondedAt;
 /// Create a copy of FriendRequest
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -1182,16 +1182,16 @@ $FriendRequestCopyWith<FriendRequest> get copyWith => _$FriendRequestCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is FriendRequest&&(identical(other.id, id) || other.id == id)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.fullName, fullName) || other.fullName == fullName)&&(identical(other.email, email) || other.email == email)&&(identical(other.direction, direction) || other.direction == direction)&&(identical(other.status, status) || other.status == status)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl)&&(identical(other.respondedAt, respondedAt) || other.respondedAt == respondedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is FriendRequest&&(identical(other.id, id) || other.id == id)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.fullName, fullName) || other.fullName == fullName)&&(identical(other.direction, direction) || other.direction == direction)&&(identical(other.status, status) || other.status == status)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.email, email) || other.email == email)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl)&&(identical(other.respondedAt, respondedAt) || other.respondedAt == respondedAt));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,userId,fullName,email,direction,status,createdAt,avatarUrl,respondedAt);
+int get hashCode => Object.hash(runtimeType,id,userId,fullName,direction,status,createdAt,email,avatarUrl,respondedAt);
 
 @override
 String toString() {
-  return 'FriendRequest(id: $id, userId: $userId, fullName: $fullName, email: $email, direction: $direction, status: $status, createdAt: $createdAt, avatarUrl: $avatarUrl, respondedAt: $respondedAt)';
+  return 'FriendRequest(id: $id, userId: $userId, fullName: $fullName, direction: $direction, status: $status, createdAt: $createdAt, email: $email, avatarUrl: $avatarUrl, respondedAt: $respondedAt)';
 }
 
 
@@ -1202,7 +1202,7 @@ abstract mixin class $FriendRequestCopyWith<$Res>  {
   factory $FriendRequestCopyWith(FriendRequest value, $Res Function(FriendRequest) _then) = _$FriendRequestCopyWithImpl;
 @useResult
 $Res call({
- String id, String userId, String fullName, String email, RequestDirection direction, FriendStatus status, DateTime createdAt, String? avatarUrl, DateTime? respondedAt
+ String id, String userId, String fullName, RequestDirection direction, FriendStatus status, DateTime createdAt, String? email, String? avatarUrl, DateTime? respondedAt
 });
 
 
@@ -1219,16 +1219,16 @@ class _$FriendRequestCopyWithImpl<$Res>
 
 /// Create a copy of FriendRequest
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? userId = null,Object? fullName = null,Object? email = null,Object? direction = null,Object? status = null,Object? createdAt = null,Object? avatarUrl = freezed,Object? respondedAt = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? userId = null,Object? fullName = null,Object? direction = null,Object? status = null,Object? createdAt = null,Object? email = freezed,Object? avatarUrl = freezed,Object? respondedAt = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
 as String,fullName: null == fullName ? _self.fullName : fullName // ignore: cast_nullable_to_non_nullable
-as String,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
 as String,direction: null == direction ? _self.direction : direction // ignore: cast_nullable_to_non_nullable
 as RequestDirection,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as FriendStatus,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
-as DateTime,avatarUrl: freezed == avatarUrl ? _self.avatarUrl : avatarUrl // ignore: cast_nullable_to_non_nullable
+as DateTime,email: freezed == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
+as String?,avatarUrl: freezed == avatarUrl ? _self.avatarUrl : avatarUrl // ignore: cast_nullable_to_non_nullable
 as String?,respondedAt: freezed == respondedAt ? _self.respondedAt : respondedAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,
   ));
@@ -1315,10 +1315,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String userId,  String fullName,  String email,  RequestDirection direction,  FriendStatus status,  DateTime createdAt,  String? avatarUrl,  DateTime? respondedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String userId,  String fullName,  RequestDirection direction,  FriendStatus status,  DateTime createdAt,  String? email,  String? avatarUrl,  DateTime? respondedAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _FriendRequest() when $default != null:
-return $default(_that.id,_that.userId,_that.fullName,_that.email,_that.direction,_that.status,_that.createdAt,_that.avatarUrl,_that.respondedAt);case _:
+return $default(_that.id,_that.userId,_that.fullName,_that.direction,_that.status,_that.createdAt,_that.email,_that.avatarUrl,_that.respondedAt);case _:
   return orElse();
 
 }
@@ -1336,10 +1336,10 @@ return $default(_that.id,_that.userId,_that.fullName,_that.email,_that.direction
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String userId,  String fullName,  String email,  RequestDirection direction,  FriendStatus status,  DateTime createdAt,  String? avatarUrl,  DateTime? respondedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String userId,  String fullName,  RequestDirection direction,  FriendStatus status,  DateTime createdAt,  String? email,  String? avatarUrl,  DateTime? respondedAt)  $default,) {final _that = this;
 switch (_that) {
 case _FriendRequest():
-return $default(_that.id,_that.userId,_that.fullName,_that.email,_that.direction,_that.status,_that.createdAt,_that.avatarUrl,_that.respondedAt);case _:
+return $default(_that.id,_that.userId,_that.fullName,_that.direction,_that.status,_that.createdAt,_that.email,_that.avatarUrl,_that.respondedAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -1356,10 +1356,10 @@ return $default(_that.id,_that.userId,_that.fullName,_that.email,_that.direction
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String userId,  String fullName,  String email,  RequestDirection direction,  FriendStatus status,  DateTime createdAt,  String? avatarUrl,  DateTime? respondedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String userId,  String fullName,  RequestDirection direction,  FriendStatus status,  DateTime createdAt,  String? email,  String? avatarUrl,  DateTime? respondedAt)?  $default,) {final _that = this;
 switch (_that) {
 case _FriendRequest() when $default != null:
-return $default(_that.id,_that.userId,_that.fullName,_that.email,_that.direction,_that.status,_that.createdAt,_that.avatarUrl,_that.respondedAt);case _:
+return $default(_that.id,_that.userId,_that.fullName,_that.direction,_that.status,_that.createdAt,_that.email,_that.avatarUrl,_that.respondedAt);case _:
   return null;
 
 }
@@ -1371,16 +1371,16 @@ return $default(_that.id,_that.userId,_that.fullName,_that.email,_that.direction
 
 
 class _FriendRequest implements FriendRequest {
-  const _FriendRequest({required this.id, required this.userId, required this.fullName, required this.email, required this.direction, required this.status, required this.createdAt, this.avatarUrl, this.respondedAt});
+  const _FriendRequest({required this.id, required this.userId, required this.fullName, required this.direction, required this.status, required this.createdAt, this.email, this.avatarUrl, this.respondedAt});
   
 
 @override final  String id;
 @override final  String userId;
 @override final  String fullName;
-@override final  String email;
 @override final  RequestDirection direction;
 @override final  FriendStatus status;
 @override final  DateTime createdAt;
+@override final  String? email;
 @override final  String? avatarUrl;
 @override final  DateTime? respondedAt;
 
@@ -1394,16 +1394,16 @@ _$FriendRequestCopyWith<_FriendRequest> get copyWith => __$FriendRequestCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _FriendRequest&&(identical(other.id, id) || other.id == id)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.fullName, fullName) || other.fullName == fullName)&&(identical(other.email, email) || other.email == email)&&(identical(other.direction, direction) || other.direction == direction)&&(identical(other.status, status) || other.status == status)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl)&&(identical(other.respondedAt, respondedAt) || other.respondedAt == respondedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _FriendRequest&&(identical(other.id, id) || other.id == id)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.fullName, fullName) || other.fullName == fullName)&&(identical(other.direction, direction) || other.direction == direction)&&(identical(other.status, status) || other.status == status)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.email, email) || other.email == email)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl)&&(identical(other.respondedAt, respondedAt) || other.respondedAt == respondedAt));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,userId,fullName,email,direction,status,createdAt,avatarUrl,respondedAt);
+int get hashCode => Object.hash(runtimeType,id,userId,fullName,direction,status,createdAt,email,avatarUrl,respondedAt);
 
 @override
 String toString() {
-  return 'FriendRequest(id: $id, userId: $userId, fullName: $fullName, email: $email, direction: $direction, status: $status, createdAt: $createdAt, avatarUrl: $avatarUrl, respondedAt: $respondedAt)';
+  return 'FriendRequest(id: $id, userId: $userId, fullName: $fullName, direction: $direction, status: $status, createdAt: $createdAt, email: $email, avatarUrl: $avatarUrl, respondedAt: $respondedAt)';
 }
 
 
@@ -1414,7 +1414,7 @@ abstract mixin class _$FriendRequestCopyWith<$Res> implements $FriendRequestCopy
   factory _$FriendRequestCopyWith(_FriendRequest value, $Res Function(_FriendRequest) _then) = __$FriendRequestCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String userId, String fullName, String email, RequestDirection direction, FriendStatus status, DateTime createdAt, String? avatarUrl, DateTime? respondedAt
+ String id, String userId, String fullName, RequestDirection direction, FriendStatus status, DateTime createdAt, String? email, String? avatarUrl, DateTime? respondedAt
 });
 
 
@@ -1431,16 +1431,16 @@ class __$FriendRequestCopyWithImpl<$Res>
 
 /// Create a copy of FriendRequest
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? userId = null,Object? fullName = null,Object? email = null,Object? direction = null,Object? status = null,Object? createdAt = null,Object? avatarUrl = freezed,Object? respondedAt = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? userId = null,Object? fullName = null,Object? direction = null,Object? status = null,Object? createdAt = null,Object? email = freezed,Object? avatarUrl = freezed,Object? respondedAt = freezed,}) {
   return _then(_FriendRequest(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
 as String,fullName: null == fullName ? _self.fullName : fullName // ignore: cast_nullable_to_non_nullable
-as String,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
 as String,direction: null == direction ? _self.direction : direction // ignore: cast_nullable_to_non_nullable
 as RequestDirection,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as FriendStatus,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
-as DateTime,avatarUrl: freezed == avatarUrl ? _self.avatarUrl : avatarUrl // ignore: cast_nullable_to_non_nullable
+as DateTime,email: freezed == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
+as String?,avatarUrl: freezed == avatarUrl ? _self.avatarUrl : avatarUrl // ignore: cast_nullable_to_non_nullable
 as String?,respondedAt: freezed == respondedAt ? _self.respondedAt : respondedAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,
   ));
@@ -1452,7 +1452,7 @@ as DateTime?,
 /// @nodoc
 mixin _$TrainingDayShare {
 
- String get id; String get userId; String get userFullName; String get sourceDailyWorkoutId; DateTime get workoutDate; String get dayOfWeek; String get dayStatus; int get exerciseCount; int get completedSets; double get totalVolume; int get totalDurationSeconds; bool get hasPersonalRecord; int get loveCount; bool get lovedByCurrentUser; DateTime get createdAt; List<TrainingDayShareExercise> get exercises; String? get userAvatarUrl; double? get averageRpe; String? get caption;
+ String get id; String get userId; String get userFullName; String get sourceDailyWorkoutId; DateTime get workoutDate; String get dayOfWeek; String get dayStatus; int get exerciseCount; int get completedSets; double get totalVolume; int get totalDurationSeconds; bool get hasPersonalRecord; int get loveCount; bool get lovedByCurrentUser; DateTime get createdAt; List<TrainingDayShareExercise> get exercises; bool get isReusable; String? get userAvatarUrl; double? get averageRpe; String? get caption;
 /// Create a copy of TrainingDayShare
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -1463,16 +1463,16 @@ $TrainingDayShareCopyWith<TrainingDayShare> get copyWith => _$TrainingDayShareCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TrainingDayShare&&(identical(other.id, id) || other.id == id)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.userFullName, userFullName) || other.userFullName == userFullName)&&(identical(other.sourceDailyWorkoutId, sourceDailyWorkoutId) || other.sourceDailyWorkoutId == sourceDailyWorkoutId)&&(identical(other.workoutDate, workoutDate) || other.workoutDate == workoutDate)&&(identical(other.dayOfWeek, dayOfWeek) || other.dayOfWeek == dayOfWeek)&&(identical(other.dayStatus, dayStatus) || other.dayStatus == dayStatus)&&(identical(other.exerciseCount, exerciseCount) || other.exerciseCount == exerciseCount)&&(identical(other.completedSets, completedSets) || other.completedSets == completedSets)&&(identical(other.totalVolume, totalVolume) || other.totalVolume == totalVolume)&&(identical(other.totalDurationSeconds, totalDurationSeconds) || other.totalDurationSeconds == totalDurationSeconds)&&(identical(other.hasPersonalRecord, hasPersonalRecord) || other.hasPersonalRecord == hasPersonalRecord)&&(identical(other.loveCount, loveCount) || other.loveCount == loveCount)&&(identical(other.lovedByCurrentUser, lovedByCurrentUser) || other.lovedByCurrentUser == lovedByCurrentUser)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&const DeepCollectionEquality().equals(other.exercises, exercises)&&(identical(other.userAvatarUrl, userAvatarUrl) || other.userAvatarUrl == userAvatarUrl)&&(identical(other.averageRpe, averageRpe) || other.averageRpe == averageRpe)&&(identical(other.caption, caption) || other.caption == caption));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TrainingDayShare&&(identical(other.id, id) || other.id == id)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.userFullName, userFullName) || other.userFullName == userFullName)&&(identical(other.sourceDailyWorkoutId, sourceDailyWorkoutId) || other.sourceDailyWorkoutId == sourceDailyWorkoutId)&&(identical(other.workoutDate, workoutDate) || other.workoutDate == workoutDate)&&(identical(other.dayOfWeek, dayOfWeek) || other.dayOfWeek == dayOfWeek)&&(identical(other.dayStatus, dayStatus) || other.dayStatus == dayStatus)&&(identical(other.exerciseCount, exerciseCount) || other.exerciseCount == exerciseCount)&&(identical(other.completedSets, completedSets) || other.completedSets == completedSets)&&(identical(other.totalVolume, totalVolume) || other.totalVolume == totalVolume)&&(identical(other.totalDurationSeconds, totalDurationSeconds) || other.totalDurationSeconds == totalDurationSeconds)&&(identical(other.hasPersonalRecord, hasPersonalRecord) || other.hasPersonalRecord == hasPersonalRecord)&&(identical(other.loveCount, loveCount) || other.loveCount == loveCount)&&(identical(other.lovedByCurrentUser, lovedByCurrentUser) || other.lovedByCurrentUser == lovedByCurrentUser)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&const DeepCollectionEquality().equals(other.exercises, exercises)&&(identical(other.isReusable, isReusable) || other.isReusable == isReusable)&&(identical(other.userAvatarUrl, userAvatarUrl) || other.userAvatarUrl == userAvatarUrl)&&(identical(other.averageRpe, averageRpe) || other.averageRpe == averageRpe)&&(identical(other.caption, caption) || other.caption == caption));
 }
 
 
 @override
-int get hashCode => Object.hashAll([runtimeType,id,userId,userFullName,sourceDailyWorkoutId,workoutDate,dayOfWeek,dayStatus,exerciseCount,completedSets,totalVolume,totalDurationSeconds,hasPersonalRecord,loveCount,lovedByCurrentUser,createdAt,const DeepCollectionEquality().hash(exercises),userAvatarUrl,averageRpe,caption]);
+int get hashCode => Object.hashAll([runtimeType,id,userId,userFullName,sourceDailyWorkoutId,workoutDate,dayOfWeek,dayStatus,exerciseCount,completedSets,totalVolume,totalDurationSeconds,hasPersonalRecord,loveCount,lovedByCurrentUser,createdAt,const DeepCollectionEquality().hash(exercises),isReusable,userAvatarUrl,averageRpe,caption]);
 
 @override
 String toString() {
-  return 'TrainingDayShare(id: $id, userId: $userId, userFullName: $userFullName, sourceDailyWorkoutId: $sourceDailyWorkoutId, workoutDate: $workoutDate, dayOfWeek: $dayOfWeek, dayStatus: $dayStatus, exerciseCount: $exerciseCount, completedSets: $completedSets, totalVolume: $totalVolume, totalDurationSeconds: $totalDurationSeconds, hasPersonalRecord: $hasPersonalRecord, loveCount: $loveCount, lovedByCurrentUser: $lovedByCurrentUser, createdAt: $createdAt, exercises: $exercises, userAvatarUrl: $userAvatarUrl, averageRpe: $averageRpe, caption: $caption)';
+  return 'TrainingDayShare(id: $id, userId: $userId, userFullName: $userFullName, sourceDailyWorkoutId: $sourceDailyWorkoutId, workoutDate: $workoutDate, dayOfWeek: $dayOfWeek, dayStatus: $dayStatus, exerciseCount: $exerciseCount, completedSets: $completedSets, totalVolume: $totalVolume, totalDurationSeconds: $totalDurationSeconds, hasPersonalRecord: $hasPersonalRecord, loveCount: $loveCount, lovedByCurrentUser: $lovedByCurrentUser, createdAt: $createdAt, exercises: $exercises, isReusable: $isReusable, userAvatarUrl: $userAvatarUrl, averageRpe: $averageRpe, caption: $caption)';
 }
 
 
@@ -1483,7 +1483,7 @@ abstract mixin class $TrainingDayShareCopyWith<$Res>  {
   factory $TrainingDayShareCopyWith(TrainingDayShare value, $Res Function(TrainingDayShare) _then) = _$TrainingDayShareCopyWithImpl;
 @useResult
 $Res call({
- String id, String userId, String userFullName, String sourceDailyWorkoutId, DateTime workoutDate, String dayOfWeek, String dayStatus, int exerciseCount, int completedSets, double totalVolume, int totalDurationSeconds, bool hasPersonalRecord, int loveCount, bool lovedByCurrentUser, DateTime createdAt, List<TrainingDayShareExercise> exercises, String? userAvatarUrl, double? averageRpe, String? caption
+ String id, String userId, String userFullName, String sourceDailyWorkoutId, DateTime workoutDate, String dayOfWeek, String dayStatus, int exerciseCount, int completedSets, double totalVolume, int totalDurationSeconds, bool hasPersonalRecord, int loveCount, bool lovedByCurrentUser, DateTime createdAt, List<TrainingDayShareExercise> exercises, bool isReusable, String? userAvatarUrl, double? averageRpe, String? caption
 });
 
 
@@ -1500,7 +1500,7 @@ class _$TrainingDayShareCopyWithImpl<$Res>
 
 /// Create a copy of TrainingDayShare
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? userId = null,Object? userFullName = null,Object? sourceDailyWorkoutId = null,Object? workoutDate = null,Object? dayOfWeek = null,Object? dayStatus = null,Object? exerciseCount = null,Object? completedSets = null,Object? totalVolume = null,Object? totalDurationSeconds = null,Object? hasPersonalRecord = null,Object? loveCount = null,Object? lovedByCurrentUser = null,Object? createdAt = null,Object? exercises = null,Object? userAvatarUrl = freezed,Object? averageRpe = freezed,Object? caption = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? userId = null,Object? userFullName = null,Object? sourceDailyWorkoutId = null,Object? workoutDate = null,Object? dayOfWeek = null,Object? dayStatus = null,Object? exerciseCount = null,Object? completedSets = null,Object? totalVolume = null,Object? totalDurationSeconds = null,Object? hasPersonalRecord = null,Object? loveCount = null,Object? lovedByCurrentUser = null,Object? createdAt = null,Object? exercises = null,Object? isReusable = null,Object? userAvatarUrl = freezed,Object? averageRpe = freezed,Object? caption = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
@@ -1518,7 +1518,8 @@ as bool,loveCount: null == loveCount ? _self.loveCount : loveCount // ignore: ca
 as int,lovedByCurrentUser: null == lovedByCurrentUser ? _self.lovedByCurrentUser : lovedByCurrentUser // ignore: cast_nullable_to_non_nullable
 as bool,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,exercises: null == exercises ? _self.exercises : exercises // ignore: cast_nullable_to_non_nullable
-as List<TrainingDayShareExercise>,userAvatarUrl: freezed == userAvatarUrl ? _self.userAvatarUrl : userAvatarUrl // ignore: cast_nullable_to_non_nullable
+as List<TrainingDayShareExercise>,isReusable: null == isReusable ? _self.isReusable : isReusable // ignore: cast_nullable_to_non_nullable
+as bool,userAvatarUrl: freezed == userAvatarUrl ? _self.userAvatarUrl : userAvatarUrl // ignore: cast_nullable_to_non_nullable
 as String?,averageRpe: freezed == averageRpe ? _self.averageRpe : averageRpe // ignore: cast_nullable_to_non_nullable
 as double?,caption: freezed == caption ? _self.caption : caption // ignore: cast_nullable_to_non_nullable
 as String?,
@@ -1606,10 +1607,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String userId,  String userFullName,  String sourceDailyWorkoutId,  DateTime workoutDate,  String dayOfWeek,  String dayStatus,  int exerciseCount,  int completedSets,  double totalVolume,  int totalDurationSeconds,  bool hasPersonalRecord,  int loveCount,  bool lovedByCurrentUser,  DateTime createdAt,  List<TrainingDayShareExercise> exercises,  String? userAvatarUrl,  double? averageRpe,  String? caption)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String userId,  String userFullName,  String sourceDailyWorkoutId,  DateTime workoutDate,  String dayOfWeek,  String dayStatus,  int exerciseCount,  int completedSets,  double totalVolume,  int totalDurationSeconds,  bool hasPersonalRecord,  int loveCount,  bool lovedByCurrentUser,  DateTime createdAt,  List<TrainingDayShareExercise> exercises,  bool isReusable,  String? userAvatarUrl,  double? averageRpe,  String? caption)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _TrainingDayShare() when $default != null:
-return $default(_that.id,_that.userId,_that.userFullName,_that.sourceDailyWorkoutId,_that.workoutDate,_that.dayOfWeek,_that.dayStatus,_that.exerciseCount,_that.completedSets,_that.totalVolume,_that.totalDurationSeconds,_that.hasPersonalRecord,_that.loveCount,_that.lovedByCurrentUser,_that.createdAt,_that.exercises,_that.userAvatarUrl,_that.averageRpe,_that.caption);case _:
+return $default(_that.id,_that.userId,_that.userFullName,_that.sourceDailyWorkoutId,_that.workoutDate,_that.dayOfWeek,_that.dayStatus,_that.exerciseCount,_that.completedSets,_that.totalVolume,_that.totalDurationSeconds,_that.hasPersonalRecord,_that.loveCount,_that.lovedByCurrentUser,_that.createdAt,_that.exercises,_that.isReusable,_that.userAvatarUrl,_that.averageRpe,_that.caption);case _:
   return orElse();
 
 }
@@ -1627,10 +1628,10 @@ return $default(_that.id,_that.userId,_that.userFullName,_that.sourceDailyWorkou
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String userId,  String userFullName,  String sourceDailyWorkoutId,  DateTime workoutDate,  String dayOfWeek,  String dayStatus,  int exerciseCount,  int completedSets,  double totalVolume,  int totalDurationSeconds,  bool hasPersonalRecord,  int loveCount,  bool lovedByCurrentUser,  DateTime createdAt,  List<TrainingDayShareExercise> exercises,  String? userAvatarUrl,  double? averageRpe,  String? caption)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String userId,  String userFullName,  String sourceDailyWorkoutId,  DateTime workoutDate,  String dayOfWeek,  String dayStatus,  int exerciseCount,  int completedSets,  double totalVolume,  int totalDurationSeconds,  bool hasPersonalRecord,  int loveCount,  bool lovedByCurrentUser,  DateTime createdAt,  List<TrainingDayShareExercise> exercises,  bool isReusable,  String? userAvatarUrl,  double? averageRpe,  String? caption)  $default,) {final _that = this;
 switch (_that) {
 case _TrainingDayShare():
-return $default(_that.id,_that.userId,_that.userFullName,_that.sourceDailyWorkoutId,_that.workoutDate,_that.dayOfWeek,_that.dayStatus,_that.exerciseCount,_that.completedSets,_that.totalVolume,_that.totalDurationSeconds,_that.hasPersonalRecord,_that.loveCount,_that.lovedByCurrentUser,_that.createdAt,_that.exercises,_that.userAvatarUrl,_that.averageRpe,_that.caption);case _:
+return $default(_that.id,_that.userId,_that.userFullName,_that.sourceDailyWorkoutId,_that.workoutDate,_that.dayOfWeek,_that.dayStatus,_that.exerciseCount,_that.completedSets,_that.totalVolume,_that.totalDurationSeconds,_that.hasPersonalRecord,_that.loveCount,_that.lovedByCurrentUser,_that.createdAt,_that.exercises,_that.isReusable,_that.userAvatarUrl,_that.averageRpe,_that.caption);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -1647,10 +1648,10 @@ return $default(_that.id,_that.userId,_that.userFullName,_that.sourceDailyWorkou
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String userId,  String userFullName,  String sourceDailyWorkoutId,  DateTime workoutDate,  String dayOfWeek,  String dayStatus,  int exerciseCount,  int completedSets,  double totalVolume,  int totalDurationSeconds,  bool hasPersonalRecord,  int loveCount,  bool lovedByCurrentUser,  DateTime createdAt,  List<TrainingDayShareExercise> exercises,  String? userAvatarUrl,  double? averageRpe,  String? caption)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String userId,  String userFullName,  String sourceDailyWorkoutId,  DateTime workoutDate,  String dayOfWeek,  String dayStatus,  int exerciseCount,  int completedSets,  double totalVolume,  int totalDurationSeconds,  bool hasPersonalRecord,  int loveCount,  bool lovedByCurrentUser,  DateTime createdAt,  List<TrainingDayShareExercise> exercises,  bool isReusable,  String? userAvatarUrl,  double? averageRpe,  String? caption)?  $default,) {final _that = this;
 switch (_that) {
 case _TrainingDayShare() when $default != null:
-return $default(_that.id,_that.userId,_that.userFullName,_that.sourceDailyWorkoutId,_that.workoutDate,_that.dayOfWeek,_that.dayStatus,_that.exerciseCount,_that.completedSets,_that.totalVolume,_that.totalDurationSeconds,_that.hasPersonalRecord,_that.loveCount,_that.lovedByCurrentUser,_that.createdAt,_that.exercises,_that.userAvatarUrl,_that.averageRpe,_that.caption);case _:
+return $default(_that.id,_that.userId,_that.userFullName,_that.sourceDailyWorkoutId,_that.workoutDate,_that.dayOfWeek,_that.dayStatus,_that.exerciseCount,_that.completedSets,_that.totalVolume,_that.totalDurationSeconds,_that.hasPersonalRecord,_that.loveCount,_that.lovedByCurrentUser,_that.createdAt,_that.exercises,_that.isReusable,_that.userAvatarUrl,_that.averageRpe,_that.caption);case _:
   return null;
 
 }
@@ -1662,7 +1663,7 @@ return $default(_that.id,_that.userId,_that.userFullName,_that.sourceDailyWorkou
 
 
 class _TrainingDayShare implements TrainingDayShare {
-  const _TrainingDayShare({required this.id, required this.userId, required this.userFullName, required this.sourceDailyWorkoutId, required this.workoutDate, required this.dayOfWeek, required this.dayStatus, required this.exerciseCount, required this.completedSets, required this.totalVolume, required this.totalDurationSeconds, required this.hasPersonalRecord, required this.loveCount, required this.lovedByCurrentUser, required this.createdAt, required final  List<TrainingDayShareExercise> exercises, this.userAvatarUrl, this.averageRpe, this.caption}): _exercises = exercises;
+  const _TrainingDayShare({required this.id, required this.userId, required this.userFullName, required this.sourceDailyWorkoutId, required this.workoutDate, required this.dayOfWeek, required this.dayStatus, required this.exerciseCount, required this.completedSets, required this.totalVolume, required this.totalDurationSeconds, required this.hasPersonalRecord, required this.loveCount, required this.lovedByCurrentUser, required this.createdAt, required final  List<TrainingDayShareExercise> exercises, this.isReusable = false, this.userAvatarUrl, this.averageRpe, this.caption}): _exercises = exercises;
   
 
 @override final  String id;
@@ -1687,6 +1688,7 @@ class _TrainingDayShare implements TrainingDayShare {
   return EqualUnmodifiableListView(_exercises);
 }
 
+@override@JsonKey() final  bool isReusable;
 @override final  String? userAvatarUrl;
 @override final  double? averageRpe;
 @override final  String? caption;
@@ -1701,16 +1703,16 @@ _$TrainingDayShareCopyWith<_TrainingDayShare> get copyWith => __$TrainingDayShar
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TrainingDayShare&&(identical(other.id, id) || other.id == id)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.userFullName, userFullName) || other.userFullName == userFullName)&&(identical(other.sourceDailyWorkoutId, sourceDailyWorkoutId) || other.sourceDailyWorkoutId == sourceDailyWorkoutId)&&(identical(other.workoutDate, workoutDate) || other.workoutDate == workoutDate)&&(identical(other.dayOfWeek, dayOfWeek) || other.dayOfWeek == dayOfWeek)&&(identical(other.dayStatus, dayStatus) || other.dayStatus == dayStatus)&&(identical(other.exerciseCount, exerciseCount) || other.exerciseCount == exerciseCount)&&(identical(other.completedSets, completedSets) || other.completedSets == completedSets)&&(identical(other.totalVolume, totalVolume) || other.totalVolume == totalVolume)&&(identical(other.totalDurationSeconds, totalDurationSeconds) || other.totalDurationSeconds == totalDurationSeconds)&&(identical(other.hasPersonalRecord, hasPersonalRecord) || other.hasPersonalRecord == hasPersonalRecord)&&(identical(other.loveCount, loveCount) || other.loveCount == loveCount)&&(identical(other.lovedByCurrentUser, lovedByCurrentUser) || other.lovedByCurrentUser == lovedByCurrentUser)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&const DeepCollectionEquality().equals(other._exercises, _exercises)&&(identical(other.userAvatarUrl, userAvatarUrl) || other.userAvatarUrl == userAvatarUrl)&&(identical(other.averageRpe, averageRpe) || other.averageRpe == averageRpe)&&(identical(other.caption, caption) || other.caption == caption));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TrainingDayShare&&(identical(other.id, id) || other.id == id)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.userFullName, userFullName) || other.userFullName == userFullName)&&(identical(other.sourceDailyWorkoutId, sourceDailyWorkoutId) || other.sourceDailyWorkoutId == sourceDailyWorkoutId)&&(identical(other.workoutDate, workoutDate) || other.workoutDate == workoutDate)&&(identical(other.dayOfWeek, dayOfWeek) || other.dayOfWeek == dayOfWeek)&&(identical(other.dayStatus, dayStatus) || other.dayStatus == dayStatus)&&(identical(other.exerciseCount, exerciseCount) || other.exerciseCount == exerciseCount)&&(identical(other.completedSets, completedSets) || other.completedSets == completedSets)&&(identical(other.totalVolume, totalVolume) || other.totalVolume == totalVolume)&&(identical(other.totalDurationSeconds, totalDurationSeconds) || other.totalDurationSeconds == totalDurationSeconds)&&(identical(other.hasPersonalRecord, hasPersonalRecord) || other.hasPersonalRecord == hasPersonalRecord)&&(identical(other.loveCount, loveCount) || other.loveCount == loveCount)&&(identical(other.lovedByCurrentUser, lovedByCurrentUser) || other.lovedByCurrentUser == lovedByCurrentUser)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&const DeepCollectionEquality().equals(other._exercises, _exercises)&&(identical(other.isReusable, isReusable) || other.isReusable == isReusable)&&(identical(other.userAvatarUrl, userAvatarUrl) || other.userAvatarUrl == userAvatarUrl)&&(identical(other.averageRpe, averageRpe) || other.averageRpe == averageRpe)&&(identical(other.caption, caption) || other.caption == caption));
 }
 
 
 @override
-int get hashCode => Object.hashAll([runtimeType,id,userId,userFullName,sourceDailyWorkoutId,workoutDate,dayOfWeek,dayStatus,exerciseCount,completedSets,totalVolume,totalDurationSeconds,hasPersonalRecord,loveCount,lovedByCurrentUser,createdAt,const DeepCollectionEquality().hash(_exercises),userAvatarUrl,averageRpe,caption]);
+int get hashCode => Object.hashAll([runtimeType,id,userId,userFullName,sourceDailyWorkoutId,workoutDate,dayOfWeek,dayStatus,exerciseCount,completedSets,totalVolume,totalDurationSeconds,hasPersonalRecord,loveCount,lovedByCurrentUser,createdAt,const DeepCollectionEquality().hash(_exercises),isReusable,userAvatarUrl,averageRpe,caption]);
 
 @override
 String toString() {
-  return 'TrainingDayShare(id: $id, userId: $userId, userFullName: $userFullName, sourceDailyWorkoutId: $sourceDailyWorkoutId, workoutDate: $workoutDate, dayOfWeek: $dayOfWeek, dayStatus: $dayStatus, exerciseCount: $exerciseCount, completedSets: $completedSets, totalVolume: $totalVolume, totalDurationSeconds: $totalDurationSeconds, hasPersonalRecord: $hasPersonalRecord, loveCount: $loveCount, lovedByCurrentUser: $lovedByCurrentUser, createdAt: $createdAt, exercises: $exercises, userAvatarUrl: $userAvatarUrl, averageRpe: $averageRpe, caption: $caption)';
+  return 'TrainingDayShare(id: $id, userId: $userId, userFullName: $userFullName, sourceDailyWorkoutId: $sourceDailyWorkoutId, workoutDate: $workoutDate, dayOfWeek: $dayOfWeek, dayStatus: $dayStatus, exerciseCount: $exerciseCount, completedSets: $completedSets, totalVolume: $totalVolume, totalDurationSeconds: $totalDurationSeconds, hasPersonalRecord: $hasPersonalRecord, loveCount: $loveCount, lovedByCurrentUser: $lovedByCurrentUser, createdAt: $createdAt, exercises: $exercises, isReusable: $isReusable, userAvatarUrl: $userAvatarUrl, averageRpe: $averageRpe, caption: $caption)';
 }
 
 
@@ -1721,7 +1723,7 @@ abstract mixin class _$TrainingDayShareCopyWith<$Res> implements $TrainingDaySha
   factory _$TrainingDayShareCopyWith(_TrainingDayShare value, $Res Function(_TrainingDayShare) _then) = __$TrainingDayShareCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String userId, String userFullName, String sourceDailyWorkoutId, DateTime workoutDate, String dayOfWeek, String dayStatus, int exerciseCount, int completedSets, double totalVolume, int totalDurationSeconds, bool hasPersonalRecord, int loveCount, bool lovedByCurrentUser, DateTime createdAt, List<TrainingDayShareExercise> exercises, String? userAvatarUrl, double? averageRpe, String? caption
+ String id, String userId, String userFullName, String sourceDailyWorkoutId, DateTime workoutDate, String dayOfWeek, String dayStatus, int exerciseCount, int completedSets, double totalVolume, int totalDurationSeconds, bool hasPersonalRecord, int loveCount, bool lovedByCurrentUser, DateTime createdAt, List<TrainingDayShareExercise> exercises, bool isReusable, String? userAvatarUrl, double? averageRpe, String? caption
 });
 
 
@@ -1738,7 +1740,7 @@ class __$TrainingDayShareCopyWithImpl<$Res>
 
 /// Create a copy of TrainingDayShare
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? userId = null,Object? userFullName = null,Object? sourceDailyWorkoutId = null,Object? workoutDate = null,Object? dayOfWeek = null,Object? dayStatus = null,Object? exerciseCount = null,Object? completedSets = null,Object? totalVolume = null,Object? totalDurationSeconds = null,Object? hasPersonalRecord = null,Object? loveCount = null,Object? lovedByCurrentUser = null,Object? createdAt = null,Object? exercises = null,Object? userAvatarUrl = freezed,Object? averageRpe = freezed,Object? caption = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? userId = null,Object? userFullName = null,Object? sourceDailyWorkoutId = null,Object? workoutDate = null,Object? dayOfWeek = null,Object? dayStatus = null,Object? exerciseCount = null,Object? completedSets = null,Object? totalVolume = null,Object? totalDurationSeconds = null,Object? hasPersonalRecord = null,Object? loveCount = null,Object? lovedByCurrentUser = null,Object? createdAt = null,Object? exercises = null,Object? isReusable = null,Object? userAvatarUrl = freezed,Object? averageRpe = freezed,Object? caption = freezed,}) {
   return _then(_TrainingDayShare(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
@@ -1756,7 +1758,8 @@ as bool,loveCount: null == loveCount ? _self.loveCount : loveCount // ignore: ca
 as int,lovedByCurrentUser: null == lovedByCurrentUser ? _self.lovedByCurrentUser : lovedByCurrentUser // ignore: cast_nullable_to_non_nullable
 as bool,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,exercises: null == exercises ? _self._exercises : exercises // ignore: cast_nullable_to_non_nullable
-as List<TrainingDayShareExercise>,userAvatarUrl: freezed == userAvatarUrl ? _self.userAvatarUrl : userAvatarUrl // ignore: cast_nullable_to_non_nullable
+as List<TrainingDayShareExercise>,isReusable: null == isReusable ? _self.isReusable : isReusable // ignore: cast_nullable_to_non_nullable
+as bool,userAvatarUrl: freezed == userAvatarUrl ? _self.userAvatarUrl : userAvatarUrl // ignore: cast_nullable_to_non_nullable
 as String?,averageRpe: freezed == averageRpe ? _self.averageRpe : averageRpe // ignore: cast_nullable_to_non_nullable
 as double?,caption: freezed == caption ? _self.caption : caption // ignore: cast_nullable_to_non_nullable
 as String?,

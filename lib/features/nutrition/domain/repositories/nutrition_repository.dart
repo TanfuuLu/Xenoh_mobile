@@ -7,6 +7,24 @@ import '../entities/nutrition_summary.dart';
 abstract interface class NutritionRepository {
   Future<NutritionSummary> getSummary();
 
+  Future<List<NutritionDailyLog>> getHistory({
+    required DateTime from,
+    required DateTime to,
+  });
+
+  Future<NutritionSummary> getClientSummary(String clientId);
+
+  Future<NutritionDailyLog?> getClientDailyLog(
+    String clientId,
+    DateTime date,
+  );
+
+  Future<List<NutritionDailyLog>> getClientHistory(
+    String clientId, {
+    required DateTime from,
+    required DateTime to,
+  });
+
   /// Update activity/goal/targets (`PUT /nutrition/profile`).
   Future<NutritionProfile> updateProfile({
     required String activityLevel,

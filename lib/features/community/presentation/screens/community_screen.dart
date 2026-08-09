@@ -24,6 +24,29 @@ class CommunityScreen extends ConsumerStatefulWidget {
 
 class _CommunityScreenState extends ConsumerState<CommunityScreen> {
   String _query = '';
+  late final ScrollController _scrollController;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController()..addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController
+      ..removeListener(_onScroll)
+      ..dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.extentAfter < 480) {
+      unawaited(
+        ref.read(communityFeedControllerProvider.notifier).loadMore(),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +62,21 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
         title: Text(l10n.communityTitle),
         actions: [
           IconButton(
+            tooltip: l10n.communityPrivacyTooltip,
+            onPressed: () => unawaited(context.push('/community/settings')),
+            icon: const Icon(Icons.privacy_tip_outlined),
+          ),
+          IconButton(
+            tooltip: l10n.competitionsTitle,
+            onPressed: () => unawaited(context.push('/competitions')),
+            icon: const Icon(Icons.emoji_events_outlined),
+          ),
+          IconButton(
+            tooltip: l10n.challengesTitle,
+            onPressed: () => unawaited(context.push('/community/challenges')),
+            icon: const Icon(Icons.flag_outlined),
+          ),
+          IconButton(
             tooltip: l10n.communityFriendsTitle,
             onPressed: () => unawaited(context.push('/community/friends')),
             icon: const Icon(Icons.people_alt_outlined),
@@ -52,6 +90,7 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
           ref.invalidate(communityUserSearchProvider(_query));
         },
         child: ListView(
+          controller: _scrollController,
           padding: const EdgeInsets.fromLTRB(
             AppSpacing.lg,
             AppSpacing.lg,
@@ -158,7 +197,8 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
             AsyncValueView(
               value: feed,
               onRetry: () => ref.invalidate(communityFeedControllerProvider),
-              data: (shares) {
+              data: (feedState) {
+                final shares = feedState.items;
                 if (shares.isEmpty) {
                   return _EmptyCard(
                     icon: Icons.fitness_center_rounded,
@@ -183,6 +223,35 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
                       if (share != shares.last)
                         const SizedBox(height: AppSpacing.md),
                     ],
+                    if (feedState.isLoadingMore)
+                      const Padding(
+                        padding: EdgeInsets.all(AppSpacing.lg),
+                        child: Center(child: CircularProgressIndicator()),
+                      )
+                    else if (feedState.loadMoreError != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: AppSpacing.md),
+                        child: XnCard(
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Text(l10n.commonSomethingWentWrong),
+                              ),
+                              TextButton(
+                                onPressed: () => unawaited(
+                                  ref
+                                      .read(
+                                        communityFeedControllerProvider
+                                            .notifier,
+                                      )
+                                      .loadMore(),
+                                ),
+                                child: Text(l10n.commonRetry),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                   ],
                 );
               },

@@ -113,10 +113,41 @@ class CommunityRepositoryImpl implements CommunityRepository {
   }
 
   @override
-  Future<List<TrainingDayShare>> getFeed() async {
+  Future<TrainingDayFeedPage> getFeed({
+    String scope = 'friends',
+    String? cursor,
+    int pageSize = 20,
+  }) async {
     try {
-      final dtos = await _remote.getFeed();
-      return dtos.map((e) => e.toEntity()).toList(growable: false);
+      final page = await _remote.getFeed(
+        scope: scope,
+        cursor: cursor,
+        pageSize: pageSize,
+      );
+      return TrainingDayFeedPage(
+        items: page.items.map((e) => e.toEntity()).toList(growable: false),
+        nextCursor: page.nextCursor,
+      );
+    } on DioException catch (e) {
+      throw failureFromDio(e);
+    }
+  }
+
+  @override
+  Future<CommunitySettings> getSettings() async {
+    try {
+      return (await _remote.getSettings()).toEntity();
+    } on DioException catch (e) {
+      throw failureFromDio(e);
+    }
+  }
+
+  @override
+  Future<CommunitySettings> updateSettings(
+    CommunityStatsVisibility visibility,
+  ) async {
+    try {
+      return (await _remote.updateSettings(visibility)).toEntity();
     } on DioException catch (e) {
       throw failureFromDio(e);
     }
@@ -169,6 +200,38 @@ class CommunityRepositoryImpl implements CommunityRepository {
   Future<void> deleteShare(String shareId) async {
     try {
       await _remote.deleteShare(shareId);
+    } on DioException catch (e) {
+      throw failureFromDio(e);
+    }
+  }
+
+  @override
+  Future<void> reportShare({
+    required String shareId,
+    required String reason,
+    required String details,
+  }) async {
+    try {
+      await _remote.reportShare(
+        shareId: shareId,
+        reason: reason,
+        details: details,
+      );
+    } on DioException catch (e) {
+      throw failureFromDio(e);
+    }
+  }
+
+  @override
+  Future<int> copyShare({
+    required String shareId,
+    required String targetDailyWorkoutId,
+  }) async {
+    try {
+      return await _remote.copyShare(
+        shareId: shareId,
+        targetDailyWorkoutId: targetDailyWorkoutId,
+      );
     } on DioException catch (e) {
       throw failureFromDio(e);
     }

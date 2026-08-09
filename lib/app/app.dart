@@ -5,10 +5,12 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/utils/current_date_provider.dart';
+import '../features/coach_client/presentation/providers/chat_unread_controller.dart';
 import '../features/profile/presentation/providers/preferences_provider.dart';
 import '../l10n/app_localizations.dart';
 import 'router/router.dart';
 import 'theme/app_theme.dart';
+import 'widgets/xn_grid_background.dart';
 
 class XenohApp extends ConsumerWidget {
   const XenohApp({super.key});
@@ -35,39 +37,12 @@ class XenohApp extends ConsumerWidget {
       // Keeps date-sensitive providers in sync when the app resumes or stays
       // open across midnight.
       builder: (context, child) {
-        final mediaQuery = MediaQuery.of(context);
-        return MediaQuery(
-          data: mediaQuery.copyWith(
-            textScaler: _CompactTextScaler(mediaQuery.textScaler),
-          ),
-          child: _AppLifecycleLayer(child: child),
+        return _AppLifecycleLayer(
+          child: XnGridBackground(child: child ?? const SizedBox.shrink()),
         );
       },
     );
   }
-}
-
-/// Keeps platform accessibility scaling while making the app's base type
-/// scale slightly denser than Material's default.
-final class _CompactTextScaler extends TextScaler {
-  const _CompactTextScaler(this.delegate);
-
-  static const _factor = 0.92;
-
-  final TextScaler delegate;
-
-  @override
-  double scale(double fontSize) => delegate.scale(fontSize) * _factor;
-
-  @override
-  double get textScaleFactor => scale(14) / 14;
-
-  @override
-  bool operator ==(Object other) =>
-      other is _CompactTextScaler && other.delegate == delegate;
-
-  @override
-  int get hashCode => Object.hash(_CompactTextScaler, delegate);
 }
 
 class _AppLifecycleLayer extends ConsumerStatefulWidget {
@@ -111,6 +86,7 @@ class _AppLifecycleLayerState extends ConsumerState<_AppLifecycleLayer>
     // instead of showing yesterday's cached data. See `currentDateProvider`.
     if (state == AppLifecycleState.resumed) {
       ref.read(currentDateProvider.notifier).refreshIfChanged();
+      ref.invalidate(chatUnreadControllerProvider);
     }
   }
 

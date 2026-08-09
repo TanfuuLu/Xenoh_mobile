@@ -46,4 +46,7 @@ abstract interface class AuthRepository {
 
   /// Request account deletion when the user cannot sign in to the app.
   Future<Result<void>> requestAccountDeletion(String email);
+
+  /// Verify the one-time email token and permanently delete the account.
+  Future<Result<void>> verifyAccountDeletion(String token);
 }

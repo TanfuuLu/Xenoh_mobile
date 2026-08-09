@@ -5,6 +5,58 @@ import 'package:xenoh_mobile/features/dashboard/presentation/widgets/plate_calcu
 import 'package:xenoh_mobile/l10n/app_localizations.dart';
 
 void main() {
+  testWidgets('barbell visual stays prominent on a narrow phone', (
+    tester,
+  ) async {
+    await tester.binding.setSurfaceSize(const Size(320, 760));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: AppTheme.light(),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: const Scaffold(
+          body: SingleChildScrollView(child: PlateCalculatorCard()),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final visual = find.byKey(PlateCalculatorCard.barbellVisualKey);
+    expect(visual, findsOneWidget);
+    expect(tester.getSize(visual).height, 92);
+    expect(
+      tester.getTopLeft(find.text('Calculate')).dy,
+      lessThan(tester.getTopLeft(visual).dy),
+    );
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('count mode fits a standard phone without scrolling', (
+    tester,
+  ) async {
+    await tester.binding.setSurfaceSize(const Size(430, 844));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: AppTheme.light(),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: const Scaffold(body: PlateCalculatorCard()),
+      ),
+    );
+    await tester.tap(find.text('Sum plates'));
+    await tester.pumpAndSettle();
+
+    expect(
+      tester.getSize(find.byType(PlateCalculatorCard)).height,
+      lessThanOrEqualTo(844),
+    );
+    expect(tester.takeException(), isNull);
+  });
+
   // Regression: rapidly toggling Calculate <-> Sum plates while the mode
   // transition was mid-flight used to crash the calculator with a
   // "Duplicate keys" error (an AnimatedSwitcher re-selecting a child still

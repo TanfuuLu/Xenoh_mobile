@@ -56,9 +56,10 @@ class TodayWorkoutCard extends StatelessWidget {
     final progress = w.totalExercises == 0
         ? 0.0
         : (w.completedExercises / w.totalExercises).clamp(0.0, 1.0);
+    final isRest = w.status.trim().toLowerCase() == 'rest';
 
     return XnSection(
-      onTap: onOpen,
+      onTap: isRest ? null : onOpen,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -76,7 +77,7 @@ class TodayWorkoutCard extends StatelessWidget {
                   tone: XnChipTone.sage,
                   icon: Icons.check_rounded,
                 )
-              else if (w.status == 'Rest')
+              else if (isRest)
                 XnChip(
                   label: l10n.dashboardWorkoutRest,
                   tone: XnChipTone.neutral,

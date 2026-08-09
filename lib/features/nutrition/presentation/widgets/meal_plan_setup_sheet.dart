@@ -42,6 +42,12 @@ class MealPlanSetupSheet extends ConsumerStatefulWidget {
   /// This lets coaches use the same editor for a client's meal plan.
   final MealPlanSaveHandler? onSave;
 
+  static const scopeSelectorKey = Key('meal-plan-scope-selector');
+  static const selectedScopeKey = Key('meal-plan-selected-scope');
+  static const dateRowKey = Key('meal-plan-date-row');
+  static const mealListPanelKey = Key('meal-plan-list-panel');
+  static const footerKey = Key('meal-plan-footer');
+
   @override
   ConsumerState<MealPlanSetupSheet> createState() => _MealPlanSetupSheetState();
 }
@@ -206,16 +212,16 @@ class _MealPlanSetupSheetState extends ConsumerState<MealPlanSetupSheet> {
       top: false,
       child: Padding(
         padding: EdgeInsets.only(
-          left: AppSpacing.lg,
-          right: AppSpacing.lg,
-          top: AppSpacing.lg,
-          bottom: MediaQuery.viewInsetsOf(context).bottom + AppSpacing.lg,
+          left: AppSpacing.md,
+          right: AppSpacing.md,
+          top: AppSpacing.sm,
+          bottom: MediaQuery.viewInsetsOf(context).bottom + AppSpacing.md,
         ),
         child: DraggableScrollableSheet(
           expand: false,
-          initialChildSize: 0.92,
+          initialChildSize: 0.94,
           minChildSize: 0.64,
-          maxChildSize: 0.96,
+          maxChildSize: 0.98,
           builder: (context, controller) => Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -228,21 +234,9 @@ class _MealPlanSetupSheetState extends ConsumerState<MealPlanSetupSheet> {
                         Text(
                           l10n.nutritionCreateMealPlanTitle,
                           style: AppTypography.display(
-                            22,
-                            weight: FontWeight.w500,
-                            letterSpacing: 0,
-                          ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          _scope == MealPlanSaveScope.day
-                              ? DateOnly.format(_targetDate)
-                              : '${DateOnly.format(_weekStart)} - '
-                                    '${DateOnly.format(_weekStart.add(const Duration(days: 6)))}',
-                          style: const TextStyle(
-                            color: AppColors.fg3,
-                            fontSize: 13,
-                            fontWeight: FontWeight.w500,
+                            24,
+                            weight: FontWeight.w600,
+                            letterSpacing: -0.25,
                           ),
                         ),
                       ],
@@ -255,80 +249,217 @@ class _MealPlanSetupSheetState extends ConsumerState<MealPlanSetupSheet> {
                   ),
                 ],
               ),
-              const SizedBox(height: AppSpacing.md),
-              SegmentedButton<MealPlanSaveScope>(
-                segments: [
-                  ButtonSegment(
-                    value: MealPlanSaveScope.day,
-                    icon: const Icon(Icons.today_rounded),
-                    label: Text(l10n.nutritionDayCreateSegment),
-                  ),
-                  ButtonSegment(
-                    value: MealPlanSaveScope.week,
-                    icon: const Icon(Icons.date_range_rounded),
-                    label: Text(l10n.nutritionWeeklyCreateSegment),
-                  ),
-                ],
-                selected: {_scope},
-                onSelectionChanged: saving
-                    ? null
-                    : (value) => setState(() => _scope = value.first),
+              const SizedBox(height: AppSpacing.sm),
+              _ScopeSelector(
+                scope: _scope,
+                enabled: !saving,
+                onChanged: (scope) => setState(() => _scope = scope),
               ),
-              const SizedBox(height: AppSpacing.md),
+              const SizedBox(height: AppSpacing.sm),
               _TargetDatePicker(
                 scope: _scope,
                 date: _targetDate,
                 weekStart: _weekStart,
                 onPickDate: saving ? null : _pickTargetDate,
               ),
-              const SizedBox(height: AppSpacing.md),
+              const SizedBox(height: AppSpacing.sm),
               Expanded(
                 child: ListView(
                   controller: controller,
+                  keyboardDismissBehavior:
+                      ScrollViewKeyboardDismissBehavior.onDrag,
                   children: [
-                    for (final meal in _meals)
-                      _MealEditor(
-                        meal: meal,
-                        saving: saving,
-                        onAddFood: () => _addFood(meal),
-                        onRemoveMeal: _meals.length <= 1
-                            ? null
-                            : () => setState(() {
-                                meal.dispose();
-                                _meals.remove(meal);
-                              }),
-                        onRemoveItem: (item) =>
-                            setState(() => meal.items.remove(item)),
+                    Container(
+                      key: MealPlanSetupSheet.mealListPanelKey,
+                      clipBehavior: Clip.antiAlias,
+                      decoration: BoxDecoration(
+                        color: AppColors.bg2,
+                        borderRadius: BorderRadius.circular(AppRadius.lg),
+                        border: Border.all(
+                          color: AppColors.surfaceBorderSoft,
+                        ),
                       ),
-                    OutlinedButton.icon(
-                      onPressed: saving
-                          ? null
-                          : () => setState(
-                              () => _meals.add(
-                                _MealDraft.empty(l10n.nutritionMealLabel),
-                              ),
+                      child: Column(
+                        children: [
+                          for (final (index, meal) in _meals.indexed) ...[
+                            _MealEditor(
+                              index: index,
+                              meal: meal,
+                              saving: saving,
+                              onAddFood: () => _addFood(meal),
+                              onRemoveMeal: _meals.length <= 1
+                                  ? null
+                                  : () => setState(() {
+                                      meal.dispose();
+                                      _meals.remove(meal);
+                                    }),
+                              onRemoveItem: (item) =>
+                                  setState(() => meal.items.remove(item)),
                             ),
-                      icon: const Icon(Icons.add_rounded),
-                      label: Text(l10n.nutritionAddMealCta),
+                            if (index != _meals.length - 1)
+                              const Divider(height: 1),
+                          ],
+                        ],
+                      ),
                     ),
-                    const SizedBox(height: AppSpacing.md),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: TextButton.icon(
+                        onPressed: saving
+                            ? null
+                            : () => setState(
+                                () => _meals.add(
+                                  _MealDraft.empty(l10n.nutritionMealLabel),
+                                ),
+                              ),
+                        icon: const Icon(Icons.add_rounded, size: 18),
+                        label: Text(l10n.nutritionAddMealCta),
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.xs),
                     XnInput(
                       label: l10n.nutritionNotesLabel,
                       controller: _notes,
                     ),
-                    const SizedBox(height: AppSpacing.lg),
+                    const SizedBox(height: AppSpacing.md),
                   ],
                 ),
               ),
-              XnButton(
-                label: _scope == MealPlanSaveScope.day
-                    ? l10n.nutritionCreateDayCta
-                    : l10n.nutritionWeeklyCreateSegment,
-                icon: Icons.check_rounded,
-                loading: saving,
-                onPressed: _save,
+              Container(
+                key: MealPlanSetupSheet.footerKey,
+                padding: const EdgeInsets.only(top: AppSpacing.sm),
+                decoration: const BoxDecoration(
+                  color: AppColors.bgPage,
+                  border: Border(
+                    top: BorderSide(color: AppColors.surfaceBorderSoft),
+                  ),
+                ),
+                child: XnButton(
+                  label: _scope == MealPlanSaveScope.day
+                      ? l10n.nutritionCreateDayCta
+                      : l10n.nutritionCreateWeekCta,
+                  icon: Icons.check_rounded,
+                  loading: saving,
+                  onPressed: _save,
+                ),
               ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ScopeSelector extends StatelessWidget {
+  const _ScopeSelector({
+    required this.scope,
+    required this.enabled,
+    required this.onChanged,
+  });
+
+  final MealPlanSaveScope scope;
+  final bool enabled;
+  final ValueChanged<MealPlanSaveScope> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return Container(
+      key: MealPlanSetupSheet.scopeSelectorKey,
+      height: 44,
+      decoration: BoxDecoration(
+        color: AppColors.bg3.withValues(alpha: 0.72),
+        borderRadius: BorderRadius.circular(AppRadius.md),
+        border: Border.all(color: AppColors.surfaceBorderSoft),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: _ScopeOption(
+              label: l10n.nutritionDayCreateSegment,
+              icon: Icons.today_rounded,
+              selected: scope == MealPlanSaveScope.day,
+              enabled: enabled,
+              onTap: () => onChanged(MealPlanSaveScope.day),
+            ),
+          ),
+          Expanded(
+            child: _ScopeOption(
+              label: l10n.nutritionWeeklyCreateSegment,
+              icon: Icons.date_range_rounded,
+              selected: scope == MealPlanSaveScope.week,
+              enabled: enabled,
+              onTap: () => onChanged(MealPlanSaveScope.week),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ScopeOption extends StatelessWidget {
+  const _ScopeOption({
+    required this.label,
+    required this.icon,
+    required this.selected,
+    required this.enabled,
+    required this.onTap,
+  });
+
+  final String label;
+  final IconData icon;
+  final bool selected;
+  final bool enabled;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final foreground = !enabled
+        ? AppColors.fg4
+        : selected
+        ? AppColors.clay900
+        : AppColors.fg3;
+    return Semantics(
+      button: true,
+      selected: selected,
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(AppRadius.sm),
+        child: InkWell(
+          onTap: enabled ? onTap : null,
+          borderRadius: BorderRadius.circular(AppRadius.sm),
+          child: AnimatedContainer(
+            key: selected ? MealPlanSetupSheet.selectedScopeKey : null,
+            duration: AppMotion.fast,
+            margin: const EdgeInsets.all(3),
+            decoration: BoxDecoration(
+              color: selected ? AppColors.accentSoft : Colors.transparent,
+              borderRadius: BorderRadius.circular(AppRadius.sm),
+              border: Border.all(
+                color: selected ? AppColors.clay200 : Colors.transparent,
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(icon, size: 16, color: foreground),
+                const SizedBox(width: 6),
+                Flexible(
+                  child: Text(
+                    label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: foreground,
+                      fontSize: 13,
+                      fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -353,58 +484,91 @@ class _TargetDatePicker extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final weekEnd = weekStart.add(const Duration(days: 6));
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: BoxDecoration(
-        color: AppColors.bg2,
+    final canPick = scope == MealPlanSaveScope.day && onPickDate != null;
+    return Material(
+      key: MealPlanSetupSheet.dateRowKey,
+      color: AppColors.accentSoft.withValues(alpha: 0.54),
+      shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppRadius.lg),
-        border: Border.all(color: AppColors.surfaceBorderSoft),
+        side: BorderSide(
+          color: AppColors.accent.withValues(alpha: 0.16),
+        ),
       ),
-      child: Row(
-        children: [
-          Icon(
-            scope == MealPlanSaveScope.day
-                ? Icons.today_rounded
-                : Icons.date_range_rounded,
-            color: AppColors.fg2,
+      child: InkWell(
+        onTap: canPick ? onPickDate : null,
+        borderRadius: BorderRadius.circular(AppRadius.lg),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.md,
+            vertical: AppSpacing.sm,
           ),
-          const SizedBox(width: AppSpacing.md),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
+          child: Row(
+            children: [
+              Container(
+                width: 34,
+                height: 34,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: AppColors.bg2,
+                  borderRadius: BorderRadius.circular(AppRadius.md),
+                ),
+                child: Icon(
                   scope == MealPlanSaveScope.day
-                      ? l10n.nutritionCreateForLabel
-                      : l10n.nutritionWeekLabel,
+                      ? Icons.today_rounded
+                      : Icons.date_range_rounded,
+                  size: 18,
+                  color: AppColors.accent,
+                ),
+              ),
+              const SizedBox(width: AppSpacing.md),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      scope == MealPlanSaveScope.day
+                          ? l10n.nutritionCreateForLabel
+                          : l10n.nutritionWeekLabel,
+                      style: const TextStyle(
+                        color: AppColors.fg3,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 1),
+                    Text(
+                      scope == MealPlanSaveScope.day
+                          ? DateOnly.format(date)
+                          : '${DateOnly.format(weekStart)} - '
+                                '${DateOnly.format(weekEnd)}',
+                      style: AppTypography.mono(
+                        14,
+                        color: AppColors.fg1,
+                        weight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              if (scope == MealPlanSaveScope.day) ...[
+                Text(
+                  l10n.nutritionChooseDayCta,
                   style: const TextStyle(
-                    color: AppColors.fg3,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
+                    color: AppColors.accent,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
-                const SizedBox(height: 2),
-                Text(
-                  scope == MealPlanSaveScope.day
-                      ? DateOnly.format(date)
-                      : '${DateOnly.format(weekStart)} - '
-                            '${DateOnly.format(weekEnd)}',
-                  style: AppTypography.mono(
-                    14,
-                    color: AppColors.fg1,
-                    weight: FontWeight.w500,
-                  ),
+                const SizedBox(width: AppSpacing.xs),
+                const Icon(
+                  Icons.chevron_right_rounded,
+                  size: 18,
+                  color: AppColors.accent,
                 ),
               ],
-            ),
+            ],
           ),
-          if (scope == MealPlanSaveScope.day)
-            TextButton.icon(
-              onPressed: onPickDate,
-              icon: const Icon(Icons.edit_calendar_rounded, size: 18),
-              label: Text(l10n.nutritionChooseDayCta),
-            ),
-        ],
+        ),
       ),
     );
   }
@@ -412,6 +576,7 @@ class _TargetDatePicker extends StatelessWidget {
 
 class _MealEditor extends StatelessWidget {
   const _MealEditor({
+    required this.index,
     required this.meal,
     required this.saving,
     required this.onAddFood,
@@ -419,6 +584,7 @@ class _MealEditor extends StatelessWidget {
     this.onRemoveMeal,
   });
 
+  final int index;
   final _MealDraft meal;
   final bool saving;
   final VoidCallback onAddFood;
@@ -428,44 +594,86 @@ class _MealEditor extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return Container(
-      margin: const EdgeInsets.only(bottom: AppSpacing.md),
+    return Padding(
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: BoxDecoration(
-        color: AppColors.bg2,
-        borderRadius: BorderRadius.circular(AppRadius.lg),
-        border: Border.all(color: AppColors.surfaceBorderSoft),
-      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
+              Container(
+                width: 30,
+                height: 30,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: AppColors.accentSoft,
+                  borderRadius: BorderRadius.circular(AppRadius.sm),
+                ),
+                child: Text(
+                  '${index + 1}'.padLeft(2, '0'),
+                  style: AppTypography.mono(
+                    12,
+                    color: AppColors.accent,
+                    weight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              const SizedBox(width: AppSpacing.sm),
               Expanded(
-                child: XnInput(
-                  label: l10n.nutritionMealLabel,
-                  controller: meal.name,
-                  enabled: !saving,
+                child: Semantics(
+                  label: '${l10n.nutritionMealLabel} ${index + 1}',
+                  textField: true,
+                  child: TextField(
+                    controller: meal.name,
+                    enabled: !saving,
+                    textInputAction: TextInputAction.done,
+                    style: const TextStyle(
+                      color: AppColors.fg1,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    decoration: InputDecoration(
+                      hintText: l10n.nutritionMealLabel,
+                      filled: false,
+                      isDense: true,
+                      contentPadding: const EdgeInsets.symmetric(vertical: 7),
+                      border: InputBorder.none,
+                      enabledBorder: InputBorder.none,
+                      focusedBorder: const UnderlineInputBorder(
+                        borderSide: BorderSide(
+                          color: AppColors.accent,
+                          width: 1.5,
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
               ),
               if (onRemoveMeal != null) ...[
-                const SizedBox(width: AppSpacing.sm),
                 IconButton(
                   tooltip: l10n.nutritionRemoveMealTooltip,
                   onPressed: saving ? null : onRemoveMeal,
-                  icon: const Icon(Icons.delete_outline_rounded),
+                  visualDensity: VisualDensity.compact,
+                  icon: const Icon(Icons.delete_outline_rounded, size: 19),
                   color: AppColors.danger,
                 ),
               ],
             ],
           ),
-          const SizedBox(height: AppSpacing.sm),
           if (meal.items.isEmpty)
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+              padding: const EdgeInsets.fromLTRB(
+                37,
+                AppSpacing.xs,
+                0,
+                AppSpacing.xs,
+              ),
               child: Text(
                 l10n.nutritionNoFoodsAddedMessage,
-                style: const TextStyle(color: AppColors.fg3),
+                style: const TextStyle(
+                  color: AppColors.fg3,
+                  fontSize: 13,
+                ),
               ),
             )
           else
@@ -475,12 +683,11 @@ class _MealEditor extends StatelessWidget {
                 saving: saving,
                 onRemove: () => onRemoveItem(item),
               ),
-          const SizedBox(height: AppSpacing.sm),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: OutlinedButton.icon(
+          Padding(
+            padding: const EdgeInsets.only(left: 30),
+            child: TextButton.icon(
               onPressed: saving ? null : onAddFood,
-              icon: const Icon(Icons.add_rounded, size: 18),
+              icon: const Icon(Icons.add_rounded, size: 17),
               label: Text(l10n.nutritionAddFoodTitle),
             ),
           ),

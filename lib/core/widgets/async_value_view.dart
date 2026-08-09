@@ -18,6 +18,7 @@ class AsyncValueView<T> extends StatelessWidget {
     required this.value,
     required this.data,
     this.onRetry,
+    this.errorBuilder,
     this.loading,
     super.key,
   });
@@ -29,6 +30,9 @@ class AsyncValueView<T> extends StatelessWidget {
 
   /// Retry action for the first-load error state.
   final VoidCallback? onRetry;
+
+  /// Optional feature-specific first-load error state.
+  final Widget Function(Object error)? errorBuilder;
 
   /// Optional override for the first-load spinner.
   final Widget? loading;
@@ -52,7 +56,9 @@ class AsyncValueView<T> extends StatelessWidget {
           children: [
             SizedBox(
               height: MediaQuery.sizeOf(context).height * 0.7,
-              child: ErrorView.from(value.error!, context, onRetry: onRetry),
+              child:
+                  errorBuilder?.call(value.error!) ??
+                  ErrorView.from(value.error!, context, onRetry: onRetry),
             ),
           ],
         ),

@@ -1,6 +1,7 @@
 import '../entities/bodyweight_log.dart';
 import '../entities/training_activity.dart';
 import '../entities/user_profile.dart';
+import '../entities/volume_history_point.dart';
 
 /// Profile + training-activity reads. Methods throw a domain `Failure`.
 abstract interface class ProfileRepository {
@@ -10,6 +11,9 @@ abstract interface class ProfileRepository {
     required int year,
     required int month,
   });
+
+  /// Completed monthly training volume, oldest to newest (1-24 months).
+  Future<List<VolumeHistoryPoint>> getVolumeHistory({required int months});
 
   /// Update the signed-in user's profile. Null fields are left unchanged.
   Future<UserProfile> updateProfile({

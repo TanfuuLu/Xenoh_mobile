@@ -1004,27 +1004,34 @@ class _SupplementRegimenSheetState
                   child: Text(
                     l10n.supplementsDoseSlotsTitle,
                     style: AppTypography.display(
-                      20,
-                      weight: FontWeight.w500,
-                      letterSpacing: 0,
+                      22,
+                      weight: FontWeight.w600,
+                      letterSpacing: -0.2,
                     ),
                   ),
                 ),
-                TextButton.icon(
+                OutlinedButton.icon(
                   onPressed: _slots.length >= 20
                       ? null
                       : () => setState(
                           () => _slots.add(_EditableDoseSlot.defaultValue()),
                         ),
-                  icon: const Icon(Icons.add_rounded),
+                  style: OutlinedButton.styleFrom(
+                    minimumSize: const Size(0, 40),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.md,
+                    ),
+                  ),
+                  icon: const Icon(Icons.add_rounded, size: 18),
                   label: Text(l10n.supplementsAddDoseButton),
                 ),
               ],
             ),
-            const SizedBox(height: AppSpacing.sm),
+            const SizedBox(height: AppSpacing.lg),
             for (var index = 0; index < _slots.length; index++) ...[
               _DoseSlotEditor(
                 key: ValueKey(_slots[index].key),
+                index: index,
                 slot: _slots[index],
                 onChanged: () => setState(() {}),
                 onRemove: _slots.length == 1
@@ -1142,12 +1149,14 @@ class _EditableDoseSlot {
 
 class _DoseSlotEditor extends StatelessWidget {
   const _DoseSlotEditor({
+    required this.index,
     required this.slot,
     required this.onChanged,
     required this.onRemove,
     super.key,
   });
 
+  final int index;
   final _EditableDoseSlot slot;
   final VoidCallback onChanged;
   final VoidCallback? onRemove;
@@ -1155,9 +1164,71 @@ class _DoseSlotEditor extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return XnSection(
+    return Container(
+      key: ValueKey('dose-slot-card-$index'),
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.lg,
+        AppSpacing.lg,
+        AppSpacing.lg,
+        AppSpacing.xl,
+      ),
+      decoration: BoxDecoration(
+        color: AppColors.bg2,
+        borderRadius: BorderRadius.circular(AppRadius.xl),
+        border: Border.all(color: AppColors.surfaceBorderSoft),
+        boxShadow: const [
+          BoxShadow(
+            color: AppColors.shadow,
+            blurRadius: 14,
+            offset: Offset(0, 5),
+          ),
+        ],
+      ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Row(
+            children: [
+              Container(
+                width: 32,
+                height: 32,
+                alignment: Alignment.center,
+                decoration: const BoxDecoration(
+                  color: AppColors.accentSoft,
+                  shape: BoxShape.circle,
+                ),
+                child: Text(
+                  '${index + 1}',
+                  style: AppTypography.mono(
+                    13,
+                    color: AppColors.accent,
+                    weight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              const SizedBox(width: AppSpacing.md),
+              Expanded(
+                child: _DoseTimeButton(
+                  label: l10n.supplementsTimeLabel,
+                  time: slot.time,
+                  onTap: () => _pickTime(context),
+                ),
+              ),
+              if (onRemove != null) ...[
+                const SizedBox(width: AppSpacing.xs),
+                IconButton(
+                  tooltip: l10n.commonRemove,
+                  onPressed: onRemove,
+                  style: IconButton.styleFrom(
+                    foregroundColor: AppColors.danger,
+                    backgroundColor: AppColors.dangerBg,
+                  ),
+                  icon: const Icon(Icons.delete_outline_rounded, size: 20),
+                ),
+              ],
+            ],
+          ),
+          const SizedBox(height: AppSpacing.lg),
           Row(
             children: [
               Expanded(
@@ -1178,59 +1249,182 @@ class _DoseSlotEditor extends StatelessWidget {
                   maxLength: 30,
                   decoration: InputDecoration(
                     labelText: l10n.supplementsUnitLabel,
+                    counterText: '',
                   ),
                 ),
               ),
-              IconButton(
-                tooltip: l10n.commonRemove,
-                onPressed: onRemove,
-                icon: const Icon(Icons.delete_outline_rounded),
-              ),
             ],
           ),
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            title: Text(l10n.supplementsTimeLabel),
-            trailing: Text(
-              slot.time.format(context),
-              style: AppTypography.mono(14, weight: FontWeight.w500),
-            ),
-            onTap: () async {
-              final picked = await showTimePicker(
-                context: context,
-                initialTime: slot.time,
-              );
-              if (picked != null) {
-                slot.time = picked;
-                onChanged();
-              }
-            },
-          ),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              l10n.supplementsWeekdaysLabel,
-              style: const TextStyle(color: AppColors.fg3, fontSize: 12),
+          const SizedBox(height: AppSpacing.xl),
+          Text(
+            l10n.supplementsWeekdaysLabel,
+            style: const TextStyle(
+              color: AppColors.fg2,
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
             ),
           ),
-          const SizedBox(height: AppSpacing.sm),
-          Wrap(
-            spacing: 6,
-            runSpacing: 6,
+          const SizedBox(height: AppSpacing.md),
+          Row(
             children: [
-              for (final day in SupplementWeekday.values)
-                FilterChip(
-                  visualDensity: VisualDensity.compact,
-                  selected: slot.days.contains(day),
-                  label: Text(_shortDay(context, day)),
-                  onSelected: (selected) {
-                    selected ? slot.days.add(day) : slot.days.remove(day);
-                    onChanged();
-                  },
+              for (
+                var dayIndex = 0;
+                dayIndex < SupplementWeekday.values.length;
+                dayIndex++
+              ) ...[
+                if (dayIndex > 0) const SizedBox(width: AppSpacing.xs),
+                Expanded(
+                  child: _WeekdayButton(
+                    key: ValueKey('dose-slot-day-$index-$dayIndex'),
+                    label: _shortDay(
+                      context,
+                      SupplementWeekday.values[dayIndex],
+                    ),
+                    selected: slot.days.contains(
+                      SupplementWeekday.values[dayIndex],
+                    ),
+                    onSelected: (selected) {
+                      final day = SupplementWeekday.values[dayIndex];
+                      selected ? slot.days.add(day) : slot.days.remove(day);
+                      onChanged();
+                    },
+                  ),
                 ),
+              ],
             ],
           ),
         ],
+      ),
+    );
+  }
+
+  Future<void> _pickTime(BuildContext context) async {
+    final picked = await showTimePicker(
+      context: context,
+      initialTime: slot.time,
+    );
+    if (picked != null) {
+      slot.time = picked;
+      onChanged();
+    }
+  }
+}
+
+class _DoseTimeButton extends StatelessWidget {
+  const _DoseTimeButton({
+    required this.label,
+    required this.time,
+    required this.onTap,
+  });
+
+  final String label;
+  final TimeOfDay time;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final showLabel = constraints.maxWidth >= 180;
+        final formattedTime = time.format(context);
+        return Semantics(
+          button: true,
+          label: '$label $formattedTime',
+          child: ExcludeSemantics(
+            child: Material(
+              color: AppColors.bg3.withValues(alpha: 0.65),
+              borderRadius: BorderRadius.circular(AppRadius.md),
+              child: InkWell(
+                onTap: onTap,
+                borderRadius: BorderRadius.circular(AppRadius.md),
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(minHeight: 42),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.md,
+                      vertical: AppSpacing.sm,
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.schedule_rounded,
+                          size: 18,
+                          color: AppColors.accent,
+                        ),
+                        if (showLabel) ...[
+                          const SizedBox(width: AppSpacing.sm),
+                          Text(
+                            label,
+                            style: const TextStyle(
+                              color: AppColors.fg3,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                        const Spacer(),
+                        Text(
+                          formattedTime,
+                          style: AppTypography.mono(
+                            14,
+                            weight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _WeekdayButton extends StatelessWidget {
+  const _WeekdayButton({
+    required this.label,
+    required this.selected,
+    required this.onSelected,
+    super.key,
+  });
+
+  final String label;
+  final bool selected;
+  final ValueChanged<bool> onSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      selected: selected,
+      child: Material(
+        color: selected ? AppColors.accent2Soft : AppColors.bgPage,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadius.sm),
+          side: BorderSide(
+            color: selected ? AppColors.sage500 : AppColors.surfaceBorderSoft,
+          ),
+        ),
+        child: InkWell(
+          onTap: () => onSelected(!selected),
+          borderRadius: BorderRadius.circular(AppRadius.sm),
+          child: SizedBox(
+            height: 38,
+            child: Center(
+              child: Text(
+                label,
+                maxLines: 1,
+                style: TextStyle(
+                  color: selected ? AppColors.sage700 : AppColors.fg3,
+                  fontSize: 11,
+                  fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+                ),
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

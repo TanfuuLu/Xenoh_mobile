@@ -14,7 +14,9 @@ import 'exercise_template_form_sheet.dart';
 enum _TemplateAction { select, edit, delete }
 
 class ExerciseTemplatePickerSheet extends ConsumerStatefulWidget {
-  const ExerciseTemplatePickerSheet({super.key});
+  const ExerciseTemplatePickerSheet({this.clientId, super.key});
+
+  final String? clientId;
 
   @override
   ConsumerState<ExerciseTemplatePickerSheet> createState() =>
@@ -43,6 +45,7 @@ class _ExerciseTemplatePickerSheetState
           .read(
             exerciseTemplatesControllerProvider(
               muscleGroup: _muscle,
+              clientId: widget.clientId,
             ).notifier,
           )
           .createCustom(
@@ -62,7 +65,10 @@ class _ExerciseTemplatePickerSheetState
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final templates = ref.watch(
-      exerciseTemplatesControllerProvider(muscleGroup: _muscle),
+      exerciseTemplatesControllerProvider(
+        muscleGroup: _muscle,
+        clientId: widget.clientId,
+      ),
     );
 
     return SizedBox(
@@ -128,7 +134,10 @@ class _ExerciseTemplatePickerSheetState
                   e,
                   context,
                   onRetry: () => ref.invalidate(
-                    exerciseTemplatesControllerProvider(muscleGroup: _muscle),
+                    exerciseTemplatesControllerProvider(
+                      muscleGroup: _muscle,
+                      clientId: widget.clientId,
+                    ),
                   ),
                 ),
                 data: (items) {
@@ -153,6 +162,7 @@ class _ExerciseTemplatePickerSheetState
                     itemBuilder: (_, i) => _TemplateTile(
                       template: filtered[i],
                       muscleGroup: _muscle,
+                      clientId: widget.clientId,
                     ),
                   );
                 },
@@ -188,10 +198,15 @@ class _FilterChip extends StatelessWidget {
 }
 
 class _TemplateTile extends ConsumerWidget {
-  const _TemplateTile({required this.template, required this.muscleGroup});
+  const _TemplateTile({
+    required this.template,
+    required this.muscleGroup,
+    required this.clientId,
+  });
 
   final ExerciseTemplate template;
   final String? muscleGroup;
+  final String? clientId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -276,6 +291,7 @@ class _TemplateTile extends ConsumerWidget {
           .read(
             exerciseTemplatesControllerProvider(
               muscleGroup: muscleGroup,
+              clientId: clientId,
             ).notifier,
           )
           .updateCustom(
@@ -320,6 +336,7 @@ class _TemplateTile extends ConsumerWidget {
           .read(
             exerciseTemplatesControllerProvider(
               muscleGroup: muscleGroup,
+              clientId: clientId,
             ).notifier,
           )
           .deleteCustom(template.id);

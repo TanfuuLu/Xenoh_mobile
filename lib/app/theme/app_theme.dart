@@ -31,7 +31,7 @@ abstract final class AppTheme {
     return ThemeData(
       useMaterial3: true,
       colorScheme: scheme,
-      scaffoldBackgroundColor: AppColors.bgPage,
+      scaffoldBackgroundColor: Colors.transparent,
       canvasColor: AppColors.bg2,
       visualDensity: VisualDensity.standard,
       materialTapTargetSize: MaterialTapTargetSize.padded,
@@ -81,10 +81,11 @@ abstract final class AppTheme {
           backgroundColor: AppColors.accent,
           foregroundColor: AppColors.fgOnClay,
           disabledBackgroundColor: AppColors.fg4,
-          minimumSize: const Size(64, 50),
+          minimumSize: const Size(64, 44),
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
           padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.xl,
-            vertical: AppSpacing.md,
+            horizontal: AppSpacing.lg,
+            vertical: AppSpacing.sm,
           ),
           elevation: 0,
           shadowColor: Colors.transparent,
@@ -103,10 +104,11 @@ abstract final class AppTheme {
           foregroundColor: AppColors.fg1,
           backgroundColor: AppColors.buttonBg,
           side: const BorderSide(color: AppColors.buttonBorder, width: 1.2),
-          minimumSize: const Size(64, 50),
+          minimumSize: const Size(64, 44),
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
           padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.xl,
-            vertical: AppSpacing.md,
+            horizontal: AppSpacing.lg,
+            vertical: AppSpacing.sm,
           ),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppRadius.md),
@@ -121,8 +123,9 @@ abstract final class AppTheme {
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           foregroundColor: AppColors.accent,
-          minimumSize: const Size(48, 44),
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+          minimumSize: const Size(44, 44),
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppRadius.md),
           ),
@@ -339,12 +342,12 @@ abstract final class AppTheme {
       navigationBarTheme: NavigationBarThemeData(
         height: 64,
         backgroundColor: AppColors.bg2,
-        indicatorColor: AppColors.accentSoft,
+        indicatorColor: AppColors.navigationSelectedBackground,
         elevation: 0,
         labelTextStyle: WidgetStateProperty.resolveWith(
           (states) => TextStyle(
             color: states.contains(WidgetState.selected)
-                ? AppColors.clay900
+                ? AppColors.navigationSelectedForeground
                 : AppColors.fg3,
             fontSize: 12,
             fontWeight: FontWeight.w500,
@@ -353,10 +356,31 @@ abstract final class AppTheme {
         iconTheme: WidgetStateProperty.resolveWith(
           (states) => IconThemeData(
             color: states.contains(WidgetState.selected)
-                ? AppColors.clay900
+                ? AppColors.navigationSelectedForeground
                 : AppColors.fg3,
             size: 22,
           ),
+        ),
+      ),
+      navigationRailTheme: const NavigationRailThemeData(
+        backgroundColor: AppColors.bg2,
+        indicatorColor: AppColors.navigationSelectedBackground,
+        selectedIconTheme: IconThemeData(
+          color: AppColors.navigationSelectedForeground,
+          size: 22,
+        ),
+        unselectedIconTheme: IconThemeData(color: AppColors.fg3, size: 22),
+        selectedLabelTextStyle: TextStyle(
+          color: AppColors.navigationSelectedForeground,
+          fontFamily: AppTypography.fontFamily,
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+        ),
+        unselectedLabelTextStyle: TextStyle(
+          color: AppColors.fg3,
+          fontFamily: AppTypography.fontFamily,
+          fontSize: 12,
+          fontWeight: FontWeight.w500,
         ),
       ),
       snackBarTheme: SnackBarThemeData(

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:xenoh_mobile/features/shared_api/api_presentation.dart';
+import 'package:xenoh_mobile/features/shared_api/api_widgets.dart';
 import 'package:xenoh_mobile/l10n/app_localizations.dart';
 
 void main() {
@@ -43,5 +44,30 @@ void main() {
 
     expect(textOf(value, const ['missing', 'empty', 'name']), 'Xenoh');
     expect(optionalTextOf(value, const ['missing']), isNull);
+  });
+
+  testWidgets('shared loading screen uses one centered circle', (tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        localizationsDelegates: [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: Scaffold(body: LoadingList()),
+      ),
+    );
+
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    expect(find.byType(LinearProgressIndicator), findsNothing);
+    expect(
+      find.ancestor(
+        of: find.byType(CircularProgressIndicator),
+        matching: find.byType(Center),
+      ),
+      findsOneWidget,
+    );
   });
 }

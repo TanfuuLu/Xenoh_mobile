@@ -18,6 +18,7 @@ class FeatureScreenFrame extends StatelessWidget {
     this.actions,
     this.onRefresh,
     this.leading,
+    this.contentMaxWidth = AppLayout.contentMaxWidth,
     super.key,
   });
 
@@ -25,6 +26,7 @@ class FeatureScreenFrame extends StatelessWidget {
   final List<Widget> children;
   final List<Widget>? actions;
   final Future<void> Function()? onRefresh;
+  final double contentMaxWidth;
 
   /// Overrides the app bar's leading widget. Left null for pushed detail
   /// screens (an automatic back button appears); top-level shell tabs pass a
@@ -35,7 +37,11 @@ class FeatureScreenFrame extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(title), actions: actions, leading: leading),
-      body: XnPageList(onRefresh: onRefresh, children: children),
+      body: XnPageList(
+        onRefresh: onRefresh,
+        maxContentWidth: contentMaxWidth,
+        children: children,
+      ),
     );
   }
 }
@@ -54,74 +60,56 @@ class FeatureHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return XnCard(
-      color: AppColors.ink900,
+    return Padding(
       padding: const EdgeInsets.fromLTRB(
-        AppSpacing.xl,
-        AppSpacing.xl,
-        AppSpacing.xl,
-        AppSpacing.xxl,
+        AppSpacing.xs,
+        AppSpacing.sm,
+        AppSpacing.xs,
+        AppSpacing.md,
       ),
-      border: Border.all(
-        color: AppColors.fgOnClay.withValues(alpha: 0.08),
-      ),
-      child: Stack(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Positioned(
-            right: -26,
-            bottom: -44,
-            child: Icon(
-              icon,
-              size: 132,
-              color: AppColors.fgOnClay.withValues(alpha: 0.055),
+          Container(
+            width: 44,
+            height: 44,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: Colors.transparent,
+              borderRadius: BorderRadius.circular(AppRadius.md),
+              border: Border.all(color: AppColors.surfaceBorderSoft),
             ),
+            child: Icon(icon, color: AppColors.accent, size: 21),
           ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: 46,
-                height: 46,
-                decoration: BoxDecoration(
-                  color: AppColors.paperAlt,
-                  borderRadius: BorderRadius.circular(AppRadius.md),
-                  border: Border.all(
-                    color: AppColors.fgOnClay.withValues(alpha: 0.12),
+          const SizedBox(width: AppSpacing.md),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: AppTypography.display(
+                    24,
+                    weight: FontWeight.w700,
+                    color: AppColors.fg1,
+                    letterSpacing: -0.25,
+                    height: 1.08,
                   ),
                 ),
-                child: Icon(icon, color: AppColors.ink900, size: 22),
-              ),
-              const SizedBox(width: AppSpacing.lg),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: AppTypography.display(
-                        26,
-                        weight: FontWeight.w600,
-                        color: AppColors.fgOnClay,
-                        letterSpacing: -0.35,
-                        height: 1.08,
-                      ),
+                const SizedBox(height: AppSpacing.sm),
+                ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 520),
+                  child: Text(
+                    subtitle,
+                    style: const TextStyle(
+                      color: AppColors.fg2,
+                      fontSize: 13,
+                      height: 1.42,
                     ),
-                    const SizedBox(height: AppSpacing.sm),
-                    ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 520),
-                      child: Text(
-                        subtitle,
-                        style: const TextStyle(
-                          color: AppColors.ink300,
-                          fontSize: 13,
-                          height: 1.42,
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),
@@ -136,71 +124,13 @@ class LoadingList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Semantics(
       label: AppLocalizations.of(context).commonLoading,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
-        child: Column(
-          children: [
-            for (var index = 0; index < 3; index++) ...[
-              Container(
-                height: index == 0 ? 86 : 72,
-                decoration: BoxDecoration(
-                  color: AppColors.bg2.withValues(alpha: 0.72),
-                  borderRadius: BorderRadius.circular(AppRadius.lg),
-                  border: Border.all(
-                    color: AppColors.surfaceBorderSoft.withValues(alpha: 0.6),
-                  ),
-                ),
-                padding: const EdgeInsets.all(AppSpacing.lg),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: AppColors.clay100,
-                        borderRadius: BorderRadius.circular(AppRadius.md),
-                      ),
-                    ),
-                    const SizedBox(width: AppSpacing.md),
-                    Expanded(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          FractionallySizedBox(
-                            widthFactor: index == 1 ? 0.56 : 0.72,
-                            child: Container(
-                              height: 10,
-                              decoration: BoxDecoration(
-                                color: AppColors.clay200,
-                                borderRadius: BorderRadius.circular(
-                                  AppRadius.pill,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: AppSpacing.sm),
-                          FractionallySizedBox(
-                            widthFactor: index == 2 ? 0.68 : 0.44,
-                            child: Container(
-                              height: 8,
-                              decoration: BoxDecoration(
-                                color: AppColors.clay100,
-                                borderRadius: BorderRadius.circular(
-                                  AppRadius.pill,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              if (index < 2) const SizedBox(height: AppSpacing.sm),
-            ],
-          ],
+      child: const SizedBox(
+        height: 240,
+        child: Center(
+          child: SizedBox.square(
+            dimension: 32,
+            child: CircularProgressIndicator(strokeWidth: 2.5),
+          ),
         ),
       ),
     );

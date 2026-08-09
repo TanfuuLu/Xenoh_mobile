@@ -22,7 +22,17 @@ abstract interface class CommunityRepository {
 
   Future<void> removeFriend(String userId);
 
-  Future<List<TrainingDayShare>> getFeed();
+  Future<TrainingDayFeedPage> getFeed({
+    String scope = 'friends',
+    String? cursor,
+    int pageSize = 20,
+  });
+
+  Future<CommunitySettings> getSettings();
+
+  Future<CommunitySettings> updateSettings(
+    CommunityStatsVisibility visibility,
+  );
 
   Future<List<TrainingDayShare>> getUserShares(String userId);
 
@@ -36,4 +46,15 @@ abstract interface class CommunityRepository {
   Future<TrainingDayShare> unloveShare(String shareId);
 
   Future<void> deleteShare(String shareId);
+
+  Future<void> reportShare({
+    required String shareId,
+    required String reason,
+    required String details,
+  });
+
+  Future<int> copyShare({
+    required String shareId,
+    required String targetDailyWorkoutId,
+  });
 }

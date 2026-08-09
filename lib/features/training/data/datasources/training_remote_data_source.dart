@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import '../../../../core/models/paged_result.dart';
 import '../../../../core/network/paged_response.dart';
 import '../../../../core/utils/date_only.dart';
+import '../../domain/entities/last_exercise_performance.dart';
 import '../dtos/daily_workout_dto.dart';
 import '../dtos/exercise_dto.dart';
 import '../dtos/exercise_template_dto.dart';
@@ -226,6 +227,29 @@ class TrainingRemoteDataSource {
     return ExerciseDto.fromJson(res.data!);
   }
 
+  Future<ExerciseDto> updateSetPlan(
+    String setId, {
+    int? plannedReps,
+    double? plannedWeight,
+  }) async {
+    final res = await _dio.patch<Map<String, dynamic>>(
+      '/exercises/sets/$setId',
+      data: {'plannedReps': ?plannedReps, 'plannedWeight': ?plannedWeight},
+    );
+    return ExerciseDto.fromJson(res.data!);
+  }
+
+  Future<LastExercisePerformance> getLastExercisePerformance({
+    required String exerciseTemplateId,
+    required String dailyWorkoutId,
+  }) async {
+    final res = await _dio.get<Map<String, dynamic>>(
+      '/exercise-templates/$exerciseTemplateId/last-performance',
+      queryParameters: {'dailyWorkoutId': dailyWorkoutId},
+    );
+    return LastExercisePerformance.fromJson(res.data!);
+  }
+
   Future<ExerciseDto> startExerciseTimer(String exerciseId) async {
     final res = await _dio.patch<Map<String, dynamic>>(
       '/exercises/$exerciseId/timer/start',
@@ -327,9 +351,12 @@ class TrainingRemoteDataSource {
   /// list endpoints in this API.
   Future<List<ExerciseTemplateDto>> getExerciseTemplates({
     String? muscleGroup,
+    String? clientId,
   }) async {
     final res = await _dio.get<List<dynamic>>(
-      '/exercise-templates',
+      clientId == null
+          ? '/exercise-templates'
+          : '/exercise-templates/for-client/$clientId',
       queryParameters: {'muscleGroup': ?muscleGroup},
     );
     return (res.data ?? const [])
@@ -343,10 +370,14 @@ class TrainingRemoteDataSource {
     required List<String> secondaryMuscleGroups,
     required String exerciseKind,
     String? description,
+    String? clientId,
   }) async {
     final res = await _dio.post<Map<String, dynamic>>(
-      '/exercise-templates/custom',
+      clientId == null
+          ? '/exercise-templates/custom'
+          : '/exercise-templates/custom/for-client/$clientId',
       data: {
+        'clientId': ?clientId,
         'name': name,
         'description': ?description,
         'primaryMuscleGroup': primaryMuscleGroup,

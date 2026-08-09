@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:xenoh_mobile/app/theme/app_colors.dart';
 import 'package:xenoh_mobile/core/error/failure.dart';
 import 'package:xenoh_mobile/core/utils/weight_units.dart';
 import 'package:xenoh_mobile/features/progress/data/datasources/progress_remote_data_source.dart';
@@ -14,6 +15,7 @@ import 'package:xenoh_mobile/features/progress/domain/entities/plan_analytics.da
 import 'package:xenoh_mobile/features/progress/domain/repositories/progress_repository.dart';
 import 'package:xenoh_mobile/features/progress/presentation/providers/progress_controllers.dart';
 import 'package:xenoh_mobile/features/progress/presentation/screens/plan_analytics_screen.dart';
+import 'package:xenoh_mobile/features/progress/presentation/widgets/weekly_completion_chart.dart';
 import 'package:xenoh_mobile/l10n/app_localizations.dart';
 
 class MockProgressRepository extends Mock implements ProgressRepository {}
@@ -46,6 +48,69 @@ ProviderContainer _container(ProgressRepository repo) {
 }
 
 void main() {
+  testWidgets('weekly compliance uses readable horizontal progress rows', (
+    tester,
+  ) async {
+    await tester.binding.setSurfaceSize(const Size(390, 844));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    final analytics = _analytics().copyWith(
+      weeklyCompliance: const [
+        WeekCompliancePoint(
+          weekNumber: 1,
+          weekName: 'Week 1',
+          completedDays: 7,
+          totalDays: 7,
+        ),
+        WeekCompliancePoint(
+          weekNumber: 2,
+          weekName: 'Week 2',
+          completedDays: 4,
+          totalDays: 7,
+        ),
+        WeekCompliancePoint(
+          weekNumber: 3,
+          weekName: 'Week 3',
+          completedDays: 6,
+          totalDays: 7,
+        ),
+      ],
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: PlanAnalyticsView(
+              analytics: analytics,
+              unit: WeightUnit.kg,
+            ),
+          ),
+        ),
+      ),
+    );
+
+    expect(find.byType(WeeklyCompletionChart), findsOneWidget);
+    expect(
+      find.byWidgetPredicate(
+        (widget) =>
+            widget is Container &&
+            widget.decoration is BoxDecoration &&
+            (widget.decoration! as BoxDecoration).color == AppColors.bgInverse,
+      ),
+      findsNothing,
+    );
+    final chart = tester.widget<WeeklyCompletionChart>(
+      find.byType(WeeklyCompletionChart),
+    );
+    expect(chart.data, hasLength(3));
+    expect(chart.data[1].completed, 4);
+    expect(chart.data[1].total, 7);
+    expect(find.text('4/7'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   test('exercisePrsProvider loads the personal records', () async {
     final repo = MockProgressRepository();
     when(repo.getExercisePrs).thenAnswer(

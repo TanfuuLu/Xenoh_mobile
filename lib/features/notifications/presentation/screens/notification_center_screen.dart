@@ -12,6 +12,7 @@ import '../../../auth/presentation/providers/auth_controller.dart';
 import '../../../auth/presentation/providers/auth_state.dart';
 import '../../../shared_api/api_widgets.dart';
 import '../../../shared_api/xenoh_api.dart';
+import '../../domain/notification_destination.dart';
 
 final notificationsProvider = FutureProvider.autoDispose<List<JsonMap>>((ref) {
   return ref.watch(xenohApiProvider).getList('/notifications');
@@ -21,25 +22,6 @@ final notificationsProvider = FutureProvider.autoDispose<List<JsonMap>>((ref) {
 /// no per-notification detail screens exist, so coach/relationship types land
 /// on the relevant hub and let the user pick from there. Returns null when
 /// there's nowhere to go yet (e.g. `TrainingDayShare` has no viewer screen).
-String? _routeForNotification(JsonMap item, {required bool isCoach}) {
-  final type = item['type']?.toString();
-  final relatedType = item['relatedEntityType']?.toString();
-  final id = item['relatedEntityId']?.toString();
-  if (relatedType == null || id == null || id.isEmpty) return null;
-
-  if (relatedType == 'Day') return '/days/$id';
-  if (relatedType == 'Plan') {
-    return type == 'NewComment' ? '/plans/$id/comments' : '/plans/$id';
-  }
-  if (relatedType.startsWith('Week:')) return '/weeks/$id/comments';
-  if (relatedType == 'Friendship') return '/community/friends';
-  if (relatedType == 'CoachRequest' || relatedType == 'Relationship') {
-    return isCoach ? '/coach/clients' : '/coach';
-  }
-  if (relatedType == 'Subscription') return '/subscription';
-  return null;
-}
-
 class NotificationCenterScreen extends ConsumerWidget {
   const NotificationCenterScreen({super.key});
 
@@ -138,8 +120,28 @@ class NotificationCenterScreen extends ConsumerWidget {
           .patchVoid('/notifications/${item['id']}/read');
       ref.invalidate(notificationsProvider);
     }
-    final route = _routeForNotification(item, isCoach: isCoach);
-    if (route == null || !context.mounted) return;
-    unawaited(context.push<void>(route));
+    if (!context.mounted) return;
+    final destination = notificationDestination(item, isCoach: isCoach);
+    if (destination.route case final route?) {
+      unawaited(context.push<void>(route));
+      return;
+    }
+    await showDialog<void>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(
+          AppLocalizations.of(dialogContext).notificationsUnavailableTitle,
+        ),
+        content: Text(
+          AppLocalizations.of(dialogContext).notificationsUnavailableMessage,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: Text(AppLocalizations.of(dialogContext).commonClose),
+          ),
+        ],
+      ),
+    );
   }
 }

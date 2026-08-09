@@ -109,8 +109,8 @@ Map<String, dynamic> _$Big3PrsDtoToJson(_Big3PrsDto instance) =>
 _FriendDto _$FriendDtoFromJson(Map<String, dynamic> json) => _FriendDto(
   userId: json['userId'] as String,
   fullName: json['fullName'] as String,
-  email: json['email'] as String,
   friendsSince: json['friendsSince'] as String,
+  email: json['email'] as String?,
   avatarUrl: json['avatarUrl'] as String?,
   bio: json['bio'] as String?,
 );
@@ -119,8 +119,8 @@ Map<String, dynamic> _$FriendDtoToJson(_FriendDto instance) =>
     <String, dynamic>{
       'userId': instance.userId,
       'fullName': instance.fullName,
-      'email': instance.email,
       'friendsSince': instance.friendsSince,
+      'email': instance.email,
       'avatarUrl': instance.avatarUrl,
       'bio': instance.bio,
     };
@@ -130,10 +130,10 @@ _FriendRequestDto _$FriendRequestDtoFromJson(Map<String, dynamic> json) =>
       id: json['id'] as String,
       userId: json['userId'] as String,
       fullName: json['fullName'] as String,
-      email: json['email'] as String,
       direction: json['direction'] as String,
       status: json['status'] as String,
       createdAt: json['createdAt'] as String,
+      email: json['email'] as String?,
       avatarUrl: json['avatarUrl'] as String?,
       respondedAt: json['respondedAt'] as String?,
     );
@@ -143,10 +143,10 @@ Map<String, dynamic> _$FriendRequestDtoToJson(_FriendRequestDto instance) =>
       'id': instance.id,
       'userId': instance.userId,
       'fullName': instance.fullName,
-      'email': instance.email,
       'direction': instance.direction,
       'status': instance.status,
       'createdAt': instance.createdAt,
+      'email': instance.email,
       'avatarUrl': instance.avatarUrl,
       'respondedAt': instance.respondedAt,
     };
@@ -177,6 +177,7 @@ _TrainingDayShareDto _$TrainingDayShareDtoFromJson(
           )
           .toList() ??
       const <TrainingDayShareExerciseDto>[],
+  isReusable: json['isReusable'] as bool? ?? false,
   userAvatarUrl: json['userAvatarUrl'] as String?,
   averageRpe: (json['averageRpe'] as num?)?.toDouble(),
   caption: json['caption'] as String?,
@@ -201,6 +202,7 @@ Map<String, dynamic> _$TrainingDayShareDtoToJson(
   'loveCount': instance.loveCount,
   'lovedByCurrentUser': instance.lovedByCurrentUser,
   'exercises': instance.exercises,
+  'isReusable': instance.isReusable,
   'userAvatarUrl': instance.userAvatarUrl,
   'averageRpe': instance.averageRpe,
   'caption': instance.caption,

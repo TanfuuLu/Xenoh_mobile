@@ -2,8 +2,8 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'subscription.freezed.dart';
 
-/// The user's current subscription (maps from `SubscriptionResponse`, API ref
-/// §3.18). `tier` is a `PlanTier` name: `Free` | `ProIndividual` | `ProCoach`.
+/// The user's current subscription. Tier is one of `Free`, `ProIndividual`,
+/// `ProCoach`, or `Organizer`.
 @freezed
 abstract class Subscription with _$Subscription {
   const factory Subscription({
@@ -17,8 +17,11 @@ abstract class Subscription with _$Subscription {
 
   const Subscription._();
 
-  bool get isPro => isActive && (tier == 'ProIndividual' || tier == 'ProCoach');
+  bool get isPro =>
+      isActive &&
+      (tier == 'ProIndividual' || tier == 'ProCoach' || tier == 'Organizer');
   bool get isProCoach => isActive && tier == 'ProCoach';
+  bool get isOrganizer => isActive && tier == 'Organizer';
   bool get isFree => !isPro;
 }
 

@@ -137,15 +137,16 @@ class FriendsScreen extends ConsumerWidget {
                                       color: AppColors.fg1,
                                     ),
                                   ),
-                                  Text(
-                                    friend.email,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
-                                      color: AppColors.fg3,
-                                      fontSize: 12,
+                                  if (friend.email != null)
+                                    Text(
+                                      friend.email!,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                        color: AppColors.fg3,
+                                        fontSize: 12,
+                                      ),
                                     ),
-                                  ),
                                 ],
                               ),
                             ),
@@ -261,12 +262,16 @@ class _FriendRequestCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(fontWeight: FontWeight.w500),
                 ),
-                Text(
-                  request.email,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(color: AppColors.fg3, fontSize: 12),
-                ),
+                if (request.email != null)
+                  Text(
+                    request.email!,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      color: AppColors.fg3,
+                      fontSize: 12,
+                    ),
+                  ),
               ],
             ),
           ),
