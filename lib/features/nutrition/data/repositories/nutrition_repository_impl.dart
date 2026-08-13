@@ -224,6 +224,25 @@ class NutritionRepositoryImpl implements NutritionRepository {
   }
 
   @override
+  Future<MealPlanRangeResult> applyMealPlanTemplate({
+    required DateTime startDate,
+    required DateTime endDate,
+    required List<Map<String, dynamic>> meals,
+    String? notes,
+  }) async {
+    try {
+      return (await _remote.applyMealPlanTemplate(
+        startDate: startDate,
+        endDate: endDate,
+        meals: meals,
+        notes: notes,
+      )).toEntity();
+    } on DioException catch (e) {
+      throw failureFromDio(e);
+    }
+  }
+
+  @override
   Future<MealPlanDay> checkMealPlanItem(String itemId) async {
     try {
       return (await _remote.checkMealPlanItem(itemId)).toEntity();

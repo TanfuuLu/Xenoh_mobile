@@ -23,9 +23,6 @@ import '../../features/auth/presentation/screens/register_screen.dart';
 import '../../features/auth/presentation/screens/social_callback_screen.dart';
 import '../../features/blocks_reports/presentation/screens/blocklist_screen.dart';
 import '../../features/blocks_reports/presentation/screens/report_bug_screen.dart';
-import '../../features/challenges/presentation/challenge_detail_screen.dart';
-import '../../features/challenges/presentation/challenges_screen.dart';
-import '../../features/challenges/presentation/create_challenge_screen.dart';
 import '../../features/coach_client/presentation/screens/chat_hub_screen.dart';
 import '../../features/coach_client/presentation/screens/client_detail_screen.dart';
 import '../../features/coach_client/presentation/screens/client_nutrition_screen.dart';
@@ -414,6 +411,7 @@ GoRouter router(Ref ref) {
                 builder: (_, state) => PlanDetailScreen(
                   planId: state.pathParameters['planId']!,
                   coachView: state.uri.queryParameters['coachView'] == 'true',
+                  coachPlan: state.uri.queryParameters['coachPlan'] == 'true',
                   clientId: state.uri.queryParameters['clientId'],
                 ),
               ),
@@ -435,6 +433,7 @@ GoRouter router(Ref ref) {
                 builder: (_, state) => WeekScreen(
                   weekId: state.pathParameters['weekId']!,
                   coachView: state.uri.queryParameters['coachView'] == 'true',
+                  coachPlan: state.uri.queryParameters['coachPlan'] == 'true',
                   clientId: state.uri.queryParameters['clientId'],
                 ),
               ),
@@ -443,6 +442,7 @@ GoRouter router(Ref ref) {
                 builder: (_, state) => DayScreen(
                   dayId: state.pathParameters['dayId']!,
                   canComplete: state.uri.queryParameters['coachView'] != 'true',
+                  coachPlan: state.uri.queryParameters['coachPlan'] == 'true',
                   clientId: state.uri.queryParameters['clientId'],
                 ),
               ),
@@ -537,26 +537,6 @@ GoRouter router(Ref ref) {
               GoRoute(
                 path: '/community/settings',
                 builder: (_, _) => const CommunitySettingsScreen(),
-              ),
-              GoRoute(
-                path: '/community/challenges',
-                builder: (_, _) => const ChallengesScreen(),
-              ),
-              GoRoute(
-                path: '/community/challenges/create',
-                builder: (_, _) => const CreateChallengeScreen(),
-              ),
-              GoRoute(
-                path: '/community/challenges/:challengeId/edit',
-                builder: (_, state) => EditChallengeScreen(
-                  challengeId: state.pathParameters['challengeId']!,
-                ),
-              ),
-              GoRoute(
-                path: '/community/challenges/:challengeId',
-                builder: (_, state) => ChallengeDetailScreen(
-                  challengeId: state.pathParameters['challengeId']!,
-                ),
               ),
               GoRoute(
                 path: '/community/users/:userId',

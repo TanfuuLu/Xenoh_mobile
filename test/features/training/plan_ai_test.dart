@@ -21,6 +21,8 @@ void main() {
   testWidgets('balance check renders headline, summary, and warnings', (
     tester,
   ) async {
+    await tester.binding.setSurfaceSize(const Size(320, 800));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
     final api = MockXenohApi();
     when(() => api.postObject(any(), any())).thenAnswer(
       (_) async => {
@@ -52,6 +54,9 @@ void main() {
     );
     expect(find.text('Back volume is low'), findsOneWidget);
     expect(find.text('Add a row variation'), findsOneWidget);
+    expect(find.byKey(const ValueKey('balance-verdict')), findsOneWidget);
+    expect(find.byKey(const ValueKey('balance-warnings')), findsOneWidget);
+    expect(find.byKey(const ValueKey('balance-suggestions')), findsOneWidget);
   });
 
   testWidgets('403 shows the Pro upgrade prompt, not a generic error', (

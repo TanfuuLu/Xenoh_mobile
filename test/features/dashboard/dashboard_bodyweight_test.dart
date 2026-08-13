@@ -7,6 +7,7 @@ import 'package:xenoh_mobile/features/dashboard/data/repositories/dashboard_repo
 import 'package:xenoh_mobile/features/dashboard/domain/entities/personal_dashboard.dart';
 import 'package:xenoh_mobile/features/dashboard/domain/repositories/dashboard_repository.dart';
 import 'package:xenoh_mobile/features/dashboard/presentation/screens/dashboard_screen.dart';
+import 'package:xenoh_mobile/features/dashboard/presentation/widgets/community_dashboard_card.dart';
 import 'package:xenoh_mobile/features/profile/data/repositories/profile_repository_provider.dart';
 import 'package:xenoh_mobile/features/profile/domain/entities/bodyweight_log.dart';
 import 'package:xenoh_mobile/features/profile/domain/repositories/profile_repository.dart';
@@ -48,6 +49,7 @@ void main() {
         BodyweightLog(id: 'b2', weight: 78.1, date: DateTime(2026, 6, 1)),
       ],
     );
+    when(() => profile.logBodyweight(any())).thenAnswer((_) async {});
 
     await tester.pumpWidget(
       ProviderScope(
@@ -68,6 +70,7 @@ void main() {
     await tester.pump(const Duration(milliseconds: 50)); // resolve futures
 
     expect(tester.takeException(), isNull);
+    expect(find.byType(CommunityDashboardCard), findsNothing);
 
     // Identity, quick action, and XP share the image-backed hero surface.
     expect(find.byType(HeroCardBackground), findsOneWidget);
@@ -84,5 +87,35 @@ void main() {
     expect(find.text('BODYWEIGHT'), findsOneWidget);
     expect(find.text('78.1 kg'), findsOneWidget);
     expect(find.text('Log'), findsOneWidget);
+    expect(find.byTooltip('Bodyweight history'), findsOneWidget);
+
+    await tester.tap(find.byTooltip('Bodyweight history'));
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(find.text('Bodyweight history'), findsOneWidget);
+    await tester.tapAt(const Offset(10, 10));
+    await tester.pump(const Duration(milliseconds: 400));
+
+    await tester.tap(find.text('78.1 kg'));
+    await tester.pump();
+
+    expect(find.byType(TextField), findsOneWidget);
+    await tester.enterText(find.byType(TextField), '76.4');
+    await tester.tapAt(const Offset(10, 10));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 750));
+
+    expect(find.byType(TextField), findsNothing);
+    expect(find.text('78.1 kg'), findsOneWidget);
+    verifyNever(() => profile.logBodyweight(any()));
+
+    await tester.tap(find.text('78.1 kg'));
+    await tester.pump();
+    await tester.enterText(find.byType(TextField), '77.8');
+    await tester.tap(find.text('Log'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 50));
+
+    expect(find.byType(AlertDialog), findsNothing);
+    verify(() => profile.logBodyweight(77.8)).called(1);
   });
 }

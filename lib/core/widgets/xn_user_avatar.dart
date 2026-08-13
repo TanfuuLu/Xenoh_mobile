@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../app/theme/app_colors.dart';
+import '../../app/theme/app_density.dart';
 import '../../app/theme/app_dimens.dart';
 
 /// Renders a network-backed user avatar with an initials fallback.
@@ -26,6 +27,7 @@ class XnUserAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final compactSize = size * AppDensity.uiScale;
     final normalizedUrl = imageUrl?.trim();
     final hasImage = normalizedUrl?.isNotEmpty == true;
     final fallback = ColoredBox(
@@ -35,7 +37,7 @@ class XnUserAvatar extends StatelessWidget {
           _initials(name),
           style: TextStyle(
             color: foregroundColor,
-            fontSize: size >= 52 ? 18 : 14,
+            fontSize: compactSize >= 46 ? 18 : 14,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -46,8 +48,8 @@ class XnUserAvatar extends StatelessWidget {
       image: true,
       label: name,
       child: Container(
-        width: size,
-        height: size,
+        width: compactSize,
+        height: compactSize,
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(borderRadius),

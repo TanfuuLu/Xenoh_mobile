@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../../app/theme/app_colors.dart';
 import '../../app/theme/app_dimens.dart';
 
+export 'xn_card.dart' show XnCardStack;
+
 /// A single translucent panel that stacks flat [XnSection]s separated by
 /// [XnSectionDivider]s — the app's grouped-section layout, first used on the
 /// dashboard. Screens use one group per page instead of individual cards.

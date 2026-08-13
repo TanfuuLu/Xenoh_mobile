@@ -61,26 +61,23 @@ class _CommunitySettingsFormState
           style: const TextStyle(color: AppColors.fg2),
         ),
         const SizedBox(height: AppSpacing.lg),
-        XnCard(
-          padding: EdgeInsets.zero,
-          child: RadioGroup<CommunityStatsVisibility>(
-            groupValue: _visibility,
-            onChanged: _select,
-            child: Column(
-              children: [
-                RadioListTile<CommunityStatsVisibility>(
-                  value: CommunityStatsVisibility.friends,
-                  title: Text(l10n.communityPrivacyFriendsTitle),
-                  subtitle: Text(l10n.communityPrivacyFriendsDescription),
-                ),
-                const Divider(height: 1),
-                RadioListTile<CommunityStatsVisibility>(
-                  value: CommunityStatsVisibility.onlyMe,
-                  title: Text(l10n.communityPrivacyOnlyMeTitle),
-                  subtitle: Text(l10n.communityPrivacyOnlyMeDescription),
-                ),
-              ],
-            ),
+        RadioGroup<CommunityStatsVisibility>(
+          groupValue: _visibility,
+          onChanged: _select,
+          child: XnCardStack(
+            itemPadding: EdgeInsets.zero,
+            children: [
+              RadioListTile<CommunityStatsVisibility>(
+                value: CommunityStatsVisibility.friends,
+                title: Text(l10n.communityPrivacyFriendsTitle),
+                subtitle: Text(l10n.communityPrivacyFriendsDescription),
+              ),
+              RadioListTile<CommunityStatsVisibility>(
+                value: CommunityStatsVisibility.onlyMe,
+                title: Text(l10n.communityPrivacyOnlyMeTitle),
+                subtitle: Text(l10n.communityPrivacyOnlyMeDescription),
+              ),
+            ],
           ),
         ),
         const SizedBox(height: AppSpacing.lg),

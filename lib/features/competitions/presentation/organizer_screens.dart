@@ -1706,7 +1706,7 @@ class _CreateEventSheetState extends ConsumerState<_CreateEventSheet> {
               style: Theme.of(context).textTheme.headlineSmall,
             ),
             const SizedBox(height: AppSpacing.lg),
-            _requiredField(_title, l10n.challengeTitleLabel),
+            _requiredField(_title, l10n.competitionTitleLabel),
             _requiredField(
               _description,
               l10n.organizerEventDescription,

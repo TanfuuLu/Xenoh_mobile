@@ -152,7 +152,7 @@ class _WeekAnalysisBody extends StatelessWidget {
             plannedVolume: analysis.plannedVolume,
           ),
         const SizedBox(height: AppSpacing.lg),
-        XnSectionList(
+        XnCardStack(
           children: [
             _RecommendationsCard(recommendations: analysis.recommendations),
             _VolumePerDayCard(days: analysis.daily),
@@ -448,75 +448,66 @@ class _CompactStatsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return XnSectionGroup(
-      padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+    return XnCardStack(
       children: [
-        Column(
+        _CompactStatRow(
+          icon: Icons.bolt_rounded,
+          iconBg: const Color(0xFFE7D8FF),
+          label: _t(context, 'Volume vs plan', 'KL so kế hoạch'),
+          value: '${(analysis.volumeRate * 100).round()}%',
+          detail: _t(
+            context,
+            '${_formatVolume(context, analysis.actualVolume)} / ${_formatVolume(context, analysis.plannedVolume)}',
+            '${_formatVolume(context, analysis.actualVolume)} / ${_formatVolume(context, analysis.plannedVolume)}',
+          ),
+        ),
+        _CompactStatRow(
+          icon: Icons.timer_outlined,
+          iconBg: AppColors.infoBg,
+          label: _t(context, 'Time', 'Thời gian'),
+          value: _formatDuration(context, analysis.totalDurationSeconds),
+          detail: _t(context, 'Tracked exercise time', 'Thời gian đã tính'),
+        ),
+        _CompactStatRow(
+          icon: Icons.monitor_heart_outlined,
+          iconBg: const Color(0xFFFFD8EA),
+          label: _t(context, 'Average RPE', 'RPE trung bình'),
+          value: analysis.averageRpe?.toStringAsFixed(1) ?? '-',
+          detail: _t(context, 'Perceived effort', 'Mức cảm nhận'),
+        ),
+        _CompactStatRow(
+          icon: Icons.local_fire_department_outlined,
+          iconBg: const Color(0xFFFFE2D6),
+          label: _t(context, 'Calories', 'Calo'),
+          value: _number(context, analysis.estimatedCalories),
+          detail: _t(context, 'Estimated kcal', 'kcal ước tính'),
+        ),
+        Row(
           children: [
-            _CompactStatRow(
-              icon: Icons.bolt_rounded,
-              iconBg: const Color(0xFFE7D8FF),
-              label: _t(context, 'Volume vs plan', 'KL so kế hoạch'),
-              value: '${(analysis.volumeRate * 100).round()}%',
-              detail: _t(
-                context,
-                '${_formatVolume(context, analysis.actualVolume)} / ${_formatVolume(context, analysis.plannedVolume)}',
-                '${_formatVolume(context, analysis.actualVolume)} / ${_formatVolume(context, analysis.plannedVolume)}',
+            Expanded(
+              child: _MiniStatus(
+                label: _t(context, 'Rest', 'Nghỉ'),
+                value: '${analysis.restDays}',
+                color: AppColors.info,
               ),
             ),
-            _CompactDivider(),
-            _CompactStatRow(
-              icon: Icons.timer_outlined,
-              iconBg: AppColors.infoBg,
-              label: _t(context, 'Time', 'Thời gian'),
-              value: _formatDuration(context, analysis.totalDurationSeconds),
-              detail: _t(context, 'Tracked exercise time', 'Thời gian đã tính'),
+            Expanded(
+              child: _MiniStatus(
+                label: _t(context, 'Warnings', 'Cảnh báo'),
+                value: '${analysis.warningDays}',
+                color: analysis.warningDays > 0
+                    ? AppColors.warning
+                    : AppColors.success,
+              ),
             ),
-            _CompactDivider(),
-            _CompactStatRow(
-              icon: Icons.monitor_heart_outlined,
-              iconBg: const Color(0xFFFFD8EA),
-              label: _t(context, 'Average RPE', 'RPE trung bình'),
-              value: analysis.averageRpe?.toStringAsFixed(1) ?? '-',
-              detail: _t(context, 'Perceived effort', 'Mức cảm nhận'),
-            ),
-            _CompactDivider(),
-            _CompactStatRow(
-              icon: Icons.local_fire_department_outlined,
-              iconBg: const Color(0xFFFFE2D6),
-              label: _t(context, 'Calories', 'Calo'),
-              value: _number(context, analysis.estimatedCalories),
-              detail: _t(context, 'Estimated kcal', 'kcal ước tính'),
-            ),
-            _CompactDivider(),
-            Row(
-              children: [
-                Expanded(
-                  child: _MiniStatus(
-                    label: _t(context, 'Rest', 'Nghỉ'),
-                    value: '${analysis.restDays}',
-                    color: AppColors.info,
-                  ),
-                ),
-                Expanded(
-                  child: _MiniStatus(
-                    label: _t(context, 'Warnings', 'Cảnh báo'),
-                    value: '${analysis.warningDays}',
-                    color: analysis.warningDays > 0
-                        ? AppColors.warning
-                        : AppColors.success,
-                  ),
-                ),
-                Expanded(
-                  child: _MiniStatus(
-                    label: _t(context, 'Missed', 'Bỏ lỡ'),
-                    value: '${analysis.missedDays}',
-                    color: analysis.missedDays > 0
-                        ? AppColors.danger
-                        : AppColors.success,
-                  ),
-                ),
-              ],
+            Expanded(
+              child: _MiniStatus(
+                label: _t(context, 'Missed', 'Bỏ lỡ'),
+                value: '${analysis.missedDays}',
+                color: analysis.missedDays > 0
+                    ? AppColors.danger
+                    : AppColors.success,
+              ),
             ),
           ],
         ),
@@ -594,19 +585,6 @@ class _CompactStatRow extends StatelessWidget {
   }
 }
 
-class _CompactDivider extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Divider(
-      height: 1,
-      thickness: 1,
-      indent: AppSpacing.md,
-      endIndent: AppSpacing.md,
-      color: AppColors.surfaceBorderSoft.withValues(alpha: 0.55),
-    );
-  }
-}
-
 class _MiniStatus extends StatelessWidget {
   const _MiniStatus({
     required this.label,
@@ -672,8 +650,8 @@ class _HeaderCard extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            width: 52,
-            height: 52,
+            width: 46,
+            height: 46,
             decoration: BoxDecoration(
               color: AppColors.accent,
               borderRadius: BorderRadius.circular(AppRadius.lg),

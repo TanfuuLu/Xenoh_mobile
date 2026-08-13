@@ -1,10 +1,13 @@
 // ignore_for_file: cascade_invocations — sequential container.read calls read clearer.
 
+import 'package:cookie_jar/cookie_jar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:xenoh_mobile/core/error/failure.dart';
 import 'package:xenoh_mobile/core/error/result.dart';
+import 'package:xenoh_mobile/core/network/cookie_jar_provider.dart';
+import 'package:xenoh_mobile/core/network/xenoh_api.dart';
 import 'package:xenoh_mobile/features/auth/data/repositories/auth_repository_provider.dart';
 import 'package:xenoh_mobile/features/auth/domain/entities/auth_session.dart';
 import 'package:xenoh_mobile/features/auth/domain/entities/register_params.dart';
@@ -29,7 +32,10 @@ const _session = AuthSession(
 
 ProviderContainer _container(AuthRepository repo) {
   final container = ProviderContainer(
-    overrides: [authRepositoryProvider.overrideWithValue(repo)],
+    overrides: [
+      authRepositoryProvider.overrideWithValue(repo),
+      cookieJarProvider.overrideWithValue(CookieJar()),
+    ],
   );
   addTearDown(container.dispose);
   return container;
@@ -74,6 +80,28 @@ void main() {
       container.read(authControllerProvider).sessionOrNull?.user.fullName,
       'Ada Lovelace',
     );
+  });
+
+  test('login success rebuilds user-scoped API dependencies', () async {
+    final repo = MockAuthRepository();
+    when(repo.restoreSession).thenAnswer((_) async => const Err(AuthFailure()));
+    when(
+      () => repo.login(
+        email: any(named: 'email'),
+        password: any(named: 'password'),
+      ),
+    ).thenAnswer((_) async => const Ok(_session));
+
+    final container = _container(repo);
+    final controller = container.read(authControllerProvider.notifier);
+    await Future<void>.delayed(Duration.zero);
+    final apiBeforeLogin = container.read(xenohApiProvider);
+
+    final failure = await controller.login(email: 'a@b.com', password: 'pw');
+    final apiAfterLogin = container.read(xenohApiProvider);
+
+    expect(failure, isNull);
+    expect(apiAfterLogin, isNot(same(apiBeforeLogin)));
   });
 
   test('login failure returns the failure and stays unauthenticated', () async {

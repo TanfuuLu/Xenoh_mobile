@@ -52,7 +52,7 @@ class ChatHubScreen extends ConsumerWidget {
             title: l10n.coachChatNoRelationshipsTitle,
             message: l10n.coachChatNoRelationshipsMessage,
           ),
-          AsyncData(:final value) => XnSectionList(
+          AsyncData(:final value) => XnCardStack(
             children: [
               for (final rel in value)
                 _ChatClientCard(

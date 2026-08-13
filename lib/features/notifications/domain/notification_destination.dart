@@ -49,9 +49,6 @@ NotificationDestination notificationDestination(
   if (relatedType == 'Subscription') {
     return const NotificationDestination.route('/subscription');
   }
-  if (relatedType == 'FitnessChallenge') {
-    return NotificationDestination.route('/community/challenges/$id');
-  }
   if (relatedType == 'CompetitionEvent') {
     return const NotificationDestination.route('/competitions/mine');
   }

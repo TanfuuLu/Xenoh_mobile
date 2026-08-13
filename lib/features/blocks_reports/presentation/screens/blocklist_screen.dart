@@ -33,7 +33,7 @@ class BlocklistScreen extends ConsumerWidget {
             title: l10n.blocksNoBlockedUsersTitle,
             message: l10n.blocksNoBlockedUsersMessage,
           ),
-          AsyncData(:final value) => XnSectionList(
+          AsyncData(:final value) => XnCardStack(
             children: [
               for (final item in value)
                 DataCard(

@@ -13,6 +13,13 @@ final preferencesProvider = FutureProvider.autoDispose<JsonMap>((ref) {
   return ref.watch(xenohApiProvider).getObject('/users/me/preferences');
 });
 
+/// Whether workout logging should collect an RPE value for each completed set.
+/// Matches the website preference and the backend default.
+final trackRpeProvider = Provider<bool>((ref) {
+  final prefs = ref.watch(preferencesProvider);
+  return prefs.value?['trackRpe'] as bool? ?? true;
+});
+
 /// The app's active [Locale] override, derived from the user's saved
 /// `language` preference. `null` means "no override yet" — MaterialApp
 /// falls back to system-locale negotiation against `supportedLocales`,

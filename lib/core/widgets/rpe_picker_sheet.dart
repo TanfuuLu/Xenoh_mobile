@@ -72,14 +72,14 @@ class _RpeCell extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(AppRadius.md),
       child: Container(
-        width: 52,
-        height: 52,
+        width: 46,
+        height: 46,
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: selected ? AppColors.accent : AppColors.bg2,
+          color: selected ? AppColors.buttonPrimary : AppColors.buttonBg,
           borderRadius: BorderRadius.circular(AppRadius.md),
           border: Border.all(
-            color: selected ? AppColors.accent : AppColors.border1,
+            color: selected ? AppColors.buttonPrimary : AppColors.buttonBorder,
           ),
         ),
         child: Text(

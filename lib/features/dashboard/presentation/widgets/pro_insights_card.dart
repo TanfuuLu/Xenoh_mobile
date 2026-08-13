@@ -48,35 +48,30 @@ class ProInsightsCard extends StatelessWidget {
 
     if (insights.items.isEmpty) return const SizedBox.shrink();
 
-    return XnSection(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              const Icon(
-                Icons.auto_awesome_rounded,
-                color: AppColors.accent,
-                size: 18,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                l10n.dashboardInsightsTitle,
-                style: AppTypography.display(16, letterSpacing: 0),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.md),
-          for (final item in insights.items) ...[
-            _InsightRow(item: item),
-            if (item != insights.items.last)
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: AppSpacing.md),
-                child: Divider(height: 1),
-              ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            const Icon(
+              Icons.auto_awesome_rounded,
+              color: AppColors.accent,
+              size: 18,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              l10n.dashboardInsightsTitle,
+              style: AppTypography.display(16, letterSpacing: 0),
+            ),
           ],
-        ],
-      ),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        XnCardStack(
+          children: [
+            for (final item in insights.items) _InsightRow(item: item),
+          ],
+        ),
+      ],
     );
   }
 }

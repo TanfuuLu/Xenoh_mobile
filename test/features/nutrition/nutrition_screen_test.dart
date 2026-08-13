@@ -156,7 +156,7 @@ void main() {
     expect(item.displayNameFor('vi'), 'Cơm trắng');
   });
 
-  test('weekly meal plan setup upserts seven dates', () async {
+  test('weekly meal plan setup applies one atomic date range', () async {
     final repo = MockNutritionRepository();
     final meals = [
       {
@@ -167,14 +167,17 @@ void main() {
     ];
 
     when(
-      () => repo.upsertMealPlan(
-        date: any(named: 'date'),
+      () => repo.applyMealPlanTemplate(
+        startDate: any(named: 'startDate'),
+        endDate: any(named: 'endDate'),
         meals: any(named: 'meals'),
         notes: any(named: 'notes'),
       ),
     ).thenAnswer(
-      (invocation) async => _mealPlan(
-        invocation.namedArguments[#date] as DateTime,
+      (_) async => MealPlanRangeResult(
+        startDate: DateTime(2026, 6),
+        endDate: DateTime(2026, 6, 7),
+        affectedDayCount: 7,
       ),
     );
 
@@ -185,40 +188,27 @@ void main() {
 
     await container
         .read(mealPlanActionControllerProvider.notifier)
-        .saveWeek(
-          weekStart: DateTime(2026, 6),
+        .saveRange(
+          startDate: DateTime(2026, 6, 2),
+          endDate: DateTime(2026, 6, 12),
           meals: meals,
           notes: 'prep',
         );
 
-    for (var i = 0; i < 7; i++) {
-      verify(
-        () => repo.upsertMealPlan(
-          date: DateTime(2026, 6, 1 + i),
-          meals: meals,
-          notes: 'prep',
-        ),
-      ).called(1);
-    }
+    verify(
+      () => repo.applyMealPlanTemplate(
+        startDate: DateTime(2026, 6, 2),
+        endDate: DateTime(2026, 6, 12),
+        meals: meals,
+        notes: 'prep',
+      ),
+    ).called(1);
+    verifyNever(
+      () => repo.upsertMealPlan(
+        date: any(named: 'date'),
+        meals: any(named: 'meals'),
+        notes: any(named: 'notes'),
+      ),
+    );
   });
 }
-
-MealPlanDay _mealPlan(DateTime date) => MealPlanDay(
-  userId: 'u1',
-  date: date,
-  meals: const [],
-  plannedTotals: const MealPlanTotals(
-    calories: 0,
-    proteinG: 0,
-    carbsG: 0,
-    fatG: 0,
-  ),
-  checkedTotals: const MealPlanTotals(
-    calories: 0,
-    proteinG: 0,
-    carbsG: 0,
-    fatG: 0,
-  ),
-  totalItemCount: 0,
-  checkedItemCount: 0,
-);

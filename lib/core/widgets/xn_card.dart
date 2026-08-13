@@ -76,3 +76,36 @@ class _XnCardState extends State<XnCard> {
     );
   }
 }
+
+/// A vertical collection where every child owns an independent card surface.
+///
+/// Unlike the legacy grouped-section list, this widget has no shared outer
+/// surface and draws no dividers between adjacent data items.
+class XnCardStack extends StatelessWidget {
+  const XnCardStack({
+    required this.children,
+    this.spacing = AppSpacing.md,
+    this.itemPadding = const EdgeInsets.all(AppSpacing.lg),
+    super.key,
+  });
+
+  final List<Widget> children;
+  final double spacing;
+  final EdgeInsetsGeometry itemPadding;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        for (var index = 0; index < children.length; index++) ...[
+          if (children[index] case final XnCard card)
+            card
+          else
+            XnCard(padding: itemPadding, child: children[index]),
+          if (index < children.length - 1) SizedBox(height: spacing),
+        ],
+      ],
+    );
+  }
+}

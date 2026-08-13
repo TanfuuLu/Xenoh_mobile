@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_dimens.dart';
 import '../../../../app/theme/app_typography.dart';
+import '../../../../core/widgets/xn_card.dart';
 import '../../../../core/widgets/xn_chip.dart';
 import '../../../../core/widgets/xn_section.dart';
 import '../../../../l10n/app_localizations.dart';
@@ -125,54 +126,37 @@ class _BalanceBody extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        XnSectionList(
-          children: [
-            XnSection(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          textOf(
-                            value,
-                            ['headline'],
-                            fallback: l10n.trainingBalanceReviewFallback,
-                          ),
-                          style: AppTypography.display(18, letterSpacing: 0),
-                        ),
-                      ),
-                      if (severity.isNotEmpty)
-                        XnChip(label: severity, tone: _severityTone(severity)),
-                    ],
-                  ),
-                  if (optionalTextOf(value, ['summary']) != null) ...[
-                    const SizedBox(height: AppSpacing.sm),
-                    Text(
-                      textOf(value, ['summary']),
-                      style: const TextStyle(color: AppColors.fg2, height: 1.4),
-                    ),
-                  ],
-                ],
-              ),
-            ),
-            if (warnings.isNotEmpty)
-              _BulletCard(
-                title: l10n.commonWarnings,
-                icon: Icons.warning_amber_rounded,
-                iconColor: AppColors.warning,
-                items: warnings,
-              ),
-            if (suggestions.isNotEmpty)
-              _BulletCard(
-                title: l10n.commonSuggestions,
-                icon: Icons.lightbulb_outline_rounded,
-                iconColor: AppColors.accent,
-                items: suggestions,
-              ),
-          ],
+        _BalanceVerdictCard(
+          headline: textOf(
+            value,
+            ['headline'],
+            fallback: l10n.trainingBalanceReviewFallback,
+          ),
+          summary: optionalTextOf(value, ['summary']),
+          severity: severity,
         ),
+        if (warnings.isNotEmpty) ...[
+          const SizedBox(height: AppSpacing.md),
+          _BalanceInsightCard(
+            key: const ValueKey('balance-warnings'),
+            title: l10n.commonWarnings,
+            icon: Icons.warning_amber_rounded,
+            color: AppColors.warning,
+            backgroundColor: AppColors.warningBg,
+            items: warnings,
+          ),
+        ],
+        if (suggestions.isNotEmpty) ...[
+          const SizedBox(height: AppSpacing.md),
+          _BalanceInsightCard(
+            key: const ValueKey('balance-suggestions'),
+            title: l10n.commonSuggestions,
+            icon: Icons.lightbulb_outline_rounded,
+            color: AppColors.accent,
+            backgroundColor: AppColors.accentSoft,
+            items: suggestions,
+          ),
+        ],
         if (warnings.isEmpty && suggestions.isEmpty) ...[
           const SizedBox(height: AppSpacing.lg),
           EmptyFeatureState(
@@ -181,6 +165,190 @@ class _BalanceBody extends StatelessWidget {
             icon: Icons.check_circle_outline_rounded,
           ),
         ],
+      ],
+    );
+  }
+}
+
+class _BalanceVerdictCard extends StatelessWidget {
+  const _BalanceVerdictCard({
+    required this.headline,
+    required this.summary,
+    required this.severity,
+  });
+
+  final String headline;
+  final String? summary;
+  final String severity;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      key: const ValueKey('balance-verdict'),
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      decoration: BoxDecoration(
+        color: AppColors.bg2,
+        borderRadius: BorderRadius.circular(AppRadius.lg),
+        border: Border.all(color: AppColors.border1),
+        boxShadow: const [
+          BoxShadow(
+            color: AppColors.shadow,
+            blurRadius: 2,
+            offset: Offset(0, 1),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 30,
+                height: 30,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: AppColors.accentSoft,
+                  borderRadius: BorderRadius.circular(AppRadius.sm),
+                ),
+                child: const Icon(
+                  Icons.balance_rounded,
+                  color: AppColors.accent,
+                  size: 17,
+                ),
+              ),
+              const Spacer(),
+              if (severity.isNotEmpty)
+                XnChip(
+                  label: severity,
+                  tone: _severityTone(severity),
+                  compact: true,
+                ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.md),
+          Text(
+            headline,
+            style: AppTypography.display(
+              20,
+              weight: FontWeight.w700,
+              letterSpacing: -0.15,
+              height: 1.18,
+            ),
+          ),
+          if (summary != null) ...[
+            const SizedBox(height: AppSpacing.md),
+            Text(
+              summary!,
+              style: const TextStyle(
+                color: AppColors.fg2,
+                fontSize: 13,
+                height: 1.48,
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _BalanceInsightCard extends StatelessWidget {
+  const _BalanceInsightCard({
+    required this.title,
+    required this.icon,
+    required this.color,
+    required this.backgroundColor,
+    required this.items,
+    super.key,
+  });
+
+  final String title;
+  final IconData icon;
+  final Color color;
+  final Color backgroundColor;
+  final List<String> items;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        XnCard(
+          child: Row(
+            children: [
+              Container(
+                width: 30,
+                height: 30,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: backgroundColor,
+                  borderRadius: BorderRadius.circular(AppRadius.sm),
+                ),
+                child: Icon(icon, color: color, size: 17),
+              ),
+              const SizedBox(width: AppSpacing.md),
+              Expanded(
+                child: Text(
+                  title,
+                  style: AppTypography.display(
+                    16,
+                    weight: FontWeight.w700,
+                    color: AppColors.fg1,
+                    letterSpacing: 0,
+                  ),
+                ),
+              ),
+              Text(
+                '${items.length}',
+                style: TextStyle(
+                  color: color,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        XnCardStack(
+          children: [
+            for (var index = 0; index < items.length; index++)
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 22,
+                    height: 22,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: backgroundColor,
+                      borderRadius: BorderRadius.circular(AppRadius.pill),
+                    ),
+                    child: Text(
+                      '${index + 1}',
+                      style: TextStyle(
+                        color: color,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: AppSpacing.md),
+                  Expanded(
+                    child: Text(
+                      items[index],
+                      style: const TextStyle(
+                        color: AppColors.fg2,
+                        fontSize: 13,
+                        height: 1.45,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+          ],
+        ),
       ],
     );
   }
@@ -237,7 +405,7 @@ class _ProgressInsightBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return XnSectionList(
+    return XnCardStack(
       children: [
         XnSection(
           child: Column(
@@ -639,64 +807,10 @@ class _MetricGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final isSingleColumn = constraints.maxWidth < 300;
-        if (isSingleColumn) {
-          return Column(
-            children: [
-              for (var index = 0; index < items.length; index++) ...[
-                if (index > 0) const _MetricDivider(),
-                _MetricCell(item: items[index]),
-              ],
-            ],
-          );
-        }
-
-        return Column(
-          children: [
-            for (var index = 0; index < items.length; index += 2) ...[
-              if (index > 0) const _MetricDivider(),
-              if (index + 1 == items.length)
-                _MetricCell(item: items[index])
-              else
-                IntrinsicHeight(
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: _MetricCell(
-                          item: items[index],
-                        ),
-                      ),
-                      const VerticalDivider(
-                        width: AppSpacing.xl * 2,
-                        thickness: 1,
-                        color: AppColors.surfaceBorderSoft,
-                      ),
-                      Expanded(
-                        child: _MetricCell(
-                          item: items[index + 1],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-            ],
-          ],
-        );
-      },
-    );
-  }
-}
-
-class _MetricDivider extends StatelessWidget {
-  const _MetricDivider();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.symmetric(vertical: AppSpacing.md),
-      child: Divider(height: 1, color: AppColors.surfaceBorderSoft),
+    return XnCardStack(
+      children: [
+        for (final item in items) _MetricCell(item: item),
+      ],
     );
   }
 }
@@ -777,8 +891,8 @@ class _DesignSummaryCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                width: 52,
-                height: 52,
+                width: 46,
+                height: 46,
                 decoration: BoxDecoration(
                   color: AppColors.accent,
                   borderRadius: BorderRadius.circular(AppRadius.lg),
@@ -856,15 +970,13 @@ class _DesignMetricSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _AnalysisPanel(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _PanelHeader(title: title, icon: icon),
-          const SizedBox(height: AppSpacing.xl),
-          _MetricGrid(items: items),
-        ],
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _PanelHeader(title: title, icon: icon),
+        const SizedBox(height: AppSpacing.md),
+        _MetricGrid(items: items),
+      ],
     );
   }
 }
@@ -1035,41 +1147,41 @@ class _AnalysisInsightsPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _AnalysisPanel(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _PanelHeader(title: title, icon: icon, color: iconColor),
-          const SizedBox(height: AppSpacing.xl),
-          for (var index = 0; index < items.length; index++) ...[
-            if (index > 0) const _MetricDivider(),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  width: 7,
-                  height: 7,
-                  margin: const EdgeInsets.only(top: 6),
-                  decoration: BoxDecoration(
-                    color: iconColor,
-                    borderRadius: BorderRadius.circular(AppRadius.pill),
-                  ),
-                ),
-                const SizedBox(width: AppSpacing.md),
-                Expanded(
-                  child: Text(
-                    items[index],
-                    style: const TextStyle(
-                      color: AppColors.fg2,
-                      height: 1.4,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _PanelHeader(title: title, icon: icon, color: iconColor),
+        const SizedBox(height: AppSpacing.md),
+        XnCardStack(
+          children: [
+            for (final item in items)
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 7,
+                    height: 7,
+                    margin: const EdgeInsets.only(top: 6),
+                    decoration: BoxDecoration(
+                      color: iconColor,
+                      borderRadius: BorderRadius.circular(AppRadius.pill),
                     ),
                   ),
-                ),
-              ],
-            ),
+                  const SizedBox(width: AppSpacing.md),
+                  Expanded(
+                    child: Text(
+                      item,
+                      style: const TextStyle(
+                        color: AppColors.fg2,
+                        height: 1.4,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
           ],
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
@@ -1082,61 +1194,56 @@ class _MovementCoverageCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return XnSection(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _PanelHeader(
-            title: l10n.trainingMovementPatternsTitle,
-            icon: Icons.route_outlined,
-          ),
-          const SizedBox(height: AppSpacing.md),
-          for (var index = 0; index < patterns.length; index++) ...[
-            Builder(
-              builder: (context) {
-                final pattern = patterns[index];
-                final covered = pattern['isCovered'] == true;
-                return Row(
-                  children: [
-                    Icon(
-                      covered
-                          ? Icons.check_circle_rounded
-                          : Icons.cancel_outlined,
-                      size: 19,
-                      color: covered ? AppColors.success : AppColors.danger,
-                    ),
-                    const SizedBox(width: AppSpacing.sm),
-                    Expanded(
-                      child: Text(
-                        textOf(pattern, ['pattern']),
-                        style: const TextStyle(
-                          color: AppColors.fg1,
-                          fontWeight: FontWeight.w600,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _PanelHeader(
+          title: l10n.trainingMovementPatternsTitle,
+          icon: Icons.route_outlined,
+        ),
+        const SizedBox(height: AppSpacing.md),
+        XnCardStack(
+          children: [
+            for (final pattern in patterns)
+              Builder(
+                builder: (context) {
+                  final covered = pattern['isCovered'] == true;
+                  return Row(
+                    children: [
+                      Icon(
+                        covered
+                            ? Icons.check_circle_rounded
+                            : Icons.cancel_outlined,
+                        size: 19,
+                        color: covered ? AppColors.success : AppColors.danger,
+                      ),
+                      const SizedBox(width: AppSpacing.sm),
+                      Expanded(
+                        child: Text(
+                          textOf(pattern, ['pattern']),
+                          style: const TextStyle(
+                            color: AppColors.fg1,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
-                    ),
-                    Text(
-                      l10n.trainingPatternCoverageStats(
-                        textOf(pattern, ['exerciseCount'], fallback: '0'),
-                        textOf(pattern, ['plannedSets'], fallback: '0'),
+                      Text(
+                        l10n.trainingPatternCoverageStats(
+                          textOf(pattern, ['exerciseCount'], fallback: '0'),
+                          textOf(pattern, ['plannedSets'], fallback: '0'),
+                        ),
+                        style: const TextStyle(
+                          color: AppColors.fg3,
+                          fontSize: 12,
+                        ),
                       ),
-                      style: const TextStyle(
-                        color: AppColors.fg3,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                );
-              },
-            ),
-            if (index != patterns.length - 1)
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: AppSpacing.sm),
-                child: Divider(height: 1),
+                    ],
+                  );
+                },
               ),
           ],
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

@@ -21,9 +21,9 @@ class ClientTrainingPlanActions extends StatelessWidget {
 
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: AppColors.bg2,
+        color: AppColors.buttonBg,
         borderRadius: BorderRadius.circular(AppRadius.lg),
-        border: Border.all(color: AppColors.surfaceBorderSoft),
+        border: Border.all(color: AppColors.buttonBorder),
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(AppRadius.lg),
@@ -34,9 +34,9 @@ class ClientTrainingPlanActions extends StatelessWidget {
               key: createPlanKey,
               icon: Icons.add_rounded,
               label: l10n.trainingCreatePlanCta,
-              backgroundColor: AppColors.bg2,
-              iconBackgroundColor: AppColors.accentSoft,
-              iconColor: AppColors.accent,
+              backgroundColor: AppColors.buttonBg,
+              iconBackgroundColor: AppColors.buttonHover,
+              iconColor: AppColors.buttonText,
               onTap: onCreatePlan,
             ),
           ],
@@ -73,7 +73,7 @@ class _TrainingPlanActionRow extends StatelessWidget {
         child: InkWell(
           onTap: onTap,
           child: ConstrainedBox(
-            constraints: const BoxConstraints(minHeight: 60),
+            constraints: const BoxConstraints(minHeight: 53),
             child: Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: AppSpacing.md,

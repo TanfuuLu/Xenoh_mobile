@@ -146,11 +146,11 @@ class _SupplementsContent extends StatelessWidget {
           ),
         ] else ...[
           const SizedBox(height: AppSpacing.lg),
-          for (var i = 0; i < visibleDoses.length; i++) ...[
-            _DosePreview(dose: visibleDoses[i]),
-            if (i < visibleDoses.length - 1)
-              const Divider(height: AppSpacing.lg * 2),
-          ],
+          XnCardStack(
+            children: [
+              for (final dose in visibleDoses) _DosePreview(dose: dose),
+            ],
+          ),
         ],
       ],
     );

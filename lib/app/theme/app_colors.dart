@@ -65,9 +65,14 @@ abstract final class AppColors {
   static const gridLine = Color(0x0C5F402E);
 
   // Buttons.
-  static const buttonBg = Color(0xFFFFFFFF);
-  static const buttonHover = Color(0xFFF4EFEA);
-  static const buttonBorder = Color(0xFFD2C9C0);
+  static const buttonPrimary = Color(0xFF725945);
+  static const buttonBg = Color(0xFFFBF7EF);
+  static const buttonHover = Color(0xFFF1E8DC);
+  static const buttonBorder = Color(0xFFD7C7B6);
+  static const buttonText = Color(0xFF2E2218);
+  static const segmentedButtonBg = bg3;
+  static const segmentedButtonSelectedBg = clay200;
+  static const segmentedButtonBorder = Color(0xFF000000);
 
   // Status.
   static const success = Color(0xFF485A26);
@@ -87,6 +92,12 @@ abstract final class AppColors {
   static const dataAmber = Color(0xFFF59E0B);
   static const dataRose = Color(0xFFF43F5E);
   static const dataOlive = Color(0xFF84CC16);
+
+  // Nutrition macro semantics. Keep these stable across every chart and card.
+  static const macroProtein = Color(0xFFE53935);
+  static const macroFat = Color(0xFFF9A825);
+  static const macroCarbs = Color(0xFF43A047);
+
   static const dataPalette = <Color>[
     dataBlue,
     dataTeal,

@@ -10,10 +10,10 @@ import '../../../core/widgets/xn_section.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../auth/presentation/providers/auth_controller.dart';
 import '../../auth/presentation/providers/auth_state.dart';
-import '../../shared_api/xenoh_api.dart';
 import '../domain/competition_models.dart';
 import 'competition_labels.dart';
 import 'competition_providers.dart';
+import 'widgets/competition_apply_sheet.dart';
 
 class CompetitionDetailScreen extends ConsumerWidget {
   const CompetitionDetailScreen({required this.slug, super.key});
@@ -88,7 +88,7 @@ class _EventDetail extends ConsumerWidget {
           style: Theme.of(context).textTheme.titleLarge,
         ),
         const SizedBox(height: AppSpacing.sm),
-        XnSectionList(
+        XnCardStack(
           children: [
             for (final category in event.categories)
               XnSection(
@@ -111,119 +111,16 @@ class _EventDetail extends ConsumerWidget {
       await context.push<void>('/login');
       return;
     }
-    final category = ValueNotifier<String?>(null);
-    final email = TextEditingController(text: user.email);
-    final phone = TextEditingController();
-    final facebook = TextEditingController();
-    final formKey = GlobalKey<FormState>();
-    final submitted = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) => ValueListenableBuilder<String?>(
-        valueListenable: category,
-        builder: (context, selected, _) => AlertDialog(
-          title: Text(AppLocalizations.of(context).competitionApply),
-          content: Form(
-            key: formKey,
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  DropdownButtonFormField<String>(
-                    initialValue: selected,
-                    decoration: InputDecoration(
-                      labelText: AppLocalizations.of(
-                        context,
-                      ).competitionCategory,
-                    ),
-                    items: [
-                      for (final item in event.categories)
-                        DropdownMenuItem(
-                          value: item.id,
-                          child: Text(item.name),
-                        ),
-                    ],
-                    onChanged: (value) => category.value = value,
-                    validator: (value) => value == null
-                        ? AppLocalizations.of(context).competitionChooseCategory
-                        : null,
-                  ),
-                  TextFormField(
-                    controller: email,
-                    decoration: const InputDecoration(labelText: 'Email'),
-                    validator: (value) => value != null && value.contains('@')
-                        ? null
-                        : AppLocalizations.of(
-                            context,
-                          ).accountDeletionInvalidEmail,
-                  ),
-                  TextFormField(
-                    controller: phone,
-                    decoration: InputDecoration(
-                      labelText: AppLocalizations.of(context).competitionPhone,
-                    ),
-                    validator: (value) => (value?.trim().length ?? 0) >= 7
-                        ? null
-                        : AppLocalizations.of(
-                            context,
-                          ).competitionPhoneValidation,
-                  ),
-                  TextFormField(
-                    controller: facebook,
-                    decoration: const InputDecoration(labelText: 'Facebook'),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(AppLocalizations.of(context).commonCancel),
-            ),
-            FilledButton(
-              onPressed: () {
-                if (formKey.currentState!.validate()) {
-                  Navigator.pop(context, true);
-                }
-              },
-              child: Text(AppLocalizations.of(context).competitionSubmit),
-            ),
-          ],
-        ),
+    final submitted = await CompetitionApplySheet.show(
+      context,
+      event: event,
+      initialEmail: user.email,
+    );
+    if (submitted != true || !context.mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(AppLocalizations.of(context).competitionSubmitted),
       ),
     );
-    if (submitted == true && context.mounted) {
-      try {
-        await ref
-            .read(competitionRepositoryProvider)
-            .register(
-              eventId: event.id,
-              categoryId: category.value!,
-              contactEmail: email.text.trim(),
-              contactPhone: phone.text.trim(),
-              contactFacebook: facebook.text.trim().isEmpty
-                  ? null
-                  : facebook.text.trim(),
-            );
-        ref.invalidate(myCompetitionsProvider);
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(AppLocalizations.of(context).competitionSubmitted),
-            ),
-          );
-        }
-      } catch (error) {
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(apiErrorMessage(error, context))),
-          );
-        }
-      }
-    }
-    category.dispose();
-    email.dispose();
-    phone.dispose();
-    facebook.dispose();
   }
 }

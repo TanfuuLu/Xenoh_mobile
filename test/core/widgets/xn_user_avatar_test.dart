@@ -8,10 +8,12 @@ void main() {
   ) async {
     await tester.pumpWidget(
       const MaterialApp(
-        home: XnUserAvatar(
-          name: 'Demo Athlete',
-          imageUrl: 'https://example.test/avatar.webp',
-          size: 48,
+        home: Center(
+          child: XnUserAvatar(
+            name: 'Demo Athlete',
+            imageUrl: 'https://example.test/avatar.webp',
+            size: 48,
+          ),
         ),
       ),
     );
@@ -22,15 +24,25 @@ void main() {
       'https://example.test/avatar.webp',
     );
     expect(find.text('DA'), findsNothing);
+    final avatarContainer = find.descendant(
+      of: find.byType(XnUserAvatar),
+      matching: find.byType(Container),
+    );
+    expect(
+      tester.getSize(avatarContainer),
+      const Size(42.24, 42.24),
+    );
   });
 
   testWidgets('falls back to initials when the URL is blank', (tester) async {
     await tester.pumpWidget(
       const MaterialApp(
-        home: XnUserAvatar(
-          name: 'Demo Athlete',
-          imageUrl: '  ',
-          size: 48,
+        home: Center(
+          child: XnUserAvatar(
+            name: 'Demo Athlete',
+            imageUrl: '  ',
+            size: 48,
+          ),
         ),
       ),
     );

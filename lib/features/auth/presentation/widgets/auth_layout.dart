@@ -4,6 +4,8 @@ import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_dimens.dart';
 import '../../../../app/theme/app_typography.dart';
 
+enum AuthLayoutVariant { standard, featured }
+
 class AuthLayout extends StatelessWidget {
   const AuthLayout({
     required this.title,
@@ -13,6 +15,7 @@ class AuthLayout extends StatelessWidget {
     this.currentStep,
     this.totalSteps,
     this.stepLabel,
+    this.variant = AuthLayoutVariant.standard,
     super.key,
   });
 
@@ -23,13 +26,25 @@ class AuthLayout extends StatelessWidget {
   final int? currentStep;
   final int? totalSteps;
   final String? stepLabel;
+  final AuthLayoutVariant variant;
 
   static const headerKey = ValueKey('auth-layout-header');
   static const formKey = ValueKey('auth-layout-form');
+  static const formSurfaceKey = ValueKey('auth-layout-form-surface');
   static const wideKey = ValueKey('auth-layout-wide');
+  static const featuredKey = ValueKey('auth-layout-featured');
 
   @override
   Widget build(BuildContext context) {
+    if (variant == AuthLayoutVariant.featured) {
+      return _FeaturedAuthLayout(
+        title: title,
+        subtitle: subtitle,
+        footer: footer,
+        child: child,
+      );
+    }
+
     return Scaffold(
       body: SafeArea(
         child: LayoutBuilder(
@@ -64,7 +79,7 @@ class AuthLayout extends StatelessWidget {
                                 subtitle: subtitle,
                               ),
                             ),
-                            const SizedBox(width: 52),
+                            const SizedBox(width: 46),
                             Expanded(
                               flex: 5,
                               child: _AuthFormColumn(
@@ -106,6 +121,141 @@ class AuthLayout extends StatelessWidget {
   }
 }
 
+class _FeaturedAuthLayout extends StatelessWidget {
+  const _FeaturedAuthLayout({
+    required this.title,
+    required this.subtitle,
+    required this.child,
+    required this.footer,
+  });
+
+  final String title;
+  final String subtitle;
+  final Widget child;
+  final Widget? footer;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final wide = constraints.maxWidth >= 840;
+            final panel = _FeaturedAuthHero(
+              key: AuthLayout.headerKey,
+              title: title,
+              subtitle: subtitle,
+              wide: wide,
+            );
+            final form = _AuthFormColumn(
+              key: AuthLayout.formKey,
+              currentStep: null,
+              totalSteps: null,
+              stepLabel: null,
+              footer: footer,
+              elevated: true,
+              child: child,
+            );
+
+            return SingleChildScrollView(
+              key: AuthLayout.featuredKey,
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+              padding: EdgeInsets.all(wide ? AppSpacing.xl : AppSpacing.md),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 1080),
+                  child: wide
+                      ? SizedBox(
+                          height: (constraints.maxHeight - 40).clamp(
+                            620.0,
+                            760.0,
+                          ),
+                          child: Row(
+                            key: AuthLayout.wideKey,
+                            children: [
+                              Expanded(flex: 6, child: panel),
+                              const SizedBox(width: AppSpacing.xxl),
+                              Expanded(
+                                flex: 5,
+                                child: Align(
+                                  alignment: Alignment.center,
+                                  child: form,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      : Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            panel,
+                            const SizedBox(height: AppSpacing.xl),
+                            form,
+                          ],
+                        ),
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class _FeaturedAuthHero extends StatelessWidget {
+  const _FeaturedAuthHero({
+    required this.title,
+    required this.subtitle,
+    required this.wide,
+    super.key,
+  });
+
+  final String title;
+  final String subtitle;
+  final bool wide;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(
+        wide ? AppSpacing.xxxl : AppSpacing.md,
+        wide ? AppSpacing.xxxl : AppSpacing.lg,
+        wide ? AppSpacing.xxxl : AppSpacing.md,
+        wide ? AppSpacing.xxxl : 0,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const _AuthBrand(),
+          if (wide) const Spacer() else const SizedBox(height: AppSpacing.xxxl),
+          Container(
+            width: 42,
+            height: 4,
+            decoration: BoxDecoration(
+              color: AppColors.buttonPrimary,
+              borderRadius: BorderRadius.circular(AppRadius.pill),
+            ),
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          _AuthHero(title: title, subtitle: subtitle, featured: true),
+          if (wide) ...[
+            const SizedBox(height: AppSpacing.xxxl),
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 360),
+              child: Divider(
+                height: 1,
+                thickness: 1,
+                color: AppColors.buttonBorder.withValues(alpha: 0.72),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
 class _AuthFormColumn extends StatelessWidget {
   const _AuthFormColumn({
     required this.child,
@@ -113,6 +263,7 @@ class _AuthFormColumn extends StatelessWidget {
     required this.currentStep,
     required this.totalSteps,
     required this.stepLabel,
+    this.elevated = false,
     super.key,
   });
 
@@ -121,6 +272,7 @@ class _AuthFormColumn extends StatelessWidget {
   final int? currentStep;
   final int? totalSteps;
   final String? stepLabel;
+  final bool elevated;
 
   @override
   Widget build(BuildContext context) {
@@ -128,6 +280,7 @@ class _AuthFormColumn extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _AuthSurface(
+          elevated: elevated,
           progress: currentStep != null && totalSteps != null
               ? _AuthProgress(
                   currentStep: currentStep!,
@@ -239,8 +392,9 @@ class _AuthBrand extends StatelessWidget {
       alignment: Alignment.centerLeft,
       child: Image.asset(
         'assets/icon/banner_logo_xenoh.png',
-        height: 42,
-        width: 154,
+        semanticLabel: 'Xenoh',
+        height: 37,
+        width: 136,
         fit: BoxFit.contain,
         alignment: Alignment.centerLeft,
         filterQuality: FilterQuality.medium,
@@ -250,10 +404,16 @@ class _AuthBrand extends StatelessWidget {
 }
 
 class _AuthHero extends StatelessWidget {
-  const _AuthHero({required this.title, required this.subtitle, super.key});
+  const _AuthHero({
+    required this.title,
+    required this.subtitle,
+    this.featured = false,
+    super.key,
+  });
 
   final String title;
   final String subtitle;
+  final bool featured;
 
   @override
   Widget build(BuildContext context) {
@@ -263,10 +423,10 @@ class _AuthHero extends StatelessWidget {
         Text(
           title,
           style: AppTypography.display(
-            36,
-            height: 1.04,
+            featured ? 42 : 36,
+            height: featured ? 0.98 : 1.04,
             weight: FontWeight.w700,
-            letterSpacing: -0.7,
+            letterSpacing: featured ? -1.1 : -0.7,
           ),
         ),
         const SizedBox(height: AppSpacing.md),
@@ -287,18 +447,35 @@ class _AuthHero extends StatelessWidget {
 }
 
 class _AuthSurface extends StatelessWidget {
-  const _AuthSurface({required this.child, this.progress});
+  const _AuthSurface({
+    required this.child,
+    required this.elevated,
+    this.progress,
+  });
 
   final Widget child;
   final Widget? progress;
+  final bool elevated;
 
   @override
   Widget build(BuildContext context) {
     return DecoratedBox(
+      key: AuthLayout.formSurfaceKey,
       decoration: BoxDecoration(
         color: AppColors.bg2,
-        borderRadius: BorderRadius.circular(AppRadius.lg),
+        borderRadius: BorderRadius.circular(
+          elevated ? AppRadius.xxl : AppRadius.lg,
+        ),
         border: Border.all(color: AppColors.surfaceBorderSoft),
+        boxShadow: elevated
+            ? const [
+                BoxShadow(
+                  color: AppColors.shadowDeep,
+                  blurRadius: 28,
+                  offset: Offset(0, 14),
+                ),
+              ]
+            : null,
       ),
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.xl),

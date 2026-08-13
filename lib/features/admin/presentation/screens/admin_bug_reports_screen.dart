@@ -106,7 +106,7 @@ class _AdminBugReportsScreenState extends ConsumerState<AdminBugReportsScreen> {
             message: l10n.adminNoBugReportsMessage,
             icon: Icons.bug_report_outlined,
           ),
-          AsyncData(:final value) => XnSectionList(
+          AsyncData(:final value) => XnCardStack(
             children: [
               for (final item in value)
                 _BugReportCard(item: item, filters: _filters),

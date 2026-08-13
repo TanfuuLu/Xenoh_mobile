@@ -81,6 +81,13 @@ abstract interface class NutritionRepository {
     String? notes,
   });
 
+  Future<MealPlanRangeResult> applyMealPlanTemplate({
+    required DateTime startDate,
+    required DateTime endDate,
+    required List<Map<String, dynamic>> meals,
+    String? notes,
+  });
+
   Future<MealPlanDay> checkMealPlanItem(String itemId);
 
   Future<MealPlanDay> uncheckMealPlanItem(String itemId);

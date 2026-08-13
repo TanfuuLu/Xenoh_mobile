@@ -34,7 +34,7 @@ class XnChip extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: compact ? AppSpacing.sm : AppSpacing.md,
-        vertical: compact ? 4 : 6,
+        vertical: compact ? 3.5 : 5,
       ),
       decoration: BoxDecoration(
         color: bg,
@@ -47,8 +47,8 @@ class XnChip extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (icon != null) ...[
-            Icon(icon, size: compact ? 12 : 14, color: fg),
-            SizedBox(width: compact ? 4 : 6),
+            Icon(icon, size: compact ? 11 : 12, color: fg),
+            SizedBox(width: compact ? 3.5 : 5),
           ],
           Text(
             label,

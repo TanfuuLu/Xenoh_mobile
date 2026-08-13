@@ -135,7 +135,7 @@ class _OverviewContent extends ConsumerWidget {
         AsyncValueView(
           value: logs,
           onRetry: () => ref.invalidate(cycleLogsProvider),
-          data: (items) => XnSectionGroup(
+          data: (items) => XnCardStack(
             children: [
               _CycleMetricGrid(
                 metrics: [
@@ -165,17 +165,13 @@ class _OverviewContent extends ConsumerWidget {
                   ),
                 ],
               ),
-              const XnSectionDivider(),
               _CycleCalendarCard(
                 overview: overview,
                 logs: items,
                 initialMonth: today,
               ),
-              const XnSectionDivider(),
               _CycleTrendsCard(logs: items, today: today),
-              const XnSectionDivider(),
               const _CycleInsightRow(),
-              const XnSectionDivider(),
               _RecentLogsSection(logs: items),
             ],
           ),
@@ -257,10 +253,9 @@ class _RecentLogsSection extends StatelessWidget {
               ),
             )
           else
-            for (var i = 0; i < recent.length; i++) ...[
-              if (i > 0) const XnSectionDivider(),
-              _LogCard(log: recent[i]),
-            ],
+            XnCardStack(
+              children: [for (final log in recent) _LogCard(log: log)],
+            ),
         ],
       ),
     );

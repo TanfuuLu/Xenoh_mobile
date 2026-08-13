@@ -5,7 +5,6 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../../core/error/failure.dart';
 import '../../../../core/error/result.dart';
 import '../../../../core/network/dio_provider.dart';
-import '../../../profile/presentation/providers/preferences_provider.dart';
 import '../../data/repositories/auth_repository_provider.dart';
 import '../../domain/entities/register_params.dart';
 import '../../domain/repositories/auth_repository.dart';
@@ -84,15 +83,12 @@ class AuthController extends _$AuthController {
     }
   }
 
-  /// Busts caches that may have already been (wrongly) populated by a request
-  /// that raced ahead of this login — e.g. on a fresh install, the startup
-  /// silent-refresh resolves to unauthenticated almost immediately (no
-  /// session to restore), which is enough to let `preferencesProvider` fire
-  /// its first, tokenless, 401-doomed request before the user has even
-  /// logged in. That failure would otherwise sit cached (autoDispose is
-  /// pinned alive by `AppLocale`'s listener) until manually retried.
+  /// Rebuilds the authenticated HTTP dependency graph after the access token
+  /// changes. Every remote repository/API provider watches [dioProvider], so
+  /// invalidating it also discards data and in-flight requests from the
+  /// previous account instead of leaving screens with stale cached results.
   void _refreshUserScopedCaches() {
-    ref.invalidate(preferencesProvider);
+    ref.invalidate(dioProvider);
   }
 
   Future<Failure?> sendForgotPasswordCode(String email) async {

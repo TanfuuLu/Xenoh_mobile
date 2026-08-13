@@ -132,7 +132,7 @@ class _InsightBody extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.sm),
         ],
-        XnSectionList(
+        XnCardStack(
           children: [
             for (final (key, label, icon) in _sections(l10n))
               if (content[key] is JsonMap)
@@ -979,7 +979,7 @@ class _WeekComparisonCard extends StatelessWidget {
       1.0,
     ].reduce((a, b) => a > b ? a : b);
 
-    return XnSectionGroup(
+    return XnCardStack(
       children: [
         _WeekBar(
           label: l10n.insightsPreviousWeekLabel,
@@ -988,7 +988,6 @@ class _WeekComparisonCard extends StatelessWidget {
           color: AppColors.dataBlue,
           unit: unit,
         ),
-        const SizedBox(height: AppSpacing.md),
         _WeekBar(
           label: l10n.insightsCurrentWeekLabel,
           volume: currentVolume,
@@ -1068,16 +1067,14 @@ class _MuscleBalanceCard extends StatelessWidget {
           (a['sharePercent'] as num?) ?? 0,
         ),
       );
-    return XnSectionGroup(
+    return XnCardStack(
       children: [
-        for (var i = 0; i < sorted.length; i++) ...[
-          if (i > 0) const SizedBox(height: AppSpacing.md),
+        for (var i = 0; i < sorted.length; i++)
           _MuscleBalanceRow(
             point: sorted[i],
             unit: unit,
             color: AppColors.dataColor(i),
           ),
-        ],
       ],
     );
   }

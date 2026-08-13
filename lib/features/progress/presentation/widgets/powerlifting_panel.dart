@@ -39,24 +39,19 @@ class PowerliftingPanel extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // Big-3 lift panel.
-        XnSectionGroup(
+        // Each Big-3 lift is an independent record card.
+        XnCardStack(
           children: [
-            for (var i = 0; i < section.lifts.length; i++) ...[
-              if (i > 0) const XnSectionDivider(),
-              _LiftSection(lift: section.lifts[i], unit: unit),
-            ],
+            for (final lift in section.lifts)
+              _LiftSection(lift: lift, unit: unit),
           ],
         ),
         const SizedBox(height: AppSpacing.md),
-        XnSectionGroup(
+        XnCardStack(
           children: [
             _AnalysisSection(analysis: analysis),
-            const XnSectionDivider(),
             _E1rmTrendSection(section: section, unit: unit),
-            const XnSectionDivider(),
             _PrTimelineSection(prs: allPrs, unit: unit),
-            const XnSectionDivider(),
             _DotsSection(dots: section.dots),
           ],
         ),

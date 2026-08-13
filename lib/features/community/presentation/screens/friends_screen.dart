@@ -73,7 +73,7 @@ class FriendsScreen extends ConsumerWidget {
                 if (requests.isEmpty) {
                   return _EmptyLine(l10n.communityNoIncomingRequestsMessage);
                 }
-                return XnSectionList(
+                return XnCardStack(
                   children: [
                     for (final request in requests)
                       _FriendRequestCard(
@@ -110,7 +110,7 @@ class FriendsScreen extends ConsumerWidget {
                 if (items.isEmpty) {
                   return _EmptyLine(l10n.communityNoFriendsMessage);
                 }
-                return XnSectionList(
+                return XnCardStack(
                   children: [
                     for (final friend in items)
                       XnSection(
@@ -186,7 +186,7 @@ class FriendsScreen extends ConsumerWidget {
                 if (requests.isEmpty) {
                   return _EmptyLine(l10n.communityNoOutgoingRequestsMessage);
                 }
-                return XnSectionList(
+                return XnCardStack(
                   children: [
                     for (final request in requests)
                       XnSection(

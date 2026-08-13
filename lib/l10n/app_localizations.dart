@@ -446,6 +446,24 @@ abstract class AppLocalizations {
   /// **'Pounds'**
   String get profilePreferencesWeightUnitPounds;
 
+  /// Label for the workout RPE tracking preference
+  ///
+  /// In en, this message translates to:
+  /// **'Track RPE'**
+  String get profilePreferencesTrackRpeLabel;
+
+  /// Enabled RPE tracking option
+  ///
+  /// In en, this message translates to:
+  /// **'On'**
+  String get profilePreferencesTrackRpeOn;
+
+  /// Disabled RPE tracking option
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get profilePreferencesTrackRpeOff;
+
   /// Snackbar shown after preferences save successfully
   ///
   /// In en, this message translates to:
@@ -797,8 +815,20 @@ abstract class AppLocalizations {
   /// Change password screen title
   ///
   /// In en, this message translates to:
-  /// **'Change password'**
+  /// **'Change Password'**
   String get settingsChangePasswordTitle;
+
+  /// Security eyebrow above the change password title
+  ///
+  /// In en, this message translates to:
+  /// **'SECURITY'**
+  String get settingsSecurityEyebrow;
+
+  /// Change password screen subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm your current password before setting a new one.'**
+  String get settingsChangePasswordSubtitle;
 
   /// Current password input label
   ///
@@ -812,10 +842,22 @@ abstract class AppLocalizations {
   /// **'New password'**
   String get settingsNewPasswordLabel;
 
+  /// Confirm new password input label
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm new password'**
+  String get settingsConfirmNewPasswordLabel;
+
+  /// Error shown when new password confirmation does not match
+  ///
+  /// In en, this message translates to:
+  /// **'New passwords do not match.'**
+  String get settingsPasswordsDoNotMatchError;
+
   /// Save password button label
   ///
   /// In en, this message translates to:
-  /// **'Save password'**
+  /// **'Update password'**
   String get settingsSavePasswordCta;
 
   /// Snackbar shown after changing password successfully
@@ -833,7 +875,7 @@ abstract class AppLocalizations {
   /// Blocklist header title
   ///
   /// In en, this message translates to:
-  /// **'Blocked users'**
+  /// **'Blocked Users'**
   String get blocksBlockedUsersTitle;
 
   /// Blocklist header subtitle
@@ -863,7 +905,7 @@ abstract class AppLocalizations {
   /// Report bug screen title
   ///
   /// In en, this message translates to:
-  /// **'Report a bug'**
+  /// **'Report A Bug'**
   String get reportBugTitle;
 
   /// Report bug screen subtitle
@@ -977,7 +1019,7 @@ abstract class AppLocalizations {
   /// Notifications header title
   ///
   /// In en, this message translates to:
-  /// **'Notification center'**
+  /// **'Notification Center'**
   String get notificationsCenterTitle;
 
   /// Notifications header subtitle
@@ -1991,7 +2033,7 @@ abstract class AppLocalizations {
   /// No description provided for @coachChatHeaderTitle.
   ///
   /// In en, this message translates to:
-  /// **'Relationship chat'**
+  /// **'Relationship Chat'**
   String get coachChatHeaderTitle;
 
   /// No description provided for @coachChatHeaderSubtitle.
@@ -2057,7 +2099,7 @@ abstract class AppLocalizations {
   /// No description provided for @coachEnterCodeHeaderTitle.
   ///
   /// In en, this message translates to:
-  /// **'Connect to coach'**
+  /// **'Connect To Coach'**
   String get coachEnterCodeHeaderTitle;
 
   /// No description provided for @coachEnterCodeHeaderSubtitle.
@@ -2099,7 +2141,7 @@ abstract class AppLocalizations {
   /// No description provided for @coachInviteCodesTitle.
   ///
   /// In en, this message translates to:
-  /// **'Invite codes'**
+  /// **'Invite Codes'**
   String get coachInviteCodesTitle;
 
   /// No description provided for @coachInviteCodesSubtitle.
@@ -2291,7 +2333,7 @@ abstract class AppLocalizations {
   /// No description provided for @coachProfileTitle.
   ///
   /// In en, this message translates to:
-  /// **'Coach profile'**
+  /// **'Coach Profile'**
   String get coachProfileTitle;
 
   /// No description provided for @coachProfileSubtitle.
@@ -4055,7 +4097,7 @@ abstract class AppLocalizations {
   /// No description provided for @trainingAiBalanceCheckTitle.
   ///
   /// In en, this message translates to:
-  /// **'AI balance check'**
+  /// **'AI Balance Check'**
   String get trainingAiBalanceCheckTitle;
 
   /// No description provided for @trainingAiBalanceCheckSubtitle.
@@ -4067,7 +4109,7 @@ abstract class AppLocalizations {
   /// No description provided for @trainingPlanProgressInsightTitle.
   ///
   /// In en, this message translates to:
-  /// **'AI plan progress'**
+  /// **'AI Plan Progress'**
   String get trainingPlanProgressInsightTitle;
 
   /// No description provided for @trainingPlanProgressInsightSubtitle.
@@ -4614,6 +4656,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Skip or unskip exercise'**
   String get trainingSkipUnskipTooltip;
+
+  /// No description provided for @trainingExerciseActionsTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Exercise actions'**
+  String get trainingExerciseActionsTooltip;
 
   /// No description provided for @trainingDeleteExerciseTooltip.
   ///
@@ -5457,7 +5505,7 @@ abstract class AppLocalizations {
   /// No description provided for @insightsHeaderTitle.
   ///
   /// In en, this message translates to:
-  /// **'AI coach review'**
+  /// **'AI Coach Review'**
   String get insightsHeaderTitle;
 
   /// No description provided for @insightsHeaderSubtitle.
@@ -6134,7 +6182,7 @@ abstract class AppLocalizations {
   /// No description provided for @sharingPersonalRecordTitle.
   ///
   /// In en, this message translates to:
-  /// **'Personal record'**
+  /// **'Personal Record'**
   String get sharingPersonalRecordTitle;
 
   /// No description provided for @sharingPersonalRecordSubtitle.
@@ -6350,7 +6398,7 @@ abstract class AppLocalizations {
   /// No description provided for @nutritionInsightTitle.
   ///
   /// In en, this message translates to:
-  /// **'Nutrition insight'**
+  /// **'Nutrition Insight'**
   String get nutritionInsightTitle;
 
   /// No description provided for @nutritionInsightSubtitle.
@@ -6860,7 +6908,7 @@ abstract class AppLocalizations {
   /// No description provided for @dashboardCommunitySubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Train together, share progress and take on challenges.'**
+  /// **'Train together and share progress with the community.'**
   String get dashboardCommunitySubtitle;
 
   /// No description provided for @communityEyebrowLabel.
@@ -7232,7 +7280,7 @@ abstract class AppLocalizations {
   /// No description provided for @adminPlatformOperationsTitle.
   ///
   /// In en, this message translates to:
-  /// **'Platform operations'**
+  /// **'Platform Operations'**
   String get adminPlatformOperationsTitle;
 
   /// No description provided for @adminPlatformOperationsSubtitle.
@@ -7298,7 +7346,7 @@ abstract class AppLocalizations {
   /// No description provided for @adminModerationQueueTitle.
   ///
   /// In en, this message translates to:
-  /// **'Moderation queue'**
+  /// **'Moderation Queue'**
   String get adminModerationQueueTitle;
 
   /// No description provided for @adminModerationQueueSubtitle.
@@ -7346,7 +7394,7 @@ abstract class AppLocalizations {
   /// No description provided for @adminPlatformPlansTitle.
   ///
   /// In en, this message translates to:
-  /// **'Platform plans'**
+  /// **'Platform Plans'**
   String get adminPlatformPlansTitle;
 
   /// No description provided for @adminPlatformPlansSubtitle.
@@ -7388,7 +7436,7 @@ abstract class AppLocalizations {
   /// No description provided for @adminUserManagementTitle.
   ///
   /// In en, this message translates to:
-  /// **'User management'**
+  /// **'User Management'**
   String get adminUserManagementTitle;
 
   /// No description provided for @adminUserManagementSubtitle.
@@ -7478,7 +7526,7 @@ abstract class AppLocalizations {
   /// No description provided for @adminPlanAnalyticsHeaderTitle.
   ///
   /// In en, this message translates to:
-  /// **'Admin plan analytics'**
+  /// **'Admin Plan Analytics'**
   String get adminPlanAnalyticsHeaderTitle;
 
   /// No description provided for @adminPlanAnalyticsHeaderSubtitle.
@@ -7562,7 +7610,7 @@ abstract class AppLocalizations {
   /// No description provided for @adminPlatformInsightsTitle.
   ///
   /// In en, this message translates to:
-  /// **'Platform insights'**
+  /// **'Platform Insights'**
   String get adminPlatformInsightsTitle;
 
   /// No description provided for @adminPlatformInsightsSubtitle.
@@ -7610,7 +7658,7 @@ abstract class AppLocalizations {
   /// No description provided for @adminMarketingAnalyticsTitle.
   ///
   /// In en, this message translates to:
-  /// **'Marketing analytics'**
+  /// **'Marketing Analytics'**
   String get adminMarketingAnalyticsTitle;
 
   /// No description provided for @adminMarketingAnalyticsSubtitle.
@@ -7682,7 +7730,7 @@ abstract class AppLocalizations {
   /// No description provided for @adminAiUsageTitle.
   ///
   /// In en, this message translates to:
-  /// **'AI usage'**
+  /// **'AI Usage'**
   String get adminAiUsageTitle;
 
   /// No description provided for @adminAiUsageSubtitle.
@@ -7760,7 +7808,7 @@ abstract class AppLocalizations {
   /// No description provided for @adminBugReportsTitle.
   ///
   /// In en, this message translates to:
-  /// **'Bug reports'**
+  /// **'Bug Reports'**
   String get adminBugReportsTitle;
 
   /// No description provided for @adminBugReportsSubtitle.
@@ -7850,7 +7898,7 @@ abstract class AppLocalizations {
   /// No description provided for @adminUserDetailTitle.
   ///
   /// In en, this message translates to:
-  /// **'User detail'**
+  /// **'User Detail'**
   String get adminUserDetailTitle;
 
   /// No description provided for @adminUserDetailSubtitle.
@@ -8078,7 +8126,7 @@ abstract class AppLocalizations {
   /// No description provided for @marketingBuiltForTitle.
   ///
   /// In en, this message translates to:
-  /// **'Built for lifters and coaches'**
+  /// **'Built For Lifters And Coaches'**
   String get marketingBuiltForTitle;
 
   /// No description provided for @marketingBuiltForSubtitle.
@@ -8471,191 +8519,11 @@ abstract class AppLocalizations {
   /// **'Share actions'**
   String get communityShareActionsTooltip;
 
-  /// No description provided for @challengesTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Fitness challenges'**
-  String get challengesTitle;
-
-  /// No description provided for @challengesCreate.
-  ///
-  /// In en, this message translates to:
-  /// **'Create challenge'**
-  String get challengesCreate;
-
-  /// No description provided for @challengeEdit.
-  ///
-  /// In en, this message translates to:
-  /// **'Edit challenge'**
-  String get challengeEdit;
-
-  /// No description provided for @challengesMineTab.
-  ///
-  /// In en, this message translates to:
-  /// **'My challenges'**
-  String get challengesMineTab;
-
-  /// No description provided for @challengesDiscoverTab.
-  ///
-  /// In en, this message translates to:
-  /// **'Discover'**
-  String get challengesDiscoverTab;
-
-  /// No description provided for @challengesEmpty.
-  ///
-  /// In en, this message translates to:
-  /// **'No challenges here yet.'**
-  String get challengesEmpty;
-
-  /// No description provided for @challengeDetailTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Challenge details'**
-  String get challengeDetailTitle;
-
-  /// No description provided for @challengeAccept.
-  ///
-  /// In en, this message translates to:
-  /// **'Accept'**
-  String get challengeAccept;
-
-  /// No description provided for @challengeDecline.
-  ///
-  /// In en, this message translates to:
-  /// **'Decline'**
-  String get challengeDecline;
-
-  /// No description provided for @challengeJoin.
-  ///
-  /// In en, this message translates to:
-  /// **'Join challenge'**
-  String get challengeJoin;
-
-  /// No description provided for @challengeLeave.
-  ///
-  /// In en, this message translates to:
-  /// **'Leave'**
-  String get challengeLeave;
-
-  /// No description provided for @challengeCheckIn.
-  ///
-  /// In en, this message translates to:
-  /// **'Check in'**
-  String get challengeCheckIn;
-
-  /// No description provided for @challengeUndoCheckIn.
-  ///
-  /// In en, this message translates to:
-  /// **'Undo check-in'**
-  String get challengeUndoCheckIn;
-
-  /// No description provided for @challengeInvite.
-  ///
-  /// In en, this message translates to:
-  /// **'Invite members'**
-  String get challengeInvite;
-
-  /// No description provided for @challengeCancel.
-  ///
-  /// In en, this message translates to:
-  /// **'Cancel challenge'**
-  String get challengeCancel;
-
-  /// No description provided for @challengeCancelConfirm.
-  ///
-  /// In en, this message translates to:
-  /// **'Cancel this challenge for all members?'**
-  String get challengeCancelConfirm;
-
-  /// No description provided for @challengeMembers.
-  ///
-  /// In en, this message translates to:
-  /// **'Members'**
-  String get challengeMembers;
-
-  /// No description provided for @challengeStandings.
-  ///
-  /// In en, this message translates to:
-  /// **'Standings'**
-  String get challengeStandings;
-
-  /// No description provided for @challengeBaselineRequired.
-  ///
-  /// In en, this message translates to:
-  /// **'Baseline required'**
-  String get challengeBaselineRequired;
-
-  /// No description provided for @challengeCreator.
-  ///
-  /// In en, this message translates to:
-  /// **'Creator'**
-  String get challengeCreator;
-
-  /// No description provided for @challengeRemoveMember.
-  ///
-  /// In en, this message translates to:
-  /// **'Remove member'**
-  String get challengeRemoveMember;
-
-  /// No description provided for @challengeTitleLabel.
+  /// No description provided for @competitionTitleLabel.
   ///
   /// In en, this message translates to:
   /// **'Title'**
-  String get challengeTitleLabel;
-
-  /// No description provided for @challengeTitleValidation.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter 3 to 80 characters.'**
-  String get challengeTitleValidation;
-
-  /// No description provided for @challengeDescriptionLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Description'**
-  String get challengeDescriptionLabel;
-
-  /// No description provided for @challengeMetricLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Metric'**
-  String get challengeMetricLabel;
-
-  /// No description provided for @challengeAccessLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Access'**
-  String get challengeAccessLabel;
-
-  /// No description provided for @challengeWeeklyTarget.
-  ///
-  /// In en, this message translates to:
-  /// **'Sessions per week'**
-  String get challengeWeeklyTarget;
-
-  /// No description provided for @challengeCheckInPrompt.
-  ///
-  /// In en, this message translates to:
-  /// **'Check-in prompt'**
-  String get challengeCheckInPrompt;
-
-  /// No description provided for @challengeCapacity.
-  ///
-  /// In en, this message translates to:
-  /// **'Participant capacity'**
-  String get challengeCapacity;
-
-  /// No description provided for @challengeStartDate.
-  ///
-  /// In en, this message translates to:
-  /// **'Start date'**
-  String get challengeStartDate;
-
-  /// No description provided for @challengeEndDate.
-  ///
-  /// In en, this message translates to:
-  /// **'End date'**
-  String get challengeEndDate;
+  String get competitionTitleLabel;
 
   /// No description provided for @competitionsTitle.
   ///
@@ -9332,7 +9200,7 @@ abstract class AppLocalizations {
   /// No description provided for @adminPaymentsTitle.
   ///
   /// In en, this message translates to:
-  /// **'Payments & subscriptions'**
+  /// **'Payments & Subscriptions'**
   String get adminPaymentsTitle;
 
   /// No description provided for @adminPaymentsSubtitle.
@@ -9616,6 +9484,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Enter at least 7 characters.'**
   String get competitionPhoneValidation;
+
+  /// No description provided for @competitionApplySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick your category and confirm how the organizer can reach you.'**
+  String get competitionApplySubtitle;
+
+  /// No description provided for @competitionApplyContact.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact'**
+  String get competitionApplyContact;
+
+  /// No description provided for @competitionEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get competitionEmail;
+
+  /// No description provided for @competitionEmailHint.
+  ///
+  /// In en, this message translates to:
+  /// **'you@example.com'**
+  String get competitionEmailHint;
+
+  /// No description provided for @competitionPhoneHint.
+  ///
+  /// In en, this message translates to:
+  /// **'0901 234 567'**
+  String get competitionPhoneHint;
+
+  /// No description provided for @competitionFacebookOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Facebook (optional)'**
+  String get competitionFacebookOptional;
+
+  /// No description provided for @competitionFacebookHint.
+  ///
+  /// In en, this message translates to:
+  /// **'facebook.com/yourprofile'**
+  String get competitionFacebookHint;
+
+  /// No description provided for @competitionEntryFee.
+  ///
+  /// In en, this message translates to:
+  /// **'Entry fee'**
+  String get competitionEntryFee;
+
+  /// No description provided for @competitionSpotsLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'Spots left'**
+  String get competitionSpotsLeft;
+
+  /// No description provided for @competitionChooseCategoryHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a category'**
+  String get competitionChooseCategoryHint;
 
   /// No description provided for @competitionSubmit.
   ///

@@ -106,7 +106,7 @@ class CycleInsightScreen extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(height: AppSpacing.lg),
-                  XnSectionList(
+                  XnCardStack(
                     children: [
                       if (data.content.phaseRecommendations.isNotEmpty)
                         _RecommendationsCard(

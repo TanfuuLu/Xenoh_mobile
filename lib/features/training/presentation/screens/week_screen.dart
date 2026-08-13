@@ -17,6 +17,7 @@ import '../../../../l10n/app_localizations.dart';
 import '../../../profile/presentation/providers/profile_controller.dart';
 import '../../domain/entities/daily_workout.dart';
 import '../../domain/entities/exercise.dart';
+import '../../domain/services/training_calorie_estimator.dart';
 import '../navigation/training_route_scope.dart';
 import '../providers/cycle_day_markers_provider.dart';
 import '../providers/days_controller.dart';
@@ -56,12 +57,14 @@ class WeekScreen extends ConsumerWidget {
   const WeekScreen({
     required this.weekId,
     this.coachView = false,
+    this.coachPlan = false,
     this.clientId,
     super.key,
   });
 
   final String weekId;
   final bool coachView;
+  final bool coachPlan;
   final String? clientId;
 
   @override
@@ -163,6 +166,7 @@ class WeekScreen extends ConsumerWidget {
                             weekId: weekId,
                             cycleMarkers: markers,
                             coachView: coachView,
+                            coachPlan: coachPlan,
                             clientId: clientId,
                           ),
                         ),
@@ -191,6 +195,7 @@ class _DayTimelineList extends StatefulWidget {
     required this.weekId,
     required this.initialIndex,
     required this.coachView,
+    required this.coachPlan,
     this.clientId,
     this.cycleMarkers,
   });
@@ -199,6 +204,7 @@ class _DayTimelineList extends StatefulWidget {
   final String weekId;
   final int initialIndex;
   final bool coachView;
+  final bool coachPlan;
   final String? clientId;
   final Map<String, String>? cycleMarkers;
 
@@ -264,6 +270,7 @@ class _DayTimelineListState extends State<_DayTimelineList> {
                         trainingRouteLocation(
                           '/days/${day.id}',
                           coachView: widget.coachView,
+                          coachPlan: widget.coachPlan,
                           clientId: widget.clientId,
                         ),
                       ),
@@ -545,10 +552,7 @@ class _DayCard extends ConsumerWidget {
               ],
               if (expanded) ...[
                 const Spacer(),
-                _DayAtGlance(
-                  dayId: day.id,
-                  onOpenAnalysis: () => context.push('/weeks/$weekId/analysis'),
-                ),
+                _DayAtGlance(dayId: day.id),
               ],
             ],
           ),
@@ -629,13 +633,9 @@ class _DayCard extends ConsumerWidget {
 }
 
 class _DayAtGlance extends ConsumerWidget {
-  const _DayAtGlance({
-    required this.dayId,
-    required this.onOpenAnalysis,
-  });
+  const _DayAtGlance({required this.dayId});
 
   final String dayId;
-  final VoidCallback onOpenAnalysis;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -660,12 +660,10 @@ class _DayAtGlance extends ConsumerWidget {
           error: (_, _) => _DayMetricList(
             metrics: const _DayWorkoutMetrics.empty(),
             l10n: l10n,
-            onOpenAnalysis: onOpenAnalysis,
           ),
           data: (items) => _DayMetricList(
             metrics: _DayWorkoutMetrics.fromExercises(items),
             l10n: l10n,
-            onOpenAnalysis: onOpenAnalysis,
           ),
         ),
       ),
@@ -677,12 +675,10 @@ class _DayMetricList extends StatelessWidget {
   const _DayMetricList({
     required this.metrics,
     required this.l10n,
-    required this.onOpenAnalysis,
   });
 
   final _DayWorkoutMetrics metrics;
   final AppLocalizations l10n;
-  final VoidCallback onOpenAnalysis;
 
   @override
   Widget build(BuildContext context) {
@@ -732,28 +728,6 @@ class _DayMetricList extends StatelessWidget {
           icon: Icons.local_fire_department_outlined,
           label: l10n.coachCaloriesLabel,
           value: '${metrics.estimatedCalories} ${l10n.nutritionKcalLabel}',
-        ),
-        const SizedBox(height: 12),
-        SizedBox(
-          width: double.infinity,
-          child: OutlinedButton.icon(
-            onPressed: onOpenAnalysis,
-            icon: const Icon(Icons.insights_rounded, size: 18),
-            label: Text(l10n.commonAnalytics),
-            style: OutlinedButton.styleFrom(
-              foregroundColor: AppColors.fg1,
-              side: const BorderSide(color: AppColors.surfaceBorderSoft),
-              minimumSize: const Size.fromHeight(42),
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(AppRadius.md),
-              ),
-              textStyle: const TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
         ),
       ],
     );
@@ -848,9 +822,9 @@ class _DayWorkoutMetrics {
       totalVolume: totalVolume,
       averageRpe: rpeCount == 0 ? null : totalRpe / rpeCount,
       totalDurationSeconds: totalDurationSeconds,
-      estimatedCalories: totalDurationSeconds <= 0
-          ? 0
-          : math.max(1, (totalDurationSeconds / 10).round()),
+      estimatedCalories: estimateTrainingCalories(
+        Duration(seconds: totalDurationSeconds),
+      ),
     );
   }
 
@@ -961,8 +935,11 @@ class _WeekDaysSummary extends StatelessWidget {
     final progress = exercises == 0 ? 0.0 : completedExercises / exercises;
 
     return XnCard(
-      color: AppColors.bg3.withValues(alpha: 0.72),
-      border: Border.all(color: AppColors.border1.withValues(alpha: 0.52)),
+      key: const ValueKey('week-days-summary'),
+      color: AppColors.clay900,
+      border: Border.all(
+        color: AppColors.fgOnClay.withValues(alpha: 0.08),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -974,13 +951,15 @@ class _WeekDaysSummary extends StatelessWidget {
                 height: 48,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: AppColors.bg2,
+                  color: AppColors.fgOnClay.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(AppRadius.md),
-                  border: Border.all(color: AppColors.surfaceBorderSoft),
+                  border: Border.all(
+                    color: AppColors.fgOnClay.withValues(alpha: 0.14),
+                  ),
                 ),
                 child: const Icon(
                   Icons.view_day_rounded,
-                  color: AppColors.accent,
+                  color: AppColors.fgOnClay,
                 ),
               ),
               const SizedBox(width: AppSpacing.md),
@@ -990,7 +969,11 @@ class _WeekDaysSummary extends StatelessWidget {
                   children: [
                     Text(
                       l10n.trainingWeekExecutionLabel,
-                      style: AppTypography.display(22, letterSpacing: 0),
+                      style: AppTypography.display(
+                        22,
+                        letterSpacing: 0,
+                        color: AppColors.fgOnClay,
+                      ),
                     ),
                     const SizedBox(height: 4),
                     Text(
@@ -1001,7 +984,7 @@ class _WeekDaysSummary extends StatelessWidget {
                         exercises,
                       ),
                       style: const TextStyle(
-                        color: AppColors.fg2,
+                        color: AppColors.clay200,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -1013,13 +996,17 @@ class _WeekDaysSummary extends StatelessWidget {
           const SizedBox(height: AppSpacing.lg),
           _ProgressBar(
             value: progress.clamp(0.0, 1.0),
-            color: AppColors.accent,
+            color: AppColors.clay200,
           ),
           const SizedBox(height: AppSpacing.md),
           Row(
             children: [
               Expanded(
-                child: _SummaryMetric(label: l10n.commonRest, value: '$rest'),
+                child: _SummaryMetric(
+                  label: l10n.commonRest,
+                  value: '$rest',
+                  inverse: true,
+                ),
               ),
               const SizedBox(width: AppSpacing.sm),
               Expanded(
@@ -1027,6 +1014,7 @@ class _WeekDaysSummary extends StatelessWidget {
                   label: l10n.commonMissed,
                   value: '$missed',
                   tone: missed > 0 ? XnChipTone.danger : XnChipTone.sage,
+                  inverse: true,
                 ),
               ),
               const SizedBox(width: AppSpacing.sm),
@@ -1034,6 +1022,7 @@ class _WeekDaysSummary extends StatelessWidget {
                 child: _SummaryMetric(
                   label: l10n.commonProgress,
                   value: '${(progress * 100).round()}%',
+                  inverse: true,
                 ),
               ),
             ],
@@ -1081,19 +1070,39 @@ class _SummaryMetric extends StatelessWidget {
     required this.label,
     required this.value,
     this.tone = XnChipTone.neutral,
+    this.inverse = false,
   });
 
   final String label;
   final String value;
   final XnChipTone tone;
+  final bool inverse;
 
   @override
   Widget build(BuildContext context) {
-    final (bg, fg) = switch (tone) {
-      XnChipTone.danger => (AppColors.dangerBg, AppColors.danger),
-      XnChipTone.sage => (AppColors.successBg, AppColors.success),
-      _ => (AppColors.bg2, AppColors.fg2),
-    };
+    final (bg, fg, labelColor) = inverse
+        ? (
+            AppColors.fgOnClay.withValues(alpha: 0.1),
+            tone == XnChipTone.danger
+                ? AppColors.warningBg
+                : tone == XnChipTone.sage
+                ? AppColors.sage100
+                : AppColors.fgOnClay,
+            AppColors.clay200,
+          )
+        : switch (tone) {
+            XnChipTone.danger => (
+              AppColors.dangerBg,
+              AppColors.danger,
+              AppColors.fg3,
+            ),
+            XnChipTone.sage => (
+              AppColors.successBg,
+              AppColors.success,
+              AppColors.fg3,
+            ),
+            _ => (AppColors.bg2, AppColors.fg2, AppColors.fg3),
+          };
 
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
@@ -1114,8 +1123,8 @@ class _SummaryMetric extends StatelessWidget {
             label,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              color: AppColors.fg3,
+            style: TextStyle(
+              color: labelColor,
               fontSize: 11,
               fontWeight: FontWeight.w500,
             ),

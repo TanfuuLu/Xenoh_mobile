@@ -102,7 +102,7 @@ class LegalScreen extends StatelessWidget {
           icon: content.icon,
         ),
         const SizedBox(height: AppSpacing.lg),
-        XnSectionList(
+        XnCardStack(
           children: [
             for (final section in content.sections)
               XnSection(

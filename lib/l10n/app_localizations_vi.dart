@@ -188,6 +188,15 @@ class AppLocalizationsVi extends AppLocalizations {
   String get profilePreferencesWeightUnitPounds => 'Pound';
 
   @override
+  String get profilePreferencesTrackRpeLabel => 'Theo dõi RPE';
+
+  @override
+  String get profilePreferencesTrackRpeOn => 'Bật';
+
+  @override
+  String get profilePreferencesTrackRpeOff => 'Tắt';
+
+  @override
   String get profilePreferencesSavedSnackbar => 'Đã lưu tùy chọn.';
 
   @override
@@ -378,13 +387,26 @@ class AppLocalizationsVi extends AppLocalizations {
   String get settingsChangePasswordTitle => 'Đổi mật khẩu';
 
   @override
+  String get settingsSecurityEyebrow => 'BẢO MẬT';
+
+  @override
+  String get settingsChangePasswordSubtitle =>
+      'Xác nhận mật khẩu hiện tại trước khi đặt mật khẩu mới.';
+
+  @override
   String get settingsCurrentPasswordLabel => 'Mật khẩu hiện tại';
 
   @override
   String get settingsNewPasswordLabel => 'Mật khẩu mới';
 
   @override
-  String get settingsSavePasswordCta => 'Lưu mật khẩu';
+  String get settingsConfirmNewPasswordLabel => 'Xác nhận mật khẩu mới';
+
+  @override
+  String get settingsPasswordsDoNotMatchError => 'Mật khẩu mới không khớp.';
+
+  @override
+  String get settingsSavePasswordCta => 'Cập nhật mật khẩu';
 
   @override
   String get settingsPasswordUpdatedSnackbar => 'Đã cập nhật mật khẩu.';
@@ -2501,6 +2523,9 @@ class AppLocalizationsVi extends AppLocalizations {
   String get trainingSkipUnskipTooltip => 'Bỏ qua hoặc hủy bỏ qua bài tập';
 
   @override
+  String get trainingExerciseActionsTooltip => 'Thao tác bài tập';
+
+  @override
   String get trainingDeleteExerciseTooltip => 'Xóa bài tập';
 
   @override
@@ -3725,7 +3750,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get dashboardCommunitySubtitle =>
-      'Tập luyện cùng nhau, chia sẻ tiến độ và tham gia thử thách.';
+      'Tập luyện cùng nhau và chia sẻ tiến độ với cộng đồng.';
 
   @override
   String get communityEyebrowLabel => 'CỘNG ĐỒNG';
@@ -4623,98 +4648,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get communityShareActionsTooltip => 'Thao tác bài chia sẻ';
 
   @override
-  String get challengesTitle => 'Thử thách thể chất';
-
-  @override
-  String get challengesCreate => 'Tạo thử thách';
-
-  @override
-  String get challengeEdit => 'Chỉnh sửa thử thách';
-
-  @override
-  String get challengesMineTab => 'Của tôi';
-
-  @override
-  String get challengesDiscoverTab => 'Khám phá';
-
-  @override
-  String get challengesEmpty => 'Chưa có thử thách nào.';
-
-  @override
-  String get challengeDetailTitle => 'Chi tiết thử thách';
-
-  @override
-  String get challengeAccept => 'Chấp nhận';
-
-  @override
-  String get challengeDecline => 'Từ chối';
-
-  @override
-  String get challengeJoin => 'Tham gia';
-
-  @override
-  String get challengeLeave => 'Rời thử thách';
-
-  @override
-  String get challengeCheckIn => 'Check-in';
-
-  @override
-  String get challengeUndoCheckIn => 'Hoàn tác check-in';
-
-  @override
-  String get challengeInvite => 'Mời thành viên';
-
-  @override
-  String get challengeCancel => 'Hủy thử thách';
-
-  @override
-  String get challengeCancelConfirm =>
-      'Hủy thử thách này cho tất cả thành viên?';
-
-  @override
-  String get challengeMembers => 'Thành viên';
-
-  @override
-  String get challengeStandings => 'Bảng xếp hạng';
-
-  @override
-  String get challengeBaselineRequired => 'Cần thiết lập mốc ban đầu';
-
-  @override
-  String get challengeCreator => 'Người tạo';
-
-  @override
-  String get challengeRemoveMember => 'Xóa thành viên';
-
-  @override
-  String get challengeTitleLabel => 'Tiêu đề';
-
-  @override
-  String get challengeTitleValidation => 'Nhập từ 3 đến 80 ký tự.';
-
-  @override
-  String get challengeDescriptionLabel => 'Mô tả';
-
-  @override
-  String get challengeMetricLabel => 'Chỉ số';
-
-  @override
-  String get challengeAccessLabel => 'Quyền tham gia';
-
-  @override
-  String get challengeWeeklyTarget => 'Buổi mỗi tuần';
-
-  @override
-  String get challengeCheckInPrompt => 'Lời nhắc check-in';
-
-  @override
-  String get challengeCapacity => 'Số người tối đa';
-
-  @override
-  String get challengeStartDate => 'Ngày bắt đầu';
-
-  @override
-  String get challengeEndDate => 'Ngày kết thúc';
+  String get competitionTitleLabel => 'Tiêu đề';
 
   @override
   String get competitionsTitle => 'Giải đấu';
@@ -5207,6 +5141,37 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get competitionPhoneValidation => 'Nhập ít nhất 7 ký tự.';
+
+  @override
+  String get competitionApplySubtitle =>
+      'Chọn hạng mục và xác nhận cách ban tổ chức liên hệ với bạn.';
+
+  @override
+  String get competitionApplyContact => 'Liên hệ';
+
+  @override
+  String get competitionEmail => 'Email';
+
+  @override
+  String get competitionEmailHint => 'ban@example.com';
+
+  @override
+  String get competitionPhoneHint => '0901 234 567';
+
+  @override
+  String get competitionFacebookOptional => 'Facebook (không bắt buộc)';
+
+  @override
+  String get competitionFacebookHint => 'facebook.com/trangcuaban';
+
+  @override
+  String get competitionEntryFee => 'Phí đăng ký';
+
+  @override
+  String get competitionSpotsLeft => 'Chỗ còn lại';
+
+  @override
+  String get competitionChooseCategoryHint => 'Chọn hạng mục';
 
   @override
   String get competitionSubmit => 'Gửi đơn đăng ký';

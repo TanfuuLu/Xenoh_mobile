@@ -5,7 +5,6 @@ import 'package:mocktail/mocktail.dart';
 import 'package:xenoh_mobile/app/theme/app_dimens.dart';
 import 'package:xenoh_mobile/core/widgets/synced_background_card.dart';
 import 'package:xenoh_mobile/features/profile/data/repositories/profile_repository_provider.dart';
-import 'package:xenoh_mobile/features/profile/domain/entities/bodyweight_log.dart';
 import 'package:xenoh_mobile/features/profile/domain/entities/training_activity.dart';
 import 'package:xenoh_mobile/features/profile/domain/entities/user_profile.dart';
 import 'package:xenoh_mobile/features/profile/domain/repositories/profile_repository.dart';
@@ -25,6 +24,7 @@ final _profile = UserProfile(
   xpToNextLevel: 1470,
   title: 'Beginner',
   big3Prs: const Big3Prs(),
+  bio: 'Female powerlifter chasing a 1.5x bodyweight squat',
   dateOfBirth: DateTime(2009, 6, 13),
   gender: 'Male',
 );
@@ -50,13 +50,6 @@ void main() {
         month: any(named: 'month'),
       ),
     ).thenAnswer((_) async => _activity);
-    when(repo.getBodyweightHistory).thenAnswer(
-      (_) async => [
-        BodyweightLog(id: 'b1', weight: 81, date: DateTime(2026, 5, 1)),
-        BodyweightLog(id: 'b2', weight: 80, date: DateTime(2026, 6, 1)),
-      ],
-    );
-
     await tester.pumpWidget(
       ProviderScope(
         overrides: [profileRepositoryProvider.overrideWithValue(repo)],
@@ -72,10 +65,12 @@ void main() {
     expect(tester.takeException(), isNull);
     expect(find.text('Lu Phuc'), findsOneWidget);
     expect(find.text('Beginner'), findsOneWidget);
-    // No bodyweight card on Profile (it lives on Home now); latest weight shows
-    // only in the level-card pill.
+    expect(find.textContaining('Female powerlifter'), findsNothing);
+    expect(find.text('BIO'), findsNothing);
+    // Bodyweight and its history live on Home, not in the Profile level card.
     expect(find.text('BODYWEIGHT'), findsNothing);
-    expect(find.text('80 kg'), findsOneWidget);
+    expect(find.text('80 kg'), findsNothing);
+    expect(find.byIcon(Icons.history_rounded), findsNothing);
     expect(
       find.byWidgetPredicate(
         (widget) =>
@@ -88,6 +83,11 @@ void main() {
       tester.getSize(find.byType(SyncedBackgroundCard)).height,
       AppLayout.heroCardMinHeight,
     );
+    final heroRect = tester.getRect(find.byType(SyncedBackgroundCard));
+    final levelRect = tester.getRect(
+      find.byKey(const ValueKey('profile-level-card')),
+    );
+    expect(heroRect.bottom - levelRect.bottom, AppSpacing.lg + 1);
 
     // Scroll the calendar (grid) into view to exercise its layout too.
     await tester.scrollUntilVisible(

@@ -11,14 +11,12 @@ class CommunityDashboardCard extends StatelessWidget {
     required this.incomingRequestCount,
     required this.onOpenCommunity,
     required this.onOpenFriends,
-    required this.onOpenChallenges,
     super.key,
   });
 
   final int incomingRequestCount;
   final VoidCallback onOpenCommunity;
   final VoidCallback onOpenFriends;
-  final VoidCallback onOpenChallenges;
 
   @override
   Widget build(BuildContext context) {
@@ -65,28 +63,17 @@ class CommunityDashboardCard extends StatelessWidget {
           ),
         ),
         const SizedBox(height: AppSpacing.sm),
-        Row(
-          children: [
-            Expanded(
-              child: OutlinedButton.icon(
-                onPressed: onOpenFriends,
-                icon: Badge.count(
-                  count: incomingRequestCount,
-                  isLabelVisible: incomingRequestCount > 0,
-                  child: const Icon(Icons.people_alt_outlined),
-                ),
-                label: Text(l10n.communityFriendsTitle),
-              ),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: OutlinedButton.icon(
+            onPressed: onOpenFriends,
+            icon: Badge.count(
+              count: incomingRequestCount,
+              isLabelVisible: incomingRequestCount > 0,
+              child: const Icon(Icons.people_alt_outlined),
             ),
-            const SizedBox(width: AppSpacing.sm),
-            Expanded(
-              child: OutlinedButton.icon(
-                onPressed: onOpenChallenges,
-                icon: const Icon(Icons.flag_outlined),
-                label: Text(l10n.challengesTitle),
-              ),
-            ),
-          ],
+            label: Text(l10n.communityFriendsTitle),
+          ),
         ),
       ],
     );

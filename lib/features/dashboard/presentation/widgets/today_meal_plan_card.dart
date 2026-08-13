@@ -147,26 +147,28 @@ class _MealSection extends ConsumerWidget {
           ),
         ),
         const SizedBox(height: AppSpacing.md),
-        for (var index = 0; index < meal.items.length; index++) ...[
-          _MealPlanItemTile(
-            item: meal.items[index],
-            pending: pending,
-            onChanged: (checked) {
-              if (checked == null) return;
-              unawaited(
-                ref
-                    .read(mealPlanActionControllerProvider.notifier)
-                    .setChecked(
-                      date: date,
-                      itemId: meal.items[index].id,
-                      checked: checked,
-                    ),
-              );
-            },
-          ),
-          if (index < meal.items.length - 1)
-            const Divider(height: AppSpacing.lg * 2),
-        ],
+        XnCardStack(
+          itemPadding: EdgeInsets.zero,
+          children: [
+            for (final item in meal.items)
+              _MealPlanItemTile(
+                item: item,
+                pending: pending,
+                onChanged: (checked) {
+                  if (checked == null) return;
+                  unawaited(
+                    ref
+                        .read(mealPlanActionControllerProvider.notifier)
+                        .setChecked(
+                          date: date,
+                          itemId: item.id,
+                          checked: checked,
+                        ),
+                  );
+                },
+              ),
+          ],
+        ),
       ],
     );
   }
@@ -188,7 +190,10 @@ class _MealPlanItemTile extends StatelessWidget {
     final languageCode = Localizations.localeOf(context).languageCode;
     return CheckboxListTile(
       dense: false,
-      contentPadding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+      contentPadding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.lg,
+        vertical: AppSpacing.md,
+      ),
       minVerticalPadding: AppSpacing.md,
       value: item.isChecked,
       controlAffinity: ListTileControlAffinity.trailing,

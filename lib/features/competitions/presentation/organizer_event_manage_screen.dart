@@ -552,7 +552,7 @@ class _EditEventDialogState extends ConsumerState<_EditEventDialog> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              _field(_title, l10n.challengeTitleLabel),
+              _field(_title, l10n.competitionTitleLabel),
               _field(_description, l10n.organizerEventDescription, lines: 3),
               _field(_venue, l10n.organizerVenueName),
               _field(_address, l10n.organizerAddress),

@@ -759,9 +759,9 @@ class _AppDrawer extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final isCoach = user?.isCoach ?? false;
     final isAdmin = user?.isAdmin ?? false;
-    final drawerWidth = (MediaQuery.sizeOf(context).width * 0.88).clamp(
-      280.0,
-      336.0,
+    final drawerWidth = (MediaQuery.sizeOf(context).width * 0.78).clamp(
+      246.0,
+      296.0,
     );
 
     return Drawer(
@@ -769,14 +769,14 @@ class _AppDrawer extends StatelessWidget {
       backgroundColor: AppColors.clay050,
       surfaceTintColor: Colors.transparent,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.horizontal(right: Radius.circular(24)),
+        borderRadius: BorderRadius.horizontal(right: Radius.circular(21)),
       ),
       child: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(18, 14, 10, 10),
+              padding: const EdgeInsets.fromLTRB(16, 12, 9, 9),
               child: Row(
                 children: [
                   Expanded(
@@ -784,7 +784,7 @@ class _AppDrawer extends StatelessWidget {
                       alignment: Alignment.centerLeft,
                       child: Image.asset(
                         'assets/icon/banner_logo_xenoh.png',
-                        height: 34,
+                        height: 30,
                         fit: BoxFit.contain,
                         filterQuality: FilterQuality.medium,
                       ),
@@ -819,7 +819,7 @@ class _AppDrawer extends StatelessWidget {
                   20,
                 ),
                 children: [
-                  _DrawerSection(
+                  HomeDrawerSection(
                     title: isCoach
                         ? l10n.appShellDrawerCoachWorkspaceSection
                         : l10n.appShellDrawerTrainingSection,
@@ -874,7 +874,7 @@ class _AppDrawer extends StatelessWidget {
                         ),
                     ],
                   ),
-                  _DrawerSection(
+                  HomeDrawerSection(
                     title: l10n.appShellDrawerProgressSection,
                     icon: Icons.trending_up_outlined,
                     children: [
@@ -890,7 +890,7 @@ class _AppDrawer extends StatelessWidget {
                       ),
                     ],
                   ),
-                  _DrawerSection(
+                  HomeDrawerSection(
                     title: l10n.appShellDrawerCommunitySection,
                     icon: Icons.groups_outlined,
                     initiallyExpanded: currentIndex == 4,
@@ -910,7 +910,7 @@ class _AppDrawer extends StatelessWidget {
                       ),
                     ],
                   ),
-                  _DrawerSection(
+                  HomeDrawerSection(
                     title: l10n.appShellDrawerAiToolsSection,
                     icon: Icons.auto_awesome_outlined,
                     children: [
@@ -927,7 +927,7 @@ class _AppDrawer extends StatelessWidget {
                     ],
                   ),
                   if (isCoach)
-                    _DrawerSection(
+                    HomeDrawerSection(
                       title: l10n.appShellDrawerCoachToolsSection,
                       icon: Icons.supervisor_account_outlined,
                       initiallyExpanded: true,
@@ -950,7 +950,7 @@ class _AppDrawer extends StatelessWidget {
                       ],
                     )
                   else if (!isAdmin)
-                    _DrawerSection(
+                    HomeDrawerSection(
                       title: l10n.appShellDrawerCoachAccessSection,
                       icon: Icons.school_outlined,
                       children: [
@@ -967,7 +967,7 @@ class _AppDrawer extends StatelessWidget {
                       ],
                     ),
                   if (isAdmin)
-                    _DrawerSection(
+                    HomeDrawerSection(
                       title: l10n.appShellDrawerAdministrationSection,
                       icon: Icons.admin_panel_settings_outlined,
                       initiallyExpanded: true,
@@ -1049,7 +1049,7 @@ class _UserPanel extends StatelessWidget {
               borderColor: AppColors.fgOnClay.withValues(alpha: 0.18),
               borderRadius: AppRadius.md,
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: 10.5),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1082,9 +1082,9 @@ class _UserPanel extends StatelessWidget {
               tooltip: AppLocalizations.of(
                 context,
               ).appShellNotificationsTooltip,
-              icon: const Icon(Icons.notifications_none_rounded, size: 20),
+              icon: const Icon(Icons.notifications_none_rounded, size: 18),
               visualDensity: VisualDensity.compact,
-              constraints: const BoxConstraints.tightFor(width: 38, height: 38),
+              constraints: const BoxConstraints.tightFor(width: 34, height: 34),
               color: AppColors.fgOnClay,
               style: IconButton.styleFrom(
                 backgroundColor: AppColors.fgOnClay.withValues(alpha: 0.08),
@@ -1098,13 +1098,14 @@ class _UserPanel extends StatelessWidget {
   }
 }
 
-class _DrawerSection extends StatefulWidget {
-  const _DrawerSection({
+class HomeDrawerSection extends StatefulWidget {
+  const HomeDrawerSection({
     required this.title,
     required this.icon,
     required this.children,
     this.initiallyExpanded = false,
     this.selected = false,
+    super.key,
   });
 
   final String title;
@@ -1114,10 +1115,10 @@ class _DrawerSection extends StatefulWidget {
   final bool selected;
 
   @override
-  State<_DrawerSection> createState() => _DrawerSectionState();
+  State<HomeDrawerSection> createState() => _HomeDrawerSectionState();
 }
 
-class _DrawerSectionState extends State<_DrawerSection> {
+class _HomeDrawerSectionState extends State<HomeDrawerSection> {
   late bool _expanded = widget.initiallyExpanded;
 
   @override
@@ -1127,74 +1128,58 @@ class _DrawerSectionState extends State<_DrawerSection> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        AnimatedContainer(
-          duration: AppMotion.med,
-          curve: Curves.easeOutCubic,
-          decoration: BoxDecoration(
-            color: _expanded
-                ? AppColors.bg2.withValues(alpha: 0.78)
-                : Colors.transparent,
-            borderRadius: BorderRadius.circular(AppRadius.lg),
-            border: Border.all(
-              color: _expanded
-                  ? AppColors.surfaceBorderSoft.withValues(alpha: 0.82)
-                  : Colors.transparent,
-            ),
+        Theme(
+          data: Theme.of(context).copyWith(
+            dividerColor: Colors.transparent,
+            splashColor: AppColors.accentSoft.withValues(alpha: 0.34),
+            highlightColor: AppColors.accentSoft.withValues(alpha: 0.18),
           ),
-          child: Theme(
-            data: Theme.of(context).copyWith(
-              dividerColor: Colors.transparent,
-              splashColor: AppColors.accentSoft.withValues(alpha: 0.34),
-              highlightColor: AppColors.accentSoft.withValues(alpha: 0.18),
-            ),
-            child: Material(
-              type: MaterialType.transparency,
-              child: ExpansionTile(
-                initiallyExpanded: widget.initiallyExpanded,
-                onExpansionChanged: (value) =>
-                    setState(() => _expanded = value),
-                maintainState: true,
-                minTileHeight: 54,
-                shape: const Border(),
-                collapsedShape: const Border(),
-                tilePadding: const EdgeInsets.symmetric(horizontal: 10),
-                childrenPadding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
-                expandedCrossAxisAlignment: CrossAxisAlignment.stretch,
-                iconColor: AppColors.accent,
-                collapsedIconColor: AppColors.fg3,
-                leading: AnimatedContainer(
-                  duration: AppMotion.med,
-                  width: 34,
-                  height: 34,
-                  decoration: BoxDecoration(
-                    color: highlighted
-                        ? AppColors.accentSoft
-                        : AppColors.bg2.withValues(alpha: 0.72),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Icon(
-                    widget.icon,
-                    size: 18,
-                    color: highlighted ? AppColors.clay900 : AppColors.fg2,
-                  ),
+          child: Material(
+            type: MaterialType.transparency,
+            child: ExpansionTile(
+              initiallyExpanded: widget.initiallyExpanded,
+              onExpansionChanged: (value) => setState(() => _expanded = value),
+              maintainState: true,
+              minTileHeight: 48,
+              shape: const Border(),
+              collapsedShape: const Border(),
+              tilePadding: const EdgeInsets.symmetric(horizontal: 9),
+              childrenPadding: const EdgeInsets.fromLTRB(24, 0, 7, 7),
+              expandedCrossAxisAlignment: CrossAxisAlignment.stretch,
+              iconColor: AppColors.accent,
+              collapsedIconColor: AppColors.fg3,
+              leading: AnimatedContainer(
+                duration: AppMotion.med,
+                width: 30,
+                height: 30,
+                decoration: BoxDecoration(
+                  color: highlighted
+                      ? AppColors.accentSoft
+                      : AppColors.bg2.withValues(alpha: 0.72),
+                  borderRadius: BorderRadius.circular(9),
                 ),
-                title: Text(
-                  widget.title,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    color: highlighted ? AppColors.ink900 : AppColors.fg2,
-                    fontSize: 13.5,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 0.1,
-                  ),
+                child: Icon(
+                  widget.icon,
+                  size: 16,
+                  color: highlighted ? AppColors.clay900 : AppColors.fg2,
                 ),
-                children: widget.children,
               ),
+              title: Text(
+                widget.title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: highlighted ? AppColors.ink900 : AppColors.fg2,
+                  fontSize: 13.5,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0.1,
+                ),
+              ),
+              children: widget.children,
             ),
           ),
         ),
-        const SizedBox(height: 6),
+        const SizedBox(height: 5),
       ],
     );
   }
@@ -1234,7 +1219,7 @@ class _DrawerItem extends StatelessWidget {
           child: AnimatedContainer(
             duration: AppMotion.fast,
             curve: Curves.easeOutCubic,
-            padding: const EdgeInsets.fromLTRB(8, 7, 10, 7),
+            padding: const EdgeInsets.fromLTRB(7, 6, 9, 6),
             decoration: BoxDecoration(
               color: selected ? AppColors.clay900 : Colors.transparent,
               borderRadius: BorderRadius.circular(AppRadius.md),
@@ -1242,21 +1227,21 @@ class _DrawerItem extends StatelessWidget {
             child: Row(
               children: [
                 Container(
-                  width: 30,
-                  height: 30,
+                  width: 26,
+                  height: 26,
                   decoration: BoxDecoration(
                     color: selected
                         ? AppColors.fgOnClay.withValues(alpha: 0.12)
                         : AppColors.clay100.withValues(alpha: 0.5),
-                    borderRadius: BorderRadius.circular(9),
+                    borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
                     selected ? activeIcon ?? icon : icon,
-                    size: 17,
+                    size: 15,
                     color: fg,
                   ),
                 ),
-                const SizedBox(width: 11),
+                const SizedBox(width: 10),
                 Expanded(
                   child: Text(
                     label,

@@ -84,24 +84,27 @@ class MealPlanActionController extends _$MealPlanActionController {
       ..invalidate(nutritionControllerProvider);
   }
 
-  Future<void> saveWeek({
-    required DateTime weekStart,
+  Future<void> saveRange({
+    required DateTime startDate,
+    required DateTime endDate,
     required List<Map<String, dynamic>> meals,
     String? notes,
   }) async {
     state = const AsyncValue.loading();
-    final start = _dateOnly(weekStart);
+    final start = _dateOnly(startDate);
+    final end = _dateOnly(endDate);
     state = await AsyncValue.guard(() async {
-      final repo = ref.read(nutritionRepositoryProvider);
-      for (var i = 0; i < 7; i++) {
-        await repo.upsertMealPlan(
-          date: start.add(Duration(days: i)),
-          meals: meals,
-          notes: notes,
-        );
-      }
+      await ref
+          .read(nutritionRepositoryProvider)
+          .applyMealPlanTemplate(
+            startDate: start,
+            endDate: end,
+            meals: meals,
+            notes: notes,
+          );
     });
-    for (var i = 0; i < 7; i++) {
+    final dayCount = end.difference(start).inDays + 1;
+    for (var i = 0; i < dayCount; i++) {
       ref.invalidate(mealPlanProvider(start.add(Duration(days: i))));
     }
     ref.invalidate(nutritionControllerProvider);

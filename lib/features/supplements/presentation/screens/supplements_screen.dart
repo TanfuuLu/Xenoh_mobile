@@ -264,7 +264,7 @@ class _DailyContent extends StatelessWidget {
             message: l10n.supplementsNoDosesMessage,
           )
         else
-          XnSectionList(
+          XnCardStack(
             children: [
               for (final dose in daily.doses)
                 _DoseRow(
@@ -517,7 +517,7 @@ class _RegimensTab extends ConsumerWidget {
               title: l10n.supplementsNoRegimensTitle,
               message: l10n.supplementsNoRegimensMessage,
             ),
-            AsyncData(:final value) => XnSectionList(
+            AsyncData(:final value) => XnCardStack(
               children: [
                 for (final regimen in value)
                   _RegimenRow(
@@ -764,7 +764,7 @@ class _HistoryTab extends ConsumerWidget {
                     message: l10n.supplementsNoHistoryMessage,
                   )
                 else
-                  XnSectionList(
+                  XnCardStack(
                     children: [
                       for (final day in value.days.reversed)
                         _HistoryRow(day: day),

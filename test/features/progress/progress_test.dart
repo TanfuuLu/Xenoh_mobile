@@ -6,6 +6,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:xenoh_mobile/app/theme/app_colors.dart';
 import 'package:xenoh_mobile/core/error/failure.dart';
 import 'package:xenoh_mobile/core/utils/weight_units.dart';
+import 'package:xenoh_mobile/core/widgets/xn_card.dart';
 import 'package:xenoh_mobile/features/progress/data/datasources/progress_remote_data_source.dart';
 import 'package:xenoh_mobile/features/progress/data/dtos/exercise_pr_dto.dart';
 import 'package:xenoh_mobile/features/progress/data/repositories/progress_repository_impl.dart';
@@ -48,6 +49,31 @@ ProviderContainer _container(ProgressRepository repo) {
 }
 
 void main() {
+  testWidgets('each plan overview metric is a standalone card', (tester) async {
+    await tester.binding.setSurfaceSize(const Size(390, 844));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    await tester.pumpWidget(
+      MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: PlanAnalyticsView(
+              analytics: _analytics(),
+              unit: WeightUnit.kg,
+            ),
+          ),
+        ),
+      ),
+    );
+
+    // Score hero + eight full-width metric cards.
+    expect(find.byType(XnCard), findsNWidgets(9));
+    expect(find.byType(Divider), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('weekly compliance uses readable horizontal progress rows', (
     tester,
   ) async {

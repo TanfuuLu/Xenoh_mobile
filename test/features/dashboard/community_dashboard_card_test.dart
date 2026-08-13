@@ -10,7 +10,6 @@ void main() {
   ) async {
     var openedCommunity = false;
     var openedFriends = false;
-    var openedChallenges = false;
 
     await tester.pumpWidget(
       MaterialApp(
@@ -26,7 +25,6 @@ void main() {
             incomingRequestCount: 3,
             onOpenCommunity: () => openedCommunity = true,
             onOpenFriends: () => openedFriends = true,
-            onOpenChallenges: () => openedChallenges = true,
           ),
         ),
       ),
@@ -37,10 +35,9 @@ void main() {
 
     await tester.tap(find.text('Community'));
     await tester.tap(find.text('Friends'));
-    await tester.tap(find.text('Fitness challenges'));
 
     expect(openedCommunity, isTrue);
     expect(openedFriends, isTrue);
-    expect(openedChallenges, isTrue);
+    expect(find.text('Fitness challenges'), findsNothing);
   });
 }

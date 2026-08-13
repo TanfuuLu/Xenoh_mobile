@@ -16,4 +16,11 @@ void main() {
   test('athlete training route has no coach query parameters', () {
     expect(trainingRouteLocation('/weeks/week-1'), '/weeks/week-1');
   });
+
+  test('client coaching-plan route preserves the read-only plan scope', () {
+    expect(
+      trainingRouteLocation('/days/day-1', coachPlan: true),
+      '/days/day-1?coachPlan=true',
+    );
+  });
 }

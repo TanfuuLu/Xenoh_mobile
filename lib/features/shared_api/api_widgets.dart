@@ -60,13 +60,9 @@ class FeatureHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        AppSpacing.xs,
-        AppSpacing.sm,
-        AppSpacing.xs,
-        AppSpacing.md,
-      ),
+    return XnCard(
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      color: AppColors.bg2,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -75,7 +71,7 @@ class FeatureHeader extends StatelessWidget {
             height: 44,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: Colors.transparent,
+              color: AppColors.accentSoft,
               borderRadius: BorderRadius.circular(AppRadius.md),
               border: Border.all(color: AppColors.surfaceBorderSoft),
             ),
@@ -203,13 +199,13 @@ class EmptyFeatureState extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            width: 52,
-            height: 52,
+            width: 46,
+            height: 46,
             decoration: BoxDecoration(
               color: AppColors.clay100,
               borderRadius: BorderRadius.circular(AppRadius.lg),
             ),
-            child: Icon(icon, color: AppColors.clay900, size: 26),
+            child: Icon(icon, color: AppColors.clay900, size: 23),
           ),
           const SizedBox(height: AppSpacing.md),
           Text(
@@ -258,7 +254,7 @@ class DataCard extends StatelessWidget {
         children: [
           Container(
             width: 4,
-            height: 52,
+            height: 46,
             decoration: BoxDecoration(
               color: AppColors.accent,
               borderRadius: BorderRadius.circular(AppRadius.pill),

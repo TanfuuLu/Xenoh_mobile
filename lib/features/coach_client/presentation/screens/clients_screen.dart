@@ -214,7 +214,7 @@ class _DashboardMetricList extends StatelessWidget {
     return Column(
       children: [
         for (final item in items) ...[
-          if (item != items.first) const XnSectionDivider(),
+          if (item != items.first) const SizedBox(height: AppSpacing.md),
           _BoardMetricTile(item: item),
         ],
       ],
@@ -513,7 +513,7 @@ class _RosterGroup extends StatelessWidget {
           ],
         ),
         const SizedBox(height: AppSpacing.md),
-        XnSectionList(children: children),
+        XnCardStack(children: children),
       ],
     );
   }
@@ -857,7 +857,7 @@ class _VaultButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return Material(
-      color: AppColors.accent,
+      color: AppColors.buttonPrimary,
       borderRadius: BorderRadius.circular(AppRadius.pill),
       child: InkWell(
         onTap: onTap,

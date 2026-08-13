@@ -27,6 +27,7 @@ class SettingsScreen extends ConsumerStatefulWidget {
 class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   String? _language;
   String? _weightUnit;
+  bool? _trackRpe;
   var _saving = false;
 
   @override
@@ -42,81 +43,51 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           subtitle: l10n.settingsSubtitle,
         ),
         const SizedBox(height: AppSpacing.md),
-        XnSectionGroup(
+        XnSectionEyebrow(l10n.profilePreferencesTitle),
+        const SizedBox(height: AppSpacing.sm),
+        switch (prefs) {
+          AsyncData(:final value) => _preferenceFields(context, value),
+          AsyncError(:final error) => XnCardStack(
+            children: [
+              FeatureError(
+                error: error,
+                onRetry: () => ref.invalidate(preferencesProvider),
+              ),
+            ],
+          ),
+          _ => const XnCardStack(children: [LoadingList()]),
+        },
+        const SizedBox(height: AppSpacing.lg),
+        XnSectionEyebrow(l10n.profileAccountTitle),
+        const SizedBox(height: AppSpacing.sm),
+        XnCardStack(
           children: [
-            XnSection(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  XnSectionEyebrow(l10n.profilePreferencesTitle),
-                  const SizedBox(height: AppSpacing.sm),
-                  switch (prefs) {
-                    AsyncData(:final value) => _preferenceFields(
-                      context,
-                      value,
-                    ),
-                    AsyncError(:final error) => FeatureError(
-                      error: error,
-                      onRetry: () => ref.invalidate(preferencesProvider),
-                    ),
-                    _ => const LoadingList(),
-                  },
-                ],
-              ),
+            _SettingsRow(
+              icon: Icons.person_outline_rounded,
+              label: l10n.profileAccountProfile,
+              onTap: () => Navigator.of(context).pop(),
             ),
-            const XnSectionDivider(),
-            XnSection(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.sm,
-                vertical: AppSpacing.lg,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  XnSectionEyebrow(l10n.profileAccountTitle),
-                  const SizedBox(height: AppSpacing.sm),
-                  _SettingsRow(
-                    icon: Icons.person_outline_rounded,
-                    label: l10n.profileAccountProfile,
-                    onTap: () => Navigator.of(context).pop(),
-                  ),
-                  _SettingsRow(
-                    icon: Icons.lock_outline_rounded,
-                    label: l10n.profileAccountChangePassword,
-                    onTap: () => context.push('/change-password'),
-                  ),
-                  _SettingsRow(
-                    icon: Icons.bug_report_outlined,
-                    label: l10n.profileAccountReportBug,
-                    onTap: () => context.push('/report-bug'),
-                  ),
-                  _SettingsRow(
-                    icon: Icons.folder_outlined,
-                    label: l10n.storageTitle,
-                    onTap: () => context.push('/storage'),
-                  ),
-                  _SettingsRow(
-                    icon: Icons.delete_forever_outlined,
-                    label: l10n.accountDeletionSettingsLabel,
-                    danger: true,
-                    onTap: _confirmAccountDeletion,
-                  ),
-                ],
-              ),
+            _SettingsRow(
+              icon: Icons.lock_outline_rounded,
+              label: l10n.profileAccountChangePassword,
+              onTap: () => context.push('/change-password'),
             ),
-            const XnSectionDivider(),
-            XnSection(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.sm,
-                vertical: AppSpacing.sm,
-              ),
-              child: _SettingsRow(
-                icon: Icons.logout_rounded,
-                label: l10n.profileAccountSignOut,
-                danger: true,
-                onTap: () => unawaited(
-                  ref.read(authControllerProvider.notifier).logout(),
-                ),
+            _SettingsRow(
+              icon: Icons.bug_report_outlined,
+              label: l10n.profileAccountReportBug,
+              onTap: () => context.push('/report-bug'),
+            ),
+            _SettingsRow(
+              icon: Icons.folder_outlined,
+              label: l10n.storageTitle,
+              onTap: () => context.push('/storage'),
+            ),
+            _SettingsRow(
+              icon: Icons.logout_rounded,
+              label: l10n.profileAccountSignOut,
+              danger: true,
+              onTap: () => unawaited(
+                ref.read(authControllerProvider.notifier).logout(),
               ),
             ),
           ],
@@ -131,8 +102,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final theme = normalizeThemePreference(value['theme']?.toString());
     final weightUnit =
         _weightUnit ?? textOf(value, ['weightUnit'], fallback: 'kg');
+    final trackRpe = _trackRpe ?? (value['trackRpe'] as bool? ?? true);
 
-    return Column(
+    return XnCardStack(
       children: [
         _PreferenceSelectField(
           label: l10n.profilePreferencesLanguageLabel,
@@ -152,10 +124,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           ],
           onChanged: (selected) {
             setState(() => _language = selected);
-            unawaited(_save(selected, theme, weightUnit));
+            unawaited(_save(selected, theme, weightUnit, trackRpe));
           },
         ),
-        const _PreferenceDivider(),
         _PreferenceSelectField(
           label: l10n.profilePreferencesWeightUnitLabel,
           value: weightUnit,
@@ -174,20 +145,48 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           ],
           onChanged: (selected) {
             setState(() => _weightUnit = selected);
-            unawaited(_save(language, theme, selected));
+            unawaited(_save(language, theme, selected, trackRpe));
+          },
+        ),
+        _PreferenceSelectField(
+          label: l10n.profilePreferencesTrackRpeLabel,
+          value: trackRpe ? 'on' : 'off',
+          enabled: !_saving,
+          options: [
+            _PreferenceOption(
+              value: 'on',
+              label: l10n.profilePreferencesTrackRpeOn,
+              icon: Icons.speed_rounded,
+            ),
+            _PreferenceOption(
+              value: 'off',
+              label: l10n.profilePreferencesTrackRpeOff,
+              icon: Icons.speed_outlined,
+            ),
+          ],
+          onChanged: (selected) {
+            final enabled = selected == 'on';
+            setState(() => _trackRpe = enabled);
+            unawaited(_save(language, theme, weightUnit, enabled));
           },
         ),
       ],
     );
   }
 
-  Future<void> _save(String language, String theme, String weightUnit) async {
+  Future<void> _save(
+    String language,
+    String theme,
+    String weightUnit,
+    bool trackRpe,
+  ) async {
     setState(() => _saving = true);
     try {
       await ref.read(xenohApiProvider).putObject('/users/me/preferences', {
         'language': language,
         'theme': theme,
         'weightUnit': weightUnit,
+        'trackRpe': trackRpe,
       });
       ref.read(appLocaleProvider.notifier).setLocale(language);
       ref.invalidate(preferencesProvider);
@@ -204,6 +203,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       // the server's state instead of showing a value that never saved.
       _language = null;
       _weightUnit = null;
+      _trackRpe = null;
       ref.invalidate(preferencesProvider);
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -212,36 +212,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     } finally {
       if (mounted) setState(() => _saving = false);
     }
-  }
-
-  Future<void> _confirmAccountDeletion() async {
-    final l10n = AppLocalizations.of(context);
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Text(l10n.accountDeletionConfirmationTitle),
-        content: Text(l10n.accountDeletionConfirmationMessage),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(false),
-            child: Text(l10n.commonCancel),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(dialogContext).pop(true),
-            child: Text(l10n.accountDeletionConfirmLabel),
-          ),
-        ],
-      ),
-    );
-    if (confirmed != true || !mounted) return;
-
-    final failure = await ref
-        .read(authControllerProvider.notifier)
-        .deleteAccount();
-    if (!mounted || failure == null) return;
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(apiErrorMessage(failure, context))));
   }
 }
 
@@ -365,22 +335,6 @@ class _SettingsRow extends StatelessWidget {
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _PreferenceDivider extends StatelessWidget {
-  const _PreferenceDivider();
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 58),
-      child: Divider(
-        height: AppSpacing.lg,
-        thickness: 1,
-        color: AppColors.surfaceBorderSoft.withValues(alpha: 0.7),
       ),
     );
   }

@@ -62,7 +62,7 @@ class KeyVaultScreen extends ConsumerWidget {
             message: l10n.coachNoActiveCodesMessage,
             icon: Icons.key_off_outlined,
           ),
-          AsyncData(:final value) => XnSectionList(
+          AsyncData(:final value) => XnCardStack(
             children: [
               for (final item in value)
                 Column(

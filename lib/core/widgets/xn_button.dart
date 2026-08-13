@@ -27,7 +27,8 @@ class XnButton extends StatelessWidget {
     final effectiveOnPressed = loading ? null : onPressed;
     final loadingColor = switch (variant) {
       XnButtonVariant.primary || XnButtonVariant.danger => AppColors.fgOnClay,
-      XnButtonVariant.secondary || XnButtonVariant.ghost => AppColors.accent,
+      XnButtonVariant.secondary ||
+      XnButtonVariant.ghost => AppColors.buttonPrimary,
     };
     final child = AnimatedSwitcher(
       duration: AppMotion.fast,
@@ -44,8 +45,8 @@ class XnButton extends StatelessWidget {
       child: loading
           ? SizedBox(
               key: const ValueKey('loading'),
-              height: 20,
-              width: 20,
+              height: 18,
+              width: 18,
               child: CircularProgressIndicator(
                 strokeWidth: 2,
                 color: loadingColor,
@@ -75,7 +76,7 @@ class XnButton extends StatelessWidget {
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.danger,
           foregroundColor: AppColors.fgOnClay,
-          minimumSize: const Size(64, 44),
+          minimumSize: const Size(56, 40),
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
           padding: const EdgeInsets.symmetric(
             horizontal: AppSpacing.lg,
@@ -96,7 +97,7 @@ class XnButton extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Icon(icon, size: 18),
-        const SizedBox(width: 6),
+        const SizedBox(width: 5),
         Text(label),
       ],
     );

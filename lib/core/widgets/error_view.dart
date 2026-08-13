@@ -45,8 +45,8 @@ class ErrorView extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                width: 52,
-                height: 52,
+                width: 46,
+                height: 46,
                 decoration: BoxDecoration(
                   color: AppColors.dangerBg,
                   borderRadius: BorderRadius.circular(AppRadius.lg),

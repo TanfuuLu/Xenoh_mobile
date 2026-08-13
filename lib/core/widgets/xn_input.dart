@@ -15,6 +15,7 @@ class XnInput extends StatelessWidget {
     this.keyboardType,
     this.textInputAction,
     this.validator,
+    this.errorText,
     this.onChanged,
     this.enabled = true,
     this.prefix,
@@ -30,6 +31,7 @@ class XnInput extends StatelessWidget {
   final TextInputType? keyboardType;
   final TextInputAction? textInputAction;
   final String? Function(String?)? validator;
+  final String? errorText;
   final ValueChanged<String>? onChanged;
   final bool enabled;
   final Widget? prefix;
@@ -61,6 +63,7 @@ class XnInput extends StatelessWidget {
           inputFormatters: inputFormatters,
           decoration: InputDecoration(
             hintText: hint,
+            errorText: errorText,
             prefixIcon: prefix,
             suffixIcon: suffix,
             contentPadding: const EdgeInsets.symmetric(

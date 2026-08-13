@@ -42,18 +42,55 @@ void main() {
       expect(tester.takeException(), isNull);
     },
   );
+
+  testWidgets('featured login keeps the flat hero clear of the form card', (
+    tester,
+  ) async {
+    await _pumpAuthLayout(
+      tester,
+      const Size(320, 700),
+      variant: AuthLayoutVariant.featured,
+    );
+    expect(find.byKey(AuthLayout.featuredKey), findsOneWidget);
+    expect(find.byKey(AuthLayout.wideKey), findsNothing);
+    expect(find.byKey(AuthLayout.formSurfaceKey), findsOneWidget);
+    final headerRect = tester.getRect(find.byKey(AuthLayout.headerKey));
+    final formRect = tester.getRect(find.byKey(AuthLayout.formKey));
+    expect(formRect.top, greaterThanOrEqualTo(headerRect.bottom));
+
+    final formSurface = tester.widget<DecoratedBox>(
+      find.byKey(AuthLayout.formSurfaceKey),
+    );
+    final formDecoration = formSurface.decoration as BoxDecoration;
+    expect(formDecoration.color, isNotNull);
+    expect(formDecoration.border, isNotNull);
+    expect(tester.takeException(), isNull);
+
+    await _pumpAuthLayout(
+      tester,
+      const Size(1000, 800),
+      variant: AuthLayoutVariant.featured,
+    );
+    expect(find.byKey(AuthLayout.wideKey), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
 }
 
-Future<void> _pumpAuthLayout(WidgetTester tester, Size size) async {
+Future<void> _pumpAuthLayout(
+  WidgetTester tester,
+  Size size, {
+  AuthLayoutVariant variant = AuthLayoutVariant.standard,
+}) async {
   await tester.binding.setSurfaceSize(size);
   addTearDown(() => tester.binding.setSurfaceSize(null));
   await tester.pumpWidget(
     MaterialApp(
       theme: AppTheme.light(),
-      home: const AuthLayout(
+      home: AuthLayout(
         title: 'Welcome back',
         subtitle: 'Sign in to continue your training plan.',
-        child: TextField(),
+        variant: variant,
+        child: const TextField(),
       ),
     ),
   );

@@ -6,6 +6,31 @@ import '../../domain/entities/meal_plan.dart';
 part 'meal_plan_dto.freezed.dart';
 part 'meal_plan_dto.g.dart';
 
+class MealPlanRangeResultDto {
+  const MealPlanRangeResultDto({
+    required this.startDate,
+    required this.endDate,
+    required this.affectedDayCount,
+  });
+
+  factory MealPlanRangeResultDto.fromJson(Map<String, dynamic> json) =>
+      MealPlanRangeResultDto(
+        startDate: json['startDate'] as String,
+        endDate: json['endDate'] as String,
+        affectedDayCount: json['affectedDayCount'] as int,
+      );
+
+  final String startDate;
+  final String endDate;
+  final int affectedDayCount;
+
+  MealPlanRangeResult toEntity() => MealPlanRangeResult(
+    startDate: DateOnly.tryParse(startDate) ?? DateTime(1970),
+    endDate: DateOnly.tryParse(endDate) ?? DateTime(1970),
+    affectedDayCount: affectedDayCount,
+  );
+}
+
 @freezed
 abstract class MealPlanTotalsDto with _$MealPlanTotalsDto {
   const factory MealPlanTotalsDto({

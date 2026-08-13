@@ -60,7 +60,9 @@ void main() {
 
           expect(tester.takeException(), isNull);
           expect(find.byType(HomeShellMenuButton), findsOneWidget);
-          expect(find.byType(XnCard), findsNothing);
+          expect(find.byType(XnCard), findsOneWidget);
+          final headerCard = tester.widget<XnCard>(find.byType(XnCard));
+          expect(headerCard.color, isNot(Colors.transparent));
         },
       );
     }

@@ -186,7 +186,7 @@ class _PendingAttachmentsRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 56,
+      height: 49,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.fromLTRB(
@@ -243,7 +243,7 @@ class _SendButton extends StatelessWidget {
         final enabled =
             !sending && (value.text.trim().isNotEmpty || hasAttachments);
         return Material(
-          color: enabled ? AppColors.accent : AppColors.bg3,
+          color: enabled ? AppColors.buttonPrimary : AppColors.bg3,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppRadius.md),
           ),
@@ -251,8 +251,8 @@ class _SendButton extends StatelessWidget {
           child: InkWell(
             onTap: enabled ? onSend : null,
             child: SizedBox(
-              width: 48,
-              height: 48,
+              width: 42,
+              height: 42,
               child: sending
                   ? const Padding(
                       padding: EdgeInsets.all(14),

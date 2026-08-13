@@ -9,6 +9,7 @@ import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_dimens.dart';
 import '../../../../app/theme/app_typography.dart';
 import '../../../../core/widgets/async_value_view.dart';
+import '../../../../core/widgets/synced_background_card.dart';
 import '../../../../core/widgets/xn_card.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../auth/presentation/providers/auth_controller.dart';
@@ -129,6 +130,7 @@ class _PlansScreenState extends ConsumerState<PlansScreen> {
               trainingRouteLocation(
                 '/plans/${plan.id}',
                 coachView: clientId != null,
+                coachPlan: plan.planType == 'Coach',
                 clientId: clientId,
               ),
             ),
@@ -501,11 +503,11 @@ class _SectionLoading extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const SizedBox(
-      height: 72,
+      height: 63,
       child: Center(
         child: SizedBox(
-          width: 22,
-          height: 22,
+          width: 20,
+          height: 20,
           child: CircularProgressIndicator(strokeWidth: 2.4),
         ),
       ),
@@ -529,102 +531,116 @@ class _PlansHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    l10n.trainingPlansHeaderSubtitle,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      color: AppColors.fg2,
-                      fontSize: 13,
-                      height: 1.35,
-                      fontWeight: FontWeight.w500,
+    return SyncedBackgroundCard(
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.trainingPlansHeaderTitle,
+                      style: AppTypography.display(
+                        26,
+                        weight: FontWeight.w700,
+                        color: AppColors.fgOnClay,
+                        letterSpacing: -0.3,
+                        height: 1.05,
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: AppSpacing.md),
-            Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                color: Colors.transparent,
-                borderRadius: BorderRadius.circular(AppRadius.lg),
-                border: Border.all(
-                  color: AppColors.surfaceBorderSoft,
+                    const SizedBox(height: AppSpacing.sm),
+                    Text(
+                      l10n.trainingPlansHeaderSubtitle,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: AppColors.fgOnClay.withValues(alpha: 0.78),
+                        fontSize: 13,
+                        height: 1.35,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              child: const Icon(
-                Icons.lightbulb_outline_rounded,
-                color: AppColors.accent,
-                size: 24,
+              const SizedBox(width: AppSpacing.md),
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: AppColors.fgOnClay.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(AppRadius.lg),
+                  border: Border.all(
+                    color: AppColors.fgOnClay.withValues(alpha: 0.16),
+                  ),
+                ),
+                child: const Icon(
+                  Icons.lightbulb_outline_rounded,
+                  color: AppColors.clay200,
+                  size: 24,
+                ),
               ),
-            ),
-          ],
-        ),
-        const SizedBox(height: AppSpacing.lg),
-        Row(
-          children: [
-            Expanded(
-              child: _HeaderMetric(
-                label: l10n.trainingMyPlansTitle,
-                value: '$myPlanCount',
+            ],
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          Row(
+            children: [
+              Expanded(
+                child: _HeaderMetric(
+                  label: l10n.trainingMyPlansTitle,
+                  value: '$myPlanCount',
+                ),
               ),
-            ),
-            const SizedBox(width: AppSpacing.sm),
-            Expanded(
-              child: _HeaderMetric(
-                label: l10n.trainingCoachPlansTitle,
-                value: '$coachPlanCount',
+              const SizedBox(width: AppSpacing.sm),
+              Expanded(
+                child: _HeaderMetric(
+                  label: l10n.trainingCoachPlansTitle,
+                  value: '$coachPlanCount',
+                ),
               ),
-            ),
-          ],
-        ),
-        const SizedBox(height: AppSpacing.lg),
-        LayoutBuilder(
-          builder: (context, constraints) {
-            final aiAction = _PillAction(
-              label: l10n.trainingAiStarterCta,
-              icon: Icons.auto_awesome_rounded,
-              onPressed: onCreateAiPlan,
-              filled: false,
-            );
-            final createAction = _PillAction(
-              label: l10n.trainingNewPlanTitle,
-              icon: Icons.add_rounded,
-              onPressed: onCreatePlan,
-              filled: true,
-            );
-            if (constraints.maxWidth < 360) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+            ],
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final aiAction = _PillAction(
+                label: l10n.trainingAiStarterCta,
+                icon: Icons.auto_awesome_rounded,
+                onPressed: onCreateAiPlan,
+                filled: false,
+              );
+              final createAction = _PillAction(
+                label: l10n.trainingNewPlanTitle,
+                icon: Icons.add_rounded,
+                onPressed: onCreatePlan,
+                filled: true,
+              );
+              if (constraints.maxWidth < 360) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    aiAction,
+                    const SizedBox(height: AppSpacing.sm),
+                    createAction,
+                  ],
+                );
+              }
+              return Row(
                 children: [
-                  aiAction,
-                  const SizedBox(height: AppSpacing.sm),
-                  createAction,
+                  Expanded(child: aiAction),
+                  const SizedBox(width: AppSpacing.sm),
+                  Expanded(child: createAction),
                 ],
               );
-            }
-            return Row(
-              children: [
-                Expanded(child: aiAction),
-                const SizedBox(width: AppSpacing.sm),
-                Expanded(child: createAction),
-              ],
-            );
-          },
-        ),
-      ],
+            },
+          ),
+        ],
+      ),
     );
   }
 }
@@ -686,7 +702,7 @@ class _PillAction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bg = filled ? AppColors.accent : AppColors.bg2;
+    final bg = filled ? AppColors.buttonPrimary : AppColors.buttonBg;
     final fg = filled ? AppColors.fgOnClay : AppColors.fg1;
     return FilledButton.icon(
       onPressed: onPressed,
@@ -696,7 +712,7 @@ class _PillAction extends StatelessWidget {
         backgroundColor: bg,
         foregroundColor: fg,
         side: BorderSide(
-          color: filled ? AppColors.accentHover : AppColors.surfaceBorderSoft,
+          color: filled ? AppColors.buttonPrimary : AppColors.buttonBorder,
         ),
         shape: const StadiumBorder(),
         elevation: 0,

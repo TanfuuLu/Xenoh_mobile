@@ -191,6 +191,11 @@ class TrainingDayShareCard extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final unit = ref.watch(weightUnitProvider);
     final prs = share.exercises.where((e) => e.isPersonalRecord).toList();
+    final trainedExercises =
+        share.exercises
+            .where((exercise) => !exercise.isSkipped)
+            .toList(growable: false)
+          ..sort((left, right) => left.sortOrder.compareTo(right.sortOrder));
 
     return XnCard(
       child: Column(
@@ -320,6 +325,10 @@ class TrainingDayShareCard extends ConsumerWidget {
               ),
             ),
           ],
+          if (trainedExercises.isNotEmpty) ...[
+            const SizedBox(height: AppSpacing.md),
+            _TrainedExerciseList(exercises: trainedExercises),
+          ],
           const SizedBox(height: AppSpacing.md),
           Wrap(
             spacing: AppSpacing.md,
@@ -386,6 +395,98 @@ class TrainingDayShareCard extends ConsumerWidget {
                 ),
               ),
             ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _TrainedExerciseList extends StatelessWidget {
+  const _TrainedExerciseList({required this.exercises});
+
+  final List<TrainingDayShareExercise> exercises;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        XnSectionEyebrow(l10n.communityExercisesMetricLabel),
+        const SizedBox(height: AppSpacing.sm),
+        XnCardStack(
+          itemPadding: EdgeInsets.zero,
+          children: [
+            for (var index = 0; index < exercises.length; index++)
+              _TrainedExerciseRow(
+                exercise: exercises[index],
+                displayOrder: index + 1,
+              ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _TrainedExerciseRow extends StatelessWidget {
+  const _TrainedExerciseRow({
+    required this.exercise,
+    required this.displayOrder,
+  });
+
+  final TrainingDayShareExercise exercise;
+  final int displayOrder;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final completedSets = exercise.sets.where((set) => set.isCompleted).length;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+      child: Row(
+        children: [
+          Container(
+            width: 28,
+            height: 28,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: AppColors.bg2,
+              borderRadius: BorderRadius.circular(AppRadius.sm),
+              border: Border.all(color: AppColors.surfaceBorderSoft),
+            ),
+            child: Text(
+              '$displayOrder',
+              style: const TextStyle(
+                color: AppColors.fg3,
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+          const SizedBox(width: AppSpacing.sm),
+          Expanded(
+            child: Text(
+              exercise.name,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                color: AppColors.fg1,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          const SizedBox(width: AppSpacing.sm),
+          Text(
+            '$completedSets/${exercise.sets.length} ${l10n.trainingSetsLabel}',
+            style: const TextStyle(
+              color: AppColors.fg3,
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ],
       ),

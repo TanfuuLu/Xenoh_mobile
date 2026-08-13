@@ -66,12 +66,14 @@ class PlanDetailScreen extends ConsumerWidget {
   const PlanDetailScreen({
     required this.planId,
     this.coachView = false,
+    this.coachPlan = false,
     this.clientId,
     super.key,
   });
 
   final String planId;
   final bool coachView;
+  final bool coachPlan;
   final String? clientId;
 
   @override
@@ -215,6 +217,8 @@ class PlanDetailScreen extends ConsumerWidget {
                             currentWeekId: currentWeekId,
                             initialIndex: _currentWeekIndex(items),
                             coachView: coachView,
+                            coachPlan:
+                                coachPlan || plan.value?.planType == 'Coach',
                             clientId: clientId,
                           ),
                         ),
@@ -389,6 +393,7 @@ class _WeekTimelineCarousel extends StatefulWidget {
     required this.currentWeekId,
     required this.initialIndex,
     required this.coachView,
+    required this.coachPlan,
     this.clientId,
   });
 
@@ -397,6 +402,7 @@ class _WeekTimelineCarousel extends StatefulWidget {
   final String? currentWeekId;
   final int initialIndex;
   final bool coachView;
+  final bool coachPlan;
   final String? clientId;
 
   @override
@@ -461,6 +467,7 @@ class _WeekTimelineCarouselState extends State<_WeekTimelineCarousel> {
                         trainingRouteLocation(
                           '/weeks/${week.id}',
                           coachView: widget.coachView,
+                          coachPlan: widget.coachPlan,
                           clientId: widget.clientId,
                         ),
                       ),
@@ -661,9 +668,11 @@ class _WeekCard extends ConsumerWidget {
         ],
         if (expanded) ...[
           const SizedBox(height: AppSpacing.xl),
-          _WeekAtGlance(
-            weekId: week.id,
-            onOpenAnalysis: () => context.push('/weeks/${week.id}/analysis'),
+          Expanded(
+            child: _WeekAtGlance(
+              weekId: week.id,
+              onOpenAnalysis: () => context.push('/weeks/${week.id}/analysis'),
+            ),
           ),
         ],
       ],
@@ -701,19 +710,7 @@ class _WeekCard extends ConsumerWidget {
                   ]
                 : null,
           ),
-          child: expanded
-              ? LayoutBuilder(
-                  builder: (context, constraints) => SingleChildScrollView(
-                    primary: false,
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                        minHeight: constraints.maxHeight,
-                      ),
-                      child: content,
-                    ),
-                  ),
-                )
-              : content,
+          child: content,
         ),
       ),
     );
@@ -757,41 +754,74 @@ class _WeekAtGlance extends ConsumerWidget {
       ),
       child: Padding(
         padding: const EdgeInsets.only(top: AppSpacing.xl),
-        child: analysis.when(
-          loading: () => const SizedBox(
-            height: 118,
-            child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
-          ),
-          error: (_, _) => _WeekAtGlanceContent(
-            title: l10n.trainingWeekExecutionLabel,
-            rows: const [],
-            onOpenAnalysis: onOpenAnalysis,
-          ),
-          data: (data) => _WeekAtGlanceContent(
-            title: l10n.trainingWeekExecutionLabel,
-            rows: [
-              _WeekAtGlanceRow(
-                icon: Icons.trending_up_rounded,
-                color: AppColors.success,
-                label: l10n.progressVolumeLabel,
-                value:
-                    '${_formatWeekVolume(context, data.actualVolume)} kg-reps',
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              child: analysis.when(
+                loading: () => const Center(
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ),
+                error: (_, _) => SingleChildScrollView(
+                  primary: false,
+                  child: _WeekAtGlanceContent(
+                    title: l10n.trainingWeekExecutionLabel,
+                    rows: const [],
+                  ),
+                ),
+                data: (data) => SingleChildScrollView(
+                  primary: false,
+                  child: _WeekAtGlanceContent(
+                    title: l10n.trainingWeekExecutionLabel,
+                    rows: [
+                      _WeekAtGlanceRow(
+                        icon: Icons.trending_up_rounded,
+                        color: AppColors.success,
+                        label: l10n.progressVolumeLabel,
+                        value:
+                            '${_formatWeekVolume(context, data.actualVolume)} '
+                            'kg-reps',
+                      ),
+                      _WeekAtGlanceRow(
+                        icon: Icons.layers_outlined,
+                        color: AppColors.warning,
+                        label: l10n.progressCompletedSetsLabel,
+                        value: '${data.completedSets}/${data.totalSets}',
+                      ),
+                      _WeekAtGlanceRow(
+                        icon: Icons.timer_outlined,
+                        color: AppColors.info,
+                        label: l10n.progressTimeTrainedLabel,
+                        value: _formatWeekDuration(
+                          l10n,
+                          data.totalDurationSeconds,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-              _WeekAtGlanceRow(
-                icon: Icons.layers_outlined,
-                color: AppColors.warning,
-                label: l10n.progressCompletedSetsLabel,
-                value: '${data.completedSets}/${data.totalSets}',
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            OutlinedButton.icon(
+              onPressed: onOpenAnalysis,
+              icon: const Icon(Icons.insights_rounded, size: 18),
+              label: Text(l10n.commonAnalytics),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: AppColors.fg1,
+                side: const BorderSide(color: AppColors.surfaceBorderSoft),
+                minimumSize: const Size.fromHeight(42),
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(AppRadius.md),
+                ),
+                textStyle: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
-              _WeekAtGlanceRow(
-                icon: Icons.timer_outlined,
-                color: AppColors.info,
-                label: l10n.progressTimeTrainedLabel,
-                value: _formatWeekDuration(l10n, data.totalDurationSeconds),
-              ),
-            ],
-            onOpenAnalysis: onOpenAnalysis,
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -802,16 +832,13 @@ class _WeekAtGlanceContent extends StatelessWidget {
   const _WeekAtGlanceContent({
     required this.title,
     required this.rows,
-    required this.onOpenAnalysis,
   });
 
   final String title;
   final List<_WeekAtGlanceRow> rows;
-  final VoidCallback onOpenAnalysis;
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -839,28 +866,6 @@ class _WeekAtGlanceContent extends StatelessWidget {
             row,
             const SizedBox(height: AppSpacing.lg),
           ],
-        const SizedBox(height: AppSpacing.sm),
-        SizedBox(
-          width: double.infinity,
-          child: OutlinedButton.icon(
-            onPressed: onOpenAnalysis,
-            icon: const Icon(Icons.insights_rounded, size: 18),
-            label: Text(l10n.commonAnalytics),
-            style: OutlinedButton.styleFrom(
-              foregroundColor: AppColors.fg1,
-              side: const BorderSide(color: AppColors.surfaceBorderSoft),
-              minimumSize: const Size.fromHeight(42),
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(AppRadius.md),
-              ),
-              textStyle: const TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ),
       ],
     );
   }

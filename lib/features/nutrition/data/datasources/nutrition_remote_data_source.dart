@@ -210,6 +210,24 @@ class NutritionRemoteDataSource {
     return MealPlanDayDto.fromJson(res.data!);
   }
 
+  Future<MealPlanRangeResultDto> applyMealPlanTemplate({
+    required DateTime startDate,
+    required DateTime endDate,
+    required List<Map<String, dynamic>> meals,
+    String? notes,
+  }) async {
+    final res = await _dio.put<Map<String, dynamic>>(
+      '/nutrition/meal-plans/ranges',
+      data: {
+        'startDate': DateOnly.format(startDate),
+        'endDate': DateOnly.format(endDate),
+        'notes': notes,
+        'meals': meals,
+      },
+    );
+    return MealPlanRangeResultDto.fromJson(res.data!);
+  }
+
   Future<MealPlanDayDto> checkMealPlanItem(String itemId) async {
     final res = await _dio.post<Map<String, dynamic>>(
       '/nutrition/meal-plans/items/$itemId/check',

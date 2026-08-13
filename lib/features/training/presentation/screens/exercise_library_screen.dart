@@ -11,7 +11,6 @@ import '../../../../core/widgets/async_value_view.dart';
 import '../../../../core/widgets/exercise_thumbnail.dart';
 import '../../../../core/widgets/xn_card.dart';
 import '../../../../core/widgets/xn_chip.dart';
-import '../../../../core/widgets/xn_section.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../profile/presentation/providers/preferences_provider.dart';
 import '../../../progress/domain/entities/exercise_pr.dart';
@@ -193,8 +192,6 @@ class _ExerciseLibraryScreenState extends ConsumerState<ExerciseLibraryScreen> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _createTemplate,
-        backgroundColor: AppColors.accent,
-        foregroundColor: AppColors.fgOnClay,
         icon: const Icon(Icons.add_rounded),
         label: Text(l10n.trainingCustomLabel),
       ),
@@ -249,9 +246,9 @@ class _ExerciseLibraryScreenState extends ConsumerState<ExerciseLibraryScreen> {
                 if (filtered.isEmpty)
                   const _EmptyLibrary()
                 else
-                  XnSectionList(
+                  Column(
                     children: [
-                      for (final template in filtered)
+                      for (final (index, template) in filtered.indexed) ...[
                         _ExerciseTemplateCard(
                           template: template,
                           unit: unit,
@@ -266,6 +263,9 @@ class _ExerciseLibraryScreenState extends ConsumerState<ExerciseLibraryScreen> {
                               ? () => _deleteTemplate(template)
                               : null,
                         ),
+                        if (index < filtered.length - 1)
+                          const SizedBox(height: AppSpacing.md),
+                      ],
                     ],
                   ),
               ],
@@ -325,26 +325,45 @@ class _MuscleFilter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    Widget filterChip({
+      required String label,
+      required bool isSelected,
+      required VoidCallback onSelected,
+    }) {
+      return Padding(
+        padding: const EdgeInsets.only(right: AppSpacing.md),
+        child: ChoiceChip(
+          label: Text(label),
+          selected: isSelected,
+          onSelected: (_) => onSelected(),
+          backgroundColor: AppColors.bg2,
+          selectedColor: AppColors.sage100,
+          checkmarkColor: AppColors.sage700,
+          labelStyle: TextStyle(
+            color: isSelected ? AppColors.sage700 : AppColors.fg2,
+            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+          ),
+          side: BorderSide(
+            color: isSelected ? AppColors.sage500 : AppColors.surfaceBorderSoft,
+          ),
+        ),
+      );
+    }
+
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
         children: [
-          Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: ChoiceChip(
-              label: Text(l10n.commonAll),
-              selected: selected == null,
-              onSelected: (_) => onChanged(null),
-            ),
+          filterChip(
+            label: l10n.commonAll,
+            isSelected: selected == null,
+            onSelected: () => onChanged(null),
           ),
           for (final group in muscleGroupOptions)
-            Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: ChoiceChip(
-                label: Text(muscleGroupLabel(group, l10n)),
-                selected: selected == group,
-                onSelected: (_) => onChanged(group),
-              ),
+            filterChip(
+              label: muscleGroupLabel(group, l10n),
+              isSelected: selected == group,
+              onSelected: () => onChanged(group),
             ),
         ],
       ),
@@ -372,7 +391,9 @@ class _ExerciseTemplateCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return XnSection(
+    return XnCard(
+      key: ValueKey('exercise-template-card-${template.id}'),
+      padding: const EdgeInsets.all(AppSpacing.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

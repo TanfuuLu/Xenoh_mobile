@@ -17,6 +17,7 @@ import '../../domain/entities/food.dart';
 import '../../domain/entities/meal_plan.dart';
 import '../providers/nutrition_controller.dart';
 import 'ai_food_lookup_empty_state.dart';
+import 'food_search_result_card.dart';
 
 enum MealPlanSaveScope { day, week }
 
@@ -27,20 +28,36 @@ typedef MealPlanSaveHandler =
       String? notes,
     });
 
+typedef MealPlanWeekSaveHandler =
+    Future<void> Function({
+      required DateTime startDate,
+      required DateTime endDate,
+      required List<Map<String, dynamic>> meals,
+      String? notes,
+    });
+
+typedef MealPlanDateRangePicker =
+    Future<DateTimeRange?> Function({required DateTimeRange initialRange});
+
 class MealPlanSetupSheet extends ConsumerStatefulWidget {
   const MealPlanSetupSheet({
     required this.date,
     this.initialPlan,
     this.onSave,
+    this.onSaveWeek,
+    this.pickDateRange,
     super.key,
   });
 
   final DateTime date;
   final MealPlanDay? initialPlan;
 
-  /// When supplied, saves each selected date through the caller's endpoint.
-  /// This lets coaches use the same editor for a client's meal plan.
+  /// Saves one selected day through a caller-provided endpoint.
   final MealPlanSaveHandler? onSave;
+
+  /// Saves the selected date range atomically when weekly mode is active.
+  final MealPlanWeekSaveHandler? onSaveWeek;
+  final MealPlanDateRangePicker? pickDateRange;
 
   static const scopeSelectorKey = Key('meal-plan-scope-selector');
   static const selectedScopeKey = Key('meal-plan-selected-scope');
@@ -60,13 +77,14 @@ class _MealPlanSetupSheetState extends ConsumerState<MealPlanSetupSheet> {
     widget.date.month,
     widget.date.day,
   );
+  late DateTime _rangeStart = _targetDate.subtract(
+    Duration(days: _targetDate.weekday - 1),
+  );
+  late DateTime _rangeEnd = _rangeStart.add(const Duration(days: 6));
   late final TextEditingController _notes = TextEditingController(
     text: widget.initialPlan?.notes ?? '',
   );
   late final List<_MealDraft> _meals = _initialMeals();
-
-  DateTime get _weekStart =>
-      _targetDate.subtract(Duration(days: _targetDate.weekday - 1));
 
   @override
   void dispose() {
@@ -119,14 +137,24 @@ class _MealPlanSetupSheetState extends ConsumerState<MealPlanSetupSheet> {
     if (widget.onSave case final onSave?) {
       setState(() => _isSaving = true);
       try {
-        final dates = _scope == MealPlanSaveScope.day
-            ? <DateTime>[_targetDate]
-            : List.generate(
-                7,
-                (index) => _weekStart.add(Duration(days: index)),
-              );
-        for (final date in dates) {
-          await onSave(date: date, meals: meals, notes: notes);
+        final onSaveWeek = widget.onSaveWeek;
+        if (_scope == MealPlanSaveScope.week && onSaveWeek != null) {
+          await onSaveWeek(
+            startDate: _rangeStart,
+            endDate: _rangeEnd,
+            meals: meals,
+            notes: notes,
+          );
+        } else {
+          final dates = _scope == MealPlanSaveScope.day
+              ? <DateTime>[_targetDate]
+              : List.generate(
+                  _rangeEnd.difference(_rangeStart).inDays + 1,
+                  (index) => _rangeStart.add(Duration(days: index)),
+                );
+          for (final date in dates) {
+            await onSave(date: date, meals: meals, notes: notes);
+          }
         }
       } catch (error) {
         if (!mounted) return;
@@ -146,8 +174,9 @@ class _MealPlanSetupSheetState extends ConsumerState<MealPlanSetupSheet> {
     if (_scope == MealPlanSaveScope.day) {
       await controller.saveDay(date: _targetDate, meals: meals, notes: notes);
     } else {
-      await controller.saveWeek(
-        weekStart: _weekStart,
+      await controller.saveRange(
+        startDate: _rangeStart,
+        endDate: _rangeEnd,
         meals: meals,
         notes: notes,
       );
@@ -177,6 +206,33 @@ class _MealPlanSetupSheetState extends ConsumerState<MealPlanSetupSheet> {
     });
   }
 
+  Future<void> _pickTargetRange() async {
+    final initialRange = DateTimeRange(start: _rangeStart, end: _rangeEnd);
+    final picked =
+        await (widget.pickDateRange?.call(
+              initialRange: initialRange,
+            ) ??
+            showDateRangePicker(
+              context: context,
+              initialDateRange: initialRange,
+              firstDate: DateTime(2020),
+              lastDate: DateTime(2035),
+            ));
+    if (picked == null || !mounted) return;
+    setState(() {
+      _rangeStart = DateTime(
+        picked.start.year,
+        picked.start.month,
+        picked.start.day,
+      );
+      _rangeEnd = DateTime(
+        picked.end.year,
+        picked.end.month,
+        picked.end.day,
+      );
+    });
+  }
+
   List<Map<String, dynamic>> _payload() => [
     for (final (index, meal) in _meals.indexed)
       if (meal.name.text.trim().isNotEmpty)
@@ -187,16 +243,12 @@ class _MealPlanSetupSheetState extends ConsumerState<MealPlanSetupSheet> {
             for (final (itemIndex, item) in meal.items.indexed)
               {
                 'foodItemId': item.foodItemId,
-                'grams': item.grams,
                 'sortOrder': itemIndex,
-                if (item.servingLabel != null)
+                if (item.hasServingAmount) ...{
                   'servingLabel': item.servingLabel,
-                if (item.servingLabelVi != null)
-                  'servingLabelVi': item.servingLabelVi,
-                if (item.servingLabelEn != null)
-                  'servingLabelEn': item.servingLabelEn,
-                if (item.servingCount != null)
                   'servingCount': item.servingCount,
+                } else
+                  'grams': item.grams,
               },
           ],
         },
@@ -259,8 +311,13 @@ class _MealPlanSetupSheetState extends ConsumerState<MealPlanSetupSheet> {
               _TargetDatePicker(
                 scope: _scope,
                 date: _targetDate,
-                weekStart: _weekStart,
-                onPickDate: saving ? null : _pickTargetDate,
+                rangeStart: _rangeStart,
+                rangeEnd: _rangeEnd,
+                onPick: saving
+                    ? null
+                    : _scope == MealPlanSaveScope.day
+                    ? _pickTargetDate
+                    : _pickTargetRange,
               ),
               const SizedBox(height: AppSpacing.sm),
               Expanded(
@@ -421,44 +478,48 @@ class _ScopeOption extends StatelessWidget {
         : selected
         ? AppColors.clay900
         : AppColors.fg3;
-    return Semantics(
-      button: true,
-      selected: selected,
-      child: Material(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(AppRadius.sm),
-        child: InkWell(
-          onTap: enabled ? onTap : null,
+    return SizedBox.expand(
+      child: Semantics(
+        button: true,
+        selected: selected,
+        child: Material(
+          color: Colors.transparent,
           borderRadius: BorderRadius.circular(AppRadius.sm),
-          child: AnimatedContainer(
-            key: selected ? MealPlanSetupSheet.selectedScopeKey : null,
-            duration: AppMotion.fast,
-            margin: const EdgeInsets.all(3),
-            decoration: BoxDecoration(
-              color: selected ? AppColors.accentSoft : Colors.transparent,
-              borderRadius: BorderRadius.circular(AppRadius.sm),
-              border: Border.all(
-                color: selected ? AppColors.clay200 : Colors.transparent,
+          child: InkWell(
+            onTap: enabled ? onTap : null,
+            borderRadius: BorderRadius.circular(AppRadius.sm),
+            child: AnimatedContainer(
+              key: selected ? MealPlanSetupSheet.selectedScopeKey : null,
+              duration: AppMotion.fast,
+              margin: const EdgeInsets.all(3),
+              decoration: BoxDecoration(
+                color: selected ? AppColors.accentSoft : Colors.transparent,
+                borderRadius: BorderRadius.circular(AppRadius.sm),
+                border: Border.all(
+                  color: selected ? AppColors.clay200 : Colors.transparent,
+                ),
               ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(icon, size: 16, color: foreground),
-                const SizedBox(width: 6),
-                Flexible(
-                  child: Text(
-                    label,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: foreground,
-                      fontSize: 13,
-                      fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(icon, size: 16, color: foreground),
+                  const SizedBox(width: 6),
+                  Flexible(
+                    child: Text(
+                      label,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: foreground,
+                        fontSize: 13,
+                        fontWeight: selected
+                            ? FontWeight.w600
+                            : FontWeight.w500,
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
@@ -471,20 +532,20 @@ class _TargetDatePicker extends StatelessWidget {
   const _TargetDatePicker({
     required this.scope,
     required this.date,
-    required this.weekStart,
-    required this.onPickDate,
+    required this.rangeStart,
+    required this.rangeEnd,
+    required this.onPick,
   });
 
   final MealPlanSaveScope scope;
   final DateTime date;
-  final DateTime weekStart;
-  final VoidCallback? onPickDate;
+  final DateTime rangeStart;
+  final DateTime rangeEnd;
+  final VoidCallback? onPick;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final weekEnd = weekStart.add(const Duration(days: 6));
-    final canPick = scope == MealPlanSaveScope.day && onPickDate != null;
     return Material(
       key: MealPlanSetupSheet.dateRowKey,
       color: AppColors.accentSoft.withValues(alpha: 0.54),
@@ -495,7 +556,7 @@ class _TargetDatePicker extends StatelessWidget {
         ),
       ),
       child: InkWell(
-        onTap: canPick ? onPickDate : null,
+        onTap: onPick,
         borderRadius: BorderRadius.circular(AppRadius.lg),
         child: Padding(
           padding: const EdgeInsets.symmetric(
@@ -539,8 +600,8 @@ class _TargetDatePicker extends StatelessWidget {
                     Text(
                       scope == MealPlanSaveScope.day
                           ? DateOnly.format(date)
-                          : '${DateOnly.format(weekStart)} - '
-                                '${DateOnly.format(weekEnd)}',
+                          : '${DateOnly.format(rangeStart)} - '
+                                '${DateOnly.format(rangeEnd)}',
                       style: AppTypography.mono(
                         14,
                         color: AppColors.fg1,
@@ -550,9 +611,11 @@ class _TargetDatePicker extends StatelessWidget {
                   ],
                 ),
               ),
-              if (scope == MealPlanSaveScope.day) ...[
+              ...[
                 Text(
-                  l10n.nutritionChooseDayCta,
+                  scope == MealPlanSaveScope.day
+                      ? l10n.nutritionChooseDayCta
+                      : l10n.commonEdit,
                   style: const TextStyle(
                     color: AppColors.accent,
                     fontSize: 13,
@@ -862,30 +925,15 @@ class _FoodPickerSheetState extends ConsumerState<_FoodPickerSheet> {
                     );
                   }
                   return ListView.separated(
+                    padding: const EdgeInsets.only(bottom: AppSpacing.sm),
                     itemCount: foods.length,
-                    separatorBuilder: (_, _) => const Divider(
-                      height: 1,
-                      color: AppColors.surfaceBorderSoft,
-                    ),
+                    separatorBuilder: (_, _) =>
+                        const SizedBox(height: AppSpacing.sm),
                     itemBuilder: (_, index) {
                       final food = foods[index];
-                      return ListTile(
-                        contentPadding: EdgeInsets.zero,
-                        title: Text(
-                          food.displayNameFor(languageCode),
-                          style: const TextStyle(fontWeight: FontWeight.w500),
-                        ),
-                        subtitle: Text(
-                          '${food.caloriesPer100g.toStringAsFixed(0)} kcal - '
-                          'P ${food.proteinPer100g.toStringAsFixed(0)} - '
-                          'C ${food.carbsPer100g.toStringAsFixed(0)} - '
-                          'F ${food.fatPer100g.toStringAsFixed(0)} /100g',
-                          style: AppTypography.mono(
-                            11,
-                            color: AppColors.fg3,
-                          ),
-                        ),
-                        trailing: const Icon(Icons.chevron_right_rounded),
+                      return FoodSearchResultCard(
+                        food: food,
+                        languageCode: languageCode,
                         onTap: () => Navigator.pop(context, food),
                       );
                     },
@@ -1115,6 +1163,11 @@ class _MealItemDraft {
   final double? servingCount;
 
   String? get servingLabel => servingLabelVi ?? servingLabelEn;
+
+  bool get hasServingAmount =>
+      servingLabel?.trim().isNotEmpty == true &&
+      servingCount != null &&
+      servingCount! > 0;
 }
 
 String _g(double value) => value == value.roundToDouble()

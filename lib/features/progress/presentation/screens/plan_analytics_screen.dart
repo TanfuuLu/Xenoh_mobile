@@ -101,12 +101,10 @@ class PlanAnalyticsView extends StatelessWidget {
       children: [
         _ScoreHero(score: a.trainingScore, consistency: a.consistencyPercent),
         const SizedBox(height: AppSpacing.md),
-        _AnalyticsPanel(
-          child: _StatsSection(analytics: a, unit: unit),
-        ),
+        _StatsSection(analytics: a, unit: unit),
         if (a.insights.isNotEmpty) ...[
           const SizedBox(height: AppSpacing.md),
-          _AnalyticsPanel(child: _InsightsSection(insights: a.insights)),
+          _InsightsSection(insights: a.insights),
         ],
         if (a.weeklyCompliance.isNotEmpty) ...[
           const SizedBox(height: AppSpacing.md),
@@ -122,9 +120,7 @@ class PlanAnalyticsView extends StatelessWidget {
         ],
         if (a.muscleGroupVolume.isNotEmpty) ...[
           const SizedBox(height: AppSpacing.md),
-          _AnalyticsPanel(
-            child: _MuscleSection(points: a.muscleGroupVolume),
-          ),
+          _MuscleSection(points: a.muscleGroupVolume),
         ],
         const SizedBox(height: AppSpacing.lg),
       ],
@@ -251,31 +247,18 @@ class _StatsSection extends StatelessWidget {
       ),
     ];
 
-    return XnSection(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          XnSectionEyebrow(l10n.progressOverviewTab),
-          const SizedBox(height: AppSpacing.lg),
-          LayoutBuilder(
-            builder: (context, constraints) {
-              const spacing = AppSpacing.lg;
-              final width = (constraints.maxWidth - spacing) / 2;
-              return Wrap(
-                spacing: spacing,
-                runSpacing: AppSpacing.xl,
-                children: [
-                  for (final (label, value) in tiles)
-                    SizedBox(
-                      width: width,
-                      child: _StatTile(label: label, value: value),
-                    ),
-                ],
-              );
-            },
-          ),
-        ],
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        XnSectionEyebrow(l10n.progressOverviewTab),
+        const SizedBox(height: AppSpacing.md),
+        XnCardStack(
+          children: [
+            for (final (label, value) in tiles)
+              _StatTile(label: label, value: value),
+          ],
+        ),
+      ],
     );
   }
 }
@@ -322,18 +305,17 @@ class _InsightsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return XnSection(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          XnSectionEyebrow(l10n.progressInsightsTitle),
-          const SizedBox(height: AppSpacing.md),
-          for (var i = 0; i < insights.length; i++) ...[
-            if (i > 0) const SizedBox(height: AppSpacing.lg),
-            _InsightRow(insight: insights[i]),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        XnSectionEyebrow(l10n.progressInsightsTitle),
+        const SizedBox(height: AppSpacing.md),
+        XnCardStack(
+          children: [
+            for (final insight in insights) _InsightRow(insight: insight),
           ],
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
@@ -480,22 +462,22 @@ class _MuscleSection extends StatelessWidget {
         .map((p) => p.percentOfTotal)
         .fold<double>(0, (a, b) => a > b ? a : b);
 
-    return XnSection(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          XnSectionEyebrow(l10n.progressMuscleGroupsTitle),
-          const SizedBox(height: AppSpacing.lg),
-          for (var i = 0; i < sorted.length; i++) ...[
-            if (i > 0) const SizedBox(height: AppSpacing.md),
-            _MuscleRow(
-              point: sorted[i],
-              maxPct: maxPct,
-              color: AppColors.dataColor(i),
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        XnSectionEyebrow(l10n.progressMuscleGroupsTitle),
+        const SizedBox(height: AppSpacing.md),
+        XnCardStack(
+          children: [
+            for (var i = 0; i < sorted.length; i++)
+              _MuscleRow(
+                point: sorted[i],
+                maxPct: maxPct,
+                color: AppColors.dataColor(i),
+              ),
           ],
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

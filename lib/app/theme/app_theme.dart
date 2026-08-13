@@ -33,13 +33,18 @@ abstract final class AppTheme {
       colorScheme: scheme,
       scaffoldBackgroundColor: Colors.transparent,
       canvasColor: AppColors.bg2,
-      visualDensity: VisualDensity.standard,
-      materialTapTargetSize: MaterialTapTargetSize.padded,
+      visualDensity: const VisualDensity(horizontal: -1.5, vertical: -1.5),
+      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
       focusColor: AppColors.accentSoft.withValues(alpha: 0.72),
       hoverColor: AppColors.buttonHover.withValues(alpha: 0.72),
       highlightColor: AppColors.accentSoft.withValues(alpha: 0.42),
       fontFamily: AppTypography.fontFamily,
       textTheme: textTheme,
+      iconTheme: const IconThemeData(color: AppColors.fg2, size: 21),
+      primaryIconTheme: const IconThemeData(
+        color: AppColors.fgOnClay,
+        size: 21,
+      ),
       splashFactory: InkSparkle.splashFactory,
       pageTransitionsTheme: const PageTransitionsTheme(
         builders: {
@@ -56,7 +61,7 @@ abstract final class AppTheme {
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
-        toolbarHeight: 62,
+        toolbarHeight: 55,
         centerTitle: false,
         titleSpacing: AppSpacing.xl,
         titleTextStyle: AppTypography.display(
@@ -65,7 +70,7 @@ abstract final class AppTheme {
           letterSpacing: -0.2,
           height: 1.15,
         ),
-        iconTheme: const IconThemeData(color: AppColors.fg2),
+        iconTheme: const IconThemeData(color: AppColors.fg2, size: 21),
       ),
       cardTheme: CardThemeData(
         color: AppColors.bg2,
@@ -78,10 +83,10 @@ abstract final class AppTheme {
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
-          backgroundColor: AppColors.accent,
+          backgroundColor: AppColors.buttonPrimary,
           foregroundColor: AppColors.fgOnClay,
           disabledBackgroundColor: AppColors.fg4,
-          minimumSize: const Size(64, 44),
+          minimumSize: const Size(56, 40),
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
           padding: const EdgeInsets.symmetric(
             horizontal: AppSpacing.lg,
@@ -99,12 +104,20 @@ abstract final class AppTheme {
           ),
         ),
       ),
+      floatingActionButtonTheme: const FloatingActionButtonThemeData(
+        backgroundColor: AppColors.buttonPrimary,
+        foregroundColor: AppColors.fgOnClay,
+        elevation: 0,
+        focusElevation: 0,
+        hoverElevation: 0,
+        highlightElevation: 0,
+      ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          foregroundColor: AppColors.fg1,
+          foregroundColor: AppColors.buttonText,
           backgroundColor: AppColors.buttonBg,
           side: const BorderSide(color: AppColors.buttonBorder, width: 1.2),
-          minimumSize: const Size(64, 44),
+          minimumSize: const Size(56, 40),
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
           padding: const EdgeInsets.symmetric(
             horizontal: AppSpacing.lg,
@@ -122,8 +135,8 @@ abstract final class AppTheme {
       ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
-          foregroundColor: AppColors.accent,
-          minimumSize: const Size(44, 44),
+          foregroundColor: AppColors.buttonPrimary,
+          minimumSize: const Size(40, 40),
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
           shape: RoundedRectangleBorder(
@@ -169,7 +182,8 @@ abstract final class AppTheme {
       iconButtonTheme: IconButtonThemeData(
         style: IconButton.styleFrom(
           foregroundColor: AppColors.fg2,
-          minimumSize: const Size(44, 44),
+          iconSize: 21,
+          minimumSize: const Size(40, 40),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppRadius.md),
           ),
@@ -204,16 +218,16 @@ abstract final class AppTheme {
         modalBarrierColor: Color(0x8A251A13),
         showDragHandle: true,
         dragHandleColor: AppColors.border1,
-        dragHandleSize: Size(42, 4),
+        dragHandleSize: Size(37, 4),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(21)),
         ),
       ),
       listTileTheme: const ListTileThemeData(
         iconColor: AppColors.fg2,
         textColor: AppColors.fg1,
         contentPadding: EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-        minTileHeight: 48,
+        minTileHeight: 42,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(AppRadius.md)),
         ),
@@ -289,13 +303,13 @@ abstract final class AppTheme {
         }),
       ),
       segmentedButtonTheme: SegmentedButtonThemeData(
-        selectedIcon: const Icon(Icons.check_rounded, size: 16),
+        selectedIcon: const Icon(Icons.check_rounded, size: 14),
         style: ButtonStyle(
           backgroundColor: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.selected)) {
-              return AppColors.accentSoft;
+              return AppColors.segmentedButtonSelectedBg;
             }
-            return AppColors.bg2;
+            return AppColors.segmentedButtonBg;
           }),
           foregroundColor: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.selected)) {
@@ -306,12 +320,9 @@ abstract final class AppTheme {
           overlayColor: WidgetStatePropertyAll(
             AppColors.accentSoft.withValues(alpha: 0.48),
           ),
-          side: WidgetStateProperty.resolveWith((states) {
-            if (states.contains(WidgetState.selected)) {
-              return const BorderSide(color: AppColors.accent, width: 1.2);
-            }
-            return const BorderSide(color: AppColors.surfaceBorderSoft);
-          }),
+          side: const WidgetStatePropertyAll(
+            BorderSide(color: AppColors.segmentedButtonBorder, width: 1.2),
+          ),
           shape: WidgetStatePropertyAll(
             RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(AppRadius.md),
@@ -340,7 +351,7 @@ abstract final class AppTheme {
       ),
       menuTheme: MenuThemeData(style: _menuStyle()),
       navigationBarTheme: NavigationBarThemeData(
-        height: 64,
+        height: 56,
         backgroundColor: AppColors.bg2,
         indicatorColor: AppColors.navigationSelectedBackground,
         elevation: 0,
@@ -358,18 +369,20 @@ abstract final class AppTheme {
             color: states.contains(WidgetState.selected)
                 ? AppColors.navigationSelectedForeground
                 : AppColors.fg3,
-            size: 22,
+            size: 20,
           ),
         ),
       ),
       navigationRailTheme: const NavigationRailThemeData(
         backgroundColor: AppColors.bg2,
         indicatorColor: AppColors.navigationSelectedBackground,
+        minWidth: 64,
+        minExtendedWidth: 225,
         selectedIconTheme: IconThemeData(
           color: AppColors.navigationSelectedForeground,
-          size: 22,
+          size: 20,
         ),
-        unselectedIconTheme: IconThemeData(color: AppColors.fg3, size: 22),
+        unselectedIconTheme: IconThemeData(color: AppColors.fg3, size: 20),
         selectedLabelTextStyle: TextStyle(
           color: AppColors.navigationSelectedForeground,
           fontFamily: AppTypography.fontFamily,

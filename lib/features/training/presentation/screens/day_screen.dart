@@ -19,6 +19,7 @@ import '../../../dashboard/presentation/providers/dashboard_controller.dart';
 import '../../../profile/presentation/providers/preferences_provider.dart';
 import '../../domain/entities/exercise.dart';
 import '../../domain/entities/exercise_template.dart';
+import '../../domain/services/training_calorie_estimator.dart';
 import '../providers/exercises_controller.dart';
 import '../widgets/exercise_form_sheet.dart';
 import '../widgets/exercise_template_picker_sheet.dart';
@@ -27,12 +28,14 @@ class DayScreen extends ConsumerStatefulWidget {
   const DayScreen({
     required this.dayId,
     this.canComplete = true,
+    this.coachPlan = false,
     this.clientId,
     super.key,
   });
 
   final String dayId;
   final bool canComplete;
+  final bool coachPlan;
   final String? clientId;
 
   @override
@@ -49,7 +52,14 @@ class _DayScreenState extends ConsumerState<DayScreen> {
     return widget.canComplete && !isCoach;
   }
 
+  bool get _canAddExercises {
+    final isCoach =
+        ref.read(authControllerProvider).sessionOrNull?.user.isCoach ?? false;
+    return !widget.coachPlan || isCoach;
+  }
+
   Future<void> _addExercise() async {
+    if (!_canAddExercises) return;
     final l10n = AppLocalizations.of(context);
     final template = await showModalBottomSheet<ExerciseTemplate>(
       context: context,
@@ -97,6 +107,7 @@ class _DayScreenState extends ConsumerState<DayScreen> {
     final isCoach =
         ref.watch(authControllerProvider).sessionOrNull?.user.isCoach ?? false;
     final canComplete = widget.canComplete && !isCoach;
+    final canAddExercises = !widget.coachPlan || isCoach;
     final currentStreak = ref
         .watch(dashboardControllerProvider)
         .value
@@ -220,11 +231,12 @@ class _DayScreenState extends ConsumerState<DayScreen> {
                             style: const TextStyle(color: AppColors.fg2),
                           ),
                           const SizedBox(height: AppSpacing.md),
-                          FilledButton.icon(
-                            onPressed: _addExercise,
-                            icon: const Icon(Icons.add_rounded),
-                            label: Text(l10n.trainingAddExerciseCta),
-                          ),
+                          if (canAddExercises)
+                            FilledButton.icon(
+                              onPressed: _addExercise,
+                              icon: const Icon(Icons.add_rounded),
+                              label: Text(l10n.trainingAddExerciseCta),
+                            ),
                         ],
                       ),
                     ),
@@ -259,7 +271,10 @@ class _DayScreenState extends ConsumerState<DayScreen> {
                     AppSpacing.md,
                     AppSpacing.xl,
                   ),
-                  itemCount: items.length + 1 + (_dayResolved(items) ? 1 : 0),
+                  itemCount:
+                      items.length +
+                      (canAddExercises ? 1 : 0) +
+                      (_dayResolved(items) ? 1 : 0),
                   separatorBuilder: (_, _) =>
                       const SizedBox(height: AppSpacing.md),
                   itemBuilder: (_, i) {
@@ -275,7 +290,7 @@ class _DayScreenState extends ConsumerState<DayScreen> {
                     }
 
                     final exerciseIndex = i - (result == null ? 0 : 1);
-                    if (exerciseIndex == items.length) {
+                    if (canAddExercises && exerciseIndex == items.length) {
                       return _AddExerciseListButton(onPressed: _addExercise);
                     }
 
@@ -854,6 +869,7 @@ class _ExerciseTile extends ConsumerWidget {
     final unit = ref.watch(weightUnitProvider);
     final exerciseDisabled = exercise.isSkipped;
     final controlsEnabled = !reorderMode && !exerciseDisabled;
+    final note = (exercise.notes ?? '').trim();
     return XnCard(
       color: exercise.isSkipped
           ? AppColors.dangerBg
@@ -865,11 +881,10 @@ class _ExerciseTile extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: const EdgeInsets.all(AppSpacing.sm),
+            padding: const EdgeInsets.all(AppSpacing.md),
             decoration: BoxDecoration(
-              color: AppColors.bgPage.withValues(alpha: 0.58),
-              borderRadius: BorderRadius.circular(AppRadius.md),
-              border: Border.all(color: AppColors.surfaceBorderSoft),
+              color: AppColors.bgPage.withValues(alpha: 0.52),
+              borderRadius: BorderRadius.circular(AppRadius.lg),
             ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -877,25 +892,62 @@ class _ExerciseTile extends ConsumerWidget {
                 ExerciseThumbnail(
                   imageUrl: exercise.imageUrl,
                   exerciseKind: exercise.exerciseKind,
-                  size: 68,
+                  size: 72,
                 ),
                 const SizedBox(width: AppSpacing.md),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        exercise.name,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: AppTypography.display(
-                          16,
-                          weight: FontWeight.w500,
-                          letterSpacing: 0,
-                          height: 1.12,
-                        ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              exercise.name,
+                              softWrap: true,
+                              style: AppTypography.display(
+                                20,
+                                weight: FontWeight.w600,
+                                letterSpacing: -0.15,
+                                height: 1.12,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: AppSpacing.xs),
+                          if (reorderMode)
+                            const Padding(
+                              padding: EdgeInsets.only(top: AppSpacing.xs),
+                              child: Icon(
+                                Icons.drag_handle_rounded,
+                                color: AppColors.fg3,
+                              ),
+                            )
+                          else
+                            _ExerciseActionButtons(
+                              disabled: exerciseDisabled,
+                              onEdit: exerciseDisabled
+                                  ? null
+                                  : () => _editExercise(context, ref),
+                              onSkip: canComplete
+                                  ? () => _skip(context, ref)
+                                  : null,
+                              onDelete: exerciseDisabled
+                                  ? null
+                                  : () => _delete(context, ref),
+                            ),
+                        ],
                       ),
-                      const SizedBox(height: AppSpacing.sm),
+                      if (note.isNotEmpty) ...[
+                        const SizedBox(height: AppSpacing.sm),
+                        _ExerciseNoteLine(
+                          note: note,
+                          onTap: exerciseDisabled
+                              ? null
+                              : () => _editExercise(context, ref),
+                        ),
+                      ],
+                      const SizedBox(height: AppSpacing.md),
                       Wrap(
                         spacing: AppSpacing.xs,
                         runSpacing: AppSpacing.xs,
@@ -927,38 +979,9 @@ class _ExerciseTile extends ConsumerWidget {
                     ],
                   ),
                 ),
-                const SizedBox(width: AppSpacing.xs),
-                if (reorderMode)
-                  const Padding(
-                    padding: EdgeInsets.only(top: AppSpacing.xs),
-                    child: Icon(
-                      Icons.drag_handle_rounded,
-                      color: AppColors.fg3,
-                    ),
-                  )
-                else
-                  _ExerciseActionButtons(
-                    disabled: exerciseDisabled,
-                    onEdit: exerciseDisabled
-                        ? null
-                        : () => _editExercise(context, ref),
-                    onSkip: canComplete ? () => _skip(context, ref) : null,
-                    onDelete: exerciseDisabled
-                        ? null
-                        : () => _delete(context, ref),
-                  ),
               ],
             ),
           ),
-          if ((exercise.notes ?? '').trim().isNotEmpty) ...[
-            const SizedBox(height: AppSpacing.sm),
-            _ExerciseNoteLine(
-              note: exercise.notes!.trim(),
-              onTap: exerciseDisabled
-                  ? null
-                  : () => _editExercise(context, ref),
-            ),
-          ],
           if (exercise.exerciseKind.toLowerCase() != 'cardio') ...[
             const SizedBox(height: AppSpacing.sm),
             _LastPerformanceLine(
@@ -1135,74 +1158,99 @@ class _ExerciseActionButtons extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        Wrap(
-          spacing: AppSpacing.xs,
-          runSpacing: AppSpacing.xs,
-          alignment: WrapAlignment.end,
-          children: [
-            _ExerciseIconAction(
-              tooltip: l10n.trainingEditExerciseTitle,
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: AppColors.bg2,
+        shape: BoxShape.circle,
+        border: Border.all(color: AppColors.surfaceBorderSoft),
+      ),
+      child: SizedBox.square(
+        dimension: 34,
+        child: PopupMenuButton<_ExerciseAction>(
+          tooltip: l10n.trainingExerciseActionsTooltip,
+          enabled: onEdit != null || onSkip != null || onDelete != null,
+          position: PopupMenuPosition.under,
+          padding: EdgeInsets.zero,
+          iconSize: 20,
+          icon: const Icon(Icons.more_vert_rounded),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppRadius.md),
+          ),
+          onSelected: (action) {
+            switch (action) {
+              case _ExerciseAction.edit:
+                onEdit?.call();
+              case _ExerciseAction.toggleSkip:
+                onSkip?.call();
+              case _ExerciseAction.delete:
+                onDelete?.call();
+            }
+          },
+          itemBuilder: (_) => [
+            _exerciseActionItem(
+              action: _ExerciseAction.edit,
+              label: l10n.trainingEditExerciseTitle,
               icon: Icons.edit_outlined,
-              onPressed: onEdit,
+              enabled: onEdit != null,
             ),
-            _ExerciseIconAction(
-              tooltip: l10n.trainingSkipUnskipTooltip,
+            _exerciseActionItem(
+              action: _ExerciseAction.toggleSkip,
+              label: l10n.trainingSkipUnskipTooltip,
               icon: disabled
                   ? Icons.keyboard_return_rounded
                   : Icons.do_not_disturb_alt_outlined,
-              onPressed: onSkip,
-              color: disabled ? AppColors.danger : AppColors.fg2,
+              enabled: onSkip != null,
             ),
-            _ExerciseIconAction(
-              tooltip: l10n.trainingDeleteExerciseTooltip,
+            _exerciseActionItem(
+              action: _ExerciseAction.delete,
+              label: l10n.trainingDeleteExerciseTooltip,
               icon: Icons.delete_outline_rounded,
-              color: AppColors.danger,
-              onPressed: onDelete,
+              enabled: onDelete != null,
+              danger: true,
             ),
           ],
         ),
-      ],
+      ),
     );
   }
 }
 
-class _ExerciseIconAction extends StatelessWidget {
-  const _ExerciseIconAction({
-    required this.tooltip,
-    required this.icon,
-    required this.onPressed,
-    this.color = AppColors.fg2,
-  });
+enum _ExerciseAction { edit, toggleSkip, delete }
 
-  final String tooltip;
-  final IconData icon;
-  final VoidCallback? onPressed;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return IconButton(
-      tooltip: tooltip,
-      onPressed: onPressed,
-      icon: Icon(icon),
-      color: color,
-      iconSize: 19,
-      padding: const EdgeInsets.all(6),
-      constraints: const BoxConstraints.tightFor(width: 34, height: 34),
-      style: IconButton.styleFrom(
-        backgroundColor: AppColors.bg2,
-        hoverColor: AppColors.buttonHover,
-        shape: const CircleBorder(
-          side: BorderSide(color: AppColors.surfaceBorderSoft),
+PopupMenuItem<_ExerciseAction> _exerciseActionItem({
+  required _ExerciseAction action,
+  required String label,
+  required IconData icon,
+  required bool enabled,
+  bool danger = false,
+}) {
+  final color = !enabled
+      ? AppColors.fg3
+      : danger
+      ? AppColors.danger
+      : AppColors.fg2;
+  return PopupMenuItem<_ExerciseAction>(
+    value: action,
+    enabled: enabled,
+    child: Row(
+      children: [
+        Icon(icon, size: 19, color: color),
+        const SizedBox(width: AppSpacing.md),
+        Expanded(
+          child: Text(
+            label,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              color: color,
+              fontWeight: FontWeight.w500,
+              fontSize: 13,
+            ),
+          ),
         ),
-        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-      ),
-    );
-  }
+      ],
+    ),
+  );
 }
 
 class _TimerPanel extends StatefulWidget {
@@ -1284,6 +1332,9 @@ class _TimerPanelState extends State<_TimerPanel> {
     final displayTime = widget.formatDuration(
       elapsedSeconds < 0 ? 0 : elapsedSeconds,
     );
+    final estimatedCalories = estimateTrainingCalories(
+      Duration(seconds: elapsedSeconds),
+    );
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.sm,
@@ -1303,8 +1354,10 @@ class _TimerPanelState extends State<_TimerPanel> {
           Expanded(
             child: _TimerMetric(
               icon: Icons.local_fire_department_outlined,
-              label: l10n.trainingNoEstLabel,
-              muted: true,
+              label: estimatedCalories > 0
+                  ? '~$estimatedCalories ${l10n.nutritionKcalLabel}'
+                  : l10n.trainingNoEstLabel,
+              muted: estimatedCalories <= 0,
             ),
           ),
           if (!finished && exercise.durationSeconds == null)
@@ -1673,19 +1726,23 @@ class _SetLogRowState extends ConsumerState<_SetLogRow> {
   Future<void> _complete() async {
     if (widget.set.isCompleted || !widget.canComplete || _saving) return;
 
-    final rpe = await showModalBottomSheet<double>(
-      context: context,
-      backgroundColor: AppColors.bgPage,
-      builder: (_) => RpePickerSheet(
-        setNumber: widget.set.setNumber,
-        initial: double.tryParse(_rpe.text.trim()),
-      ),
-    );
-    // Sheet dismissed without a choice: leave the set un-completed.
-    if (rpe == null || !mounted) return;
-    _rpe.text = rpe == rpe.roundToDouble()
-        ? rpe.toStringAsFixed(0)
-        : rpe.toString();
+    final trackRpe = ref.read(trackRpeProvider);
+    double? rpe;
+    if (trackRpe) {
+      rpe = await showModalBottomSheet<double>(
+        context: context,
+        backgroundColor: AppColors.bgPage,
+        builder: (_) => RpePickerSheet(
+          setNumber: widget.set.setNumber,
+          initial: double.tryParse(_rpe.text.trim()),
+        ),
+      );
+      // Sheet dismissed without a choice: leave the set un-completed.
+      if (rpe == null || !mounted) return;
+      _rpe.text = rpe == rpe.roundToDouble()
+          ? rpe.toStringAsFixed(0)
+          : rpe.toString();
+    }
 
     setState(() => _saving = true);
     try {
@@ -1736,16 +1793,17 @@ class _SetLogRowState extends ConsumerState<_SetLogRow> {
     final completionEnabled = widget.canComplete && !done && !_saving;
     final planEditingEnabled = widget.canEditPlan && !done && !_saving;
     final unit = ref.watch(weightUnitProvider);
+    final trackRpe = ref.watch(trackRpeProvider);
     _updateDisplayedWeightUnit(unit);
 
     return LayoutBuilder(
       builder: (context, constraints) {
         final compact = constraints.maxWidth < 350;
         return Container(
-          height: 56,
+          height: 49,
           padding: const EdgeInsets.symmetric(
             horizontal: AppSpacing.sm,
-            vertical: 7,
+            vertical: 6,
           ),
           decoration: BoxDecoration(
             color: done
@@ -1790,18 +1848,20 @@ class _SetLogRowState extends ConsumerState<_SetLogRow> {
                   ),
                 ),
               ),
-              const SizedBox(width: _inputGap),
-              Expanded(
-                child: _InlineSetInput(
-                  controller: _rpe,
-                  enabled: completionEnabled,
-                  hint: '-',
-                  suffix: '',
-                  keyboardType: const TextInputType.numberWithOptions(
-                    decimal: true,
+              if (trackRpe) ...[
+                const SizedBox(width: _inputGap),
+                Expanded(
+                  child: _InlineSetInput(
+                    controller: _rpe,
+                    enabled: completionEnabled,
+                    hint: '-',
+                    suffix: '',
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
                   ),
                 ),
-              ),
+              ],
               if (widget.canComplete) ...[
                 const SizedBox(width: _inputGap),
                 _SetDoneButton(

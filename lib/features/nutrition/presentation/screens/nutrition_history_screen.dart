@@ -181,7 +181,7 @@ class _HistoryContent extends StatelessWidget {
           ],
         ),
         const SizedBox(height: AppSpacing.lg),
-        XnSectionList(
+        XnCardStack(
           children: [
             for (final log in ordered.reversed)
               XnSection(

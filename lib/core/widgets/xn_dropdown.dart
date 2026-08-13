@@ -145,8 +145,8 @@ class _OptionRow extends StatelessWidget {
         children: [
           AnimatedContainer(
             duration: AppMotion.fast,
-            width: 22,
-            height: 22,
+            width: 20,
+            height: 20,
             decoration: BoxDecoration(
               color: selected ? AppColors.accent : AppColors.bg3,
               borderRadius: BorderRadius.circular(AppRadius.sm),

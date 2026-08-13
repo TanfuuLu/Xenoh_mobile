@@ -56,6 +56,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     return AuthLayout(
       title: l10n.authLoginTitle,
       subtitle: l10n.authLoginSubtitle,
+      variant: AuthLayoutVariant.featured,
       footer: AuthFooterAction(
         prompt: l10n.authLoginNoAccountPrompt,
         actionLabel: l10n.authLoginCreateAccountCta,

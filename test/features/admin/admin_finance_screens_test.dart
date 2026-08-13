@@ -23,7 +23,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Payments & subscriptions'), findsWidgets);
+    expect(find.text('Payments & Subscriptions'), findsWidgets);
     expect(find.text('Mai Nguyen'), findsWidgets);
     expect(find.text('1,000 VND'), findsNothing);
     expect(tester.takeException(), isNull);

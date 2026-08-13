@@ -283,8 +283,7 @@ class _NutritionScreenState extends ConsumerState<NutritionScreen> {
         const SizedBox(height: AppSpacing.md),
         LayoutBuilder(
           builder: (context, constraints) {
-            final dailyPanel = XnSectionGroup(
-              padding: EdgeInsets.zero,
+            final dailyPanel = XnCardStack(
               children: [
                 _TodayCard(
                   title: selectedIsToday
@@ -299,7 +298,6 @@ class _NutritionScreenState extends ConsumerState<NutritionScreen> {
                       totals?.totalCarbsG ?? data.todayLog?.carbsG ?? 0,
                   consumedFat: totals?.totalFatG ?? data.todayLog?.fatG ?? 0,
                 ),
-                const XnSectionDivider(),
                 _FoodLogCard(
                   title: selectedIsToday
                       ? l10n.nutritionTodaysFoodEyebrow
@@ -614,26 +612,28 @@ class _MealSection extends ConsumerWidget {
           ),
         ),
         const SizedBox(height: AppSpacing.sm),
-        for (var index = 0; index < meal.items.length; index++) ...[
-          _MealPlanItemRow(
-            item: meal.items[index],
-            languageCode: languageCode,
-            enabled: !pending,
-            onChanged: (checked) {
-              unawaited(
-                ref
-                    .read(mealPlanActionControllerProvider.notifier)
-                    .setChecked(
-                      date: date,
-                      itemId: meal.items[index].id,
-                      checked: checked,
-                    ),
-              );
-            },
-          ),
-          if (index < meal.items.length - 1)
-            const Divider(height: AppSpacing.xl, indent: AppSpacing.sm),
-        ],
+        XnCardStack(
+          itemPadding: EdgeInsets.zero,
+          children: [
+            for (final item in meal.items)
+              _MealPlanItemRow(
+                item: item,
+                languageCode: languageCode,
+                enabled: !pending,
+                onChanged: (checked) {
+                  unawaited(
+                    ref
+                        .read(mealPlanActionControllerProvider.notifier)
+                        .setChecked(
+                          date: date,
+                          itemId: item.id,
+                          checked: checked,
+                        ),
+                  );
+                },
+              ),
+          ],
+        ),
       ],
     );
   }
@@ -1047,21 +1047,21 @@ class _TodayCard extends StatelessWidget {
                       label: l10n.nutritionProteinLabel,
                       logged: consumedProtein,
                       target: calc.proteinG,
-                      color: AppColors.sage500,
+                      color: AppColors.macroProtein,
                     ),
                     const SizedBox(height: 12),
                     _MacroBar(
                       label: l10n.nutritionCarbsLabel,
                       logged: consumedCarbs,
                       target: calc.carbsG,
-                      color: AppColors.warning,
+                      color: AppColors.macroCarbs,
                     ),
                     const SizedBox(height: 12),
                     _MacroBar(
                       label: l10n.nutritionFatLabel,
                       logged: consumedFat,
                       target: calc.fatG,
-                      color: AppColors.info,
+                      color: AppColors.macroFat,
                     ),
                   ],
                 ),
@@ -1123,7 +1123,7 @@ class _FoodLogCard extends StatelessWidget {
               FilledButton.icon(
                 onPressed: onAdd,
                 style: FilledButton.styleFrom(
-                  backgroundColor: AppColors.accent,
+                  backgroundColor: AppColors.buttonPrimary,
                   foregroundColor: AppColors.fgOnClay,
                   shape: const StadiumBorder(),
                   elevation: 0,
@@ -1401,7 +1401,7 @@ class _MacroBar extends StatelessWidget {
     return Row(
       children: [
         SizedBox(
-          width: 58,
+          width: 51,
           child: Text(
             label,
             maxLines: 2,
@@ -1427,7 +1427,7 @@ class _MacroBar extends StatelessWidget {
         ),
         const SizedBox(width: AppSpacing.md),
         SizedBox(
-          width: 64,
+          width: 56,
           child: Text(
             trailing,
             textAlign: TextAlign.right,

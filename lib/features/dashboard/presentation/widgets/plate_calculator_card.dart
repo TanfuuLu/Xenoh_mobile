@@ -481,10 +481,12 @@ class _BarOption extends StatelessWidget {
           curve: Curves.easeOutCubic,
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
-            color: selected ? AppColors.accent : AppColors.buttonBg,
+            color: selected ? AppColors.buttonPrimary : AppColors.buttonBg,
             borderRadius: BorderRadius.circular(AppRadius.pill),
             border: Border.all(
-              color: selected ? AppColors.accent : AppColors.buttonBorder,
+              color: selected
+                  ? AppColors.buttonPrimary
+                  : AppColors.buttonBorder,
             ),
           ),
           child: Text(

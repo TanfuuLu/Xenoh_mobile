@@ -143,10 +143,6 @@ class LandingScreen extends StatelessWidget {
                   child: Text(l10n.marketingPrivacyNavLabel),
                 ),
                 TextButton(
-                  onPressed: () => unawaited(context.push('/account-deletion')),
-                  child: Text(l10n.accountDeletionSettingsLabel),
-                ),
-                TextButton(
                   onPressed: () => unawaited(context.push('/terms')),
                   child: Text(l10n.marketingTermsNavLabel),
                 ),

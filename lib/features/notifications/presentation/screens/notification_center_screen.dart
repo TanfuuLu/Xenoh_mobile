@@ -66,7 +66,7 @@ class NotificationCenterScreen extends ConsumerWidget {
             title: l10n.notificationsEmptyTitle,
             message: l10n.notificationsEmptyMessage,
           ),
-          AsyncData(:final value) => XnSectionList(
+          AsyncData(:final value) => XnCardStack(
             children: [
               for (final item in value)
                 DataCard(

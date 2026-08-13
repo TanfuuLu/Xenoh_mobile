@@ -45,8 +45,8 @@ class ProLockedView extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                width: 56,
-                height: 56,
+                width: 49,
+                height: 49,
                 decoration: BoxDecoration(
                   color: AppColors.paperAlt,
                   borderRadius: BorderRadius.circular(AppRadius.lg),

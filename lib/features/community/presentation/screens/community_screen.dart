@@ -10,7 +10,6 @@ import '../../../../app/theme/app_dimens.dart';
 import '../../../../app/theme/app_typography.dart';
 import '../../../../core/widgets/async_value_view.dart';
 import '../../../../core/widgets/xn_card.dart';
-import '../../../../core/widgets/xn_section.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../providers/community_controllers.dart';
 import '../widgets/community_widgets.dart';
@@ -65,16 +64,6 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
             tooltip: l10n.communityPrivacyTooltip,
             onPressed: () => unawaited(context.push('/community/settings')),
             icon: const Icon(Icons.privacy_tip_outlined),
-          ),
-          IconButton(
-            tooltip: l10n.competitionsTitle,
-            onPressed: () => unawaited(context.push('/competitions')),
-            icon: const Icon(Icons.emoji_events_outlined),
-          ),
-          IconButton(
-            tooltip: l10n.challengesTitle,
-            onPressed: () => unawaited(context.push('/community/challenges')),
-            icon: const Icon(Icons.flag_outlined),
           ),
           IconButton(
             tooltip: l10n.communityFriendsTitle,
@@ -142,7 +131,7 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
                       message: l10n.communityNoAthletesMatchMessage,
                     );
                   }
-                  return XnSectionList(
+                  return XnCardStack(
                     children: [
                       for (final user in page.items)
                         CommunityUserCard(

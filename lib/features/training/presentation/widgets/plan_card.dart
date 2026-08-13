@@ -58,133 +58,133 @@ class PlanCard extends StatelessWidget {
         ? 0.0
         : (plan.completedDays / plan.totalDays).clamp(0.0, 1.0);
     final progressColor = plan.isActive ? AppColors.success : AppColors.accent;
-    final surface = plan.isActive
-        ? AppColors.successBg.withValues(alpha: 0.32)
-        : AppColors.bg2;
+    final borderColor = plan.isActive
+        ? AppColors.success.withValues(alpha: 0.28)
+        : AppColors.surfaceBorderSoft;
 
-    return Material(
-      color: Colors.transparent,
-      borderRadius: BorderRadius.circular(AppRadius.lg),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(AppRadius.lg),
-        child: Ink(
-          padding: const EdgeInsets.all(AppSpacing.xl),
-          decoration: BoxDecoration(
-            color: surface,
-            borderRadius: BorderRadius.circular(AppRadius.lg),
-            border: Border.all(
-              color: plan.isActive
-                  ? AppColors.success.withValues(alpha: 0.24)
-                  : AppColors.surfaceBorderSoft,
-            ),
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(AppRadius.xl),
+        boxShadow: [
+          BoxShadow(
+            color: plan.isActive
+                ? AppColors.success.withValues(alpha: 0.08)
+                : AppColors.shadow,
+            blurRadius: plan.isActive ? 20 : 12,
+            offset: const Offset(0, 5),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _PlanIdentityMark(
-                    icon: showCoachBadge
-                        ? Icons.workspace_premium_outlined
-                        : Icons.calendar_month_rounded,
-                    color: accent,
-                  ),
-                  const SizedBox(width: AppSpacing.lg),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          plan.name,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: AppTypography.display(
-                            20,
-                            weight: FontWeight.w500,
-                            letterSpacing: 0,
-                            height: 1.08,
-                          ),
-                        ),
-                        const SizedBox(height: AppSpacing.md),
-                        Row(
-                          children: [
-                            const Icon(
-                              Icons.event_outlined,
-                              size: 14,
-                              color: AppColors.fg3,
+        ],
+      ),
+      child: Material(
+        color: AppColors.bg2,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadius.xl),
+          side: BorderSide(color: borderColor),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.all(AppSpacing.xl),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _PlanIdentityMark(
+                      icon: showCoachBadge
+                          ? Icons.workspace_premium_outlined
+                          : Icons.calendar_month_rounded,
+                      color: accent,
+                    ),
+                    const SizedBox(width: AppSpacing.lg),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            plan.name,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: AppTypography.display(
+                              19,
+                              weight: FontWeight.w600,
+                              letterSpacing: -0.2,
+                              height: 1.18,
                             ),
-                            const SizedBox(width: AppSpacing.sm),
-                            Expanded(
-                              child: Text(
-                                '${DateOnly.format(plan.startDate)} - '
-                                '${DateOnly.format(plan.endDate)}',
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  color: AppColors.fg2,
-                                  fontSize: 12.5,
-                                  height: 1.2,
-                                  fontWeight: FontWeight.w500,
+                          ),
+                          const SizedBox(height: AppSpacing.sm),
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.event_outlined,
+                                size: 14,
+                                color: AppColors.fg3,
+                              ),
+                              const SizedBox(width: AppSpacing.sm),
+                              Expanded(
+                                child: Text(
+                                  '${DateOnly.format(plan.startDate)} - '
+                                  '${DateOnly.format(plan.endDate)}',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    color: AppColors.fg2,
+                                    fontSize: 12.5,
+                                    height: 1.2,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ],
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: AppSpacing.sm),
-                  _StatusPill(
-                    label: statusLabel,
-                    backgroundColor: statusColor,
-                    foregroundColor: statusTextColor,
-                    tooltip: showCoachBadge
-                        ? l10n.trainingCoachPlanTooltip
-                        : plan.isActive
-                        ? l10n.trainingDeactivatePlanTooltip
-                        : l10n.trainingActivatePlanTooltip,
-                    onTap: showCoachBadge ? null : onActivate,
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppSpacing.xl),
-              _PlanProgressBand(
-                value: progress,
-                color: progressColor,
-                progressLabel: l10n.trainingPlanCardProgress(
-                  plan.completedWeeks,
-                  plan.totalWeeks,
-                  plan.completedDays,
-                  plan.totalDays,
+                    const SizedBox(width: AppSpacing.sm),
+                    _StatusPill(
+                      label: statusLabel,
+                      backgroundColor: statusColor,
+                      foregroundColor: statusTextColor,
+                      tooltip: showCoachBadge
+                          ? l10n.trainingCoachPlanTooltip
+                          : plan.isActive
+                          ? l10n.trainingDeactivatePlanTooltip
+                          : l10n.trainingActivatePlanTooltip,
+                      onTap: showCoachBadge ? null : onActivate,
+                    ),
+                  ],
                 ),
-                percent: '${plan.progressPercent}%',
-              ),
-              const SizedBox(height: AppSpacing.lg),
-              Row(
-                children: [
-                  Expanded(
-                    child: _PlanActivationButton(
-                      isActive: plan.isActive,
-                      activateLabel: l10n.commonActivate,
-                      deactivateLabel: l10n.commonDeactivate,
-                      onPressed: onActivate,
-                    ),
+                const SizedBox(height: AppSpacing.xxl),
+                _PlanProgressBand(
+                  value: progress,
+                  color: progressColor,
+                  progressLabel: l10n.trainingPlanCardProgress(
+                    plan.completedWeeks,
+                    plan.totalWeeks,
+                    plan.completedDays,
+                    plan.totalDays,
                   ),
-                  const SizedBox(width: AppSpacing.lg),
-                  _PlanActionToolbar(
-                    analyticsTooltip: l10n.commonAnalytics,
-                    reviewTooltip: l10n.trainingReviewPlanTooltip,
-                    deleteTooltip: l10n.trainingDeletePlanTooltip,
-                    reviewIcon: Icons.auto_fix_high_outlined,
-                    onAnalytics: onAnalytics,
-                    onReview: onReview,
-                    onDelete: onDelete,
-                  ),
-                ],
-              ),
-            ],
+                  percent: '${plan.progressPercent}%',
+                ),
+                const SizedBox(height: AppSpacing.xl),
+                Container(height: 1, color: AppColors.surfaceBorderSoft),
+                const SizedBox(height: AppSpacing.lg),
+                _PlanActions(
+                  isActive: plan.isActive,
+                  activateLabel: l10n.commonActivate,
+                  deactivateLabel: l10n.commonDeactivate,
+                  analyticsTooltip: l10n.commonAnalytics,
+                  reviewTooltip: l10n.trainingReviewPlanTooltip,
+                  deleteTooltip: l10n.trainingDeletePlanTooltip,
+                  onActivate: onActivate,
+                  onAnalytics: onAnalytics,
+                  onReview: onReview,
+                  onDelete: onDelete,
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -201,12 +201,11 @@ class _PlanIdentityMark extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 40,
+      width: 44,
       height: 44,
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(AppRadius.md),
-        border: Border.all(color: color.withValues(alpha: 0.18)),
+        color: color.withValues(alpha: 0.11),
+        borderRadius: BorderRadius.circular(AppRadius.lg),
       ),
       child: Icon(icon, size: 20, color: color),
     );
@@ -228,59 +227,57 @@ class _PlanProgressBand extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(
-        AppSpacing.lg,
-        AppSpacing.md,
-        AppSpacing.lg,
-        AppSpacing.lg,
-      ),
-      decoration: BoxDecoration(
-        color: AppColors.bg2.withValues(alpha: 0.64),
-        borderRadius: BorderRadius.circular(AppRadius.md),
-        border: Border.all(color: color.withValues(alpha: 0.1)),
-      ),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Text(
-                AppLocalizations.of(context).commonProgress,
-                style: const TextStyle(
-                  color: AppColors.fg3,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w500,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  AppLocalizations.of(context).commonProgress,
+                  style: const TextStyle(
+                    color: AppColors.fg3,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.25,
+                  ),
                 ),
-              ),
-              const Spacer(),
-              Text(
-                percent,
-                style: AppTypography.mono(
-                  13,
-                  weight: FontWeight.w500,
-                  color: AppColors.fg1,
+                const SizedBox(height: 2),
+                Text(
+                  percent,
+                  style: AppTypography.mono(
+                    22,
+                    weight: FontWeight.w600,
+                    color: AppColors.fg1,
+                  ),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.md),
-          _ProgressBar(value: value, color: color),
-          const SizedBox(height: AppSpacing.sm),
-          Align(
-            alignment: Alignment.centerRight,
-            child: Text(
-              progressLabel,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: AppTypography.mono(
-                10.5,
-                weight: FontWeight.w500,
-                color: AppColors.fg3,
+              ],
+            ),
+            const SizedBox(width: AppSpacing.lg),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 3),
+                child: Text(
+                  progressLabel,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.right,
+                  style: AppTypography.mono(
+                    10.5,
+                    weight: FontWeight.w500,
+                    color: AppColors.fg3,
+                  ),
+                ),
               ),
             ),
-          ),
-        ],
-      ),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        _ProgressBar(value: value, color: color),
+      ],
     );
   }
 }
@@ -297,8 +294,8 @@ class _ProgressBar extends StatelessWidget {
       borderRadius: BorderRadius.circular(AppRadius.pill),
       child: LinearProgressIndicator(
         value: value,
-        minHeight: 5,
-        backgroundColor: AppColors.bg3,
+        minHeight: 7,
+        backgroundColor: AppColors.bg3.withValues(alpha: 0.9),
         valueColor: AlwaysStoppedAnimation<Color>(color),
       ),
     );
@@ -324,26 +321,107 @@ class _StatusPill extends StatelessWidget {
   Widget build(BuildContext context) {
     final pill = Material(
       color: backgroundColor,
-      borderRadius: BorderRadius.circular(AppRadius.md),
+      borderRadius: BorderRadius.circular(AppRadius.sm),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(AppRadius.md),
+        borderRadius: BorderRadius.circular(AppRadius.sm),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 6),
-          child: Text(
-            label,
-            style: TextStyle(
-              color: foregroundColor,
-              fontSize: 11,
-              fontWeight: FontWeight.w500,
-              height: 1,
-            ),
+          padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 7),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 6,
+                height: 6,
+                decoration: BoxDecoration(
+                  color: foregroundColor,
+                  shape: BoxShape.circle,
+                ),
+              ),
+              const SizedBox(width: AppSpacing.sm),
+              Text(
+                label,
+                style: TextStyle(
+                  color: foregroundColor,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  height: 1,
+                ),
+              ),
+            ],
           ),
         ),
       ),
     );
     final tooltip = this.tooltip;
     return tooltip == null ? pill : Tooltip(message: tooltip, child: pill);
+  }
+}
+
+class _PlanActions extends StatelessWidget {
+  const _PlanActions({
+    required this.isActive,
+    required this.activateLabel,
+    required this.deactivateLabel,
+    required this.analyticsTooltip,
+    required this.reviewTooltip,
+    required this.deleteTooltip,
+    required this.onActivate,
+    required this.onAnalytics,
+    required this.onReview,
+    required this.onDelete,
+  });
+
+  final bool isActive;
+  final String activateLabel;
+  final String deactivateLabel;
+  final String analyticsTooltip;
+  final String reviewTooltip;
+  final String deleteTooltip;
+  final VoidCallback onActivate;
+  final VoidCallback onAnalytics;
+  final VoidCallback onReview;
+  final VoidCallback onDelete;
+
+  @override
+  Widget build(BuildContext context) {
+    final activation = _PlanActivationButton(
+      isActive: isActive,
+      activateLabel: activateLabel,
+      deactivateLabel: deactivateLabel,
+      onPressed: onActivate,
+    );
+    final toolbar = _PlanActionToolbar(
+      analyticsTooltip: analyticsTooltip,
+      reviewTooltip: reviewTooltip,
+      deleteTooltip: deleteTooltip,
+      reviewIcon: Icons.auto_fix_high_outlined,
+      onAnalytics: onAnalytics,
+      onReview: onReview,
+      onDelete: onDelete,
+    );
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        if (constraints.maxWidth < 340) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              activation,
+              const SizedBox(height: AppSpacing.sm),
+              toolbar,
+            ],
+          );
+        }
+        return Row(
+          children: [
+            Expanded(child: activation),
+            const SizedBox(width: AppSpacing.md),
+            toolbar,
+          ],
+        );
+      },
+    );
   }
 }
 
@@ -368,35 +446,28 @@ class _PlanActionToolbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.buttonBg,
-        borderRadius: BorderRadius.circular(AppRadius.md),
-        border: Border.all(color: AppColors.surfaceBorderSoft),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _PlanIconButton(
-            tooltip: analyticsTooltip,
-            icon: Icons.bar_chart_rounded,
-            onPressed: onAnalytics,
-          ),
-          const _ToolbarDivider(),
-          _PlanIconButton(
-            tooltip: reviewTooltip,
-            icon: reviewIcon,
-            onPressed: onReview,
-          ),
-          const _ToolbarDivider(),
-          _PlanIconButton(
-            tooltip: deleteTooltip,
-            icon: Icons.delete_outline_rounded,
-            color: AppColors.danger,
-            onPressed: onDelete,
-          ),
-        ],
-      ),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        _PlanIconButton(
+          tooltip: analyticsTooltip,
+          icon: Icons.bar_chart_rounded,
+          onPressed: onAnalytics,
+        ),
+        const SizedBox(width: AppSpacing.sm),
+        _PlanIconButton(
+          tooltip: reviewTooltip,
+          icon: reviewIcon,
+          onPressed: onReview,
+        ),
+        const SizedBox(width: AppSpacing.sm),
+        _PlanIconButton(
+          tooltip: deleteTooltip,
+          icon: Icons.delete_outline_rounded,
+          color: AppColors.danger,
+          onPressed: onDelete,
+        ),
+      ],
     );
   }
 }
@@ -416,7 +487,7 @@ class _PlanActivationButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final background = isActive ? AppColors.successBg : AppColors.accent;
+    final background = isActive ? AppColors.successBg : AppColors.buttonPrimary;
     final foreground = isActive ? AppColors.success : AppColors.fgOnClay;
     return FilledButton.icon(
       onPressed: onPressed,
@@ -444,17 +515,6 @@ class _PlanActivationButton extends StatelessWidget {
   }
 }
 
-class _ToolbarDivider extends StatelessWidget {
-  const _ToolbarDivider();
-
-  @override
-  Widget build(BuildContext context) => Container(
-    width: 1,
-    height: 28,
-    color: AppColors.surfaceBorderSoft,
-  );
-}
-
 class _PlanIconButton extends StatelessWidget {
   const _PlanIconButton({
     required this.tooltip,
@@ -475,13 +535,21 @@ class _PlanIconButton extends StatelessWidget {
       onPressed: onPressed,
       icon: Icon(icon),
       color: color,
-      iconSize: 21,
+      iconSize: 19,
       visualDensity: VisualDensity.compact,
-      constraints: const BoxConstraints.tightFor(width: 46, height: 44),
+      constraints: const BoxConstraints.tightFor(width: 42, height: 42),
       padding: EdgeInsets.zero,
       style: IconButton.styleFrom(
+        backgroundColor: color == AppColors.danger
+            ? AppColors.dangerBg.withValues(alpha: 0.45)
+            : AppColors.buttonBg,
+        side: BorderSide(
+          color: color == AppColors.danger
+              ? AppColors.danger.withValues(alpha: 0.15)
+              : AppColors.surfaceBorderSoft,
+        ),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppRadius.sm),
+          borderRadius: BorderRadius.circular(AppRadius.md),
         ),
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
       ),

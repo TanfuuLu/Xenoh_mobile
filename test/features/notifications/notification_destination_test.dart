@@ -133,17 +133,17 @@ void main() {
     }
   });
 
-  test('challenge notifications open the native detail screen', () {
-    expect(
-      notificationDestination(
-        const {
-          'relatedEntityType': 'FitnessChallenge',
-          'relatedEntityId': 'challenge-1',
-        },
-        isCoach: false,
-      ).route,
-      '/community/challenges/challenge-1',
+  test('challenge notifications safely fall back', () {
+    final destination = notificationDestination(
+      const {
+        'relatedEntityType': 'FitnessChallenge',
+        'relatedEntityId': 'challenge-1',
+      },
+      isCoach: false,
     );
+
+    expect(destination.route, isNull);
+    expect(destination.hasFallback, isTrue);
   });
 
   test('competition notifications open my native registrations', () {

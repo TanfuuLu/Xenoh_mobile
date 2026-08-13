@@ -9,6 +9,7 @@ import '../features/coach_client/presentation/providers/chat_unread_controller.d
 import '../features/profile/presentation/providers/preferences_provider.dart';
 import '../l10n/app_localizations.dart';
 import 'router/router.dart';
+import 'theme/app_density.dart';
 import 'theme/app_theme.dart';
 import 'widgets/xn_grid_background.dart';
 
@@ -37,8 +38,10 @@ class XenohApp extends ConsumerWidget {
       // Keeps date-sensitive providers in sync when the app resumes or stays
       // open across midnight.
       builder: (context, child) {
-        return _AppLifecycleLayer(
-          child: XnGridBackground(child: child ?? const SizedBox.shrink()),
+        return AppDensityScope(
+          child: _AppLifecycleLayer(
+            child: XnGridBackground(child: child ?? const SizedBox.shrink()),
+          ),
         );
       },
     );

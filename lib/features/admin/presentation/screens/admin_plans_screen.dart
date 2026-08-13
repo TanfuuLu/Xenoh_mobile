@@ -34,7 +34,7 @@ class AdminPlansScreen extends ConsumerWidget {
             title: l10n.adminNoPlansTitle,
             message: l10n.adminNoPlansMessage,
           ),
-          AsyncData(:final value) => XnSectionList(
+          AsyncData(:final value) => XnCardStack(
             children: [
               for (final item in value)
                 DataCard(

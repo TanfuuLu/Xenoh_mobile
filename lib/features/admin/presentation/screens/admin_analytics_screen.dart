@@ -110,7 +110,7 @@ class _InsightsTab extends ConsumerWidget {
             },
           ),
           const SizedBox(height: AppSpacing.lg),
-          XnSectionList(
+          XnCardStack(
             children: [
               _MetricSeries(
                 title: l10n.adminUserRegistrationsTitle,
@@ -172,7 +172,7 @@ class _MarketingTab extends ConsumerWidget {
             },
           ),
           const SizedBox(height: AppSpacing.lg),
-          XnSectionList(
+          XnCardStack(
             children: [
               _MetricSeries(
                 title: l10n.adminTopSourcesTitle,
@@ -222,7 +222,7 @@ class _AiUsageTab extends ConsumerWidget {
           },
         ),
         const SizedBox(height: AppSpacing.lg),
-        XnSectionList(
+        XnCardStack(
           children: [
             _MetricSeries(
               title: l10n.adminByTierTitle,

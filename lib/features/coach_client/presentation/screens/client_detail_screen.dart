@@ -257,6 +257,23 @@ class ClientDetailScreen extends ConsumerWidget {
             },
           );
         },
+        onSaveWeek:
+            ({
+              required startDate,
+              required endDate,
+              required meals,
+              notes,
+            }) async {
+              await ref.read(xenohApiProvider).putObject(
+                '/nutrition/clients/$clientId/meal-plans/ranges',
+                {
+                  'startDate': DateOnly.format(startDate),
+                  'endDate': DateOnly.format(endDate),
+                  'notes': notes,
+                  'meals': meals,
+                },
+              );
+            },
       ),
     );
     if (savedDate == null || !context.mounted) return;

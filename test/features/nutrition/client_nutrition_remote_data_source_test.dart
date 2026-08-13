@@ -66,6 +66,36 @@ void main() {
       '/nutrition/history?from=2026-07-21&to=2026-08-03',
     );
   });
+
+  test('applies a weekly meal template in one atomic range request', () async {
+    final adapter = _ClientNutritionAdapter();
+    final source = NutritionRemoteDataSource(
+      Dio()..httpClientAdapter = adapter,
+    );
+    final meals = [
+      {
+        'name': 'Breakfast',
+        'sortOrder': 0,
+        'items': <Map<String, dynamic>>[],
+      },
+    ];
+
+    final result = await source.applyMealPlanTemplate(
+      startDate: DateTime(2026, 8, 10),
+      endDate: DateTime(2026, 8, 16),
+      notes: 'Prep week',
+      meals: meals,
+    );
+
+    expect(result.affectedDayCount, 7);
+    expect(adapter.requests.single, '/nutrition/meal-plans/ranges');
+    expect(adapter.requestBodies.single, {
+      'startDate': '2026-08-10',
+      'endDate': '2026-08-16',
+      'notes': 'Prep week',
+      'meals': meals,
+    });
+  });
 }
 
 class _ClientNutritionAdapter implements HttpClientAdapter {
@@ -73,6 +103,7 @@ class _ClientNutritionAdapter implements HttpClientAdapter {
 
   final bool missingDailyLog;
   final List<String> requests = [];
+  final List<Map<String, dynamic>> requestBodies = [];
 
   @override
   Future<ResponseBody> fetch(
@@ -84,6 +115,9 @@ class _ClientNutritionAdapter implements HttpClientAdapter {
         .map((entry) => '${entry.key}=${entry.value}')
         .join('&');
     requests.add('${options.path}${query.isEmpty ? '' : '?$query'}');
+    if (options.data case final Map<String, dynamic> body) {
+      requestBodies.add(body);
+    }
 
     if (missingDailyLog && options.path.contains('/logs/')) {
       return ResponseBody.fromString('', 404);
@@ -136,6 +170,11 @@ class _ClientNutritionAdapter implements HttpClientAdapter {
           'fatG': 60.0,
         },
       ],
+      '/nutrition/meal-plans/ranges' => {
+        'startDate': '2026-08-10',
+        'endDate': '2026-08-16',
+        'affectedDayCount': 7,
+      },
       _ => throw StateError('Unexpected request: ${options.path}'),
     };
 

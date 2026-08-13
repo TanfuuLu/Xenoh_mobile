@@ -2,6 +2,18 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'meal_plan.freezed.dart';
 
+class MealPlanRangeResult {
+  const MealPlanRangeResult({
+    required this.startDate,
+    required this.endDate,
+    required this.affectedDayCount,
+  });
+
+  final DateTime startDate;
+  final DateTime endDate;
+  final int affectedDayCount;
+}
+
 @freezed
 abstract class MealPlanTotals with _$MealPlanTotals {
   const factory MealPlanTotals({

@@ -188,6 +188,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profilePreferencesWeightUnitPounds => 'Pounds';
 
   @override
+  String get profilePreferencesTrackRpeLabel => 'Track RPE';
+
+  @override
+  String get profilePreferencesTrackRpeOn => 'On';
+
+  @override
+  String get profilePreferencesTrackRpeOff => 'Off';
+
+  @override
   String get profilePreferencesSavedSnackbar => 'Preferences saved.';
 
   @override
@@ -375,7 +384,14 @@ class AppLocalizationsEn extends AppLocalizations {
       'Couldn\'t load activity for this month.';
 
   @override
-  String get settingsChangePasswordTitle => 'Change password';
+  String get settingsChangePasswordTitle => 'Change Password';
+
+  @override
+  String get settingsSecurityEyebrow => 'SECURITY';
+
+  @override
+  String get settingsChangePasswordSubtitle =>
+      'Confirm your current password before setting a new one.';
 
   @override
   String get settingsCurrentPasswordLabel => 'Current password';
@@ -384,7 +400,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsNewPasswordLabel => 'New password';
 
   @override
-  String get settingsSavePasswordCta => 'Save password';
+  String get settingsConfirmNewPasswordLabel => 'Confirm new password';
+
+  @override
+  String get settingsPasswordsDoNotMatchError => 'New passwords do not match.';
+
+  @override
+  String get settingsSavePasswordCta => 'Update password';
 
   @override
   String get settingsPasswordUpdatedSnackbar => 'Password updated.';
@@ -393,7 +415,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get blocksBlocklistTitle => 'Blocklist';
 
   @override
-  String get blocksBlockedUsersTitle => 'Blocked users';
+  String get blocksBlockedUsersTitle => 'Blocked Users';
 
   @override
   String get blocksBlockedUsersSubtitle =>
@@ -409,7 +431,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get blocksUnblockTooltip => 'Unblock';
 
   @override
-  String get reportBugTitle => 'Report a bug';
+  String get reportBugTitle => 'Report A Bug';
 
   @override
   String get reportBugSubtitle =>
@@ -469,7 +491,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notificationsMarkAllReadTooltip => 'Mark all read';
 
   @override
-  String get notificationsCenterTitle => 'Notification center';
+  String get notificationsCenterTitle => 'Notification Center';
 
   @override
   String get notificationsCenterSubtitle =>
@@ -1031,7 +1053,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get coachChatTitle => 'Chat';
 
   @override
-  String get coachChatHeaderTitle => 'Relationship chat';
+  String get coachChatHeaderTitle => 'Relationship Chat';
 
   @override
   String get coachChatHeaderSubtitle =>
@@ -1067,7 +1089,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get coachEnterCodeTitle => 'Enter coach code';
 
   @override
-  String get coachEnterCodeHeaderTitle => 'Connect to coach';
+  String get coachEnterCodeHeaderTitle => 'Connect To Coach';
 
   @override
   String get coachEnterCodeHeaderSubtitle =>
@@ -1090,7 +1112,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get coachGenerateInviteCodeTooltip => 'Generate invite code';
 
   @override
-  String get coachInviteCodesTitle => 'Invite codes';
+  String get coachInviteCodesTitle => 'Invite Codes';
 
   @override
   String get coachInviteCodesSubtitle =>
@@ -1188,7 +1210,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get coachMyCoachTitle => 'My coach';
 
   @override
-  String get coachProfileTitle => 'Coach profile';
+  String get coachProfileTitle => 'Coach Profile';
 
   @override
   String get coachProfileSubtitle =>
@@ -2161,14 +2183,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get trainingBalanceCheckTitle => 'Balance check';
 
   @override
-  String get trainingAiBalanceCheckTitle => 'AI balance check';
+  String get trainingAiBalanceCheckTitle => 'AI Balance Check';
 
   @override
   String get trainingAiBalanceCheckSubtitle =>
       'How well this plan distributes training across the body.';
 
   @override
-  String get trainingPlanProgressInsightTitle => 'AI plan progress';
+  String get trainingPlanProgressInsightTitle => 'AI Plan Progress';
 
   @override
   String get trainingPlanProgressInsightSubtitle =>
@@ -2488,6 +2510,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get trainingSkipUnskipTooltip => 'Skip or unskip exercise';
+
+  @override
+  String get trainingExerciseActionsTooltip => 'Exercise actions';
 
   @override
   String get trainingDeleteExerciseTooltip => 'Delete exercise';
@@ -2952,7 +2977,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get insightsRefreshTooltip => 'Refresh';
 
   @override
-  String get insightsHeaderTitle => 'AI coach review';
+  String get insightsHeaderTitle => 'AI Coach Review';
 
   @override
   String get insightsHeaderSubtitle =>
@@ -3313,7 +3338,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sharingPrShareTitle => 'PR share';
 
   @override
-  String get sharingPersonalRecordTitle => 'Personal record';
+  String get sharingPersonalRecordTitle => 'Personal Record';
 
   @override
   String get sharingPersonalRecordSubtitle =>
@@ -3429,7 +3454,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Nutrition intake is read-only for coaches. The client records their own daily totals.';
 
   @override
-  String get nutritionInsightTitle => 'Nutrition insight';
+  String get nutritionInsightTitle => 'Nutrition Insight';
 
   @override
   String get nutritionInsightSubtitle =>
@@ -3717,7 +3742,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get dashboardCommunitySubtitle =>
-      'Train together, share progress and take on challenges.';
+      'Train together and share progress with the community.';
 
   @override
   String get communityEyebrowLabel => 'COMMUNITY';
@@ -3930,7 +3955,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get adminDashboardTitle => 'Admin dashboard';
 
   @override
-  String get adminPlatformOperationsTitle => 'Platform operations';
+  String get adminPlatformOperationsTitle => 'Platform Operations';
 
   @override
   String get adminPlatformOperationsSubtitle =>
@@ -3964,7 +3989,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get adminReportsTitle => 'Reports';
 
   @override
-  String get adminModerationQueueTitle => 'Moderation queue';
+  String get adminModerationQueueTitle => 'Moderation Queue';
 
   @override
   String get adminModerationQueueSubtitle =>
@@ -3989,7 +4014,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get adminReviewedOnMobileNote => 'Reviewed on mobile';
 
   @override
-  String get adminPlatformPlansTitle => 'Platform plans';
+  String get adminPlatformPlansTitle => 'Platform Plans';
 
   @override
   String get adminPlatformPlansSubtitle =>
@@ -4015,7 +4040,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get adminUserManagementTitle => 'User management';
+  String get adminUserManagementTitle => 'User Management';
 
   @override
   String get adminUserManagementSubtitle =>
@@ -4063,7 +4088,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get adminPlanAnalyticsTitle => 'Plan analytics';
 
   @override
-  String get adminPlanAnalyticsHeaderTitle => 'Admin plan analytics';
+  String get adminPlanAnalyticsHeaderTitle => 'Admin Plan Analytics';
 
   @override
   String get adminPlanAnalyticsHeaderSubtitle =>
@@ -4106,7 +4131,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get adminAiUsageTab => 'AI Usage';
 
   @override
-  String get adminPlatformInsightsTitle => 'Platform insights';
+  String get adminPlatformInsightsTitle => 'Platform Insights';
 
   @override
   String get adminPlatformInsightsSubtitle =>
@@ -4131,7 +4156,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get adminCommunityActivityTitle => 'Community activity';
 
   @override
-  String get adminMarketingAnalyticsTitle => 'Marketing analytics';
+  String get adminMarketingAnalyticsTitle => 'Marketing Analytics';
 
   @override
   String get adminMarketingAnalyticsSubtitle =>
@@ -4168,7 +4193,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get adminTopCampaignsTitle => 'Top campaigns';
 
   @override
-  String get adminAiUsageTitle => 'AI usage';
+  String get adminAiUsageTitle => 'AI Usage';
 
   @override
   String get adminAiUsageSubtitle =>
@@ -4212,7 +4237,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get adminBugReportsTitle => 'Bug reports';
+  String get adminBugReportsTitle => 'Bug Reports';
 
   @override
   String get adminBugReportsSubtitle =>
@@ -4259,7 +4284,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get adminBugStatusDismissed => 'Dismissed';
 
   @override
-  String get adminUserDetailTitle => 'User detail';
+  String get adminUserDetailTitle => 'User Detail';
 
   @override
   String get adminUserDetailSubtitle =>
@@ -4388,7 +4413,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get marketingAboutTitle => 'About Xenoh';
 
   @override
-  String get marketingBuiltForTitle => 'Built for lifters and coaches';
+  String get marketingBuiltForTitle => 'Built For Lifters And Coaches';
 
   @override
   String get marketingBuiltForSubtitle =>
@@ -4612,97 +4637,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get communityShareActionsTooltip => 'Share actions';
 
   @override
-  String get challengesTitle => 'Fitness challenges';
-
-  @override
-  String get challengesCreate => 'Create challenge';
-
-  @override
-  String get challengeEdit => 'Edit challenge';
-
-  @override
-  String get challengesMineTab => 'My challenges';
-
-  @override
-  String get challengesDiscoverTab => 'Discover';
-
-  @override
-  String get challengesEmpty => 'No challenges here yet.';
-
-  @override
-  String get challengeDetailTitle => 'Challenge details';
-
-  @override
-  String get challengeAccept => 'Accept';
-
-  @override
-  String get challengeDecline => 'Decline';
-
-  @override
-  String get challengeJoin => 'Join challenge';
-
-  @override
-  String get challengeLeave => 'Leave';
-
-  @override
-  String get challengeCheckIn => 'Check in';
-
-  @override
-  String get challengeUndoCheckIn => 'Undo check-in';
-
-  @override
-  String get challengeInvite => 'Invite members';
-
-  @override
-  String get challengeCancel => 'Cancel challenge';
-
-  @override
-  String get challengeCancelConfirm => 'Cancel this challenge for all members?';
-
-  @override
-  String get challengeMembers => 'Members';
-
-  @override
-  String get challengeStandings => 'Standings';
-
-  @override
-  String get challengeBaselineRequired => 'Baseline required';
-
-  @override
-  String get challengeCreator => 'Creator';
-
-  @override
-  String get challengeRemoveMember => 'Remove member';
-
-  @override
-  String get challengeTitleLabel => 'Title';
-
-  @override
-  String get challengeTitleValidation => 'Enter 3 to 80 characters.';
-
-  @override
-  String get challengeDescriptionLabel => 'Description';
-
-  @override
-  String get challengeMetricLabel => 'Metric';
-
-  @override
-  String get challengeAccessLabel => 'Access';
-
-  @override
-  String get challengeWeeklyTarget => 'Sessions per week';
-
-  @override
-  String get challengeCheckInPrompt => 'Check-in prompt';
-
-  @override
-  String get challengeCapacity => 'Participant capacity';
-
-  @override
-  String get challengeStartDate => 'Start date';
-
-  @override
-  String get challengeEndDate => 'End date';
+  String get competitionTitleLabel => 'Title';
 
   @override
   String get competitionsTitle => 'Competitions';
@@ -5049,7 +4984,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get adminOrganizerSaveDecision => 'Save decision';
 
   @override
-  String get adminPaymentsTitle => 'Payments & subscriptions';
+  String get adminPaymentsTitle => 'Payments & Subscriptions';
 
   @override
   String get adminPaymentsSubtitle =>
@@ -5196,6 +5131,37 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get competitionPhoneValidation => 'Enter at least 7 characters.';
+
+  @override
+  String get competitionApplySubtitle =>
+      'Pick your category and confirm how the organizer can reach you.';
+
+  @override
+  String get competitionApplyContact => 'Contact';
+
+  @override
+  String get competitionEmail => 'Email';
+
+  @override
+  String get competitionEmailHint => 'you@example.com';
+
+  @override
+  String get competitionPhoneHint => '0901 234 567';
+
+  @override
+  String get competitionFacebookOptional => 'Facebook (optional)';
+
+  @override
+  String get competitionFacebookHint => 'facebook.com/yourprofile';
+
+  @override
+  String get competitionEntryFee => 'Entry fee';
+
+  @override
+  String get competitionSpotsLeft => 'Spots left';
+
+  @override
+  String get competitionChooseCategoryHint => 'Select a category';
 
   @override
   String get competitionSubmit => 'Submit application';

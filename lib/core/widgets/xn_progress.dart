@@ -7,7 +7,7 @@ class XnAnimatedLinearProgress extends StatelessWidget {
     required this.value,
     required this.backgroundColor,
     required this.color,
-    this.minHeight = 8,
+    this.minHeight = 7,
     super.key,
   });
 

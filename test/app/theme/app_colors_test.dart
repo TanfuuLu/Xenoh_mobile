@@ -24,6 +24,46 @@ void main() {
     expect(AppColors.dataOlive, const Color(0xFF84CC16));
   });
 
+  test('uses consistent semantic colors for nutrition macros', () {
+    expect(AppColors.macroProtein, const Color(0xFFE53935));
+    expect(AppColors.macroFat, const Color(0xFFF9A825));
+    expect(AppColors.macroCarbs, const Color(0xFF43A047));
+  });
+
+  test('button colors match the website semantic tokens', () {
+    expect(AppColors.buttonPrimary, const Color(0xFF725945));
+    expect(AppColors.buttonBg, const Color(0xFFFBF7EF));
+    expect(AppColors.buttonHover, const Color(0xFFF1E8DC));
+    expect(AppColors.buttonBorder, const Color(0xFFD7C7B6));
+    expect(AppColors.buttonText, const Color(0xFF2E2218));
+
+    final theme = AppTheme.light();
+    expect(
+      theme.filledButtonTheme.style!.backgroundColor!.resolve({}),
+      AppColors.buttonPrimary,
+    );
+    expect(
+      theme.outlinedButtonTheme.style!.backgroundColor!.resolve({}),
+      AppColors.buttonBg,
+    );
+    expect(
+      theme.outlinedButtonTheme.style!.foregroundColor!.resolve({}),
+      AppColors.buttonText,
+    );
+    expect(
+      theme.textButtonTheme.style!.foregroundColor!.resolve({}),
+      AppColors.buttonPrimary,
+    );
+    expect(
+      theme.floatingActionButtonTheme.backgroundColor,
+      AppColors.buttonPrimary,
+    );
+    expect(
+      theme.floatingActionButtonTheme.foregroundColor,
+      AppColors.fgOnClay,
+    );
+  });
+
   test('navigation selection matches the website active destination', () {
     expect(
       AppColors.navigationSelectedBackground,
@@ -42,6 +82,27 @@ void main() {
     expect(
       theme.navigationRailTheme.indicatorColor,
       AppColors.navigationSelectedBackground,
+    );
+  });
+
+  test('segmented buttons use muted fills and black borders', () {
+    final style = AppTheme.light().segmentedButtonTheme.style!;
+
+    expect(
+      style.backgroundColor!.resolve(<WidgetState>{}),
+      AppColors.segmentedButtonBg,
+    );
+    expect(
+      style.backgroundColor!.resolve(<WidgetState>{WidgetState.selected}),
+      AppColors.segmentedButtonSelectedBg,
+    );
+    expect(
+      style.side!.resolve(<WidgetState>{}),
+      const BorderSide(color: Colors.black, width: 1.2),
+    );
+    expect(
+      style.side!.resolve(<WidgetState>{WidgetState.selected}),
+      const BorderSide(color: Colors.black, width: 1.2),
     );
   });
 }

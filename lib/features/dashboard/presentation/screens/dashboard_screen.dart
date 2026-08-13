@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -10,20 +12,17 @@ import '../../../../core/utils/weight_units.dart';
 import '../../../../core/widgets/async_value_view.dart';
 import '../../../../core/widgets/xn_card.dart';
 import '../../../../l10n/app_localizations.dart';
-import '../../../community/domain/entities/community_models.dart';
-import '../../../community/presentation/providers/community_controllers.dart';
 import '../../../notifications/presentation/screens/notification_center_screen.dart';
 import '../../../nutrition/presentation/providers/nutrition_controller.dart';
 import '../../../profile/data/repositories/profile_background_repository.dart';
 import '../../../profile/data/repositories/profile_repository_provider.dart';
+import '../../../profile/domain/entities/bodyweight_log.dart';
 import '../../../profile/presentation/providers/preferences_provider.dart';
 import '../../../profile/presentation/providers/profile_controller.dart';
 import '../../../profile/presentation/widgets/bodyweight_card.dart';
-import '../../../profile/presentation/widgets/log_bodyweight_dialog.dart';
 import '../../../supplements/presentation/providers/supplement_controllers.dart';
 import '../../domain/entities/personal_dashboard.dart';
 import '../providers/dashboard_controller.dart';
-import '../widgets/community_dashboard_card.dart';
 import '../widgets/dashboard_hero.dart';
 import '../widgets/nutrition_card.dart';
 import '../widgets/plate_calculator_card.dart';
@@ -162,7 +161,7 @@ class _NotificationBell extends StatelessWidget {
   }
 }
 
-class _DashboardBody extends ConsumerWidget {
+class _DashboardBody extends StatelessWidget {
   const _DashboardBody({
     required this.data,
     required this.unit,
@@ -176,10 +175,7 @@ class _DashboardBody extends ConsumerWidget {
   final Alignment backgroundAlignment;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final incomingRequests = ref.watch(
-      friendRequestsProvider(RequestDirection.incoming),
-    );
+  Widget build(BuildContext context) {
     return ListView(
       padding: const EdgeInsets.all(AppSpacing.lg),
       children: [
@@ -202,15 +198,6 @@ class _DashboardBody extends ConsumerWidget {
         ),
         const SizedBox(height: AppSpacing.md),
         const _DashboardPanel(child: _DashboardBodyweight()),
-        const SizedBox(height: AppSpacing.md),
-        _DashboardPanel(
-          child: CommunityDashboardCard(
-            incomingRequestCount: incomingRequests.value?.length ?? 0,
-            onOpenCommunity: () => context.go('/community'),
-            onOpenFriends: () => context.push('/community/friends'),
-            onOpenChallenges: () => context.push('/community/challenges'),
-          ),
-        ),
         const SizedBox(height: AppSpacing.md),
         const _DashboardPanel(child: NutritionCard()),
         const SizedBox(height: AppSpacing.md),
@@ -276,31 +263,63 @@ class _DashboardBodyweight extends ConsumerWidget {
     return BodyweightCard(
       history: history,
       unit: unit,
-      onLog: () => _logBodyweight(context, ref, unit),
+      onLog: (weightKg) => _logBodyweight(context, ref, weightKg),
+      onShowHistory: history.value?.isNotEmpty ?? false
+          ? () => _showBodyweightHistory(context, ref, history.value!, unit)
+          : null,
       framed: false,
     );
+  }
+
+  void _showBodyweightHistory(
+    BuildContext context,
+    WidgetRef ref,
+    List<BodyweightLog> logs,
+    WeightUnit unit,
+  ) {
+    unawaited(
+      showModalBottomSheet<void>(
+        context: context,
+        backgroundColor: AppColors.bgPage,
+        showDragHandle: true,
+        builder: (_) => BodyweightHistorySheet(
+          logs: logs,
+          unit: unit,
+          onDelete: (id) => _deleteBodyweightLog(context, ref, id),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _deleteBodyweightLog(
+    BuildContext context,
+    WidgetRef ref,
+    String id,
+  ) async {
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      await ref.read(profileRepositoryProvider).deleteBodyweightLog(id);
+      ref
+        ..invalidate(bodyweightHistoryProvider)
+        ..invalidate(myProfileControllerProvider);
+      await ref.read(dashboardControllerProvider.notifier).refresh();
+      if (context.mounted) Navigator.of(context).pop();
+    } catch (error) {
+      messenger
+        ..hideCurrentSnackBar()
+        ..showSnackBar(SnackBar(content: Text('$error')));
+    }
   }
 
   Future<void> _logBodyweight(
     BuildContext context,
     WidgetRef ref,
-    WeightUnit unit,
+    double weightKg,
   ) async {
     final messenger = ScaffoldMessenger.of(context);
     final l10n = AppLocalizations.of(context);
-    final current = ref
-        .read(bodyweightHistoryProvider)
-        .value
-        ?.lastOrNull
-        ?.weight;
-    final weight = await showDialog<double>(
-      context: context,
-      builder: (_) => LogBodyweightDialog(unit: unit, initialWeight: current),
-    );
-    if (weight == null) return;
-
     try {
-      await ref.read(profileRepositoryProvider).logBodyweight(weight);
+      await ref.read(profileRepositoryProvider).logBodyweight(weightKg);
       // Re-fetch so the chart, dashboard (BMI) and profile reflect it.
       ref
         ..invalidate(bodyweightHistoryProvider)
@@ -315,6 +334,7 @@ class _DashboardBodyweight extends ConsumerWidget {
       messenger
         ..hideCurrentSnackBar()
         ..showSnackBar(SnackBar(content: Text('$e')));
+      rethrow;
     }
   }
 }

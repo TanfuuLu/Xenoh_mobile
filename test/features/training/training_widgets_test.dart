@@ -2,23 +2,29 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:xenoh_mobile/app/theme/app_colors.dart';
 import 'package:xenoh_mobile/core/models/paged_result.dart';
 import 'package:xenoh_mobile/core/utils/weight_units.dart';
+import 'package:xenoh_mobile/core/widgets/exercise_thumbnail.dart';
 import 'package:xenoh_mobile/core/widgets/synced_background_card.dart';
+import 'package:xenoh_mobile/core/widgets/xn_card.dart';
 import 'package:xenoh_mobile/features/auth/domain/entities/auth_session.dart';
 import 'package:xenoh_mobile/features/auth/domain/entities/user.dart';
 import 'package:xenoh_mobile/features/auth/presentation/providers/auth_controller.dart';
 import 'package:xenoh_mobile/features/auth/presentation/providers/auth_state.dart';
 import 'package:xenoh_mobile/features/profile/presentation/providers/preferences_provider.dart';
+import 'package:xenoh_mobile/features/progress/presentation/providers/progress_controllers.dart';
 import 'package:xenoh_mobile/features/training/data/repositories/training_repository_provider.dart';
 import 'package:xenoh_mobile/features/training/domain/entities/daily_workout.dart';
 import 'package:xenoh_mobile/features/training/domain/entities/exercise.dart';
+import 'package:xenoh_mobile/features/training/domain/entities/exercise_template.dart';
 import 'package:xenoh_mobile/features/training/domain/entities/last_exercise_performance.dart';
 import 'package:xenoh_mobile/features/training/domain/entities/plan.dart';
 import 'package:xenoh_mobile/features/training/domain/entities/weekly_workout.dart';
 import 'package:xenoh_mobile/features/training/domain/repositories/training_repository.dart';
 import 'package:xenoh_mobile/features/training/presentation/providers/cycle_day_markers_provider.dart';
 import 'package:xenoh_mobile/features/training/presentation/screens/day_screen.dart';
+import 'package:xenoh_mobile/features/training/presentation/screens/exercise_library_screen.dart';
 import 'package:xenoh_mobile/features/training/presentation/screens/plan_detail_screen.dart';
 import 'package:xenoh_mobile/features/training/presentation/screens/plans_screen.dart';
 import 'package:xenoh_mobile/features/training/presentation/screens/week_screen.dart';
@@ -111,7 +117,10 @@ void main() {
   testWidgets('day sets expose planned editing and previous performance', (
     tester,
   ) async {
+    await tester.binding.setSurfaceSize(const Size(320, 800));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
     final repo = MockTrainingRepository();
+    const exerciseName = 'Barbell High Bar Back Squat With Controlled Tempo';
     const set = ExerciseSet(
       id: 'set-1',
       setNumber: 1,
@@ -122,7 +131,7 @@ void main() {
     const exercise = Exercise(
       id: 'exercise-1',
       exerciseTemplateId: 'template-1',
-      name: 'Squat',
+      name: exerciseName,
       primaryMuscleGroup: 'Quadriceps',
       exerciseKind: 'Strength',
       plannedSets: 1,
@@ -132,6 +141,7 @@ void main() {
       isSkipped: false,
       dailyWorkoutId: 'day-1',
       sortOrder: 0,
+      notes: 'Keep chest tall',
       sets: [set],
     );
     when(
@@ -167,7 +177,37 @@ void main() {
     await tester.pumpWidget(_app(const DayScreen(dayId: 'day-1'), repo: repo));
     await tester.pumpAndSettle();
 
+    final exerciseNameText = tester.widget<Text>(find.text(exerciseName));
+    expect(exerciseNameText.maxLines, isNull);
+    expect(exerciseNameText.overflow, isNot(TextOverflow.ellipsis));
+    expect(exerciseNameText.style?.fontSize, 20);
+    expect(
+      tester.getTopLeft(find.text('Keep chest tall')).dy,
+      greaterThan(tester.getTopLeft(find.text(exerciseName)).dy),
+    );
+    expect(
+      tester.getTopLeft(find.text('Keep chest tall')).dy,
+      lessThan(tester.getTopLeft(find.text('Quadriceps')).dy),
+    );
+    expect(
+      tester.getTopLeft(find.text('Quadriceps')).dx,
+      greaterThan(
+        tester.getTopRight(find.byType(ExerciseThumbnail)).dx,
+      ),
+    );
     expect(find.textContaining('Last time: 97.5 kg'), findsOneWidget);
+    expect(find.byTooltip('Edit exercise'), findsNothing);
+    expect(find.byIcon(Icons.more_vert_rounded), findsOneWidget);
+
+    await tester.tap(find.byIcon(Icons.more_vert_rounded));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Edit exercise'), findsOneWidget);
+    expect(find.text('Skip or unskip exercise'), findsOneWidget);
+    expect(find.text('Delete exercise'), findsOneWidget);
+
+    await tester.tapAt(Offset.zero);
+    await tester.pumpAndSettle();
     await tester.tap(find.byTooltip('Edit set target'));
     await tester.pumpAndSettle();
     await tester.enterText(
@@ -186,6 +226,144 @@ void main() {
         'set-1',
         plannedReps: 6,
         plannedWeight: 102.5,
+      ),
+    ).called(1);
+  });
+
+  testWidgets('completed exercise shows a calorie estimate from its duration', (
+    tester,
+  ) async {
+    final repo = MockTrainingRepository();
+    const exercise = Exercise(
+      id: 'exercise-1',
+      exerciseTemplateId: 'template-1',
+      name: 'Romanian Deadlift',
+      primaryMuscleGroup: 'Hamstrings',
+      exerciseKind: 'Strength',
+      plannedSets: 3,
+      plannedReps: 6,
+      completedSetsCount: 3,
+      isCompleted: true,
+      isSkipped: false,
+      dailyWorkoutId: 'day-1',
+      sortOrder: 0,
+      durationSeconds: 2400,
+      sets: <ExerciseSet>[],
+    );
+    when(
+      () => repo.getExercisesByDay('day-1'),
+    ).thenAnswer((_) async => <Exercise>[exercise]);
+    when(
+      () => repo.getLastExercisePerformance(
+        exerciseTemplateId: 'template-1',
+        dailyWorkoutId: 'day-1',
+      ),
+    ).thenAnswer(
+      (_) async => const LastExercisePerformance(
+        exerciseTemplateId: 'template-1',
+      ),
+    );
+
+    await tester.pumpWidget(_app(const DayScreen(dayId: 'day-1'), repo: repo));
+    await tester.pumpAndSettle();
+
+    expect(find.text('40m'), findsWidgets);
+    expect(find.text('~240 kcal'), findsOneWidget);
+    expect(find.text('No est.'), findsNothing);
+  });
+
+  testWidgets('disabled RPE tracking completes a set without RPE input', (
+    tester,
+  ) async {
+    final repo = MockTrainingRepository();
+    const set = ExerciseSet(
+      id: 'set-1',
+      setNumber: 1,
+      plannedReps: 5,
+      plannedWeight: 100,
+      isCompleted: false,
+    );
+    const exercise = Exercise(
+      id: 'exercise-1',
+      exerciseTemplateId: 'template-1',
+      name: 'Squat',
+      primaryMuscleGroup: 'Quadriceps',
+      exerciseKind: 'Strength',
+      plannedSets: 1,
+      plannedReps: 5,
+      completedSetsCount: 0,
+      isCompleted: false,
+      isSkipped: false,
+      dailyWorkoutId: 'day-1',
+      sortOrder: 0,
+      sets: [set],
+    );
+    final completed = exercise.copyWith(
+      completedSetsCount: 1,
+      sets: [
+        set.copyWith(
+          actualReps: 5,
+          actualWeight: 100,
+          isCompleted: true,
+        ),
+      ],
+    );
+    when(
+      () => repo.getExercisesByDay('day-1'),
+    ).thenAnswer((_) async => [exercise]);
+    when(
+      () => repo.getLastExercisePerformance(
+        exerciseTemplateId: 'template-1',
+        dailyWorkoutId: 'day-1',
+      ),
+    ).thenAnswer(
+      (_) async => const LastExercisePerformance(
+        exerciseTemplateId: 'template-1',
+      ),
+    );
+    when(
+      () => repo.markSetComplete(
+        'set-1',
+        actualReps: 5,
+        actualWeight: 100,
+        rpe: null,
+      ),
+    ).thenAnswer((_) async => completed);
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          authControllerProvider.overrideWith(_NoNetworkAuthController.new),
+          trainingRepositoryProvider.overrideWithValue(repo),
+          preferencesProvider.overrideWith(
+            (ref) async => <String, dynamic>{
+              'language': 'en',
+              'theme': 'light',
+              'weightUnit': 'kg',
+              'trackRpe': false,
+            },
+          ),
+        ],
+        child: const MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: DayScreen(dayId: 'day-1'),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byType(TextField), findsNWidgets(2));
+    await tester.tap(find.byTooltip('Mark done'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('How hard was set 1?'), findsNothing);
+    verify(
+      () => repo.markSetComplete(
+        'set-1',
+        actualReps: 5,
+        actualWeight: 100,
+        rpe: null,
       ),
     ).called(1);
   });
@@ -243,7 +421,7 @@ void main() {
 
       expect(find.byTooltip('Complete all'), findsNothing);
       expect(find.byTooltip('Mark done'), findsNothing);
-      expect(find.byTooltip('Edit exercise'), findsOneWidget);
+      expect(find.byTooltip('Exercise actions'), findsOneWidget);
       expect(find.byTooltip('Edit set target'), findsOneWidget);
       expect(find.text('Add exercise'), findsWidgets);
     },
@@ -312,6 +490,69 @@ void main() {
       expect(find.byTooltip('Edit set target'), findsOneWidget);
     },
   );
+
+  testWidgets('client cannot add exercises to a coaching plan', (
+    tester,
+  ) async {
+    final repo = MockTrainingRepository();
+    const exercise = Exercise(
+      id: 'exercise-1',
+      exerciseTemplateId: 'template-1',
+      name: 'Coach programmed squat',
+      primaryMuscleGroup: 'Quadriceps',
+      exerciseKind: 'Strength',
+      plannedSets: 1,
+      plannedReps: 5,
+      completedSetsCount: 0,
+      isCompleted: false,
+      isSkipped: false,
+      dailyWorkoutId: 'day-1',
+      sortOrder: 0,
+      sets: [],
+    );
+    when(
+      () => repo.getExercisesByDay('day-1'),
+    ).thenAnswer((_) async => [exercise]);
+    when(
+      () => repo.getLastExercisePerformance(
+        exerciseTemplateId: 'template-1',
+        dailyWorkoutId: 'day-1',
+      ),
+    ).thenAnswer(
+      (_) async => const LastExercisePerformance(
+        exerciseTemplateId: 'template-1',
+      ),
+    );
+
+    await tester.pumpWidget(
+      _app(
+        const DayScreen(dayId: 'day-1', coachPlan: true),
+        repo: repo,
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Add exercise'), findsNothing);
+    expect(find.byIcon(Icons.add_rounded), findsNothing);
+  });
+
+  testWidgets('client cannot add the first exercise to an empty coaching day', (
+    tester,
+  ) async {
+    final repo = MockTrainingRepository();
+    when(() => repo.getExercisesByDay('day-1')).thenAnswer((_) async => []);
+
+    await tester.pumpWidget(
+      _app(
+        const DayScreen(dayId: 'day-1', coachPlan: true),
+        repo: repo,
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Add exercise'), findsNothing);
+    expect(find.byIcon(Icons.add_rounded), findsNothing);
+  });
 
   testWidgets('Vietnamese set label stays on one line', (tester) async {
     tester.view.physicalSize = const Size(320, 640);
@@ -539,6 +780,16 @@ void main() {
     expect(weekPages.controller!.viewportFraction, 0.88);
     expect(find.text('Foundation and technique week'), findsOneWidget);
     expect(find.text('Đang tập trung'), findsOneWidget);
+    final analyticsAction = find.ancestor(
+      of: find.byIcon(Icons.insights_rounded),
+      matching: find.byType(OutlinedButton),
+    );
+    expect(analyticsAction, findsOneWidget);
+    expect(
+      tester.getBottomRight(find.byType(PageView)).dy -
+          tester.getBottomRight(analyticsAction).dy,
+      lessThan(40),
+    );
   });
 
   testWidgets('CreatePlanSheet supports coach-scoped plan creation', (
@@ -734,9 +985,71 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byTooltip('Export plan'), findsNothing);
-    expect(find.byType(SyncedBackgroundCard), findsNothing);
-    expect(find.text('Plans'), findsOneWidget);
+    expect(find.byType(SyncedBackgroundCard), findsOneWidget);
+    expect(find.text('Plans'), findsWidgets);
     verifyNever(() => repo.exportPlanCsv('p1'));
+  });
+
+  testWidgets('exercise library renders every exercise as a separate card', (
+    tester,
+  ) async {
+    final repo = MockTrainingRepository();
+    const templates = [
+      ExerciseTemplate(
+        id: 'squat',
+        name: 'Pause Squat',
+        primaryMuscleGroup: 'Quadriceps',
+        exerciseKind: 'Strength',
+        isCustom: true,
+        description: 'Two-second pause at the bottom',
+      ),
+      ExerciseTemplate(
+        id: 'bench',
+        name: 'Bench Press',
+        primaryMuscleGroup: 'Chest',
+        exerciseKind: 'Strength',
+        isCustom: false,
+        description: 'Barbell flat bench press',
+      ),
+    ];
+    when(
+      () => repo.getExerciseTemplates(muscleGroup: null, clientId: null),
+    ).thenAnswer((_) async => templates);
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          authControllerProvider.overrideWith(_NoNetworkAuthController.new),
+          trainingRepositoryProvider.overrideWithValue(repo),
+          exercisePrsProvider.overrideWith((ref) async => []),
+        ],
+        child: const MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: ExerciseLibraryScreen(),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final squatCard = find.byKey(
+      const ValueKey('exercise-template-card-squat'),
+    );
+    final benchCard = find.byKey(
+      const ValueKey('exercise-template-card-bench'),
+    );
+    expect(squatCard, findsOneWidget);
+    expect(benchCard, findsOneWidget);
+    expect(
+      tester.getTopLeft(benchCard).dy - tester.getBottomLeft(squatCard).dy,
+      greaterThan(0),
+    );
+    final filterChips = tester.widgetList<ChoiceChip>(find.byType(ChoiceChip));
+    final selectedChip = filterChips.singleWhere((chip) => chip.selected);
+    final unselectedChip = filterChips.firstWhere((chip) => !chip.selected);
+    expect(selectedChip.selectedColor, AppColors.sage100);
+    expect(selectedChip.checkmarkColor, AppColors.sage700);
+    expect(unselectedChip.backgroundColor, AppColors.bg2);
   });
 
   testWidgets('Coach plan activation is separate from design analysis', (
@@ -801,6 +1114,11 @@ void main() {
 
     expect(find.byType(PageView), findsOneWidget);
     expect(find.byType(ChoiceChip), findsNothing);
+    expect(find.text('Analytics'), findsNothing);
+    final summaryCard = tester.widget<XnCard>(
+      find.byKey(const ValueKey('week-days-summary')),
+    );
+    expect(summaryCard.color, AppColors.clay900);
     final dayPages = tester.widget<PageView>(find.byType(PageView));
     expect(dayPages.padEnds, isTrue);
     expect(dayPages.controller!.viewportFraction, 0.9);

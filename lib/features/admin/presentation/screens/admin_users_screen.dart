@@ -34,7 +34,7 @@ class AdminUsersScreen extends ConsumerWidget {
             title: l10n.adminNoUsersTitle,
             message: l10n.adminNoUsersMessage,
           ),
-          AsyncData(:final value) => XnSectionList(
+          AsyncData(:final value) => XnCardStack(
             children: [
               for (final item in value)
                 DataCard(

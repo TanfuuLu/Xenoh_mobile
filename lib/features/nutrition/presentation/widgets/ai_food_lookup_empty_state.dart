@@ -52,11 +52,14 @@ class AiFoodLookupEmptyState extends StatelessWidget {
             TextButton.icon(
               onPressed: loading ? null : onLookup,
               style: TextButton.styleFrom(
-                foregroundColor: AppColors.accent,
+                foregroundColor: AppColors.buttonPrimary,
                 padding: EdgeInsets.zero,
                 minimumSize: Size.zero,
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                textStyle: AppTypography.mono(13, color: AppColors.accent),
+                textStyle: AppTypography.mono(
+                  13,
+                  color: AppColors.buttonPrimary,
+                ),
               ),
               icon: loading
                   ? const SizedBox(

@@ -37,7 +37,7 @@ class PersonalRecordsScreen extends ConsumerWidget {
             return ListView(
               padding: const EdgeInsets.all(AppSpacing.lg),
               children: [
-                XnSectionList(
+                XnCardStack(
                   children: [
                     for (final item in items)
                       _PrCard(
