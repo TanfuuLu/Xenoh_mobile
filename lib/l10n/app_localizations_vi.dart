@@ -509,6 +509,27 @@ class AppLocalizationsVi extends AppLocalizations {
   String get notificationsMarkReadTooltip => 'Đánh dấu đã đọc';
 
   @override
+  String get notificationsFallbackMessage => 'Bạn có một thông báo mới.';
+
+  @override
+  String get notificationsCategoryCoaching => 'Huấn luyện';
+
+  @override
+  String get notificationsCategoryCommunity => 'Cộng đồng';
+
+  @override
+  String get notificationsCategoryCompetition => 'Thi đấu';
+
+  @override
+  String get notificationsCategoryTraining => 'Tập luyện';
+
+  @override
+  String get notificationsCategoryMembership => 'Gói thành viên';
+
+  @override
+  String get notificationsCategoryGeneral => 'Chung';
+
+  @override
   String get progressTitle => 'Tiến độ';
 
   @override

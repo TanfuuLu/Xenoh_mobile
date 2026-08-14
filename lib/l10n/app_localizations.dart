@@ -1046,6 +1046,48 @@ abstract class AppLocalizations {
   /// **'Mark read'**
   String get notificationsMarkReadTooltip;
 
+  /// Safe message used when a notification payload has no display message
+  ///
+  /// In en, this message translates to:
+  /// **'You have a new notification.'**
+  String get notificationsFallbackMessage;
+
+  /// Category label for coach and client notifications
+  ///
+  /// In en, this message translates to:
+  /// **'Coaching'**
+  String get notificationsCategoryCoaching;
+
+  /// Category label for friendship and community notifications
+  ///
+  /// In en, this message translates to:
+  /// **'Community'**
+  String get notificationsCategoryCommunity;
+
+  /// Category label for competition notifications
+  ///
+  /// In en, this message translates to:
+  /// **'Competition'**
+  String get notificationsCategoryCompetition;
+
+  /// Category label for workout and plan notifications
+  ///
+  /// In en, this message translates to:
+  /// **'Training'**
+  String get notificationsCategoryTraining;
+
+  /// Category label for subscription notifications
+  ///
+  /// In en, this message translates to:
+  /// **'Membership'**
+  String get notificationsCategoryMembership;
+
+  /// Fallback category label for unknown notification types
+  ///
+  /// In en, this message translates to:
+  /// **'General'**
+  String get notificationsCategoryGeneral;
+
   /// Progress screen title
   ///
   /// In en, this message translates to:

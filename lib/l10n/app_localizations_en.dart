@@ -508,6 +508,27 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notificationsMarkReadTooltip => 'Mark read';
 
   @override
+  String get notificationsFallbackMessage => 'You have a new notification.';
+
+  @override
+  String get notificationsCategoryCoaching => 'Coaching';
+
+  @override
+  String get notificationsCategoryCommunity => 'Community';
+
+  @override
+  String get notificationsCategoryCompetition => 'Competition';
+
+  @override
+  String get notificationsCategoryTraining => 'Training';
+
+  @override
+  String get notificationsCategoryMembership => 'Membership';
+
+  @override
+  String get notificationsCategoryGeneral => 'General';
+
+  @override
   String get progressTitle => 'Progress';
 
   @override

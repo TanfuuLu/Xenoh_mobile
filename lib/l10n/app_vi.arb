@@ -166,6 +166,13 @@
   "notificationsEmptyTitle": "Không có thông báo",
   "notificationsEmptyMessage": "Sự kiện chưa đọc về quan hệ, trò chuyện và bình luận sẽ xuất hiện ở đây.",
   "notificationsMarkReadTooltip": "Đánh dấu đã đọc",
+  "notificationsFallbackMessage": "Bạn có một thông báo mới.",
+  "notificationsCategoryCoaching": "Huấn luyện",
+  "notificationsCategoryCommunity": "Cộng đồng",
+  "notificationsCategoryCompetition": "Thi đấu",
+  "notificationsCategoryTraining": "Tập luyện",
+  "notificationsCategoryMembership": "Gói thành viên",
+  "notificationsCategoryGeneral": "Chung",
 
   "progressTitle": "Tiến độ",
   "progressProFeatureTitle": "Tiến độ là tính năng Pro",
