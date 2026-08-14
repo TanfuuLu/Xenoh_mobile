@@ -565,6 +565,8 @@
   "@appShellDrawerKeyVault": { "description": "Drawer item label for the coach key vault" },
   "appShellDrawerChat": "Chat",
   "@appShellDrawerChat": { "description": "Drawer item label for coach/client chat" },
+  "appShellDrawerCoachChat": "Coach Chat",
+  "@appShellDrawerCoachChat": { "description": "Drawer item label for a client to chat with their coach" },
   "appShellDrawerCoachAccessSection": "Coach access",
   "@appShellDrawerCoachAccessSection": { "description": "Drawer section title for connecting with a coach" },
   "appShellDrawerMyCoach": "My Coach",

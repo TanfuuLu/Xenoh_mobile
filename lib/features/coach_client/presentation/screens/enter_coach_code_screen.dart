@@ -7,7 +7,7 @@ import '../../../../core/widgets/xn_input.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../shared_api/api_widgets.dart';
 import '../../../shared_api/xenoh_api.dart';
-import 'my_coach_screen.dart';
+import '../providers/my_coach_provider.dart';
 
 class EnterCoachCodeScreen extends ConsumerStatefulWidget {
   const EnterCoachCodeScreen({super.key});

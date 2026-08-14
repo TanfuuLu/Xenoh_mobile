@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:xenoh_mobile/core/utils/app_routes.dart';
 import 'package:xenoh_mobile/features/notifications/domain/notification_destination.dart';
 
 void main() {
@@ -89,7 +90,11 @@ void main() {
         },
         isCoach: true,
       ).route,
-      '/coach/chat/messages?relationshipId=r%201',
+      relationshipChatLocation(
+        coachInbox: true,
+        relationshipId: 'r 1',
+        peerName: '',
+      ),
     );
     expect(
       notificationDestination(
@@ -100,7 +105,11 @@ void main() {
         },
         isCoach: false,
       ).route,
-      '/coach/messages?relationshipId=r1',
+      relationshipChatLocation(
+        coachInbox: false,
+        relationshipId: 'r1',
+        peerName: '',
+      ),
     );
     expect(
       notificationDestination(
@@ -165,4 +174,41 @@ void main() {
       isTrue,
     );
   });
+
+  test('chat notifications without a relationship id open a safe entry', () {
+    expect(
+      notificationDestination(
+        const {'type': 'NewMessage'},
+        isCoach: false,
+      ).route,
+      '/coach/messages',
+    );
+    expect(
+      notificationDestination(
+        const {'type': 'NewMessage'},
+        isCoach: true,
+      ).route,
+      '/coach/chat',
+    );
+  });
+
+  test(
+    'new-message payload routes even when related entity type is absent',
+    () {
+      expect(
+        notificationDestination(
+          const {
+            'type': 'NewMessage',
+            'relatedEntityId': 'relationship/42',
+          },
+          isCoach: false,
+        ).route,
+        relationshipChatLocation(
+          coachInbox: false,
+          relationshipId: 'relationship/42',
+          peerName: '',
+        ),
+      );
+    },
+  );
 }

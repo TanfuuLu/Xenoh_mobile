@@ -16,24 +16,7 @@ import '../../../../l10n/app_localizations.dart';
 import '../../../shared_api/api_widgets.dart';
 import '../../../shared_api/xenoh_api.dart';
 import '../providers/chat_unread_controller.dart';
-
-final myCoachProvider = FutureProvider.autoDispose<JsonMap?>((ref) {
-  return ref
-      .watch(xenohApiProvider)
-      .getNullableObject('/coach-client/my-coach');
-});
-
-/// Full coach profile (email/bio/avatar) — `GET /users/{coachId}` is only
-/// authorized while an active coach-client relationship exists, so this is
-/// fetched alongside the relationship rather than being part of it.
-final coachProfileProvider = FutureProvider.autoDispose.family<JsonMap, String>(
-  (
-    ref,
-    coachId,
-  ) {
-    return ref.watch(xenohApiProvider).getObject('/users/$coachId');
-  },
-);
+import '../providers/my_coach_provider.dart';
 
 class MyCoachScreen extends ConsumerWidget {
   const MyCoachScreen({super.key});

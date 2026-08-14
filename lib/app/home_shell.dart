@@ -154,6 +154,7 @@ class HomeShell extends ConsumerWidget {
       onOpenInsights: () => unawaited(context.push('/insights')),
       onOpenCoachChat: () => unawaited(context.push('/insights/coach-chat')),
       onOpenMyCoach: () => unawaited(context.push('/coach')),
+      onOpenClientChat: () => unawaited(context.push('/coach/messages')),
       onOpenEnterCoachCode: () => unawaited(context.push('/enter-coach-code')),
       onOpenClients: () => unawaited(context.push('/coach/clients')),
       onOpenKeyVault: () => unawaited(context.push('/coach/key-vault')),
@@ -717,6 +718,7 @@ class _AppDrawer extends StatelessWidget {
     required this.onOpenInsights,
     required this.onOpenCoachChat,
     required this.onOpenMyCoach,
+    required this.onOpenClientChat,
     required this.onOpenEnterCoachCode,
     required this.onOpenClients,
     required this.onOpenKeyVault,
@@ -743,6 +745,7 @@ class _AppDrawer extends StatelessWidget {
   final VoidCallback onOpenInsights;
   final VoidCallback onOpenCoachChat;
   final VoidCallback onOpenMyCoach;
+  final VoidCallback onOpenClientChat;
   final VoidCallback onOpenEnterCoachCode;
   final VoidCallback onOpenClients;
   final VoidCallback onOpenKeyVault;
@@ -950,21 +953,10 @@ class _AppDrawer extends StatelessWidget {
                       ],
                     )
                   else if (!isAdmin)
-                    HomeDrawerSection(
-                      title: l10n.appShellDrawerCoachAccessSection,
-                      icon: Icons.school_outlined,
-                      children: [
-                        _DrawerItem(
-                          icon: Icons.school_outlined,
-                          label: l10n.appShellDrawerMyCoach,
-                          onTap: onOpenMyCoach,
-                        ),
-                        _DrawerItem(
-                          icon: Icons.vpn_key_outlined,
-                          label: l10n.appShellDrawerEnterCoachCode,
-                          onTap: onOpenEnterCoachCode,
-                        ),
-                      ],
+                    CoachAccessDrawerSection(
+                      onOpenMyCoach: onOpenMyCoach,
+                      onOpenCoachChat: onOpenClientChat,
+                      onOpenEnterCoachCode: onOpenEnterCoachCode,
                     ),
                   if (isAdmin)
                     HomeDrawerSection(
@@ -1094,6 +1086,45 @@ class _UserPanel extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class CoachAccessDrawerSection extends StatelessWidget {
+  const CoachAccessDrawerSection({
+    required this.onOpenMyCoach,
+    required this.onOpenCoachChat,
+    required this.onOpenEnterCoachCode,
+    super.key,
+  });
+
+  final VoidCallback onOpenMyCoach;
+  final VoidCallback onOpenCoachChat;
+  final VoidCallback onOpenEnterCoachCode;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return HomeDrawerSection(
+      title: l10n.appShellDrawerCoachAccessSection,
+      icon: Icons.school_outlined,
+      children: [
+        _DrawerItem(
+          icon: Icons.school_outlined,
+          label: l10n.appShellDrawerMyCoach,
+          onTap: onOpenMyCoach,
+        ),
+        _DrawerItem(
+          icon: Icons.forum_outlined,
+          label: l10n.appShellDrawerCoachChat,
+          onTap: onOpenCoachChat,
+        ),
+        _DrawerItem(
+          icon: Icons.vpn_key_outlined,
+          label: l10n.appShellDrawerEnterCoachCode,
+          onTap: onOpenEnterCoachCode,
+        ),
+      ],
     );
   }
 }

@@ -2048,6 +2048,12 @@ abstract class AppLocalizations {
   /// **'Chat'**
   String get appShellDrawerChat;
 
+  /// Drawer item label for a client to chat with their coach
+  ///
+  /// In en, this message translates to:
+  /// **'Coach Chat'**
+  String get appShellDrawerCoachChat;
+
   /// Drawer section title for connecting with a coach
   ///
   /// In en, this message translates to:

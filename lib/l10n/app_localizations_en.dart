@@ -1062,6 +1062,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appShellDrawerChat => 'Chat';
 
   @override
+  String get appShellDrawerCoachChat => 'Coach Chat';
+
+  @override
   String get appShellDrawerCoachAccessSection => 'Coach access';
 
   @override

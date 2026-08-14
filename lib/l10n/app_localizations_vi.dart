@@ -1068,6 +1068,9 @@ class AppLocalizationsVi extends AppLocalizations {
   String get appShellDrawerChat => 'Trò chuyện';
 
   @override
+  String get appShellDrawerCoachChat => 'Trò chuyện với HLV';
+
+  @override
   String get appShellDrawerCoachAccessSection => 'Kết nối huấn luyện viên';
 
   @override
