@@ -3,14 +3,16 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  test('Android registers only the Xenoh social callback', () {
+  test('Android registers the Xenoh custom scheme callback', () {
     final manifest = File(
       'android/app/src/main/AndroidManifest.xml',
     ).readAsStringSync();
 
     expect(manifest, contains('android:scheme="xenoh"'));
-    expect(manifest, contains('android:host="auth"'));
-    expect(manifest, contains('android:path="/social-callback"'));
+    // flutter_web_auth_2 4.x dispatches by scheme. The returned URI is still
+    // allowlisted by ExternalAuthLauncher before the ticket is exchanged.
+    expect(manifest, isNot(contains('android:host="auth"')));
+    expect(manifest, isNot(contains('android:path="/social-callback"')));
     expect(
       manifest,
       contains('android:name="android.intent.category.BROWSABLE"'),
