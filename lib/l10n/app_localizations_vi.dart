@@ -1382,6 +1382,19 @@ class AppLocalizationsVi extends AppLocalizations {
   String get authLoginCreateAccountCta => 'Tạo tài khoản';
 
   @override
+  String get authOrDivider => 'hoặc';
+
+  @override
+  String get authContinueWithGoogle => 'Tiếp tục với Google';
+
+  @override
+  String get authContinueWithFacebook => 'Tiếp tục với Facebook';
+
+  @override
+  String get authSocialLaunchFailedError =>
+      'Không thể mở đăng nhập mạng xã hội. Vui lòng thử lại.';
+
+  @override
   String get authPasswordHint => 'Mật khẩu của bạn';
 
   @override
@@ -1558,6 +1571,10 @@ class AppLocalizationsVi extends AppLocalizations {
   @override
   String get authMissingSocialTicketError =>
       'Thiếu mã đăng nhập từ mạng xã hội.';
+
+  @override
+  String get authExpiredSocialTicketError =>
+      'Liên kết đăng nhập không hợp lệ hoặc đã hết hạn. Vui lòng thử lại.';
 
   @override
   String get dashboardSignOutTooltip => 'Đăng xuất';

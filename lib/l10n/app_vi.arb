@@ -445,6 +445,10 @@
   "authLoginSubtitle": "Đăng nhập để quản lý tập luyện, dinh dưỡng, phục hồi và phản hồi từ huấn luyện viên tại một nơi.",
   "authLoginNoAccountPrompt": "Chưa có tài khoản?",
   "authLoginCreateAccountCta": "Tạo tài khoản",
+  "authOrDivider": "hoặc",
+  "authContinueWithGoogle": "Tiếp tục với Google",
+  "authContinueWithFacebook": "Tiếp tục với Facebook",
+  "authSocialLaunchFailedError": "Không thể mở đăng nhập mạng xã hội. Vui lòng thử lại.",
   "authPasswordHint": "Mật khẩu của bạn",
   "authEnterPasswordError": "Nhập mật khẩu của bạn",
   "authForgotPasswordCta": "Quên mật khẩu?",
@@ -504,6 +508,7 @@
   "authSocialSignInFailedError": "Đăng nhập qua mạng xã hội thất bại.",
   "authBackToLoginCta": "Quay lại đăng nhập",
   "authMissingSocialTicketError": "Thiếu mã đăng nhập từ mạng xã hội.",
+  "authExpiredSocialTicketError": "Liên kết đăng nhập không hợp lệ hoặc đã hết hạn. Vui lòng thử lại.",
 
   "dashboardSignOutTooltip": "Đăng xuất",
   "dashboardNotificationsTooltip": "Thông báo",

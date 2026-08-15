@@ -17,6 +17,9 @@ part 'auth_controller.g.dart';
 /// caller (the screens) rather than folded into [AuthState].
 @Riverpod(keepAlive: true)
 class AuthController extends _$AuthController {
+  String? _externalTicket;
+  Future<Failure?>? _externalTicketExchange;
+
   @override
   AuthState build() {
     // When a background refresh fails, the interceptor flips this flag — drop
@@ -59,7 +62,19 @@ class AuthController extends _$AuthController {
     }
   }
 
-  Future<Failure?> exchangeExternalTicket(String ticket) async {
+  Future<Failure?> exchangeExternalTicket(String ticket) {
+    final pendingOrCompleted = _externalTicketExchange;
+    if (_externalTicket == ticket && pendingOrCompleted != null) {
+      return pendingOrCompleted;
+    }
+
+    final exchange = _exchangeExternalTicket(ticket);
+    _externalTicket = ticket;
+    _externalTicketExchange = exchange;
+    return exchange;
+  }
+
+  Future<Failure?> _exchangeExternalTicket(String ticket) async {
     final result = await _repo.exchangeExternalTicket(ticket);
     switch (result) {
       case Ok(:final value):
@@ -141,6 +156,8 @@ class AuthController extends _$AuthController {
 
   Future<void> logout() async {
     await _repo.logout();
+    _externalTicket = null;
+    _externalTicketExchange = null;
     state = const AuthState.unauthenticated();
   }
 

@@ -1,5 +1,7 @@
 // ignore_for_file: cascade_invocations — sequential container.read calls read clearer.
 
+import 'dart:async';
+
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -121,6 +123,26 @@ void main() {
 
     expect(failure, isA<ValidationFailure>());
     expect(container.read(authControllerProvider).isAuthed, isFalse);
+  });
+
+  test('duplicate external ticket deliveries share one exchange', () async {
+    final repo = MockAuthRepository();
+    final exchange = Completer<Result<AuthSession>>();
+    when(repo.restoreSession).thenAnswer((_) async => const Err(AuthFailure()));
+    when(
+      () => repo.exchangeExternalTicket('one-time-ticket'),
+    ).thenAnswer((_) => exchange.future);
+
+    final container = _container(repo);
+    final controller = container.read(authControllerProvider.notifier);
+
+    final first = controller.exchangeExternalTicket('one-time-ticket');
+    final duplicate = controller.exchangeExternalTicket('one-time-ticket');
+    exchange.complete(const Ok(_session));
+
+    expect(await first, isNull);
+    expect(await duplicate, isNull);
+    verify(() => repo.exchangeExternalTicket('one-time-ticket')).called(1);
   });
 
   test('logout clears the session', () async {

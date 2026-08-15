@@ -11,9 +11,14 @@ import '../../../../l10n/app_localizations.dart';
 import '../providers/auth_controller.dart';
 
 class SocialCallbackScreen extends ConsumerStatefulWidget {
-  const SocialCallbackScreen({required this.ticket, super.key});
+  const SocialCallbackScreen({
+    required this.ticket,
+    required this.errorCode,
+    super.key,
+  });
 
   final String? ticket;
+  final String? errorCode;
 
   @override
   ConsumerState<SocialCallbackScreen> createState() =>
@@ -27,7 +32,7 @@ class _SocialCallbackScreenState extends ConsumerState<SocialCallbackScreen> {
   @override
   void initState() {
     super.initState();
-    unawaited(_exchange());
+    unawaited(_handleCallback());
   }
 
   @override
@@ -69,7 +74,18 @@ class _SocialCallbackScreenState extends ConsumerState<SocialCallbackScreen> {
     );
   }
 
-  Future<void> _exchange() async {
+  Future<void> _handleCallback() async {
+    await Future<void>.delayed(Duration.zero);
+    if (!mounted) return;
+
+    if (widget.errorCode != null) {
+      setState(() {
+        _loading = false;
+        _error = AppLocalizations.of(context).authSocialSignInFailedError;
+      });
+      return;
+    }
+
     final ticket = widget.ticket;
     if (ticket == null || ticket.trim().isEmpty) {
       setState(() {
@@ -88,7 +104,7 @@ class _SocialCallbackScreenState extends ConsumerState<SocialCallbackScreen> {
     }
     setState(() {
       _loading = false;
-      _error = failure.message;
+      _error = AppLocalizations.of(context).authExpiredSocialTicketError;
     });
   }
 }

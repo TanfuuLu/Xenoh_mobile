@@ -21,6 +21,7 @@ import '../../features/auth/presentation/screens/forgot_password_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/register_screen.dart';
 import '../../features/auth/presentation/screens/social_callback_screen.dart';
+import '../../features/auth/presentation/services/social_callback_uri.dart';
 import '../../features/blocks_reports/presentation/screens/blocklist_screen.dart';
 import '../../features/blocks_reports/presentation/screens/report_bug_screen.dart';
 import '../../features/coach_client/presentation/screens/chat_hub_screen.dart';
@@ -175,9 +176,11 @@ GoRouter router(Ref ref) {
       ),
       GoRoute(
         path: '/auth/social-callback',
-        builder: (_, state) => _withMenu(
-          SocialCallbackScreen(ticket: state.uri.queryParameters['ticket']),
-        ),
+        builder: (_, state) => _socialCallback(state),
+      ),
+      GoRoute(
+        path: '/social-callback',
+        builder: (_, state) => _socialCallback(state),
       ),
       GoRoute(
         path: '/coach/clients/:clientId/ai-insight',
@@ -592,6 +595,20 @@ GoRouter router(Ref ref) {
 }
 
 Widget _withMenu(Widget child) => AppBottomMenuFrame(child: child);
+
+Widget _socialCallback(GoRouterState state) {
+  final uri = state.uri;
+  if (!isSupportedSocialCallbackUri(uri)) {
+    return const NotFoundScreen(isAuthenticated: false);
+  }
+
+  return _withMenu(
+    SocialCallbackScreen(
+      ticket: uri.queryParameters['ticket'],
+      errorCode: uri.queryParameters['error'],
+    ),
+  );
+}
 
 String? _clientAiInsightIdFromPath(String path) {
   final match = RegExp(

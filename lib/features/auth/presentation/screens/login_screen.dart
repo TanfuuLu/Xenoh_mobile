@@ -4,14 +4,19 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_dimens.dart';
+import '../../../../core/config/app_config.dart';
 import '../../../../core/widgets/xn_button.dart';
 import '../../../../core/widgets/xn_input.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../providers/auth_controller.dart';
+import '../services/external_auth_launcher.dart';
 import '../widgets/auth_layout.dart';
+import '../widgets/social_login_controls.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
-  const LoginScreen({super.key});
+  const LoginScreen({this.externalAuthLauncher, super.key});
+
+  final ExternalAuthLauncher? externalAuthLauncher;
 
   @override
   ConsumerState<LoginScreen> createState() => _LoginScreenState();
@@ -23,6 +28,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _password = TextEditingController();
   bool _obscure = true;
   bool _submitting = false;
+  ExternalAuthProvider? _launchingProvider;
+
+  ExternalAuthLauncher get _externalAuthLauncher =>
+      widget.externalAuthLauncher ??
+      ExternalAuthLauncher(apiBaseUrl: AppConfig.apiBaseUrl);
 
   @override
   void dispose() {
@@ -48,6 +58,32 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         ..showSnackBar(SnackBar(content: Text(failure.message)));
     }
     // On success the router redirect navigates away automatically.
+  }
+
+  Future<void> _startExternalLogin(ExternalAuthProvider provider) async {
+    if (_submitting || _launchingProvider != null) return;
+    setState(() => _launchingProvider = provider);
+
+    var opened = false;
+    try {
+      opened = await _externalAuthLauncher.launch(provider);
+    } on Exception {
+      opened = false;
+    }
+
+    if (!mounted) return;
+    setState(() => _launchingProvider = null);
+    if (!opened) {
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context).authSocialLaunchFailedError,
+            ),
+          ),
+        );
+    }
   }
 
   @override
@@ -112,6 +148,26 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               icon: Icons.arrow_forward_rounded,
               loading: _submitting,
               onPressed: _submit,
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            AuthDivider(label: l10n.authOrDivider),
+            const SizedBox(height: AppSpacing.lg),
+            SocialAuthButton(
+              label: l10n.authContinueWithGoogle,
+              mark: 'G',
+              loading: _launchingProvider == ExternalAuthProvider.google,
+              onPressed: _submitting || _launchingProvider != null
+                  ? null
+                  : () => _startExternalLogin(ExternalAuthProvider.google),
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            SocialAuthButton(
+              label: l10n.authContinueWithFacebook,
+              mark: 'f',
+              loading: _launchingProvider == ExternalAuthProvider.facebook,
+              onPressed: _submitting || _launchingProvider != null
+                  ? null
+                  : () => _startExternalLogin(ExternalAuthProvider.facebook),
             ),
           ],
         ),

@@ -1375,6 +1375,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authLoginCreateAccountCta => 'Create one';
 
   @override
+  String get authOrDivider => 'or';
+
+  @override
+  String get authContinueWithGoogle => 'Continue with Google';
+
+  @override
+  String get authContinueWithFacebook => 'Continue with Facebook';
+
+  @override
+  String get authSocialLaunchFailedError =>
+      'Could not open social sign-in. Please try again.';
+
+  @override
   String get authPasswordHint => 'Your password';
 
   @override
@@ -1548,6 +1561,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get authMissingSocialTicketError => 'Missing social sign-in ticket.';
+
+  @override
+  String get authExpiredSocialTicketError =>
+      'This social sign-in link is invalid or expired. Please try again.';
 
   @override
   String get dashboardSignOutTooltip => 'Sign out';

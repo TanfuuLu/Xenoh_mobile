@@ -1,6 +1,21 @@
-# xenoh_mobile
+# Xenoh Mobile
 
-A new Flutter project.
+Flutter client for Xenoh.
+
+## Social sign-in
+
+Google and Facebook authentication uses the backend-owned OAuth flow. Run the
+app with the appropriate API origin, for example:
+
+```powershell
+flutter run --dart-define=API_BASE_URL=https://10.0.2.2:7017/api
+```
+
+The backend must expose `GET /api/auth/external/{provider}?client=mobile` and
+set `Authentication:MobileCallbackUrl` to
+`xenoh://auth/social-callback`. Android and iOS are configured to return that
+URI to GoRouter, which exchanges the one-time ticket for the normal Xenoh
+session.
 
 ## Getting Started
 

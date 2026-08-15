@@ -50,7 +50,7 @@ final class AuthControllerProvider
   }
 }
 
-String _$authControllerHash() => r'df81328079015b0863a50ab3517c21609859c6f7';
+String _$authControllerHash() => r'7aa7ef97471bbe85c7c745e364e4df0b922a371f';
 
 /// App-wide auth state holder. Attempts a silent refresh on startup and exposes
 /// login / register / logout. Submit-level loading/errors are returned to the

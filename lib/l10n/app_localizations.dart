@@ -2624,6 +2624,30 @@ abstract class AppLocalizations {
   /// **'Create one'**
   String get authLoginCreateAccountCta;
 
+  /// Divider label between password and social sign-in methods
+  ///
+  /// In en, this message translates to:
+  /// **'or'**
+  String get authOrDivider;
+
+  /// Google social sign-in button label
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with Google'**
+  String get authContinueWithGoogle;
+
+  /// Facebook social sign-in button label
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with Facebook'**
+  String get authContinueWithFacebook;
+
+  /// Error shown when the system browser cannot start social sign-in
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open social sign-in. Please try again.'**
+  String get authSocialLaunchFailedError;
+
   /// Password field hint on the login screen
   ///
   /// In en, this message translates to:
@@ -2959,6 +2983,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Missing social sign-in ticket.'**
   String get authMissingSocialTicketError;
+
+  /// Error shown when a social sign-in ticket cannot be exchanged
+  ///
+  /// In en, this message translates to:
+  /// **'This social sign-in link is invalid or expired. Please try again.'**
+  String get authExpiredSocialTicketError;
 
   /// Tooltip for the sign-out icon button
   ///

@@ -73,6 +73,24 @@ void main() {
     );
   });
 
+  test(
+    'social callbacks are public until exchange and ignored after login',
+    () {
+      expect(
+        routeAccessRedirect(
+          const AuthState.unauthenticated(),
+          '/social-callback',
+        ),
+        isNull,
+      );
+      expect(routeAccessRedirect(member, '/social-callback'), '/dashboard');
+      expect(
+        routeAccessRedirect(member, '/auth/social-callback'),
+        '/dashboard',
+      );
+    },
+  );
+
   test('coach and admin routes enforce their client-side role gates', () {
     expect(routeAccessRedirect(member, '/coach/clients'), '/dashboard');
     expect(routeAccessRedirect(coach, '/coach/clients'), isNull);
