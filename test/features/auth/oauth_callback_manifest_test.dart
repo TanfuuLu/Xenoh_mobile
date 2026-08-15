@@ -3,30 +3,25 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  test('Android OAuth uses the stable custom-tab callback configuration', () {
+  test('Android OAuth callback is handled by the app activity', () {
     final manifest = File(
       'android/app/src/main/AndroidManifest.xml',
     ).readAsStringSync();
-    final pubspec = File('pubspec.yaml').readAsStringSync();
+    final mainActivitySource = File(
+      'android/app/src/main/kotlin/online/xenoh/xenoh_mobile/MainActivity.kt',
+    ).readAsStringSync();
 
-    expect(
-      manifest,
-      contains('com.linusu.flutter_web_auth_2.CallbackActivity'),
-    );
-    expect(pubspec, contains('flutter_web_auth_2: 4.1.0'));
+    expect(manifest, isNot(contains('flutter_web_auth_2.CallbackActivity')));
     expect(RegExp('android:scheme="xenoh"').allMatches(manifest), hasLength(1));
 
     final mainActivity = RegExp(
       r'<activity\s+android:name="\.MainActivity"[\s\S]*?</activity>',
     ).firstMatch(manifest)!.group(0)!;
-    final callbackActivity = RegExp(
-      r'<activity\s+android:name="com\.linusu\.flutter_web_auth_2\.CallbackActivity"[\s\S]*?</activity>',
-    ).firstMatch(manifest)!.group(0)!;
-    expect(mainActivity, isNot(contains('android:scheme="xenoh"')));
-    expect(mainActivity, contains('android:launchMode="singleTop"'));
-    expect(mainActivity, isNot(contains('android:taskAffinity')));
-    expect(callbackActivity, isNot(contains('android:taskAffinity')));
-    expect(callbackActivity, isNot(contains('android:host')));
-    expect(callbackActivity, isNot(contains('android:path')));
+    expect(mainActivity, contains('android:scheme="xenoh"'));
+    expect(mainActivity, contains('android:host="auth"'));
+    expect(mainActivity, contains('android:path="/social-callback"'));
+    expect(mainActivity, contains('android:launchMode="singleTask"'));
+    expect(mainActivitySource, contains('online.xenoh/oauth'));
+    expect(mainActivitySource, contains('social-callback'));
   });
 }

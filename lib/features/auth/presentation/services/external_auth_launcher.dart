@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
 
 import 'social_callback_uri.dart';
@@ -43,6 +45,20 @@ class ExternalAuthLauncher {
 }
 
 Future<Uri> _authenticateWithBrowserSession(Uri uri) async {
+  if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
+    const channel = MethodChannel('online.xenoh/oauth');
+    final callback = await channel.invokeMethod<String>('authenticate', {
+      'url': uri.toString(),
+    });
+    if (callback == null) {
+      throw PlatformException(
+        code: 'EMPTY_CALLBACK',
+        message: 'Authentication returned no callback.',
+      );
+    }
+    return Uri.parse(callback);
+  }
+
   final callback = await FlutterWebAuth2.authenticate(
     url: uri.toString(),
     callbackUrlScheme: 'xenoh',
