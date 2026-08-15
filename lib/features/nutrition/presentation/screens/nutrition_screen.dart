@@ -767,6 +767,7 @@ List<_CalculationItem> _buildCalculationItems(
       _CalculationItem(
         l10n.nutritionRecommendedLabel,
         '${calc.recommendedCalories} kcal',
+        emphasized: true,
       ),
     if (calc.bodyweightKg != null)
       _CalculationItem(
@@ -804,49 +805,44 @@ class _Header extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                width: 36,
-                height: 36,
+                width: 40,
+                height: 40,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: AppColors.accentSoft.withValues(alpha: 0.58),
+                  color: AppColors.accentSoft,
                   borderRadius: BorderRadius.circular(AppRadius.md),
                 ),
                 child: const Icon(
                   Icons.restaurant_rounded,
-                  size: 19,
+                  size: 20,
                   color: AppColors.accent,
                 ),
               ),
               const SizedBox(width: AppSpacing.md),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      l10n.nutritionScreenTitle.toUpperCase(),
-                      style: _eyebrow,
-                    ),
-                    const SizedBox(height: 3),
-                    Text(
-                      summary.calculation.calorieTarget != null
-                          ? l10n.nutritionCalorieTargetTitle(
-                              summary.calculation.calorieTarget!,
-                            )
-                          : l10n.nutritionDailyTitle,
-                      style: AppTypography.display(
-                        21,
-                        letterSpacing: -0.2,
-                        weight: FontWeight.w600,
-                        height: 1.2,
-                      ),
-                    ),
-                  ],
+              Text(
+                l10n.nutritionScreenTitle.toUpperCase(),
+                style: _eyebrow.copyWith(
+                  color: AppColors.accentPress,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ],
+          ),
+          const SizedBox(height: AppSpacing.md),
+          Text(
+            summary.calculation.calorieTarget != null
+                ? l10n.nutritionCalorieTargetTitle(
+                    summary.calculation.calorieTarget!,
+                  )
+                : l10n.nutritionDailyTitle,
+            style: AppTypography.display(
+              27,
+              letterSpacing: -0.5,
+              weight: FontWeight.w600,
+              height: 1.08,
+            ),
           ),
           const SizedBox(height: AppSpacing.md),
           Wrap(
@@ -1280,13 +1276,18 @@ class _SoftPill extends StatelessWidget {
 }
 
 class _CalculationItem {
-  const _CalculationItem(this.label, this.value);
+  const _CalculationItem(
+    this.label,
+    this.value, {
+    this.emphasized = false,
+  });
 
   final String label;
   final String value;
+  final bool emphasized;
 }
 
-/// Compact calculation figures separated by hairlines inside the summary card.
+/// Borderless calculation figures that support the summary card hierarchy.
 class _CalculationGrid extends StatelessWidget {
   const _CalculationGrid({required this.items});
 
@@ -1294,51 +1295,24 @@ class _CalculationGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const hairline = AppColors.surfaceBorderSoft;
-    return Container(
-      clipBehavior: Clip.antiAlias,
-      decoration: BoxDecoration(
-        color: AppColors.bgPage,
-        borderRadius: BorderRadius.circular(AppRadius.md),
-        border: Border.all(color: hairline),
-      ),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final columns = constraints.maxWidth >= 300 ? 3 : 2;
-          final rows = (items.length + columns - 1) ~/ columns;
-
-          return Column(
-            children: [
-              for (var r = 0; r < rows; r++) ...[
-                if (r > 0)
-                  const Divider(height: 1, thickness: 1, color: hairline),
-                IntrinsicHeight(
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      for (var c = 0; c < columns; c++) ...[
-                        if (c > 0 && r * columns + c < items.length)
-                          const VerticalDivider(
-                            width: 1,
-                            thickness: 1,
-                            color: hairline,
-                          ),
-                        Expanded(
-                          child: r * columns + c < items.length
-                              ? _CalculationStat(
-                                  item: items[r * columns + c],
-                                )
-                              : const SizedBox.shrink(),
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
-              ],
-            ],
-          );
-        },
-      ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final columns = constraints.maxWidth >= 600 ? 3 : 2;
+        const spacing = AppSpacing.lg;
+        final itemWidth =
+            (constraints.maxWidth - (spacing * (columns - 1))) / columns;
+        return Wrap(
+          spacing: spacing,
+          runSpacing: AppSpacing.lg,
+          children: [
+            for (final item in items)
+              SizedBox(
+                width: itemWidth,
+                child: _CalculationStat(item: item),
+              ),
+          ],
+        );
+      },
     );
   }
 }
@@ -1350,29 +1324,39 @@ class _CalculationStat extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.md,
-        vertical: AppSpacing.md,
+    final accent = item.emphasized
+        ? AppColors.accent
+        : AppColors.surfaceBorderSoft;
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        border: BorderDirectional(
+          start: BorderSide(color: accent, width: item.emphasized ? 3 : 2),
+        ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            item.label.toUpperCase(),
-            style: _eyebrow,
-          ),
-          const SizedBox(height: 6),
-          Text(
-            item.value,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: AppTypography.mono(
-              16,
-              weight: FontWeight.w600,
+      child: Padding(
+        padding: const EdgeInsetsDirectional.only(start: AppSpacing.md),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              item.label.toUpperCase(),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: _eyebrow,
             ),
-          ),
-        ],
+            const SizedBox(height: 5),
+            Text(
+              item.value,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: AppTypography.mono(
+                16,
+                color: item.emphasized ? AppColors.accentPress : AppColors.fg1,
+                weight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

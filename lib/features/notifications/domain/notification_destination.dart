@@ -1,3 +1,5 @@
+import '../../../core/utils/app_routes.dart';
+
 class NotificationDestination {
   const NotificationDestination.route(this.route) : hasFallback = false;
 
@@ -15,6 +17,25 @@ NotificationDestination notificationDestination(
   final type = item['type']?.toString();
   final relatedType = item['relatedEntityType']?.toString();
   final id = item['relatedEntityId']?.toString();
+  final isChatNotification =
+      type == 'NewMessage' || relatedType == 'Relationship';
+  if (isChatNotification) {
+    if (id == null || id.isEmpty) {
+      return NotificationDestination.route(
+        isCoach ? '/coach/chat' : '/coach/messages',
+      );
+    }
+    return NotificationDestination.route(
+      relationshipChatLocation(
+        coachInbox: isCoach,
+        relationshipId: id,
+        peerName:
+            item['peerName']?.toString() ??
+            item['senderName']?.toString() ??
+            '',
+      ),
+    );
+  }
   if (relatedType == null || id == null || id.isEmpty) {
     return const NotificationDestination.fallback();
   }
@@ -36,14 +57,6 @@ NotificationDestination notificationDestination(
   if (relatedType == 'CoachRequest') {
     return NotificationDestination.route(
       isCoach ? '/coach/clients' : '/coach',
-    );
-  }
-  if (relatedType == 'Relationship') {
-    final encodedId = Uri.encodeComponent(id);
-    return NotificationDestination.route(
-      isCoach
-          ? '/coach/chat/messages?relationshipId=$encodedId'
-          : '/coach/messages?relationshipId=$encodedId',
     );
   }
   if (relatedType == 'Subscription') {

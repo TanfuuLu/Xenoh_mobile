@@ -83,7 +83,7 @@ class WorkoutTaskHandler extends TaskHandler {
     final startedAt = _timerStartedAtUtc;
     if (startedAt == null) return _setInfo;
     final elapsed = nowUtc.difference(startedAt);
-    return '$_setInfo · ${_formatElapsed(elapsed)}';
+    return '$_setInfo • ${_formatElapsed(elapsed)} elapsed';
   }
 
   String _formatElapsed(Duration d) {

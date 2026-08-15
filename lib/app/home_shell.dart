@@ -154,6 +154,7 @@ class HomeShell extends ConsumerWidget {
       onOpenInsights: () => unawaited(context.push('/insights')),
       onOpenCoachChat: () => unawaited(context.push('/insights/coach-chat')),
       onOpenMyCoach: () => unawaited(context.push('/coach')),
+      onOpenClientChat: () => unawaited(context.push('/coach/messages')),
       onOpenEnterCoachCode: () => unawaited(context.push('/enter-coach-code')),
       onOpenClients: () => unawaited(context.push('/coach/clients')),
       onOpenKeyVault: () => unawaited(context.push('/coach/key-vault')),
@@ -434,9 +435,8 @@ class _XenohNavigationRail extends StatelessWidget {
   }
 }
 
-/// A single bottom-bar tab. The active tab sits in a soft accent capsule that
-/// wraps both the icon and label, with a gentle icon "pop" — replacing
-/// Material's default icon-only pill indicator.
+/// A single icon-only bottom-bar tab. Screen names stay available through
+/// semantics while the selected icon sits in a soft accent capsule.
 class _NavItem extends StatelessWidget {
   const _NavItem({
     required this.destination,
@@ -472,7 +472,9 @@ class _NavItem extends StatelessWidget {
             child: AnimatedContainer(
               duration: AppMotion.med,
               curve: Curves.easeOutCubic,
-              padding: const EdgeInsets.symmetric(vertical: 7),
+              height: 48,
+              alignment: Alignment.center,
+              padding: const EdgeInsets.symmetric(vertical: 10),
               decoration: BoxDecoration(
                 color: selected
                     ? AppColors.navigationSelectedBackground
@@ -483,32 +485,14 @@ class _NavItem extends StatelessWidget {
                 ),
                 boxShadow: null,
               ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  AnimatedScale(
-                    scale: selected ? 1.04 : 1,
-                    duration: AppMotion.med,
-                    curve: Curves.easeOutBack,
-                    child: IconTheme(
-                      data: IconThemeData(color: color, size: 21),
-                      child: iconWidget,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    destination.label,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: color,
-                      fontSize: 11,
-                      fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
-                      letterSpacing: 0.1,
-                    ),
-                  ),
-                ],
+              child: AnimatedScale(
+                scale: selected ? 1.04 : 1,
+                duration: AppMotion.med,
+                curve: Curves.easeOutBack,
+                child: IconTheme(
+                  data: IconThemeData(color: color, size: 21),
+                  child: iconWidget,
+                ),
               ),
             ),
           ),
@@ -717,6 +701,7 @@ class _AppDrawer extends StatelessWidget {
     required this.onOpenInsights,
     required this.onOpenCoachChat,
     required this.onOpenMyCoach,
+    required this.onOpenClientChat,
     required this.onOpenEnterCoachCode,
     required this.onOpenClients,
     required this.onOpenKeyVault,
@@ -743,6 +728,7 @@ class _AppDrawer extends StatelessWidget {
   final VoidCallback onOpenInsights;
   final VoidCallback onOpenCoachChat;
   final VoidCallback onOpenMyCoach;
+  final VoidCallback onOpenClientChat;
   final VoidCallback onOpenEnterCoachCode;
   final VoidCallback onOpenClients;
   final VoidCallback onOpenKeyVault;
@@ -950,21 +936,10 @@ class _AppDrawer extends StatelessWidget {
                       ],
                     )
                   else if (!isAdmin)
-                    HomeDrawerSection(
-                      title: l10n.appShellDrawerCoachAccessSection,
-                      icon: Icons.school_outlined,
-                      children: [
-                        _DrawerItem(
-                          icon: Icons.school_outlined,
-                          label: l10n.appShellDrawerMyCoach,
-                          onTap: onOpenMyCoach,
-                        ),
-                        _DrawerItem(
-                          icon: Icons.vpn_key_outlined,
-                          label: l10n.appShellDrawerEnterCoachCode,
-                          onTap: onOpenEnterCoachCode,
-                        ),
-                      ],
+                    CoachAccessDrawerSection(
+                      onOpenMyCoach: onOpenMyCoach,
+                      onOpenCoachChat: onOpenClientChat,
+                      onOpenEnterCoachCode: onOpenEnterCoachCode,
                     ),
                   if (isAdmin)
                     HomeDrawerSection(
@@ -1094,6 +1069,45 @@ class _UserPanel extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class CoachAccessDrawerSection extends StatelessWidget {
+  const CoachAccessDrawerSection({
+    required this.onOpenMyCoach,
+    required this.onOpenCoachChat,
+    required this.onOpenEnterCoachCode,
+    super.key,
+  });
+
+  final VoidCallback onOpenMyCoach;
+  final VoidCallback onOpenCoachChat;
+  final VoidCallback onOpenEnterCoachCode;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return HomeDrawerSection(
+      title: l10n.appShellDrawerCoachAccessSection,
+      icon: Icons.school_outlined,
+      children: [
+        _DrawerItem(
+          icon: Icons.school_outlined,
+          label: l10n.appShellDrawerMyCoach,
+          onTap: onOpenMyCoach,
+        ),
+        _DrawerItem(
+          icon: Icons.forum_outlined,
+          label: l10n.appShellDrawerCoachChat,
+          onTap: onOpenCoachChat,
+        ),
+        _DrawerItem(
+          icon: Icons.vpn_key_outlined,
+          label: l10n.appShellDrawerEnterCoachCode,
+          onTap: onOpenEnterCoachCode,
+        ),
+      ],
     );
   }
 }

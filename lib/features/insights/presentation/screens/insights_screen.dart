@@ -23,7 +23,12 @@ import '../../domain/ai_response_models.dart';
 
 final personalInsightsProvider = FutureProvider.autoDispose
     .family<JsonMap, String>((ref, lang) {
-      return ref.watch(xenohApiProvider).getObject('/insights/me?lang=$lang');
+      return ref
+          .watch(xenohApiProvider)
+          .getObjectWithTimeout(
+            '/insights/me?lang=$lang',
+            receiveTimeout: const Duration(seconds: 60),
+          );
     });
 
 class InsightsScreen extends ConsumerWidget {

@@ -6,13 +6,13 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../app/theme/app_dimens.dart';
 import '../../../../core/realtime/realtime_service.dart';
-import '../../../../core/widgets/xn_section.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../auth/presentation/providers/auth_controller.dart';
 import '../../../auth/presentation/providers/auth_state.dart';
 import '../../../shared_api/api_widgets.dart';
 import '../../../shared_api/xenoh_api.dart';
 import '../../domain/notification_destination.dart';
+import '../widgets/notification_card.dart';
 
 final notificationsProvider = FutureProvider.autoDispose<List<JsonMap>>((ref) {
   return ref.watch(xenohApiProvider).getList('/notifications');
@@ -66,36 +66,25 @@ class NotificationCenterScreen extends ConsumerWidget {
             title: l10n.notificationsEmptyTitle,
             message: l10n.notificationsEmptyMessage,
           ),
-          AsyncData(:final value) => XnCardStack(
+          AsyncData(:final value) => Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              for (final item in value)
-                DataCard(
-                  title: textOf(item, ['message', 'type']),
-                  subtitle: optionalTextOf(
-                    item,
-                    ['relatedEntityType', 'createdAt'],
-                  ),
-                  meta: [
-                    if (item['type'] != null) item['type'].toString(),
-                    if (item['isRead'] == true)
-                      l10n.commonRead
-                    else
-                      l10n.commonUnread,
-                  ],
-                  trailing: item['isRead'] == true
+              for (final (index, item) in value.indexed) ...[
+                NotificationCard(
+                  notification: item,
+                  onMarkRead: item['isRead'] == true
                       ? null
-                      : IconButton(
-                          tooltip: l10n.notificationsMarkReadTooltip,
-                          icon: const Icon(Icons.check_circle_outline),
-                          onPressed: () async {
-                            await ref
-                                .read(xenohApiProvider)
-                                .patchVoid('/notifications/${item['id']}/read');
-                            ref.invalidate(notificationsProvider);
-                          },
-                        ),
+                      : () async {
+                          await ref
+                              .read(xenohApiProvider)
+                              .patchVoid('/notifications/${item['id']}/read');
+                          ref.invalidate(notificationsProvider);
+                        },
                   onTap: () => _openNotification(context, ref, item, isCoach),
                 ),
+                if (index < value.length - 1)
+                  const SizedBox(height: AppSpacing.md),
+              ],
             ],
           ),
           AsyncError(:final error) => FeatureError(

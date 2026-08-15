@@ -509,6 +509,27 @@ class AppLocalizationsVi extends AppLocalizations {
   String get notificationsMarkReadTooltip => 'Đánh dấu đã đọc';
 
   @override
+  String get notificationsFallbackMessage => 'Bạn có một thông báo mới.';
+
+  @override
+  String get notificationsCategoryCoaching => 'Huấn luyện';
+
+  @override
+  String get notificationsCategoryCommunity => 'Cộng đồng';
+
+  @override
+  String get notificationsCategoryCompetition => 'Thi đấu';
+
+  @override
+  String get notificationsCategoryTraining => 'Tập luyện';
+
+  @override
+  String get notificationsCategoryMembership => 'Gói thành viên';
+
+  @override
+  String get notificationsCategoryGeneral => 'Chung';
+
+  @override
   String get progressTitle => 'Tiến độ';
 
   @override
@@ -1047,6 +1068,9 @@ class AppLocalizationsVi extends AppLocalizations {
   String get appShellDrawerChat => 'Trò chuyện';
 
   @override
+  String get appShellDrawerCoachChat => 'Trò chuyện với HLV';
+
+  @override
   String get appShellDrawerCoachAccessSection => 'Kết nối huấn luyện viên';
 
   @override
@@ -1193,22 +1217,24 @@ class AppLocalizationsVi extends AppLocalizations {
   String get coachRequestTerminationAction => 'Yêu cầu kết thúc';
 
   @override
-  String get coachAcceptTerminationAction => 'Chấp nhận kết thúc';
+  String get coachAcceptTerminationAction => 'Kết thúc quan hệ';
 
   @override
-  String get coachRejectTerminationAction => 'Từ chối kết thúc';
+  String get coachRejectTerminationAction => 'Giữ quan hệ';
 
   @override
-  String get coachRequestRenewalAction => 'Yêu cầu gia hạn';
+  String get coachTerminationRequestedStatus => 'Đã yêu cầu kết thúc';
 
   @override
-  String get coachAcceptRenewalAction => 'Chấp nhận gia hạn';
+  String get coachTerminationPendingClientMessage =>
+      'Đang chờ huấn luyện viên chấp nhận hoặc từ chối yêu cầu.';
 
   @override
-  String get coachRejectRenewalAction => 'Từ chối gia hạn';
+  String get coachTerminationConfirmTitle => 'Yêu cầu kết thúc quan hệ?';
 
   @override
-  String get coachDisconnectAction => 'Ngắt kết nối';
+  String get coachTerminationConfirmMessage =>
+      'Huấn luyện viên phải phản hồi trước khi quan hệ huấn luyện kết thúc.';
 
   @override
   String get coachAcceptAction => 'Chấp nhận';
@@ -1229,13 +1255,6 @@ class AppLocalizationsVi extends AppLocalizations {
   @override
   String get coachNoCoachConnectedMessage =>
       'Dùng mã mời để kết nối với Huấn luyện viên Pro.';
-
-  @override
-  String get coachDisconnectConfirmTitle => 'Ngắt kết nối với huấn luyện viên?';
-
-  @override
-  String get coachDisconnectConfirmMessage =>
-      'Thao tác này kết thúc quan hệ huấn luyện hiện tại. Bạn có thể kết nối lại sau bằng mã mời mới.';
 
   @override
   String get coachCoachingPeriodLabel => 'Thời gian huấn luyện';

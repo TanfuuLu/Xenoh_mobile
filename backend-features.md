@@ -265,7 +265,7 @@ Rules:
 - Pending requests
 - Accept relationship
 - Request/accept/reject termination
-- Request/accept/reject renewal
+- Client-requested termination with coach accept/reject
 - Client profile
 - Client today workout
 - Client AI brief

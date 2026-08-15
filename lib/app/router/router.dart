@@ -24,6 +24,7 @@ import '../../features/auth/presentation/screens/social_callback_screen.dart';
 import '../../features/blocks_reports/presentation/screens/blocklist_screen.dart';
 import '../../features/blocks_reports/presentation/screens/report_bug_screen.dart';
 import '../../features/coach_client/presentation/screens/chat_hub_screen.dart';
+import '../../features/coach_client/presentation/screens/client_chat_entry_screen.dart';
 import '../../features/coach_client/presentation/screens/client_detail_screen.dart';
 import '../../features/coach_client/presentation/screens/client_nutrition_screen.dart';
 import '../../features/coach_client/presentation/screens/client_today_workout_screen.dart';
@@ -508,9 +509,10 @@ GoRouter router(Ref ref) {
               GoRoute(path: '/coach', builder: (_, _) => const MyCoachScreen()),
               GoRoute(
                 path: '/coach/messages',
-                redirect: (_, state) =>
-                    _missingRelationshipId(state) ? '/coach' : null,
                 builder: (_, state) {
+                  if (_missingRelationshipId(state)) {
+                    return const ClientChatEntryScreen();
+                  }
                   return RelationshipChatScreen(
                     relationshipId:
                         state.uri.queryParameters['relationshipId']!,

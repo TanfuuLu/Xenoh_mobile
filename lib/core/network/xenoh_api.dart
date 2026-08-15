@@ -21,6 +21,17 @@ class XenohApi {
     return res.data ?? <String, dynamic>{};
   }
 
+  Future<JsonMap> getObjectWithTimeout(
+    String path, {
+    required Duration receiveTimeout,
+  }) async {
+    final res = await _dio.get<JsonMap>(
+      path,
+      options: Options(receiveTimeout: receiveTimeout),
+    );
+    return res.data ?? <String, dynamic>{};
+  }
+
   Future<JsonMap?> getNullableObject(String path) async {
     final res = await _dio.get<JsonMap?>(path);
     return res.data;

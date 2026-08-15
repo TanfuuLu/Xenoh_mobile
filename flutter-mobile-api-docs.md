@@ -45,7 +45,7 @@ Content-Type: application/json
 - `Gender`: `Male`, `Female`, `Other`
 - `DevelopmentDirection`: `Strength`, `Hypertrophy`, `FatLoss`, `Recomposition`, `Endurance`, `GeneralHealth`
 - `TrainingDiscipline`: `Powerlifting`, `Bodybuilding`, `Weightlifting`, `Calisthenics`, `CrossFit`, `Running`, `GeneralFitness`
-- `RelationshipStatus`: `Pending`, `Active`, `PendingTermination`, `Expired`, `PendingRenewal`
+- `RelationshipStatus`: `Pending`, `Active`, `PendingTermination`, `Expired`
 - `PlanType`: `Self`, `Coach`
 - `MuscleGroup`: `Chest`, `Back`, `Shoulders`, `Biceps`, `Triceps`, `Forearms`, `Abs`, `Glutes`, `Quads`, `Hamstrings`, `Calves`, `FullBody`, `Cardio`, `Traps`, `Neck`, `Adductors`, `Abductors`
 
@@ -556,14 +556,13 @@ AI behavior:
 
 ```http
 PUT    /api/coach-client/accept/{relationshipId}
-DELETE /api/coach-client/{relationshipId}
 POST   /api/coach-client/{relationshipId}/request-termination
 POST   /api/coach-client/{relationshipId}/accept-termination
 POST   /api/coach-client/{relationshipId}/reject-termination
-POST   /api/coach-client/{relationshipId}/request-renewal
-POST   /api/coach-client/{relationshipId}/accept-renewal
-POST   /api/coach-client/{relationshipId}/reject-renewal
 ```
+
+Termination is client-initiated. The coach can accept or reject only while
+the relationship status is `PendingTermination`.
 
 ### Coach And Client Lists
 
@@ -871,4 +870,3 @@ GET /api/admin/subscriptions?tier={tier}&active={bool}
 - Refetch visible data after long background/resume.
 - Reconnect SignalR on app resume.
 - Do not support offline mutations unless a sync queue is explicitly implemented.
-

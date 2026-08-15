@@ -73,15 +73,18 @@ class _RelationshipChatScreenState
     final l10n = AppLocalizations.of(context);
     final messages = ref.watch(messagesProvider(widget.relationshipId));
     final myId = ref.watch(authControllerProvider).sessionOrNull?.user.id;
+    final peerName = widget.peerName.trim().isEmpty
+        ? l10n.coachChatUserFallback
+        : widget.peerName.trim();
 
     return Scaffold(
-      appBar: AppBar(title: Text(widget.peerName)),
+      appBar: AppBar(title: Text(peerName)),
       body: Column(
         children: [
           Expanded(child: _body(messages, myId, l10n)),
           ChatComposer(
             controller: _message,
-            hint: l10n.coachRelationshipChatMessageHint(widget.peerName),
+            hint: l10n.coachRelationshipChatMessageHint(peerName),
             sending: _sending,
             onSend: () => unawaited(_send()),
             onAttach: () => unawaited(_pickAttachment(l10n)),
