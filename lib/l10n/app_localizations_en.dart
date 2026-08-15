@@ -1210,22 +1210,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get coachRequestTerminationAction => 'Request termination';
 
   @override
-  String get coachAcceptTerminationAction => 'Accept termination';
+  String get coachAcceptTerminationAction => 'End relationship';
 
   @override
-  String get coachRejectTerminationAction => 'Reject termination';
+  String get coachRejectTerminationAction => 'Keep relationship';
 
   @override
-  String get coachRequestRenewalAction => 'Request renewal';
+  String get coachTerminationRequestedStatus => 'Termination requested';
 
   @override
-  String get coachAcceptRenewalAction => 'Accept renewal';
+  String get coachTerminationPendingClientMessage =>
+      'Waiting for your coach to accept or reject the request.';
 
   @override
-  String get coachRejectRenewalAction => 'Reject renewal';
+  String get coachTerminationConfirmTitle =>
+      'Request relationship termination?';
 
   @override
-  String get coachDisconnectAction => 'Disconnect';
+  String get coachTerminationConfirmMessage =>
+      'Your coach must respond before the coaching relationship ends.';
 
   @override
   String get coachAcceptAction => 'Accept';
@@ -1246,13 +1249,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get coachNoCoachConnectedMessage =>
       'Use an invite code to connect with a Pro Coach.';
-
-  @override
-  String get coachDisconnectConfirmTitle => 'Disconnect from coach?';
-
-  @override
-  String get coachDisconnectConfirmMessage =>
-      'This ends your active coaching relationship. You can reconnect later with a new invite code.';
 
   @override
   String get coachCoachingPeriodLabel => 'Coaching period';

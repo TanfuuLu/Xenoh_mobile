@@ -80,6 +80,9 @@ void main() {
           arguments: dummyData.getStartServiceArgs(platform),
         ),
       );
+      final arguments = methodCallHandler.log.last.arguments as Map;
+      expect(arguments, isNot(contains('notificationProgress')));
+      expect(arguments, isNot(contains('notificationMaxProgress')));
     });
 
     test('startService (error: ServiceNotInitializedException)', () async {

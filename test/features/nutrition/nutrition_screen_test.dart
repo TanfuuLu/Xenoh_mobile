@@ -14,7 +14,11 @@ import 'package:xenoh_mobile/l10n/app_localizations.dart';
 class MockNutritionRepository extends Mock implements NutritionRepository {}
 
 const _summary = NutritionSummary(
-  profile: NutritionProfile(activityLevel: 'Athlete', goal: 'Bulk'),
+  profile: NutritionProfile(
+    activityLevel: 'Athlete',
+    goal: 'Bulk',
+    targetWeightKg: 62,
+  ),
   calculation: NutritionCalculation(
     calorieTarget: 3050,
     proteinG: 160,
@@ -22,6 +26,9 @@ const _summary = NutritionSummary(
     fatG: 72,
     bmr: 1769,
     tdee: 3361,
+    recommendedCalories: 2900,
+    bodyweightKg: 64,
+    age: 28,
   ),
   canUseAdvancedAnalysis: true,
 );
@@ -87,6 +94,12 @@ void main() {
     expect(find.text('CALCULATION'), findsOneWidget);
     expect(find.text('1769 kcal'), findsOneWidget);
     expect(find.text('3361 kcal'), findsOneWidget);
+    expect(find.text('2900 kcal'), findsOneWidget);
+    expect(find.text('64 kg'), findsOneWidget);
+    expect(find.text('28'), findsOneWidget);
+    expect(find.text('62 kg'), findsOneWidget);
+    expect(find.byType(VerticalDivider), findsNothing);
+    expect(find.byType(IntrinsicHeight), findsNothing);
 
     await tester.drag(find.byType(ListView), const Offset(0, -420));
     await tester.pumpAndSettle();

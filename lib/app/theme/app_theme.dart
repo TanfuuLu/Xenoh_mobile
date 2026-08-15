@@ -211,6 +211,145 @@ abstract final class AppTheme {
           height: 1.45,
         ),
       ),
+      datePickerTheme: DatePickerThemeData(
+        backgroundColor: AppColors.bg2,
+        surfaceTintColor: Colors.transparent,
+        elevation: 18,
+        shadowColor: AppColors.shadowDeep,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadius.xxl),
+          side: const BorderSide(color: AppColors.surfaceBorderSoft),
+        ),
+        headerBackgroundColor: AppColors.accentSoft,
+        headerForegroundColor: AppColors.clay900,
+        headerHeadlineStyle: AppTypography.display(
+          28,
+          weight: FontWeight.w600,
+          letterSpacing: -0.3,
+        ),
+        headerHelpStyle: const TextStyle(
+          color: AppColors.clay800,
+          fontFamily: AppTypography.fontFamily,
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0.4,
+        ),
+        weekdayStyle: const TextStyle(
+          color: AppColors.fg3,
+          fontFamily: AppTypography.fontFamily,
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+        ),
+        dayStyle: const TextStyle(
+          fontFamily: AppTypography.fontFamily,
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+        ),
+        dayForegroundColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.disabled)) return AppColors.fg4;
+          if (states.contains(WidgetState.selected)) {
+            return AppColors.fgOnClay;
+          }
+          return AppColors.fg1;
+        }),
+        dayBackgroundColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) return AppColors.accent;
+          return Colors.transparent;
+        }),
+        dayOverlayColor: WidgetStatePropertyAll(
+          AppColors.accentSoft.withValues(alpha: 0.72),
+        ),
+        dayShape: const WidgetStatePropertyAll(CircleBorder()),
+        todayForegroundColor: const WidgetStatePropertyAll(AppColors.accent),
+        todayBackgroundColor: const WidgetStatePropertyAll(
+          Colors.transparent,
+        ),
+        todayBorder: const BorderSide(color: AppColors.accent),
+        yearStyle: const TextStyle(
+          fontFamily: AppTypography.fontFamily,
+          fontSize: 16,
+          fontWeight: FontWeight.w500,
+        ),
+        yearForegroundColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.disabled)) return AppColors.fg4;
+          if (states.contains(WidgetState.selected)) {
+            return AppColors.fgOnClay;
+          }
+          return AppColors.fg1;
+        }),
+        yearBackgroundColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) return AppColors.accent;
+          return Colors.transparent;
+        }),
+        yearOverlayColor: WidgetStatePropertyAll(
+          AppColors.accentSoft.withValues(alpha: 0.72),
+        ),
+        rangePickerBackgroundColor: AppColors.bgPage,
+        rangePickerSurfaceTintColor: Colors.transparent,
+        rangePickerShadowColor: AppColors.shadowDeep,
+        rangePickerHeaderBackgroundColor: AppColors.accentSoft,
+        rangePickerHeaderForegroundColor: AppColors.clay900,
+        rangeSelectionBackgroundColor: AppColors.accentSoft,
+        rangeSelectionOverlayColor: WidgetStatePropertyAll(
+          AppColors.accentSoft.withValues(alpha: 0.72),
+        ),
+        dividerColor: AppColors.surfaceBorderSoft,
+        cancelButtonStyle: _pickerActionStyle(),
+        confirmButtonStyle: _pickerActionStyle(),
+      ),
+      timePickerTheme: TimePickerThemeData(
+        backgroundColor: AppColors.bg2,
+        elevation: 18,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadius.xxl),
+          side: const BorderSide(color: AppColors.surfaceBorderSoft),
+        ),
+        helpTextStyle: const TextStyle(
+          color: AppColors.fg3,
+          fontFamily: AppTypography.fontFamily,
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0.4,
+        ),
+        hourMinuteColor: WidgetStateColor.resolveWith(
+          (states) => states.contains(WidgetState.selected)
+              ? AppColors.accentSoft
+              : AppColors.bg3,
+        ),
+        hourMinuteTextColor: WidgetStateColor.resolveWith(
+          (states) => states.contains(WidgetState.selected)
+              ? AppColors.accentPress
+              : AppColors.fg1,
+        ),
+        hourMinuteShape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadius.lg),
+          side: const BorderSide(color: AppColors.surfaceBorderSoft),
+        ),
+        dayPeriodColor: WidgetStateColor.resolveWith(
+          (states) => states.contains(WidgetState.selected)
+              ? AppColors.accentSoft
+              : AppColors.bg2,
+        ),
+        dayPeriodTextColor: WidgetStateColor.resolveWith(
+          (states) => states.contains(WidgetState.selected)
+              ? AppColors.accentPress
+              : AppColors.fg2,
+        ),
+        dayPeriodBorderSide: const BorderSide(color: AppColors.buttonBorder),
+        dayPeriodShape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadius.md),
+        ),
+        dialBackgroundColor: AppColors.bg3,
+        dialHandColor: AppColors.accent,
+        dialTextColor: WidgetStateColor.resolveWith(
+          (states) => states.contains(WidgetState.selected)
+              ? AppColors.fgOnClay
+              : AppColors.fg1,
+        ),
+        entryModeIconColor: AppColors.fg2,
+        cancelButtonStyle: _pickerActionStyle(),
+        confirmButtonStyle: _pickerActionStyle(),
+      ),
       bottomSheetTheme: const BottomSheetThemeData(
         backgroundColor: AppColors.bg2,
         surfaceTintColor: Colors.transparent,
@@ -237,17 +376,35 @@ abstract final class AppTheme {
         selectionColor: AppColors.clay200,
         selectionHandleColor: AppColors.accent,
       ),
-      chipTheme: const ChipThemeData(
-        backgroundColor: AppColors.accentSoft,
+      chipTheme: ChipThemeData(
+        backgroundColor: AppColors.bg2,
+        selectedColor: AppColors.clay200,
+        disabledColor: AppColors.bg3,
+        showCheckmark: false,
         labelStyle: TextStyle(
-          color: AppColors.clay900,
+          color: WidgetStateColor.resolveWith((states) {
+            if (states.contains(WidgetState.disabled)) return AppColors.fg4;
+            if (states.contains(WidgetState.selected)) {
+              return AppColors.accentPress;
+            }
+            return AppColors.fg2;
+          }),
           fontFamily: AppTypography.fontFamily,
+          fontSize: 13,
+          fontWeight: FontWeight.w500,
         ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(AppRadius.sm)),
+        secondaryLabelStyle: const TextStyle(
+          color: AppColors.accentPress,
+          fontFamily: AppTypography.fontFamily,
+          fontSize: 13,
+          fontWeight: FontWeight.w600,
         ),
-        side: BorderSide(color: AppColors.surfaceBorderSoft),
-        padding: EdgeInsets.symmetric(horizontal: AppSpacing.md),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(AppRadius.md)),
+        ),
+        side: const BorderSide(color: AppColors.surfaceBorderSoft),
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+        pressElevation: 0,
       ),
       checkboxTheme: CheckboxThemeData(
         visualDensity: VisualDensity.compact,
@@ -303,7 +460,7 @@ abstract final class AppTheme {
         }),
       ),
       segmentedButtonTheme: SegmentedButtonThemeData(
-        selectedIcon: const Icon(Icons.check_rounded, size: 14),
+        selectedIcon: const SizedBox.shrink(),
         style: ButtonStyle(
           backgroundColor: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.selected)) {
@@ -450,6 +607,19 @@ abstract final class AppTheme {
         borderRadius: BorderRadius.circular(AppRadius.lg),
         borderSide: BorderSide(color: color, width: width),
       );
+
+  static ButtonStyle _pickerActionStyle() => TextButton.styleFrom(
+    foregroundColor: AppColors.accentPress,
+    minimumSize: const Size(44, 40),
+    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(AppRadius.md),
+    ),
+    textStyle: const TextStyle(
+      fontFamily: AppTypography.fontFamily,
+      fontWeight: FontWeight.w600,
+    ),
+  );
 
   static MenuStyle _menuStyle() => MenuStyle(
     backgroundColor: const WidgetStatePropertyAll(AppColors.bg2),

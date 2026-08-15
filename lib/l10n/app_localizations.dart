@@ -2333,38 +2333,38 @@ abstract class AppLocalizations {
   /// No description provided for @coachAcceptTerminationAction.
   ///
   /// In en, this message translates to:
-  /// **'Accept termination'**
+  /// **'End relationship'**
   String get coachAcceptTerminationAction;
 
   /// No description provided for @coachRejectTerminationAction.
   ///
   /// In en, this message translates to:
-  /// **'Reject termination'**
+  /// **'Keep relationship'**
   String get coachRejectTerminationAction;
 
-  /// No description provided for @coachRequestRenewalAction.
+  /// No description provided for @coachTerminationRequestedStatus.
   ///
   /// In en, this message translates to:
-  /// **'Request renewal'**
-  String get coachRequestRenewalAction;
+  /// **'Termination requested'**
+  String get coachTerminationRequestedStatus;
 
-  /// No description provided for @coachAcceptRenewalAction.
+  /// No description provided for @coachTerminationPendingClientMessage.
   ///
   /// In en, this message translates to:
-  /// **'Accept renewal'**
-  String get coachAcceptRenewalAction;
+  /// **'Waiting for your coach to accept or reject the request.'**
+  String get coachTerminationPendingClientMessage;
 
-  /// No description provided for @coachRejectRenewalAction.
+  /// No description provided for @coachTerminationConfirmTitle.
   ///
   /// In en, this message translates to:
-  /// **'Reject renewal'**
-  String get coachRejectRenewalAction;
+  /// **'Request relationship termination?'**
+  String get coachTerminationConfirmTitle;
 
-  /// No description provided for @coachDisconnectAction.
+  /// No description provided for @coachTerminationConfirmMessage.
   ///
   /// In en, this message translates to:
-  /// **'Disconnect'**
-  String get coachDisconnectAction;
+  /// **'Your coach must respond before the coaching relationship ends.'**
+  String get coachTerminationConfirmMessage;
 
   /// No description provided for @coachAcceptAction.
   ///
@@ -2401,18 +2401,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Use an invite code to connect with a Pro Coach.'**
   String get coachNoCoachConnectedMessage;
-
-  /// No description provided for @coachDisconnectConfirmTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Disconnect from coach?'**
-  String get coachDisconnectConfirmTitle;
-
-  /// No description provided for @coachDisconnectConfirmMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'This ends your active coaching relationship. You can reconnect later with a new invite code.'**
-  String get coachDisconnectConfirmMessage;
 
   /// No description provided for @coachCoachingPeriodLabel.
   ///

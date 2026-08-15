@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:xenoh_mobile/app/theme/app_theme.dart';
+import 'package:xenoh_mobile/core/realtime/realtime_service.dart';
+import 'package:xenoh_mobile/core/widgets/xn_card.dart';
+import 'package:xenoh_mobile/features/auth/presentation/providers/auth_controller.dart';
+import 'package:xenoh_mobile/features/auth/presentation/providers/auth_state.dart';
+import 'package:xenoh_mobile/features/notifications/presentation/screens/notification_center_screen.dart';
 import 'package:xenoh_mobile/features/notifications/presentation/widgets/notification_card.dart';
 import 'package:xenoh_mobile/l10n/app_localizations.dart';
 
@@ -158,6 +164,48 @@ void main() {
     expect(find.text('Huấn luyện'), findsOneWidget);
     expect(find.text('Chưa đọc'), findsOneWidget);
   });
+
+  testWidgets('notification center does not wrap a card inside another card', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          notificationsProvider.overrideWith(
+            (ref) async => [
+              {
+                'id': 'notification-1',
+                'message': 'Your coach sent a message.',
+                'type': 'NewMessage',
+                'relatedEntityType': 'Relationship',
+                'isRead': true,
+              },
+            ],
+          ),
+          realtimeEventsProvider.overrideWith((ref) => const Stream.empty()),
+          authControllerProvider.overrideWith(_NoNetworkAuthController.new),
+        ],
+        child: _app(const NotificationCenterScreen()),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final notificationCard = find.byType(NotificationCard);
+    expect(notificationCard, findsOneWidget);
+    expect(
+      find.descendant(of: notificationCard, matching: find.byType(XnCard)),
+      findsOneWidget,
+    );
+    expect(
+      find.ancestor(of: notificationCard, matching: find.byType(XnCard)),
+      findsNothing,
+    );
+  });
+}
+
+class _NoNetworkAuthController extends AuthController {
+  @override
+  AuthState build() => const AuthState.unauthenticated();
 }
 
 Widget _app(Widget child, {Locale locale = const Locale('en')}) {

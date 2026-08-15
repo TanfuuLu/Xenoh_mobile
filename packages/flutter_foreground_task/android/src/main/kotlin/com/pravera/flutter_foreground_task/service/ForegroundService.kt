@@ -17,9 +17,11 @@ import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.util.Log
+import android.widget.RemoteViews
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import com.pravera.flutter_foreground_task.R
 import com.pravera.flutter_foreground_task.FlutterForegroundTaskLifecycleListener
 import com.pravera.flutter_foreground_task.RequestCode
 import com.pravera.flutter_foreground_task.models.*
@@ -344,6 +346,7 @@ class ForegroundService : Service() {
         val iconResId = getIconResId(icon)
         val iconBackgroundColor = icon?.backgroundColorRgb?.let(::getRgbColor)
         val largeIconBitmap = getLargeIconBitmap(icon)
+        val customContentView = getLeftLargeIconContentView(largeIconBitmap)
 
         // notification intent
         val contentIntent = getContentIntent()
@@ -376,10 +379,15 @@ class ForegroundService : Service() {
             builder.setContentIntent(contentIntent)
             builder.setContentTitle(notificationContent.title)
             builder.setContentText(notificationContent.text)
-            builder.style = Notification.BigTextStyle()
+            if (customContentView != null) {
+                builder.setCustomContentView(customContentView)
+                builder.style = Notification.DecoratedCustomViewStyle()
+            } else {
+                builder.style = Notification.BigTextStyle()
+            }
             builder.setVisibility(notificationOptions.visibility)
             builder.setOnlyAlertOnce(notificationOptions.onlyAlertOnce)
-            if (largeIconBitmap != null) {
+            if (largeIconBitmap != null && customContentView == null) {
                 builder.setLargeIcon(largeIconBitmap)
             }
             if (iconBackgroundColor != null) {
@@ -406,13 +414,18 @@ class ForegroundService : Service() {
             builder.setContentIntent(contentIntent)
             builder.setContentTitle(notificationContent.title)
             builder.setContentText(notificationContent.text)
-            builder.setStyle(NotificationCompat.BigTextStyle().bigText(notificationContent.text))
+            if (customContentView != null) {
+                builder.setCustomContentView(customContentView)
+                builder.setStyle(NotificationCompat.DecoratedCustomViewStyle())
+            } else {
+                builder.setStyle(NotificationCompat.BigTextStyle().bigText(notificationContent.text))
+            }
             builder.setVisibility(notificationOptions.visibility)
             builder.setOnlyAlertOnce(notificationOptions.onlyAlertOnce)
             if (notificationOptions.dismissible) {
                 builder.setDeleteIntent(deleteIntent)
             }
-            if (largeIconBitmap != null) {
+            if (largeIconBitmap != null && customContentView == null) {
                 builder.setLargeIcon(largeIconBitmap)
             }
             if (iconBackgroundColor != null) {
@@ -535,6 +548,15 @@ class ForegroundService : Service() {
         } catch (e: Exception) {
             Log.e(TAG, "getLargeIconBitmap($path)", e)
             null
+        }
+    }
+
+    private fun getLeftLargeIconContentView(bitmap: Bitmap?): RemoteViews? {
+        if (bitmap == null) return null
+        return RemoteViews(packageName, R.layout.flutter_foreground_task_notification_left_icon).apply {
+            setImageViewBitmap(R.id.notification_large_icon, bitmap)
+            setTextViewText(R.id.notification_title, notificationContent.title)
+            setTextViewText(R.id.notification_text, notificationContent.text)
         }
     }
 

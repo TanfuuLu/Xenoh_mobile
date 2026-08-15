@@ -6,7 +6,6 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../app/theme/app_dimens.dart';
 import '../../../../core/realtime/realtime_service.dart';
-import '../../../../core/widgets/xn_section.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../auth/presentation/providers/auth_controller.dart';
 import '../../../auth/presentation/providers/auth_state.dart';
@@ -67,9 +66,10 @@ class NotificationCenterScreen extends ConsumerWidget {
             title: l10n.notificationsEmptyTitle,
             message: l10n.notificationsEmptyMessage,
           ),
-          AsyncData(:final value) => XnCardStack(
+          AsyncData(:final value) => Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              for (final item in value)
+              for (final (index, item) in value.indexed) ...[
                 NotificationCard(
                   notification: item,
                   onMarkRead: item['isRead'] == true
@@ -82,6 +82,9 @@ class NotificationCenterScreen extends ConsumerWidget {
                         },
                   onTap: () => _openNotification(context, ref, item, isCoach),
                 ),
+                if (index < value.length - 1)
+                  const SizedBox(height: AppSpacing.md),
+              ],
             ],
           ),
           AsyncError(:final error) => FeatureError(

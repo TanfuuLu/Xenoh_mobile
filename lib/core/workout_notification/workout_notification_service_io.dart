@@ -6,6 +6,7 @@ import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../app/theme/app_colors.dart';
 import '../config/app_config.dart';
 import '../network/http_client.dart';
 import 'workout_task_handler.dart';
@@ -74,7 +75,10 @@ abstract final class WorkoutNotificationService {
     _init();
 
     final imagePath = await _resolveImagePath(imageUrl);
-    final icon = NotificationIcon(largeIconPath: imagePath);
+    final icon = NotificationIcon(
+      backgroundColor: AppColors.accent,
+      largeIconPath: imagePath,
+    );
 
     if (!await FlutterForegroundTask.isRunningService) {
       var permission =

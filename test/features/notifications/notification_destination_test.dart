@@ -73,7 +73,7 @@ void main() {
     expect(
       notificationDestination(
         const {
-          'type': 'RenewalRequested',
+          'type': 'TerminationRequested',
           'relatedEntityType': 'CoachRequest',
           'relatedEntityId': 'r1',
         },

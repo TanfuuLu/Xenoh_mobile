@@ -97,9 +97,8 @@ class _CoachProfileBody extends ConsumerWidget {
               ),
             ),
           ),
-          onDisconnect: () => _confirmDisconnect(context, ref, relationship),
-          onLifecycleAction: (action) =>
-              _runAction(context, ref, relationship, action),
+          onRequestTermination: () =>
+              _confirmTermination(context, ref, relationship),
         ),
         if (bio != null && bio.trim().isNotEmpty) ...[
           const SizedBox(height: AppSpacing.md),
@@ -111,7 +110,7 @@ class _CoachProfileBody extends ConsumerWidget {
     );
   }
 
-  Future<void> _confirmDisconnect(
+  Future<void> _confirmTermination(
     BuildContext context,
     WidgetRef ref,
     JsonMap relationship,
@@ -120,8 +119,8 @@ class _CoachProfileBody extends ConsumerWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: Text(l10n.coachDisconnectConfirmTitle),
-        content: Text(l10n.coachDisconnectConfirmMessage),
+        title: Text(l10n.coachTerminationConfirmTitle),
+        content: Text(l10n.coachTerminationConfirmMessage),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(false),
@@ -129,42 +128,26 @@ class _CoachProfileBody extends ConsumerWidget {
           ),
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(true),
-            child: Text(l10n.coachDisconnectAction),
+            child: Text(l10n.coachRequestTerminationAction),
           ),
         ],
       ),
     );
     if (confirmed != true) return;
     if (!context.mounted) return;
-    await _runAction(context, ref, relationship, _CoachAction.disconnect);
+    await _requestTermination(context, ref, relationship);
   }
 
-  Future<void> _runAction(
+  Future<void> _requestTermination(
     BuildContext context,
     WidgetRef ref,
     JsonMap relationship,
-    _CoachAction action,
   ) async {
     final id = textOf(relationship, ['id', 'relationshipId'], fallback: '');
     if (id.isEmpty) return;
     try {
       final api = ref.read(xenohApiProvider);
-      switch (action) {
-        case _CoachAction.disconnect:
-          await api.delete('/coach-client/$id');
-        case _CoachAction.requestTermination:
-          await api.postVoid('/coach-client/$id/request-termination');
-        case _CoachAction.acceptTermination:
-          await api.postVoid('/coach-client/$id/accept-termination');
-        case _CoachAction.rejectTermination:
-          await api.postVoid('/coach-client/$id/reject-termination');
-        case _CoachAction.requestRenewal:
-          await api.postVoid('/coach-client/$id/request-renewal');
-        case _CoachAction.acceptRenewal:
-          await api.postVoid('/coach-client/$id/accept-renewal');
-        case _CoachAction.rejectRenewal:
-          await api.postVoid('/coach-client/$id/reject-renewal');
-      }
+      await api.postVoid('/coach-client/$id/request-termination');
       ref.invalidate(myCoachProvider);
     } catch (error) {
       if (!context.mounted) return;
@@ -179,8 +162,7 @@ class _CoachCard extends StatelessWidget {
   const _CoachCard({
     required this.relationship,
     required this.onMessage,
-    required this.onDisconnect,
-    required this.onLifecycleAction,
+    required this.onRequestTermination,
     required this.unreadCount,
     this.profile,
   });
@@ -188,8 +170,7 @@ class _CoachCard extends StatelessWidget {
   final JsonMap relationship;
   final JsonMap? profile;
   final VoidCallback onMessage;
-  final VoidCallback onDisconnect;
-  final ValueChanged<_CoachAction> onLifecycleAction;
+  final VoidCallback onRequestTermination;
   final int unreadCount;
 
   @override
@@ -215,6 +196,7 @@ class _CoachCard extends StatelessWidget {
         : _coachSocialLinks(profile!);
     final startDate = _parseDate(relationship['startDate']);
     final endDate = _parseDate(relationship['endDate']);
+    final terminationPending = status == 'PendingTermination';
 
     return XnCard(
       child: Column(
@@ -262,7 +244,9 @@ class _CoachCard extends StatelessWidget {
                             compact: true,
                           ),
                         XnChip(
-                          label: status,
+                          label: terminationPending
+                              ? l10n.coachTerminationRequestedStatus
+                              : status,
                           tone: _statusTone(status),
                           compact: true,
                         ),
@@ -338,53 +322,51 @@ class _CoachCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: AppSpacing.sm),
-          Row(
-            children: [
-              const Spacer(),
-              PopupMenuButton<_CoachAction>(
-                tooltip: l10n.coachMoreActionsTooltip,
-                onSelected: onLifecycleAction,
-                itemBuilder: (_) => [
-                  PopupMenuItem(
-                    value: _CoachAction.requestTermination,
-                    child: Text(l10n.coachRequestTerminationAction),
+          if (terminationPending)
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(AppSpacing.md),
+              decoration: BoxDecoration(
+                color: AppColors.warningBg,
+                borderRadius: BorderRadius.circular(AppRadius.md),
+                border: Border.all(
+                  color: AppColors.warning.withValues(alpha: 0.24),
+                ),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Icon(
+                    Icons.schedule_rounded,
+                    size: 18,
+                    color: AppColors.warning,
                   ),
-                  PopupMenuItem(
-                    value: _CoachAction.acceptTermination,
-                    child: Text(l10n.coachAcceptTerminationAction),
-                  ),
-                  PopupMenuItem(
-                    value: _CoachAction.rejectTermination,
-                    child: Text(l10n.coachRejectTerminationAction),
-                  ),
-                  PopupMenuItem(
-                    value: _CoachAction.requestRenewal,
-                    child: Text(l10n.coachRequestRenewalAction),
-                  ),
-                  PopupMenuItem(
-                    value: _CoachAction.acceptRenewal,
-                    child: Text(l10n.coachAcceptRenewalAction),
-                  ),
-                  PopupMenuItem(
-                    value: _CoachAction.rejectRenewal,
-                    child: Text(l10n.coachRejectRenewalAction),
+                  const SizedBox(width: AppSpacing.sm),
+                  Expanded(
+                    child: Text(
+                      l10n.coachTerminationPendingClientMessage,
+                      style: const TextStyle(
+                        color: AppColors.fg2,
+                        height: 1.35,
+                      ),
+                    ),
                   ),
                 ],
               ),
-              const SizedBox(width: AppSpacing.sm),
-              SizedBox(
-                height: 40,
-                child: OutlinedButton.icon(
-                  onPressed: onDisconnect,
-                  icon: const Icon(
-                    Icons.person_remove_alt_1_outlined,
-                    size: 18,
-                  ),
-                  label: Text(l10n.coachDisconnectAction),
+            )
+          else if (status == 'Active')
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                onPressed: onRequestTermination,
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: AppColors.danger,
+                  side: const BorderSide(color: AppColors.danger),
                 ),
+                icon: const Icon(Icons.person_off_outlined, size: 18),
+                label: Text(l10n.coachRequestTerminationAction),
               ),
-            ],
-          ),
+            ),
         ],
       ),
     );
@@ -501,16 +483,6 @@ class _ConnectedSinceNote extends StatelessWidget {
   }
 }
 
-enum _CoachAction {
-  disconnect,
-  requestTermination,
-  acceptTermination,
-  rejectTermination,
-  requestRenewal,
-  acceptRenewal,
-  rejectRenewal,
-}
-
 XnChipTone _statusTone(String status) {
   switch (status) {
     case 'Active':
@@ -518,7 +490,6 @@ XnChipTone _statusTone(String status) {
     case 'Pending':
       return XnChipTone.info;
     case 'PendingTermination':
-    case 'PendingRenewal':
       return XnChipTone.warn;
     case 'Expired':
       return XnChipTone.danger;

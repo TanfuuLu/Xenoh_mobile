@@ -82,11 +82,12 @@ class WorkoutNotificationController extends _$WorkoutNotificationController {
       return;
     }
 
-    final weight = current.plannedWeight;
-    final setInfo =
-        'Set ${current.completedSetsCount + 1}/${current.plannedSets} · '
-        '${current.plannedReps} reps'
-        '${weight == null ? '' : ' x ${_compactWeight(weight)} kg'}';
+    final setInfo = buildWorkoutNotificationSetInfo(
+      completedSets: current.completedSetsCount,
+      plannedSets: current.plannedSets,
+      plannedReps: current.plannedReps,
+      plannedWeight: current.plannedWeight,
+    );
 
     unawaited(
       WorkoutNotificationService.showOrUpdate(
@@ -112,6 +113,20 @@ class WorkoutNotificationController extends _$WorkoutNotificationController {
     );
     _dismissedWorkoutId = dailyWorkoutId;
   }
+}
+
+@visibleForTesting
+String buildWorkoutNotificationSetInfo({
+  required int completedSets,
+  required int plannedSets,
+  required int plannedReps,
+  double? plannedWeight,
+}) {
+  final currentSet = (completedSets + 1).clamp(1, plannedSets);
+  final weight = plannedWeight == null
+      ? ''
+      : ' • ${_compactWeight(plannedWeight)} kg';
+  return 'Set $currentSet of $plannedSets • $plannedReps reps$weight';
 }
 
 /// Drops a trailing `.0` for whole numbers (e.g. `60.0` → `60`).

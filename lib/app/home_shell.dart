@@ -435,9 +435,8 @@ class _XenohNavigationRail extends StatelessWidget {
   }
 }
 
-/// A single bottom-bar tab. The active tab sits in a soft accent capsule that
-/// wraps both the icon and label, with a gentle icon "pop" — replacing
-/// Material's default icon-only pill indicator.
+/// A single icon-only bottom-bar tab. Screen names stay available through
+/// semantics while the selected icon sits in a soft accent capsule.
 class _NavItem extends StatelessWidget {
   const _NavItem({
     required this.destination,
@@ -473,7 +472,9 @@ class _NavItem extends StatelessWidget {
             child: AnimatedContainer(
               duration: AppMotion.med,
               curve: Curves.easeOutCubic,
-              padding: const EdgeInsets.symmetric(vertical: 7),
+              height: 48,
+              alignment: Alignment.center,
+              padding: const EdgeInsets.symmetric(vertical: 10),
               decoration: BoxDecoration(
                 color: selected
                     ? AppColors.navigationSelectedBackground
@@ -484,32 +485,14 @@ class _NavItem extends StatelessWidget {
                 ),
                 boxShadow: null,
               ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  AnimatedScale(
-                    scale: selected ? 1.04 : 1,
-                    duration: AppMotion.med,
-                    curve: Curves.easeOutBack,
-                    child: IconTheme(
-                      data: IconThemeData(color: color, size: 21),
-                      child: iconWidget,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    destination.label,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: color,
-                      fontSize: 11,
-                      fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
-                      letterSpacing: 0.1,
-                    ),
-                  ),
-                ],
+              child: AnimatedScale(
+                scale: selected ? 1.04 : 1,
+                duration: AppMotion.med,
+                curve: Curves.easeOutBack,
+                child: IconTheme(
+                  data: IconThemeData(color: color, size: 21),
+                  child: iconWidget,
+                ),
               ),
             ),
           ),
