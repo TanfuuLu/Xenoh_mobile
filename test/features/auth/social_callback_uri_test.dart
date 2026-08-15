@@ -55,4 +55,21 @@ void main() {
       isFalse,
     );
   });
+
+  test('converts an allowlisted app callback into an internal route', () {
+    expect(
+      internalSocialCallbackLocation(
+        Uri.parse(
+          'xenoh://auth/social-callback?ticket=one-time&state=ignored',
+        ),
+      ),
+      '/auth/social-callback?ticket=one-time&state=ignored',
+    );
+    expect(
+      internalSocialCallbackLocation(
+        Uri.parse('xenoh://attacker/social-callback?ticket=stolen'),
+      ),
+      isNull,
+    );
+  });
 }

@@ -19,6 +19,7 @@ part 'auth_controller.g.dart';
 class AuthController extends _$AuthController {
   String? _externalTicket;
   Future<Failure?>? _externalTicketExchange;
+  var _authStateRevision = 0;
 
   @override
   AuthState build() {
@@ -27,7 +28,7 @@ class AuthController extends _$AuthController {
     ref.listen(sessionExpiredProvider, (previous, next) {
       if (next) {
         ref.read(sessionExpiredProvider.notifier).reset();
-        state = const AuthState.unauthenticated();
+        _replaceAuthState(const AuthState.unauthenticated());
       }
     });
 
@@ -38,11 +39,14 @@ class AuthController extends _$AuthController {
   AuthRepository get _repo => ref.read(authRepositoryProvider);
 
   Future<void> _restore() async {
+    final restoreRevision = _authStateRevision;
     final result = await _repo.restoreSession();
-    state = switch (result) {
-      Ok(:final value) => AuthState.authenticated(value),
-      Err() => const AuthState.unauthenticated(),
-    };
+    if (restoreRevision == _authStateRevision) {
+      state = switch (result) {
+        Ok(:final value) => AuthState.authenticated(value),
+        Err() => const AuthState.unauthenticated(),
+      };
+    }
     ref.read(authBootstrappedProvider.notifier).markDone();
   }
 
@@ -54,7 +58,7 @@ class AuthController extends _$AuthController {
     final result = await _repo.login(email: email, password: password);
     switch (result) {
       case Ok(:final value):
-        state = AuthState.authenticated(value);
+        _replaceAuthState(AuthState.authenticated(value));
         _refreshUserScopedCaches();
         return null;
       case Err(:final failure):
@@ -78,7 +82,7 @@ class AuthController extends _$AuthController {
     final result = await _repo.exchangeExternalTicket(ticket);
     switch (result) {
       case Ok(:final value):
-        state = AuthState.authenticated(value);
+        _replaceAuthState(AuthState.authenticated(value));
         _refreshUserScopedCaches();
         return null;
       case Err(:final failure):
@@ -90,7 +94,7 @@ class AuthController extends _$AuthController {
     final result = await _repo.completeExternalRegistration(role: role);
     switch (result) {
       case Ok(:final value):
-        state = AuthState.authenticated(value);
+        _replaceAuthState(AuthState.authenticated(value));
         _refreshUserScopedCaches();
         return null;
       case Err(:final failure):
@@ -155,6 +159,7 @@ class AuthController extends _$AuthController {
   }
 
   Future<void> logout() async {
+    _authStateRevision++;
     await _repo.logout();
     _externalTicket = null;
     _externalTicketExchange = null;
@@ -165,7 +170,7 @@ class AuthController extends _$AuthController {
     final result = await _repo.deleteAccount();
     switch (result) {
       case Ok():
-        state = const AuthState.unauthenticated();
+        _replaceAuthState(const AuthState.unauthenticated());
         return null;
       case Err(:final failure):
         return failure;
@@ -184,11 +189,16 @@ class AuthController extends _$AuthController {
     final result = await _repo.verifyAccountDeletion(token);
     switch (result) {
       case Ok():
-        state = const AuthState.unauthenticated();
+        _replaceAuthState(const AuthState.unauthenticated());
         return null;
       case Err(:final failure):
         return failure;
     }
+  }
+
+  void _replaceAuthState(AuthState next) {
+    _authStateRevision++;
+    state = next;
   }
 }
 

@@ -106,15 +106,10 @@ GoRouter router(Ref ref) {
     initialLocation: '/dashboard',
     debugLogDiagnostics: kDebugMode,
     refreshListenable: refresh,
-    errorBuilder: (_, state) {
-      final clientId = _clientAiInsightIdFromPath(state.uri.path);
-      if (clientId != null) {
-        return ClientAiInsightsScreen(clientId: clientId);
-      }
-      return NotFoundScreen(
-        isAuthenticated: ref.read(authControllerProvider).isAuthed,
-      );
-    },
+    errorBuilder: (_, state) => routerErrorScreenFor(
+      state.uri,
+      isAuthenticated: ref.read(authControllerProvider).isAuthed,
+    ),
     redirect: (context, state) {
       final auth = ref.read(authControllerProvider);
       final loc = state.matchedLocation;
@@ -176,11 +171,11 @@ GoRouter router(Ref ref) {
       ),
       GoRoute(
         path: '/auth/social-callback',
-        builder: (_, state) => _socialCallback(state),
+        builder: (_, state) => _socialCallback(state.uri),
       ),
       GoRoute(
         path: '/social-callback',
-        builder: (_, state) => _socialCallback(state),
+        builder: (_, state) => _socialCallback(state.uri),
       ),
       GoRoute(
         path: '/coach/clients/:clientId/ai-insight',
@@ -596,8 +591,21 @@ GoRouter router(Ref ref) {
 
 Widget _withMenu(Widget child) => AppBottomMenuFrame(child: child);
 
-Widget _socialCallback(GoRouterState state) {
-  final uri = state.uri;
+@visibleForTesting
+Widget routerErrorScreenFor(Uri uri, {required bool isAuthenticated}) {
+  if (isSupportedSocialCallbackUri(uri)) {
+    return _socialCallback(uri);
+  }
+
+  final clientId = _clientAiInsightIdFromPath(uri.path);
+  if (clientId != null) {
+    return ClientAiInsightsScreen(clientId: clientId);
+  }
+
+  return NotFoundScreen(isAuthenticated: isAuthenticated);
+}
+
+Widget _socialCallback(Uri uri) {
   if (!isSupportedSocialCallbackUri(uri)) {
     return const NotFoundScreen(isAuthenticated: false);
   }

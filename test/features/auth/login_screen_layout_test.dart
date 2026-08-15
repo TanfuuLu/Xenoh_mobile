@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:xenoh_mobile/app/theme/app_theme.dart';
 import 'package:xenoh_mobile/features/auth/presentation/screens/login_screen.dart';
 import 'package:xenoh_mobile/features/auth/presentation/services/external_auth_launcher.dart';
@@ -32,15 +33,15 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('social buttons launch the fixed mobile backend flow', (
+  testWidgets('social buttons complete the native OAuth callback flow', (
     tester,
   ) async {
     Uri? openedUri;
     final launcher = ExternalAuthLauncher(
       apiBaseUrl: 'https://api.xenoh.online/api',
-      openUrl: (uri) async {
+      authenticate: (uri) async {
         openedUri = uri;
-        return true;
+        return Uri.parse('xenoh://auth/social-callback?ticket=one-time');
       },
     );
     await _pumpLogin(tester, const Size(400, 800), launcher: launcher);
@@ -52,6 +53,7 @@ void main() {
       openedUri.toString(),
       'https://api.xenoh.online/api/auth/external/google?client=mobile',
     );
+    expect(find.text('Callback one-time'), findsOneWidget);
   });
 
   testWidgets('browser launch failure is retryable and user friendly', (
@@ -59,7 +61,7 @@ void main() {
   ) async {
     final launcher = ExternalAuthLauncher(
       apiBaseUrl: 'https://api.xenoh.online/api',
-      openUrl: (_) async => false,
+      authenticate: (_) async => throw Exception('cancelled'),
     );
     await _pumpLogin(tester, const Size(400, 800), launcher: launcher);
 
@@ -88,9 +90,25 @@ Future<void> _pumpLogin(
 }) async {
   await tester.binding.setSurfaceSize(size);
   addTearDown(() => tester.binding.setSurfaceSize(null));
+  final router = GoRouter(
+    initialLocation: '/login',
+    routes: [
+      GoRoute(
+        path: '/login',
+        builder: (_, _) => LoginScreen(externalAuthLauncher: launcher),
+      ),
+      GoRoute(
+        path: '/auth/social-callback',
+        builder: (_, state) => Scaffold(
+          body: Text('Callback ${state.uri.queryParameters['ticket']}'),
+        ),
+      ),
+    ],
+  );
+  addTearDown(router.dispose);
   await tester.pumpWidget(
     ProviderScope(
-      child: MaterialApp(
+      child: MaterialApp.router(
         theme: AppTheme.light(),
         localizationsDelegates: const [
           AppLocalizations.delegate,
@@ -99,7 +117,7 @@ Future<void> _pumpLogin(
           GlobalCupertinoLocalizations.delegate,
         ],
         supportedLocales: AppLocalizations.supportedLocales,
-        home: LoginScreen(externalAuthLauncher: launcher),
+        routerConfig: router,
       ),
     ),
   );

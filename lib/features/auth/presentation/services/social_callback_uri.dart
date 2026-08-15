@@ -11,3 +11,12 @@ bool isSupportedSocialCallbackUri(Uri uri) {
       !uri.hasPort &&
       !uri.hasFragment;
 }
+
+String? internalSocialCallbackLocation(Uri uri) {
+  if (!isSupportedSocialCallbackUri(uri)) return null;
+
+  return Uri(
+    path: '/auth/social-callback',
+    query: uri.hasQuery ? uri.query : null,
+  ).toString();
+}

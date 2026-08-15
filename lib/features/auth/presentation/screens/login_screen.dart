@@ -10,6 +10,7 @@ import '../../../../core/widgets/xn_input.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../providers/auth_controller.dart';
 import '../services/external_auth_launcher.dart';
+import '../services/social_callback_uri.dart';
 import '../widgets/auth_layout.dart';
 import '../widgets/social_login_controls.dart';
 
@@ -64,16 +65,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     if (_submitting || _launchingProvider != null) return;
     setState(() => _launchingProvider = provider);
 
-    var opened = false;
+    String? callbackLocation;
     try {
-      opened = await _externalAuthLauncher.launch(provider);
+      final callback = await _externalAuthLauncher.authenticate(provider);
+      if (callback != null) {
+        callbackLocation = internalSocialCallbackLocation(callback);
+      }
     } on Exception {
-      opened = false;
+      callbackLocation = null;
     }
 
     if (!mounted) return;
     setState(() => _launchingProvider = null);
-    if (!opened) {
+    if (callbackLocation == null) {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(
@@ -83,7 +87,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             ),
           ),
         );
+      return;
     }
+    context.go(callbackLocation);
   }
 
   @override

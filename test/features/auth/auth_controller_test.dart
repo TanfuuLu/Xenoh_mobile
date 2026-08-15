@@ -145,6 +145,30 @@ void main() {
     verify(() => repo.exchangeExternalTicket('one-time-ticket')).called(1);
   });
 
+  test(
+    'late startup restore cannot overwrite external login success',
+    () async {
+      final repo = MockAuthRepository();
+      final restore = Completer<Result<AuthSession>>();
+      when(repo.restoreSession).thenAnswer((_) => restore.future);
+      when(
+        () => repo.exchangeExternalTicket('one-time-ticket'),
+      ).thenAnswer((_) async => const Ok(_session));
+
+      final container = _container(repo);
+      final controller = container.read(authControllerProvider.notifier);
+
+      expect(
+        await controller.exchangeExternalTicket('one-time-ticket'),
+        isNull,
+      );
+      restore.complete(const Err(AuthFailure()));
+      await Future<void>.delayed(Duration.zero);
+
+      expect(container.read(authControllerProvider), isA<Authenticated>());
+    },
+  );
+
   test('logout clears the session', () async {
     final repo = MockAuthRepository();
     when(repo.restoreSession).thenAnswer((_) async => const Ok(_session));

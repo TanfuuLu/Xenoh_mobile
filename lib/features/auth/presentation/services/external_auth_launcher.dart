@@ -1,4 +1,6 @@
-import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
+
+import 'social_callback_uri.dart';
 
 enum ExternalAuthProvider {
   google('google'),
@@ -9,17 +11,17 @@ enum ExternalAuthProvider {
   final String wireValue;
 }
 
-typedef ExternalUrlOpener = Future<bool> Function(Uri uri);
+typedef ExternalAuthSession = Future<Uri> Function(Uri authorizationUri);
 
 class ExternalAuthLauncher {
   ExternalAuthLauncher({
     required String apiBaseUrl,
-    ExternalUrlOpener? openUrl,
+    ExternalAuthSession? authenticate,
   }) : _apiBaseUrl = apiBaseUrl,
-       _openUrl = openUrl ?? _openInExternalBrowser;
+       _authenticate = authenticate ?? _authenticateWithBrowserSession;
 
   final String _apiBaseUrl;
-  final ExternalUrlOpener _openUrl;
+  final ExternalAuthSession _authenticate;
 
   Uri uriFor(ExternalAuthProvider provider) {
     final baseUri = Uri.parse(_apiBaseUrl);
@@ -32,9 +34,18 @@ class ExternalAuthLauncher {
     );
   }
 
-  Future<bool> launch(ExternalAuthProvider provider) =>
-      _openUrl(uriFor(provider));
+  Future<Uri?> authenticate(ExternalAuthProvider provider) async {
+    final callback = await _authenticate(uriFor(provider));
+    return callback.hasScheme && isSupportedSocialCallbackUri(callback)
+        ? callback
+        : null;
+  }
 }
 
-Future<bool> _openInExternalBrowser(Uri uri) =>
-    launchUrl(uri, mode: LaunchMode.externalApplication);
+Future<Uri> _authenticateWithBrowserSession(Uri uri) async {
+  final callback = await FlutterWebAuth2.authenticate(
+    url: uri.toString(),
+    callbackUrlScheme: 'xenoh',
+  );
+  return Uri.parse(callback);
+}

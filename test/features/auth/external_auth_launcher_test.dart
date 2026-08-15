@@ -5,7 +5,8 @@ void main() {
   test('builds fixed mobile OAuth URLs for both supported providers', () {
     final launcher = ExternalAuthLauncher(
       apiBaseUrl: 'https://api.xenoh.online/api/',
-      openUrl: (_) async => true,
+      authenticate: (_) async =>
+          Uri.parse('xenoh://auth/social-callback?ticket=one-time'),
     );
 
     expect(
@@ -19,24 +20,55 @@ void main() {
   });
 
   test(
-    'launch delegates only the generated allowlisted provider URL',
+    'authenticate returns the callback from the fixed provider URL',
     () async {
       Uri? openedUri;
       final launcher = ExternalAuthLauncher(
         apiBaseUrl: 'https://10.0.2.2:7017/api',
-        openUrl: (uri) async {
+        authenticate: (uri) async {
           openedUri = uri;
-          return true;
+          return Uri.parse(
+            'xenoh://auth/social-callback?ticket=one-time-ticket',
+          );
         },
       );
 
-      final opened = await launcher.launch(ExternalAuthProvider.facebook);
+      final callback = await launcher.authenticate(
+        ExternalAuthProvider.facebook,
+      );
 
-      expect(opened, isTrue);
+      expect(
+        callback,
+        Uri.parse('xenoh://auth/social-callback?ticket=one-time-ticket'),
+      );
       expect(
         openedUri.toString(),
         'https://10.0.2.2:7017/api/auth/external/facebook?client=mobile',
       );
     },
   );
+
+  test('authenticate rejects a callback outside the app allowlist', () async {
+    final launcher = ExternalAuthLauncher(
+      apiBaseUrl: 'https://api.xenoh.online/api',
+      authenticate: (_) async =>
+          Uri.parse('xenoh://attacker/social-callback?ticket=stolen'),
+    );
+
+    final callback = await launcher.authenticate(ExternalAuthProvider.google);
+
+    expect(callback, isNull);
+  });
+
+  test('authenticate rejects an internal relative callback', () async {
+    final launcher = ExternalAuthLauncher(
+      apiBaseUrl: 'https://api.xenoh.online/api',
+      authenticate: (_) async =>
+          Uri.parse('/auth/social-callback?ticket=one-time'),
+    );
+
+    final callback = await launcher.authenticate(ExternalAuthProvider.google);
+
+    expect(callback, isNull);
+  });
 }
