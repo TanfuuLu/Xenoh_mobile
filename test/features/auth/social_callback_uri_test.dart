@@ -54,6 +54,30 @@ void main() {
       ),
       isFalse,
     );
+    expect(
+      isSupportedSocialCallbackUri(
+        Uri.parse('/auth/social-callback?ticket=one-time#fragment'),
+      ),
+      isFalse,
+    );
+    expect(
+      isSupportedSocialCallbackUri(
+        Uri.parse('//attacker/auth/social-callback?ticket=one-time'),
+      ),
+      isFalse,
+    );
+  });
+
+  test('accepts and removes the Facebook compatibility fragment', () {
+    final callback = Uri.parse(
+      'xenoh://auth/social-callback?ticket=one-time#_=_',
+    );
+
+    expect(isSupportedSocialCallbackUri(callback), isTrue);
+    expect(
+      internalSocialCallbackLocation(callback),
+      '/auth/social-callback?ticket=one-time',
+    );
   });
 
   test('converts an allowlisted app callback into an internal route', () {

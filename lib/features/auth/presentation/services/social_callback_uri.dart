@@ -1,7 +1,8 @@
 bool isSupportedSocialCallbackUri(Uri uri) {
   if (!uri.hasScheme) {
-    return uri.path == '/auth/social-callback' ||
-        uri.path == '/social-callback';
+    final supportedPath =
+        uri.path == '/auth/social-callback' || uri.path == '/social-callback';
+    return supportedPath && !uri.hasAuthority && !uri.hasFragment;
   }
 
   return uri.scheme == 'xenoh' &&
@@ -9,7 +10,7 @@ bool isSupportedSocialCallbackUri(Uri uri) {
       uri.path == '/social-callback' &&
       uri.userInfo.isEmpty &&
       !uri.hasPort &&
-      !uri.hasFragment;
+      (!uri.hasFragment || uri.fragment == '_=_');
 }
 
 String? internalSocialCallbackLocation(Uri uri) {
