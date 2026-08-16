@@ -26,13 +26,16 @@
 
 - [x] Focused config test passes.
 - [x] Focused social login flow test passes.
-- [x] All auth/router tests pass (43 tests after implementation).
-- [x] Full Flutter suite passes (338 tests).
+- [x] All auth/router tests pass (44 tests after implementation).
+- [x] Full Flutter suite passes (340 tests).
 - [x] `flutter analyze` reports no issues.
 - [x] Debug and signed release APKs build.
 - [x] Focused backend OAuth tests pass (17 tests).
 - [x] Android warm/cold callback smoke tests pass after changes.
 - [x] Signed release defaults to the production API and opens both providers.
+- [x] Exact Facebook `_=_` callback marker is accepted and stripped; arbitrary fragments remain rejected.
+- [x] Signed release completes real Facebook ticket exchange and opens Dashboard on Android.
+- [x] Facebook session restores Dashboard after Android force-stop/relaunch.
 - [x] Git diff contains no secrets or unrelated changes.
 
 ## External release certification
@@ -41,7 +44,7 @@
 - [ ] Facebook provider console has `https://api.xenoh.online/api/auth/external/facebook/callback`.
 - [ ] Facebook email permission and app tester/live status are valid.
 - [ ] Real Google test account reaches Dashboard on Android.
-- [ ] Real Facebook test account reaches Dashboard on Android.
+- [x] Real Facebook test account reaches Dashboard on Android.
 - [ ] Real Google test account reaches Dashboard on iOS.
 - [ ] Real Facebook test account reaches Dashboard on iOS.
 - [ ] Cancellation, denial, expired/replayed ticket, logout, and account switching pass.

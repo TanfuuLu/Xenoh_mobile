@@ -47,8 +47,8 @@ Users who choose Google or Facebook on the Flutter login screen must complete th
 
 ## Implementation Tasks
 
-**Delivery status:** Tasks 1-3 are complete. Task 4 remains an external
-release-certification gate.
+**Delivery status:** Tasks 1-3 are complete. Android Facebook certification in
+Task 4 is complete; Google and iOS remain external release-certification gates.
 
 ### Task 1: Make the API origin safe for release builds
 
@@ -159,6 +159,7 @@ release-certification gate.
 | Provider console callback differs by scheme, host, path, or trailing slash | Provider rejects login before returning to Xenoh | Verify the two exact HTTPS callback URLs in Task 4 |
 | Facebook app lacks email permission or tester/live access | Backend cannot create/link the user | Verify email permission and app/tester status before release |
 | Callback delivered twice by native routing and browser-session completion | Ticket replay or duplicate navigation | Existing controller deduplicates by ticket; Task 2 locks this behavior |
+| Facebook appends its `_=_` compatibility fragment to the mobile callback | Dart rejects the otherwise valid ticket callback and leaves the user on Login | Allow and strip only the exact `_=_` marker; continue rejecting every other fragment in native and Dart tests |
 | App is killed while the browser is open | In-memory browser result is lost | Cold deep link is independently handled by Flutter Router; Android cold-start smoke test already passes |
 | Private-use `xenoh://` scheme can be claimed by another installed app | A malicious app could intercept the short-lived bearer ticket before Xenoh exchanges it | The five-minute, single-use ticket limits replay; schedule a coordinated migration to verified App/Universal Links or bind ticket exchange to the initiating app with PKCE |
 | iOS runtime cannot be exercised from Windows | iOS-specific regression remains possible | Keep static tests and require macOS/iOS certification in Task 4 |
@@ -176,8 +177,8 @@ release-certification gate.
 ## Post-Implementation Verification
 
 - Combined Google/Facebook callback-to-Dashboard regression: 2 passed.
-- Focused config/auth/router suite: 43 passed.
-- Full Flutter suite: 338 passed.
+- Focused config/auth/router suite: 44 passed.
+- Full Flutter suite: 340 passed.
 - `flutter analyze`: no issues.
 - Debug and signed release APKs: built successfully.
 - Focused backend OAuth suite: 17 passed.
@@ -185,6 +186,9 @@ release-certification gate.
   - Google opened `accounts.google.com`.
   - Facebook opened `m.facebook.com`.
   - Warm and cold callbacks returned to the release app.
+  - Real Facebook consent returned a one-time ticket with the `_=_` marker,
+    exchanged it successfully, opened Dashboard, and restored Dashboard after
+    force-stop/relaunch.
 
 ## Implementation Gate
 
