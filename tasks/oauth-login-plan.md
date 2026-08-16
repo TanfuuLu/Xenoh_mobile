@@ -160,6 +160,7 @@ release-certification gate.
 | Facebook app lacks email permission or tester/live access | Backend cannot create/link the user | Verify email permission and app/tester status before release |
 | Callback delivered twice by native routing and browser-session completion | Ticket replay or duplicate navigation | Existing controller deduplicates by ticket; Task 2 locks this behavior |
 | App is killed while the browser is open | In-memory browser result is lost | Cold deep link is independently handled by Flutter Router; Android cold-start smoke test already passes |
+| Private-use `xenoh://` scheme can be claimed by another installed app | A malicious app could intercept the short-lived bearer ticket before Xenoh exchanges it | The five-minute, single-use ticket limits replay; schedule a coordinated migration to verified App/Universal Links or bind ticket exchange to the initiating app with PKCE |
 | iOS runtime cannot be exercised from Windows | iOS-specific regression remains possible | Keep static tests and require macOS/iOS certification in Task 4 |
 | Kotlin plugin migration warning | Future Flutter versions may reject current plugins | Current build passes; track separately because changing unrelated plugins would expand OAuth scope |
 
@@ -170,6 +171,7 @@ release-certification gate.
 - Production secrets remain in the deployment secret store, never in source control or logs.
 - Real test-account passwords are entered only in the provider UI; they must not be pasted into task chat or committed files.
 - iOS certification requires a macOS/iOS build environment.
+- Native callback hardening requires a coordinated backend/domain/platform decision: verified HTTPS App/Universal Links or PKCE-bound ticket exchange.
 
 ## Post-Implementation Verification
 

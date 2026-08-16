@@ -45,3 +45,4 @@
 - [ ] Real Google test account reaches Dashboard on iOS.
 - [ ] Real Facebook test account reaches Dashboard on iOS.
 - [ ] Cancellation, denial, expired/replayed ticket, logout, and account switching pass.
+- [ ] Choose and schedule verified App/Universal Links or PKCE-bound ticket hardening.
