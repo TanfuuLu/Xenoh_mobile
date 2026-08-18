@@ -16,14 +16,12 @@ class DashboardHero extends StatelessWidget {
     required this.profile,
     this.backgroundImagePath,
     this.backgroundAlignment = Alignment.center,
-    this.onOpenPlateCalculator,
     super.key,
   });
 
   final DashboardProfile profile;
   final String? backgroundImagePath;
   final Alignment backgroundAlignment;
-  final VoidCallback? onOpenPlateCalculator;
 
   @override
   Widget build(BuildContext context) {
@@ -77,10 +75,6 @@ class DashboardHero extends StatelessWidget {
               _StreakBadge(streak: profile.currentStreak),
             ],
           ),
-          if (onOpenPlateCalculator != null) ...[
-            const SizedBox(height: AppSpacing.md),
-            _HeroActionButton(onPressed: onOpenPlateCalculator!),
-          ],
           const SizedBox(height: AppSpacing.md),
           Container(
             width: double.infinity,
@@ -154,84 +148,6 @@ class _Avatar extends StatelessWidget {
       foregroundColor: AppColors.fgOnClay,
       borderColor: AppColors.fgOnClay.withValues(alpha: 0.18),
       borderRadius: AppRadius.lg,
-    );
-  }
-}
-
-class _HeroActionButton extends StatelessWidget {
-  const _HeroActionButton({required this.onPressed});
-
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    return Material(
-      color: AppColors.fgOnClay.withValues(alpha: 0.1),
-      borderRadius: BorderRadius.circular(AppRadius.md),
-      child: InkWell(
-        onTap: onPressed,
-        borderRadius: BorderRadius.circular(AppRadius.md),
-        child: Container(
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.lg,
-            vertical: AppSpacing.md,
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 42,
-                height: 42,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: AppColors.fgOnClay.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(AppRadius.md),
-                ),
-                child: const Icon(
-                  Icons.fitness_center_rounded,
-                  color: AppColors.fgOnClay,
-                  size: 22,
-                ),
-              ),
-              const SizedBox(width: AppSpacing.md),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      l10n.dashboardPlateCalculatorTitle,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: AppColors.fgOnClay,
-                        fontSize: 15,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      l10n.dashboardPlateCalculatorSubtitle,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: AppColors.fgOnClay,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: AppSpacing.sm),
-              const Icon(
-                Icons.chevron_right_rounded,
-                color: AppColors.fgOnClay,
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }

@@ -168,7 +168,7 @@ class _BodyweightCardState extends State<BodyweightCard> {
             runSpacing: AppSpacing.xs,
             children: [
               SizedBox(
-                width: 126,
+                width: 96,
                 child: TextField(
                   groupId: _weightInputGroup,
                   controller: _weightController,
@@ -181,10 +181,16 @@ class _BodyweightCardState extends State<BodyweightCard> {
                   ],
                   textInputAction: TextInputAction.done,
                   style: AppTypography.display(22, letterSpacing: 0),
+                  // A slimmer, shorter caret so it doesn't overpower the
+                  // 22pt display digits it sits next to.
+                  cursorWidth: 1.5,
+                  cursorHeight: 20,
+                  cursorRadius: const Radius.circular(1),
                   decoration: InputDecoration(
                     isDense: true,
                     contentPadding: const EdgeInsets.only(bottom: 4),
-                    suffixText: widget.unit.suffix,
+                    // The unit is implicit while typing - it's shown on the
+                    // value once the entry is saved.
                     errorText: _weightError,
                     errorMaxLines: 2,
                   ),

@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_dimens.dart';
+import '../../../../core/sync/data_revision.dart';
+import '../../../../core/sync/data_topic.dart';
 import '../../../../core/widgets/xn_card.dart';
 import '../../../../core/widgets/xn_dropdown.dart';
 import '../../../../core/widgets/xn_section.dart';
@@ -36,6 +38,7 @@ final adminBugReportsProvider = FutureProvider.autoDispose
       ref,
       filters,
     ) {
+      ref.syncOn(const [DataTopic.admin]);
       final params = <String>[
         if (filters.status.isNotEmpty) 'status=${filters.status}',
         if (filters.severity.isNotEmpty) 'severity=${filters.severity}',
@@ -196,7 +199,6 @@ class _BugReportCardState extends ConsumerState<_BugReportCard> {
               : _noteController.text.trim(),
         },
       );
-      ref.invalidate(adminBugReportsProvider(widget.filters));
     } catch (error) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(

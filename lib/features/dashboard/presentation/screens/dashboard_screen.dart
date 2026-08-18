@@ -26,6 +26,7 @@ import '../providers/dashboard_controller.dart';
 import '../widgets/dashboard_hero.dart';
 import '../widgets/nutrition_card.dart';
 import '../widgets/plate_calculator_card.dart';
+import '../widgets/plate_calculator_entry.dart';
 import '../widgets/pro_insights_card.dart';
 import '../widgets/supplements_card.dart';
 import '../widgets/today_meal_plan_card.dart';
@@ -183,7 +184,12 @@ class _DashboardBody extends StatelessWidget {
           profile: data.profile,
           backgroundImagePath: backgroundImagePath,
           backgroundAlignment: backgroundAlignment,
-          onOpenPlateCalculator: () => _openPlateCalculator(context),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        _DashboardPanel(
+          child: PlateCalculatorEntry(
+            onOpen: () => _openPlateCalculator(context),
+          ),
         ),
         const SizedBox(height: AppSpacing.md),
         _DashboardPanel(

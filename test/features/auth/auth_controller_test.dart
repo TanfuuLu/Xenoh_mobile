@@ -1,5 +1,7 @@
 // ignore_for_file: cascade_invocations — sequential container.read calls read clearer.
 
+import 'dart:async';
+
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -122,6 +124,50 @@ void main() {
     expect(failure, isA<ValidationFailure>());
     expect(container.read(authControllerProvider).isAuthed, isFalse);
   });
+
+  test('duplicate external ticket deliveries share one exchange', () async {
+    final repo = MockAuthRepository();
+    final exchange = Completer<Result<AuthSession>>();
+    when(repo.restoreSession).thenAnswer((_) async => const Err(AuthFailure()));
+    when(
+      () => repo.exchangeExternalTicket('one-time-ticket'),
+    ).thenAnswer((_) => exchange.future);
+
+    final container = _container(repo);
+    final controller = container.read(authControllerProvider.notifier);
+
+    final first = controller.exchangeExternalTicket('one-time-ticket');
+    final duplicate = controller.exchangeExternalTicket('one-time-ticket');
+    exchange.complete(const Ok(_session));
+
+    expect(await first, isNull);
+    expect(await duplicate, isNull);
+    verify(() => repo.exchangeExternalTicket('one-time-ticket')).called(1);
+  });
+
+  test(
+    'late startup restore cannot overwrite external login success',
+    () async {
+      final repo = MockAuthRepository();
+      final restore = Completer<Result<AuthSession>>();
+      when(repo.restoreSession).thenAnswer((_) => restore.future);
+      when(
+        () => repo.exchangeExternalTicket('one-time-ticket'),
+      ).thenAnswer((_) async => const Ok(_session));
+
+      final container = _container(repo);
+      final controller = container.read(authControllerProvider.notifier);
+
+      expect(
+        await controller.exchangeExternalTicket('one-time-ticket'),
+        isNull,
+      );
+      restore.complete(const Err(AuthFailure()));
+      await Future<void>.delayed(Duration.zero);
+
+      expect(container.read(authControllerProvider), isA<Authenticated>());
+    },
+  );
 
   test('logout clears the session', () async {
     final repo = MockAuthRepository();

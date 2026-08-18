@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_dimens.dart';
+import '../../../../core/sync/data_revision.dart';
+import '../../../../core/sync/data_topic.dart';
 import '../../../../core/widgets/async_value_view.dart';
 import '../../../../core/widgets/xn_card.dart';
 import '../../../../l10n/app_localizations.dart';
@@ -10,22 +12,26 @@ import '../../../shared_api/api_widgets.dart';
 import '../../../shared_api/xenoh_api.dart';
 
 final adminPaymentSummaryProvider = FutureProvider.autoDispose<JsonMap>((ref) {
+  ref.syncOn(const [DataTopic.admin, DataTopic.subscription]);
   return ref.watch(xenohApiProvider).getObject('/admin/payments/summary');
 });
 
 final adminPaymentsProvider = FutureProvider.autoDispose<List<JsonMap>>((ref) {
+  ref.syncOn(const [DataTopic.admin, DataTopic.subscription]);
   return ref.watch(xenohApiProvider).getList('/admin/payments');
 });
 
 final adminSubscriptionsProvider = FutureProvider.autoDispose<List<JsonMap>>((
   ref,
 ) {
+  ref.syncOn(const [DataTopic.admin, DataTopic.subscription]);
   return ref.watch(xenohApiProvider).getList('/admin/subscriptions');
 });
 
 final adminPromotionCodesProvider = FutureProvider.autoDispose<List<JsonMap>>((
   ref,
 ) {
+  ref.syncOn(const [DataTopic.admin]);
   return ref.watch(xenohApiProvider).getList('/admin/promotion-codes');
 });
 
@@ -263,7 +269,6 @@ class AdminPaymentsScreen extends ConsumerWidget {
           'reason': reason.text.trim(),
         },
       );
-      ref.invalidate(adminSubscriptionsProvider);
     }
     reason.dispose();
     months.dispose();
@@ -401,7 +406,6 @@ class AdminPromotionsScreen extends ConsumerWidget {
       '/admin/promotion-codes/${promotion['id']}',
       {..._promotionPayload(promotion), 'isActive': active},
     );
-    ref.invalidate(adminPromotionCodesProvider);
   }
 
   Future<void> _deletePromotion(
@@ -431,7 +435,6 @@ class AdminPromotionsScreen extends ConsumerWidget {
       await ref
           .read(xenohApiProvider)
           .delete('/admin/promotion-codes/${promotion['id']}');
-      ref.invalidate(adminPromotionCodesProvider);
     }
   }
 
@@ -440,11 +443,10 @@ class AdminPromotionsScreen extends ConsumerWidget {
     WidgetRef ref, {
     JsonMap? promotion,
   }) async {
-    final saved = await showDialog<bool>(
+    await showDialog<bool>(
       context: context,
       builder: (_) => _PromotionDialog(promotion: promotion),
     );
-    if (saved == true) ref.invalidate(adminPromotionCodesProvider);
   }
 }
 

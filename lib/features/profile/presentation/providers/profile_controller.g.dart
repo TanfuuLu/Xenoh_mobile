@@ -37,7 +37,7 @@ final class MyProfileControllerProvider
 }
 
 String _$myProfileControllerHash() =>
-    r'77fef984e16b5f1d9a49b15179b4e8eda1994505';
+    r'83a71458b8dde778987189019e156e754bffef72';
 
 /// The signed-in user's full profile (`GET /users/me`).
 
@@ -103,7 +103,7 @@ final class BodyweightHistoryProvider
   }
 }
 
-String _$bodyweightHistoryHash() => r'ff3d25d6ec61f570a7d183fc099397a68009cec5';
+String _$bodyweightHistoryHash() => r'473988ef98851256d667f7afb94161f820308896';
 
 /// Monthly training activity (calendar + totals), keyed by year/month.
 
@@ -165,7 +165,7 @@ final class TrainingActivityProvider
   }
 }
 
-String _$trainingActivityHash() => r'37126ad901a446fb1ff08c84c5d378c66ef809fb';
+String _$trainingActivityHash() => r'bcde005846464b2a95b5af06e3cf9b084c15c95e';
 
 /// Monthly training activity (calendar + totals), keyed by year/month.
 

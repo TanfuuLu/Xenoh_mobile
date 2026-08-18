@@ -1,5 +1,12 @@
 # Xenoh Google Play Implementation Plan
 
+> **Status note (2026-08-16):** parts of the "Completed" claims below were
+> stale — the bank-transfer checkout was still live in the app until it was
+> removed on 2026-08-16, and the account-deletion localization it lists as
+> outstanding was already done. See
+> [play-store-readiness-audit.md](play-store-readiness-audit.md) for the
+> verified current state; that document is authoritative where the two differ.
+
 ## Goal
 
 Publish Xenoh on Google Play without an in-app customer payment flow. Website

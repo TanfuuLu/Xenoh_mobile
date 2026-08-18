@@ -7,7 +7,7 @@ import 'package:xenoh_mobile/features/dashboard/presentation/widgets/dashboard_h
 import 'package:xenoh_mobile/l10n/app_localizations.dart';
 
 void main() {
-  testWidgets('combines dashboard identity, action, and XP in one hero card', (
+  testWidgets('combines dashboard identity and XP in one hero card', (
     tester,
   ) async {
     const profile = DashboardProfile(
@@ -25,11 +25,10 @@ void main() {
         supportedLocales: AppLocalizations.supportedLocales,
         home: Scaffold(
           body: ListView(
-            children: [
+            children: const [
               DashboardHero(
                 profile: profile,
                 backgroundImagePath: 'saved-background.jpg',
-                onOpenPlateCalculator: () {},
               ),
             ],
           ),
@@ -52,7 +51,8 @@ void main() {
       AppLayout.heroCardMinHeight,
     );
     expect(find.text('Demo'), findsOneWidget);
-    expect(find.text('Plate calculator'), findsOneWidget);
+    // The plate calculator now lives in its own card below the hero.
+    expect(find.text('Plate calculator'), findsNothing);
     expect(find.textContaining('Novice'), findsOneWidget);
     expect(find.textContaining('11,000 XP'), findsOneWidget);
   });

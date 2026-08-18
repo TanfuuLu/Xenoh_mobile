@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../../core/sync/data_revision.dart';
+import '../../../../core/sync/data_topic.dart';
 import '../../data/repositories/cycle_repository_provider.dart';
 import '../../domain/entities/cycle_models.dart';
 
@@ -10,8 +12,10 @@ part 'cycle_controllers.g.dart';
 @riverpod
 class CycleOverviewController extends _$CycleOverviewController {
   @override
-  Future<CycleOverview> build() =>
-      ref.watch(cycleRepositoryProvider).getOverview();
+  Future<CycleOverview> build() {
+    ref.syncOn(const [DataTopic.cycle]);
+    return ref.watch(cycleRepositoryProvider).getOverview();
+  }
 
   Future<void> refresh() async {
     state = await AsyncValue.guard(
@@ -26,11 +30,13 @@ Future<List<CycleDailyLog>> cycleLogs(
   required DateTime from,
   required DateTime to,
 }) {
+  ref.syncOn(const [DataTopic.cycle]);
   return ref.watch(cycleRepositoryProvider).getLogs(from: from, to: to);
 }
 
 @riverpod
 Future<CycleSettings> cycleSettings(Ref ref) {
+  ref.syncOn(const [DataTopic.cycle]);
   return ref.watch(cycleRepositoryProvider).getSettings();
 }
 
@@ -94,11 +100,10 @@ class CycleMutationController extends _$CycleMutationController {
     _invalidateCycle();
   }
 
+  /// Cycle reads re-fetch themselves off [DataTopic.cycle]; only the AI
+  /// insight has to be dropped by hand, since AI endpoints are rate-limited
+  /// and deliberately stay out of the sync graph.
   void _invalidateCycle() {
-    ref
-      ..invalidate(cycleOverviewControllerProvider)
-      ..invalidate(cycleLogsProvider)
-      ..invalidate(cycleSettingsProvider)
-      ..invalidate(cycleInsightProvider);
+    ref.invalidate(cycleInsightProvider);
   }
 }

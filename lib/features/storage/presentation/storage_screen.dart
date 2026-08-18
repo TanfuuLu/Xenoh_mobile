@@ -157,7 +157,6 @@ class _StorageScreenState extends ConsumerState<StorageScreen> {
               }
             },
           );
-      ref.invalidate(myFilesProvider);
     } catch (error) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -293,7 +292,6 @@ class _OwnedFileCard extends ConsumerWidget {
   ) async {
     try {
       await action();
-      ref.invalidate(myFilesProvider);
     } catch (error) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../app/theme/app_dimens.dart';
+import '../../../../core/sync/data_revision.dart';
+import '../../../../core/sync/data_topic.dart';
 import '../../../../core/widgets/xn_button.dart';
 import '../../../../core/widgets/xn_dropdown.dart';
 import '../../../../core/widgets/xn_input.dart';
@@ -14,6 +16,7 @@ import 'admin_users_screen.dart';
 
 final adminUserDetailProvider = FutureProvider.autoDispose
     .family<JsonMap, String>((ref, userId) {
+      ref.syncOn(const [DataTopic.admin]);
       return ref.watch(xenohApiProvider).getObject('/admin/users/$userId');
     });
 
@@ -182,7 +185,6 @@ class _AdminUserDetailScreenState extends ConsumerState<AdminUserDetailScreen> {
               : _reason.text.trim(),
         },
       );
-      ref.invalidate(adminUserDetailProvider(widget.userId));
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(l10n.adminSubscriptionAdjustedSnackbar)),

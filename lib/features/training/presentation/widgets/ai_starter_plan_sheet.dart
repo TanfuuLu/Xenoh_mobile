@@ -12,7 +12,6 @@ import '../../../../l10n/app_localizations.dart';
 import '../../../profile/presentation/providers/preferences_provider.dart';
 import '../../../shared_api/ai_widgets.dart';
 import '../../../shared_api/xenoh_api.dart';
-import '../providers/plans_controller.dart';
 
 String _goalLabel(String value, AppLocalizations l10n) => switch (value) {
   'Build muscle' => l10n.trainingGoalBuildMuscle,
@@ -131,7 +130,6 @@ class _AiStarterPlanSheetState extends ConsumerState<AiStarterPlanSheet> {
           'language': ref.read(appLocaleProvider)?.languageCode ?? 'en',
         },
       );
-      ref.invalidate(plansControllerProvider);
       if (!mounted) return;
       Navigator.pop(context, response['id']?.toString());
     } catch (e) {

@@ -3,12 +3,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/theme/app_dimens.dart';
+import '../../../../core/sync/data_revision.dart';
+import '../../../../core/sync/data_topic.dart';
 import '../../../../core/widgets/xn_section.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../shared_api/api_widgets.dart';
 import '../../../shared_api/xenoh_api.dart';
 
 final adminUsersProvider = FutureProvider.autoDispose<List<JsonMap>>((ref) {
+  ref.syncOn(const [DataTopic.admin]);
   return ref.watch(xenohApiProvider).getList('/admin/users');
 });
 
@@ -67,7 +70,6 @@ class AdminUsersScreen extends ConsumerWidget {
                       await ref
                           .read(xenohApiProvider)
                           .postVoid('/admin/users/${item['id']}/$action');
-                      ref.invalidate(adminUsersProvider);
                     },
                   ),
                 ),

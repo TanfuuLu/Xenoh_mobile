@@ -117,10 +117,18 @@ Supported providers from frontend: `google`, `facebook`.
 
 Mobile behavior:
 
-- Open provider URL in browser/custom tab.
-- Handle callback/deep link.
+- Open `/api/auth/external/{provider}?client=mobile` in the system browser.
+- The backend redirects successful mobile OAuth to
+  `xenoh://auth/social-callback?ticket=...`.
+- Android and iOS route that callback into `/social-callback`; unrelated
+  schemes, hosts, and paths are rejected.
 - Exchange ticket with backend.
-- If backend says registration is incomplete, show completion form.
+- Tickets are short-lived and single-use. Duplicate callback delivery must
+  share the same exchange request.
+- Provider failures return `error=external_login_failed`; never put JWT or
+  refresh tokens in the callback URI.
+- New social accounts receive the `Individual` role during exchange, so no
+  completion form is required by the current contract.
 
 ## 4. Users, Profile, Bodyweight, PRs
 

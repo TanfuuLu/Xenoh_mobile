@@ -54,9 +54,10 @@ abstract final class AppColors {
   static const accent2 = sage500;
   static const accent2Soft = sage100;
 
-  // Website navigation active state (`--accent-soft` / `--accent-press`).
-  static const navigationSelectedBackground = Color(0xFFFFF0E5);
-  static const navigationSelectedForeground = Color(0xFF84371F);
+  // Navigation active state. A filled clay capsule with a light glyph, which
+  // matches the drawer's selected item instead of the old pale peach tint.
+  static const navigationSelectedBackground = clay900;
+  static const navigationSelectedForeground = fgOnClay;
 
   // Subtle authenticated-product background treatment from the website.
   static const gridTop = Color(0xFFFAF9F6);

@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:xenoh_mobile/app/theme/app_theme.dart';
 import 'package:xenoh_mobile/features/auth/presentation/screens/login_screen.dart';
+import 'package:xenoh_mobile/features/auth/presentation/services/external_auth_launcher.dart';
 import 'package:xenoh_mobile/features/auth/presentation/widgets/auth_layout.dart';
 import 'package:xenoh_mobile/l10n/app_localizations.dart';
 
@@ -19,6 +21,8 @@ void main() {
     expect(find.text('Password'), findsOneWidget);
     expect(find.text('Forgot password?'), findsOneWidget);
     expect(find.text('Sign in'), findsOneWidget);
+    expect(find.text('Continue with Google'), findsOneWidget);
+    expect(find.text('Continue with Facebook'), findsOneWidget);
     final headerRect = tester.getRect(find.byKey(AuthLayout.headerKey));
     final formRect = tester.getRect(find.byKey(AuthLayout.formKey));
     expect(formRect.top, greaterThanOrEqualTo(headerRect.bottom));
@@ -28,14 +32,83 @@ void main() {
     expect(find.byKey(AuthLayout.wideKey), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('social buttons complete the native OAuth callback flow', (
+    tester,
+  ) async {
+    Uri? openedUri;
+    final launcher = ExternalAuthLauncher(
+      apiBaseUrl: 'https://api.xenoh.online/api',
+      authenticate: (uri) async {
+        openedUri = uri;
+        return Uri.parse('xenoh://auth/social-callback?ticket=one-time');
+      },
+    );
+    await _pumpLogin(tester, const Size(400, 800), launcher: launcher);
+
+    await tester.tap(find.text('Continue with Google'));
+    await tester.pumpAndSettle();
+
+    expect(
+      openedUri.toString(),
+      'https://api.xenoh.online/api/auth/external/google?client=mobile',
+    );
+    expect(find.text('Callback one-time'), findsOneWidget);
+  });
+
+  testWidgets('browser launch failure is retryable and user friendly', (
+    tester,
+  ) async {
+    final launcher = ExternalAuthLauncher(
+      apiBaseUrl: 'https://api.xenoh.online/api',
+      authenticate: (_) async => throw Exception('cancelled'),
+    );
+    await _pumpLogin(tester, const Size(400, 800), launcher: launcher);
+
+    await tester.tap(find.text('Continue with Facebook'));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text('Could not open social sign-in. Please try again.'),
+      findsOneWidget,
+    );
+    expect(
+      tester
+          .widget<OutlinedButton>(
+            find.widgetWithText(OutlinedButton, 'Continue with Facebook'),
+          )
+          .onPressed,
+      isNotNull,
+    );
+  });
 }
 
-Future<void> _pumpLogin(WidgetTester tester, Size size) async {
+Future<void> _pumpLogin(
+  WidgetTester tester,
+  Size size, {
+  ExternalAuthLauncher? launcher,
+}) async {
   await tester.binding.setSurfaceSize(size);
   addTearDown(() => tester.binding.setSurfaceSize(null));
+  final router = GoRouter(
+    initialLocation: '/login',
+    routes: [
+      GoRoute(
+        path: '/login',
+        builder: (_, _) => LoginScreen(externalAuthLauncher: launcher),
+      ),
+      GoRoute(
+        path: '/auth/social-callback',
+        builder: (_, state) => Scaffold(
+          body: Text('Callback ${state.uri.queryParameters['ticket']}'),
+        ),
+      ),
+    ],
+  );
+  addTearDown(router.dispose);
   await tester.pumpWidget(
     ProviderScope(
-      child: MaterialApp(
+      child: MaterialApp.router(
         theme: AppTheme.light(),
         localizationsDelegates: const [
           AppLocalizations.delegate,
@@ -44,7 +117,7 @@ Future<void> _pumpLogin(WidgetTester tester, Size size) async {
           GlobalCupertinoLocalizations.delegate,
         ],
         supportedLocales: AppLocalizations.supportedLocales,
-        home: const LoginScreen(),
+        routerConfig: router,
       ),
     ),
   );

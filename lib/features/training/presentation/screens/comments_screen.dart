@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_dimens.dart';
 import '../../../../core/realtime/realtime_service.dart';
+import '../../../../core/sync/data_revision.dart';
+import '../../../../core/sync/data_topic.dart';
 import '../../../../core/widgets/chat_bubble.dart';
 import '../../../../core/widgets/chat_composer.dart';
 import '../../../../l10n/app_localizations.dart';
@@ -25,6 +27,7 @@ final commentsProvider = FutureProvider.autoDispose
       ref,
       request,
     ) {
+      ref.syncOn(const [DataTopic.community]);
       final base = request.scope == CommentScope.plan ? 'plans' : 'weeks';
       return ref
           .watch(xenohApiProvider)
@@ -192,7 +195,6 @@ class _CommentsScreenState extends ConsumerState<CommentsScreen> {
         },
       );
       _content.clear();
-      ref.invalidate(commentsProvider(_request));
     } catch (e) {
       if (!mounted) return;
       _toast(apiErrorMessage(e, context));
@@ -207,7 +209,6 @@ class _CommentsScreenState extends ConsumerState<CommentsScreen> {
       await ref
           .read(xenohApiProvider)
           .delete('/$_base/${widget.ownerId}/comments/$id');
-      ref.invalidate(commentsProvider(_request));
     } catch (e) {
       if (!mounted) return;
       _toast(apiErrorMessage(e, context));

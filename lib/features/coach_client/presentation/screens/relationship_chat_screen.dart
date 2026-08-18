@@ -228,7 +228,6 @@ class _RelationshipChatScreenState
       }
       _message.clear();
       _pendingAttachments.clear();
-      ref.invalidate(messagesProvider(widget.relationshipId));
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(

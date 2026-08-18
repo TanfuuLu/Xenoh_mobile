@@ -67,7 +67,7 @@ final class CommunityUserSearchProvider
 }
 
 String _$communityUserSearchHash() =>
-    r'78c01c8f7c69482e87af9728033df04f00d858ec';
+    r'184523a3a8795598fbb23012db7e16ca8045b30a';
 
 final class CommunityUserSearchFamily extends $Family
     with
@@ -148,7 +148,7 @@ final class CommunityProfileProvider
   }
 }
 
-String _$communityProfileHash() => r'0129f5ea2d1118a81df48120d17360f75c439884';
+String _$communityProfileHash() => r'ae54ad766e27e5dce61e86685d69a244358e44c4';
 
 final class CommunityProfileFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<CommunityUserProfile>, String> {
@@ -195,7 +195,7 @@ final class CommunitySettingsControllerProvider
 }
 
 String _$communitySettingsControllerHash() =>
-    r'040f395f71df28c53634e7bd79793dcf233439ad';
+    r'15c3e8a16c2619cf370580116ff2af387fab479e';
 
 abstract class _$CommunitySettingsController
     extends $AsyncNotifier<CommunitySettings> {
@@ -275,7 +275,7 @@ final class UserTrainingDaySharesProvider
 }
 
 String _$userTrainingDaySharesHash() =>
-    r'352af26f916fd90049ea7b4666a739be346fb378';
+    r'4d8dd1befbcd741c4770fe64bbc6866929b00052';
 
 final class UserTrainingDaySharesFamily extends $Family
     with
@@ -328,7 +328,7 @@ final class CommunityFeedControllerProvider
 }
 
 String _$communityFeedControllerHash() =>
-    r'f1c6d42f581f6b84ab9f447345760ee0f59cb104';
+    r'37e89d5020d25e14f426e8bc7174c714d281258f';
 
 abstract class _$CommunityFeedController
     extends $AsyncNotifier<CommunityFeedState> {
@@ -374,7 +374,7 @@ final class FriendsControllerProvider
   FriendsController create() => FriendsController();
 }
 
-String _$friendsControllerHash() => r'e5c21b8a67bee97e79aa227d98d8b3ce6338ca4e';
+String _$friendsControllerHash() => r'2c00546e435e056b02c6589159e9e83321492d3c';
 
 abstract class _$FriendsController extends $AsyncNotifier<List<Friend>> {
   FutureOr<List<Friend>> build();
@@ -451,7 +451,7 @@ final class FriendRequestsProvider
   }
 }
 
-String _$friendRequestsHash() => r'acf66e1b22d9a6353febaf4fa8a011701c35ba82';
+String _$friendRequestsHash() => r'475cf92bed4a88cb13fc925d4ca5f82670f37d7b';
 
 final class FriendRequestsFamily extends $Family
     with
@@ -500,7 +500,7 @@ final class FriendActionControllerProvider
 }
 
 String _$friendActionControllerHash() =>
-    r'4a35f6f6db601891a95ddbd6f2d2e773efe055ef';
+    r'862637a595ad3c5d320df8c5f346c59ba153543d';
 
 abstract class _$FriendActionController extends $AsyncNotifier<void> {
   FutureOr<void> build();
@@ -545,7 +545,7 @@ final class ShareActionControllerProvider
 }
 
 String _$shareActionControllerHash() =>
-    r'c1fd35aca26995705cab32fb5c0f91c64f4d5f6f';
+    r'77340fa30fad2327519580aefd62cc5e154a5c46';
 
 abstract class _$ShareActionController extends $AsyncNotifier<void> {
   FutureOr<void> build();

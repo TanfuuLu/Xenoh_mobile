@@ -8,6 +8,8 @@ import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_dimens.dart';
 import '../../../../app/theme/app_typography.dart';
+import '../../../../core/sync/data_revision.dart';
+import '../../../../core/sync/data_topic.dart';
 import '../../../../core/utils/date_only.dart';
 import '../../../../core/utils/text_bullets.dart';
 import '../../../../core/utils/weight_units.dart';
@@ -40,6 +42,7 @@ import '../widgets/client_training_plan_actions.dart';
 
 final clientProfileProvider = FutureProvider.autoDispose
     .family<JsonMap, String>((ref, clientId) async {
+      ref.syncOn(const [DataTopic.coaching, DataTopic.profile]);
       final profile = await ref
           .watch(xenohApiProvider)
           .getObject('/users/$clientId');
@@ -59,6 +62,7 @@ final clientProfileProvider = FutureProvider.autoDispose
 
 final clientPlansProvider = FutureProvider.autoDispose
     .family<List<JsonMap>, String>((ref, clientId) async {
+      ref.syncOn(const [DataTopic.coaching, DataTopic.training]);
       final api = ref.watch(xenohApiProvider);
       final plans = await api.getList(
         '/plans/coach-overview?pageNumber=1&pageSize=100',
@@ -81,6 +85,7 @@ final clientAiInsightProvider = FutureProvider.autoDispose
 
 final clientBodyweightHistoryProvider = FutureProvider.autoDispose
     .family<List<BodyweightLog>, String>((ref, clientId) async {
+      ref.syncOn(const [DataTopic.coaching, DataTopic.bodyweight]);
       final raw = await ref
           .watch(xenohApiProvider)
           .getList(
@@ -94,6 +99,7 @@ final clientBodyweightHistoryProvider = FutureProvider.autoDispose
 
 final clientNutritionProvider = FutureProvider.autoDispose
     .family<NutritionSummary, String>((ref, clientId) async {
+      ref.syncOn(const [DataTopic.coaching, DataTopic.nutrition]);
       final data = await ref
           .watch(xenohApiProvider)
           .getObject('/nutrition/clients/$clientId/summary');
@@ -102,6 +108,7 @@ final clientNutritionProvider = FutureProvider.autoDispose
 
 final clientExerciseTemplatesProvider = FutureProvider.autoDispose
     .family<List<ExerciseTemplate>, String>((ref, clientId) async {
+      ref.syncOn(const [DataTopic.coaching, DataTopic.exerciseLibrary]);
       final raw = await ref
           .watch(xenohApiProvider)
           .getList('/exercise-templates/for-client/$clientId');
@@ -171,6 +178,7 @@ Future<void> deleteCustomExerciseForClient({
 /// not a failure.
 final clientCycleProvider = FutureProvider.autoDispose.family<JsonMap?, String>(
   (ref, clientId) async {
+    ref.syncOn(const [DataTopic.coaching, DataTopic.cycle]);
     try {
       return await ref
           .watch(xenohApiProvider)
@@ -186,6 +194,7 @@ typedef ClientMealPlanArgs = ({String clientId, DateTime date});
 
 final clientMealPlanProvider = FutureProvider.autoDispose
     .family<MealPlanDay, ClientMealPlanArgs>((ref, args) async {
+      ref.syncOn(const [DataTopic.coaching, DataTopic.nutrition]);
       final data = await ref
           .watch(xenohApiProvider)
           .getObject(
@@ -222,7 +231,6 @@ class ClientDetailScreen extends ConsumerWidget {
     );
     if (created != true || !context.mounted) return;
 
-    ref.invalidate(clientPlansProvider(clientId));
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(
@@ -278,7 +286,6 @@ class ClientDetailScreen extends ConsumerWidget {
     );
     if (savedDate == null || !context.mounted) return;
 
-    ref.invalidate(clientMealPlanProvider((clientId: clientId, date: date)));
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(
@@ -316,7 +323,6 @@ class ClientDetailScreen extends ConsumerWidget {
         secondaryMuscleGroups: result.secondaryMuscleGroups,
         exerciseKind: result.exerciseKind,
       );
-      ref.invalidate(clientExerciseTemplatesProvider(clientId));
       if (!context.mounted) return;
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
@@ -361,7 +367,6 @@ class ClientDetailScreen extends ConsumerWidget {
         secondaryMuscleGroups: result.secondaryMuscleGroups,
         exerciseKind: result.exerciseKind,
       );
-      ref.invalidate(clientExerciseTemplatesProvider(clientId));
       if (!context.mounted) return;
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
@@ -409,7 +414,6 @@ class ClientDetailScreen extends ConsumerWidget {
         api: ref.read(xenohApiProvider),
         exerciseId: exercise.id,
       );
-      ref.invalidate(clientExerciseTemplatesProvider(clientId));
       if (!context.mounted) return;
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()

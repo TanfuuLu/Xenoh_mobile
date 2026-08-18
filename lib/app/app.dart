@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../core/utils/current_date_provider.dart';
 import '../features/coach_client/presentation/providers/chat_unread_controller.dart';
 import '../features/profile/presentation/providers/preferences_provider.dart';
+import '../features/subscription/presentation/providers/subscription_controllers.dart';
 import '../l10n/app_localizations.dart';
 import 'router/router.dart';
 import 'theme/app_density.dart';
@@ -89,7 +90,14 @@ class _AppLifecycleLayerState extends ConsumerState<_AppLifecycleLayer>
     // instead of showing yesterday's cached data. See `currentDateProvider`.
     if (state == AppLifecycleState.resumed) {
       ref.read(currentDateProvider.notifier).refreshIfChanged();
-      ref.invalidate(chatUnreadControllerProvider);
+      // Subscriptions are bought outside the app, so the entitlement can
+      // change while it is backgrounded. `subscriptionProvider` is kept alive
+      // for the whole session by the home shell (organizer nav watches it),
+      // so without this a user who subscribes in their browser and switches
+      // back keeps seeing their old tier until they force-quit.
+      ref
+        ..invalidate(chatUnreadControllerProvider)
+        ..invalidate(subscriptionProvider);
     }
   }
 

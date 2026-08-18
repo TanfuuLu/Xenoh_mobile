@@ -11,7 +11,6 @@ import '../../../../l10n/app_localizations.dart';
 import '../../../profile/presentation/providers/preferences_provider.dart';
 import '../../data/repositories/nutrition_repository_provider.dart';
 import '../../domain/entities/nutrition_summary.dart';
-import '../providers/nutrition_controller.dart';
 import 'nutrition_enums.dart';
 
 /// Bottom sheet to edit the nutrition profile (`PUT /nutrition/profile`).
@@ -75,7 +74,6 @@ class _EditNutritionProfileSheetState
             proteinPerKg: double.tryParse(_proteinPerKg.text.trim()),
             fatPerKg: double.tryParse(_fatPerKg.text.trim()),
           );
-      ref.invalidate(nutritionControllerProvider);
       if (!mounted) return;
       Navigator.pop(context, true);
     } catch (e) {

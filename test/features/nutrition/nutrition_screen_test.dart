@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:xenoh_mobile/core/widgets/xn_card.dart';
+import 'package:xenoh_mobile/features/dashboard/presentation/widgets/supplements_card.dart';
 import 'package:xenoh_mobile/features/nutrition/data/repositories/nutrition_repository_provider.dart';
 import 'package:xenoh_mobile/features/nutrition/domain/entities/food_log.dart';
 import 'package:xenoh_mobile/features/nutrition/domain/entities/meal_plan.dart';
@@ -101,10 +103,24 @@ void main() {
     expect(find.byType(VerticalDivider), findsNothing);
     expect(find.byType(IntrinsicHeight), findsNothing);
 
+    // Edit profile lives in the header card, not the overflow menu.
+    expect(
+      find.descendant(
+        of: find.byType(XnCard).first,
+        matching: find.byIcon(Icons.tune_rounded),
+      ),
+      findsOneWidget,
+    );
+
     await tester.drag(find.byType(ListView), const Offset(0, -420));
     await tester.pumpAndSettle();
 
-    expect(find.text("TODAY'S FOOD"), findsOneWidget);
+    // Supplements is a card between the day's totals and the food log.
+    expect(find.byType(SupplementsCard), findsOneWidget);
+    expect(
+      tester.getCenter(find.byType(SupplementsCard)).dy,
+      lessThan(tester.getCenter(find.text("TODAY'S FOOD")).dy),
+    );
     expect(find.text('White rice'), findsOneWidget);
     expect(find.text('Add food'), findsOneWidget);
   });

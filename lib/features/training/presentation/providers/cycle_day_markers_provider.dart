@@ -1,5 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/sync/data_revision.dart';
+import '../../../../core/sync/data_topic.dart';
 import '../../../../core/utils/date_only.dart';
 import '../../../shared_api/xenoh_api.dart';
 
@@ -16,6 +18,7 @@ typedef CycleDayMarkersRange = ({DateTime from, DateTime to});
 /// the same way `home_shell.dart` gates the Cycle tab.
 final cycleDayMarkersProvider = FutureProvider.autoDispose
     .family<Map<String, String>, CycleDayMarkersRange>((ref, range) async {
+      ref.syncOn(const [DataTopic.cycle]);
       final json = await ref
           .watch(xenohApiProvider)
           .getObject(

@@ -1,5 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../../core/sync/data_revision.dart';
+import '../../../../core/sync/data_topic.dart';
 import '../../../../core/utils/current_date_provider.dart';
 import '../../../profile/presentation/providers/preferences_provider.dart';
 import '../../data/repositories/dashboard_repository_provider.dart';
@@ -17,7 +19,16 @@ class DashboardController extends _$DashboardController {
     // just once per app session. See `currentDateProvider`.
     ref
       ..watch(currentDateProvider)
-      ..watch(appLocaleProvider);
+      ..watch(appLocaleProvider)
+      // The dashboard aggregates every other screen's data, so it re-fetches
+      // whenever any of those are written to.
+      ..syncOn(const [
+        DataTopic.training,
+        DataTopic.nutrition,
+        DataTopic.supplements,
+        DataTopic.bodyweight,
+        DataTopic.profile,
+      ]);
     return ref.watch(dashboardRepositoryProvider).fetchPersonal();
   }
 

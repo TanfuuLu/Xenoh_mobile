@@ -1,8 +1,9 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../../core/sync/data_revision.dart';
+import '../../../../core/sync/data_topic.dart';
 import '../../data/repositories/training_repository_provider.dart';
 import '../../domain/entities/daily_workout.dart';
-import 'week_analysis_provider.dart';
 
 part 'days_controller.g.dart';
 
@@ -11,6 +12,7 @@ part 'days_controller.g.dart';
 class DaysController extends _$DaysController {
   @override
   Future<List<DailyWorkout>> build(String weeklyWorkoutId) async {
+    ref.syncOn(const [DataTopic.training]);
     final result = await ref
         .watch(trainingRepositoryProvider)
         .getDays(weeklyWorkoutId, pageNumber: 1, pageSize: 100);
@@ -30,8 +32,6 @@ class DaysController extends _$DaysController {
     await ref
         .read(trainingRepositoryProvider)
         .setDayStatus(dailyWorkoutId, status);
-    await refresh();
-    ref.invalidate(weekAnalysisProvider(weeklyWorkoutId));
   }
 
   Future<int> copyDay({
@@ -44,8 +44,6 @@ class DaysController extends _$DaysController {
           sourceDailyWorkoutId: sourceDailyWorkoutId,
           targetDailyWorkoutId: targetDailyWorkoutId,
         );
-    await refresh();
-    ref.invalidate(weekAnalysisProvider(weeklyWorkoutId));
     return copied;
   }
 }

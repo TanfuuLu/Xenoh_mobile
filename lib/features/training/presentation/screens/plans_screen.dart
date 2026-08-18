@@ -204,7 +204,6 @@ class _PlansScreenState extends ConsumerState<PlansScreen> {
       } else {
         await repo.activatePlan(plan.id);
       }
-      ref.invalidate(coachClientPlansProvider);
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -238,7 +237,6 @@ class _PlansScreenState extends ConsumerState<PlansScreen> {
     if (ok ?? false) {
       try {
         await ref.read(trainingRepositoryProvider).deletePlan(plan.id);
-        ref.invalidate(coachClientPlansProvider);
       } catch (e) {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(

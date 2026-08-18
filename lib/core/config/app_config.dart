@@ -7,9 +7,13 @@ import 'package:flutter/foundation.dart';
 /// Production:
 ///   --dart-define=API_BASE_URL=https://api.xenoh.online/api
 abstract final class AppConfig {
-  static const apiBaseUrl = String.fromEnvironment(
-    'API_BASE_URL',
-    defaultValue: 'https://10.0.2.2:7017/api',
+  static const _apiBaseUrlOverride = String.fromEnvironment('API_BASE_URL');
+
+  /// Release builds fail safe to the public API when a build pipeline omits
+  /// `API_BASE_URL`; debug builds retain the Android-emulator convenience.
+  static final apiBaseUrl = resolveApiBaseUrl(
+    configured: _apiBaseUrlOverride,
+    isRelease: kReleaseMode,
   );
 
   /// Public origin for exercise images stored in Cloudflare R2.
@@ -38,6 +42,17 @@ abstract final class AppConfig {
     isDebug: kDebugMode,
     isLocalhost: isLocalhost,
   );
+}
+
+@visibleForTesting
+String resolveApiBaseUrl({
+  required String configured,
+  required bool isRelease,
+}) {
+  if (configured.isNotEmpty) return configured;
+  return isRelease
+      ? 'https://api.xenoh.online/api'
+      : 'https://10.0.2.2:7017/api';
 }
 
 @visibleForTesting

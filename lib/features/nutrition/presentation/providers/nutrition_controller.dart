@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../../core/sync/data_revision.dart';
+import '../../../../core/sync/data_topic.dart';
 import '../../../profile/presentation/providers/preferences_provider.dart';
 import '../../data/repositories/nutrition_repository_provider.dart';
 import '../../domain/entities/food.dart';
@@ -17,7 +19,9 @@ part 'nutrition_controller.g.dart';
 class NutritionController extends _$NutritionController {
   @override
   Future<NutritionSummary> build() {
-    ref.watch(appLocaleProvider);
+    ref
+      ..watch(appLocaleProvider)
+      ..syncOn(const [DataTopic.nutrition]);
     return ref.watch(nutritionRepositoryProvider).getSummary();
   }
 
@@ -33,7 +37,9 @@ class NutritionController extends _$NutritionController {
 /// Logged foods + totals for a date (today by default), keyed by `yyyy-MM-dd`.
 @riverpod
 Future<FoodLogsForDate> foodLogs(Ref ref, DateTime date) {
-  ref.watch(appLocaleProvider);
+  ref
+    ..watch(appLocaleProvider)
+    ..syncOn(const [DataTopic.nutrition]);
   return ref.watch(nutritionRepositoryProvider).getFoodLogs(date);
 }
 
@@ -41,6 +47,7 @@ typedef NutritionHistoryRange = ({DateTime from, DateTime to});
 
 final nutritionHistoryProvider = FutureProvider.autoDispose
     .family<List<NutritionDailyLog>, NutritionHistoryRange>((ref, range) {
+      ref.syncOn(const [DataTopic.nutrition]);
       return ref
           .watch(nutritionRepositoryProvider)
           .getHistory(from: range.from, to: range.to);
@@ -58,7 +65,9 @@ Future<List<FoodItem>> foodSearch(Ref ref, String query) {
 
 @riverpod
 Future<MealPlanDay> mealPlan(Ref ref, DateTime date) {
-  ref.watch(appLocaleProvider);
+  ref
+    ..watch(appLocaleProvider)
+    ..syncOn(const [DataTopic.nutrition]);
   return ref.watch(nutritionRepositoryProvider).getMealPlan(date);
 }
 
@@ -79,9 +88,8 @@ class MealPlanActionController extends _$MealPlanActionController {
           .read(nutritionRepositoryProvider)
           .upsertMealPlan(date: day, meals: meals, notes: notes);
     });
-    ref
-      ..invalidate(mealPlanProvider(day))
-      ..invalidate(nutritionControllerProvider);
+    // No manual invalidation: the write bumps `DataTopic.nutrition`, which
+    // every nutrition-backed provider watches.
   }
 
   Future<void> saveRange({
@@ -103,15 +111,9 @@ class MealPlanActionController extends _$MealPlanActionController {
             notes: notes,
           );
     });
-    final dayCount = end.difference(start).inDays + 1;
-    for (var i = 0; i < dayCount; i++) {
-      ref.invalidate(mealPlanProvider(start.add(Duration(days: i))));
-    }
-    ref.invalidate(nutritionControllerProvider);
   }
 
   Future<void> setChecked({
-    required DateTime date,
     required String itemId,
     required bool checked,
   }) async {
@@ -124,10 +126,6 @@ class MealPlanActionController extends _$MealPlanActionController {
         await repo.uncheckMealPlanItem(itemId);
       }
     });
-    ref
-      ..invalidate(mealPlanProvider(date))
-      ..invalidate(foodLogsProvider(date))
-      ..invalidate(nutritionControllerProvider);
   }
 
   DateTime _dateOnly(DateTime value) =>

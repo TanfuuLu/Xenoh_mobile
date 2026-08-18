@@ -261,9 +261,7 @@ class PlanDetailScreen extends ConsumerWidget {
             initialPlan: plan,
           ),
         );
-        if ((saved ?? false) && context.mounted) {
-          ref.invalidate(planDetailProvider(plan.id));
-        }
+        if ((saved ?? false) && context.mounted) {}
       case _PlanAction.duplicate:
         final saved = await showModalBottomSheet<bool>(
           context: context,
@@ -328,7 +326,6 @@ class PlanDetailScreen extends ConsumerWidget {
       } else {
         await notifier.activate(plan.id);
       }
-      ref.invalidate(planDetailProvider(plan.id));
     } catch (e) {
       if (!context.mounted) return;
       _toast(context, '$e');

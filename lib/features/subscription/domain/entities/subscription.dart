@@ -17,13 +17,22 @@ abstract class Subscription with _$Subscription {
 
   const Subscription._();
 
-  bool get isPro =>
-      isActive &&
-      (tier == 'ProIndividual' || tier == 'ProCoach' || tier == 'Organizer');
-  bool get isProCoach => isActive && tier == 'ProCoach';
-  bool get isOrganizer => isActive && tier == 'Organizer';
+  /// Tier names are matched case- and whitespace-insensitively.
+  ///
+  /// Entitlements are granted outside the app (website checkout), so a paying
+  /// customer whose tier string arrives in an unexpected casing would silently
+  /// read as Free with no error surfaced anywhere. Normalising costs nothing
+  /// and removes that failure mode. The server remains authoritative — it
+  /// enforces access with 403s regardless of what these getters say.
+  String get _tierKey => tier.trim().toLowerCase();
+
+  bool get isPro => isActive && _proTierKeys.contains(_tierKey);
+  bool get isProCoach => isActive && _tierKey == 'procoach';
+  bool get isOrganizer => isActive && _tierKey == 'organizer';
   bool get isFree => !isPro;
 }
+
+const _proTierKeys = {'proindividual', 'procoach', 'organizer'};
 
 /// Server-side AI request quota for the current period (maps from
 /// `AiQuotaResponse`). `periodStart` is a `DateOnly`.

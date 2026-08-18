@@ -21,6 +21,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonRetry => 'Retry';
 
   @override
+  String get commonRefresh => 'Refresh';
+
+  @override
   String get commonRemove => 'Remove';
 
   @override
@@ -1375,6 +1378,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authLoginCreateAccountCta => 'Create one';
 
   @override
+  String get authOrDivider => 'or';
+
+  @override
+  String get authContinueWithGoogle => 'Continue with Google';
+
+  @override
+  String get authContinueWithFacebook => 'Continue with Facebook';
+
+  @override
+  String get authSocialLaunchFailedError =>
+      'Could not open social sign-in. Please try again.';
+
+  @override
   String get authPasswordHint => 'Your password';
 
   @override
@@ -1548,6 +1564,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get authMissingSocialTicketError => 'Missing social sign-in ticket.';
+
+  @override
+  String get authExpiredSocialTicketError =>
+      'This social sign-in link is invalid or expired. Please try again.';
 
   @override
   String get dashboardSignOutTooltip => 'Sign out';
@@ -3870,85 +3890,6 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return '$_temp0';
   }
-
-  @override
-  String get subscriptionChoosePlanTitle => 'Choose your plan';
-
-  @override
-  String get subscriptionChoosePlanSubtitle =>
-      'Prepaid fixed terms. Plans do not renew automatically.';
-
-  @override
-  String get subscriptionCatalogEmpty =>
-      'No subscription offers are available right now.';
-
-  @override
-  String get subscriptionUnlimitedClients => 'Unlimited coaching clients';
-
-  @override
-  String get subscriptionPromotionLabel => 'Promotion code';
-
-  @override
-  String get subscriptionPromotionHint => 'Enter code';
-
-  @override
-  String get subscriptionApplyPromotion => 'Apply';
-
-  @override
-  String subscriptionPromotionApplied(String code, String amount) {
-    return 'Code $code applied. New total: $amount';
-  }
-
-  @override
-  String get subscriptionPromotionInvalid =>
-      'This promotion code is not valid.';
-
-  @override
-  String get subscriptionAcceptTerms =>
-      'I agree to the Terms of Service and Refund Policy.';
-
-  @override
-  String get subscriptionViewTerms => 'Terms of Service';
-
-  @override
-  String get subscriptionViewRefundPolicy => 'Refund Policy';
-
-  @override
-  String get subscriptionCreateOrder => 'Create payment order';
-
-  @override
-  String get subscriptionPaymentTitle => 'Bank transfer payment';
-
-  @override
-  String get subscriptionPaymentInstruction =>
-      'Transfer the exact amount using the details below before the order expires.';
-
-  @override
-  String get subscriptionPaymentBank => 'Bank';
-
-  @override
-  String get subscriptionPaymentAccountNumber => 'Account number';
-
-  @override
-  String get subscriptionPaymentAccountName => 'Account name';
-
-  @override
-  String get subscriptionPaymentAmount => 'Amount';
-
-  @override
-  String get subscriptionPaymentContent => 'Transfer content';
-
-  @override
-  String get subscriptionPaymentExpires => 'Order expires';
-
-  @override
-  String get subscriptionPaymentCopy => 'Copy';
-
-  @override
-  String get subscriptionPaymentCopied => 'Copied to clipboard.';
-
-  @override
-  String get subscriptionPaymentClose => 'Close';
 
   @override
   String get coachClientTodayWorkoutTitle => 'Client\'s workout today';

@@ -159,11 +159,7 @@ class _MealSection extends ConsumerWidget {
                   unawaited(
                     ref
                         .read(mealPlanActionControllerProvider.notifier)
-                        .setChecked(
-                          date: date,
-                          itemId: item.id,
-                          checked: checked,
-                        ),
+                        .setChecked(itemId: item.id, checked: checked),
                   );
                 },
               ),

@@ -67,7 +67,7 @@ final class WorkoutNotificationControllerProvider
 }
 
 String _$workoutNotificationControllerHash() =>
-    r'213ac860cdad75bcbae4d1d0b5443761f64cd54d';
+    r'a343f5c0a0d311a3b6731653d7ce6c1e30bd55c2';
 
 /// Keeps the Android ongoing "current exercise" notification in sync with
 /// today's workout. Watching this from HomeShell (once, for the whole

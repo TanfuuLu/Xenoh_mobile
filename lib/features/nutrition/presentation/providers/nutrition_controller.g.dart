@@ -37,7 +37,7 @@ final class NutritionControllerProvider
 }
 
 String _$nutritionControllerHash() =>
-    r'46624021949a14fbbad026f78fa6172005c6bcd6';
+    r'6f113b853e3c655df3c4a3a804987adf2934e4fb';
 
 /// Nutrition summary: profile, calculated targets, and today's log.
 
@@ -120,7 +120,7 @@ final class FoodLogsProvider
   }
 }
 
-String _$foodLogsHash() => r'ba2ce55ccbec956801e5ee0b4c6d947446a7750c';
+String _$foodLogsHash() => r'65f00713cbf75bd4edadfba5017340379e655f84';
 
 /// Logged foods + totals for a date (today by default), keyed by `yyyy-MM-dd`.
 
@@ -283,7 +283,7 @@ final class MealPlanProvider
   }
 }
 
-String _$mealPlanHash() => r'07050bbd802e2f3ad69d82934c9d66b44172c5b9';
+String _$mealPlanHash() => r'a9535007cb6f6b4a4bdc76ebaf32c9b3e4fc9080';
 
 final class MealPlanFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<MealPlanDay>, DateTime> {
@@ -328,7 +328,7 @@ final class MealPlanActionControllerProvider
 }
 
 String _$mealPlanActionControllerHash() =>
-    r'75ecf5af779c03564bfba624e52713c9c47bdd6c';
+    r'313397c4e835139b9e4585dc03e59459b385358c';
 
 abstract class _$MealPlanActionController extends $AsyncNotifier<void> {
   FutureOr<void> build();

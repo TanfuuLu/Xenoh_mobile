@@ -158,7 +158,6 @@ class _RegistrationCard extends ConsumerWidget {
   ) async {
     try {
       await action();
-      ref.invalidate(myCompetitionsProvider);
       if (context.mounted) {
         ScaffoldMessenger.of(
           context,

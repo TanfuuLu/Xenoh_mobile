@@ -122,6 +122,12 @@ abstract class AppLocalizations {
   /// **'Retry'**
   String get commonRetry;
 
+  /// Generic refresh button label
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh'**
+  String get commonRefresh;
+
   /// Generic remove button label
   ///
   /// In en, this message translates to:
@@ -2624,6 +2630,30 @@ abstract class AppLocalizations {
   /// **'Create one'**
   String get authLoginCreateAccountCta;
 
+  /// Divider label between password and social sign-in methods
+  ///
+  /// In en, this message translates to:
+  /// **'or'**
+  String get authOrDivider;
+
+  /// Google social sign-in button label
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with Google'**
+  String get authContinueWithGoogle;
+
+  /// Facebook social sign-in button label
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with Facebook'**
+  String get authContinueWithFacebook;
+
+  /// Error shown when the system browser cannot start social sign-in
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open social sign-in. Please try again.'**
+  String get authSocialLaunchFailedError;
+
   /// Password field hint on the login screen
   ///
   /// In en, this message translates to:
@@ -2959,6 +2989,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Missing social sign-in ticket.'**
   String get authMissingSocialTicketError;
+
+  /// Error shown when a social sign-in ticket cannot be exchanged
+  ///
+  /// In en, this message translates to:
+  /// **'This social sign-in link is invalid or expired. Please try again.'**
+  String get authExpiredSocialTicketError;
 
   /// Tooltip for the sign-out icon button
   ///
@@ -7126,150 +7162,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{months, plural, =1{1 month} other{{months} months}}'**
   String subscriptionMonthsLabel(int months);
-
-  /// No description provided for @subscriptionChoosePlanTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Choose your plan'**
-  String get subscriptionChoosePlanTitle;
-
-  /// No description provided for @subscriptionChoosePlanSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Prepaid fixed terms. Plans do not renew automatically.'**
-  String get subscriptionChoosePlanSubtitle;
-
-  /// No description provided for @subscriptionCatalogEmpty.
-  ///
-  /// In en, this message translates to:
-  /// **'No subscription offers are available right now.'**
-  String get subscriptionCatalogEmpty;
-
-  /// No description provided for @subscriptionUnlimitedClients.
-  ///
-  /// In en, this message translates to:
-  /// **'Unlimited coaching clients'**
-  String get subscriptionUnlimitedClients;
-
-  /// No description provided for @subscriptionPromotionLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Promotion code'**
-  String get subscriptionPromotionLabel;
-
-  /// No description provided for @subscriptionPromotionHint.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter code'**
-  String get subscriptionPromotionHint;
-
-  /// No description provided for @subscriptionApplyPromotion.
-  ///
-  /// In en, this message translates to:
-  /// **'Apply'**
-  String get subscriptionApplyPromotion;
-
-  /// No description provided for @subscriptionPromotionApplied.
-  ///
-  /// In en, this message translates to:
-  /// **'Code {code} applied. New total: {amount}'**
-  String subscriptionPromotionApplied(String code, String amount);
-
-  /// No description provided for @subscriptionPromotionInvalid.
-  ///
-  /// In en, this message translates to:
-  /// **'This promotion code is not valid.'**
-  String get subscriptionPromotionInvalid;
-
-  /// No description provided for @subscriptionAcceptTerms.
-  ///
-  /// In en, this message translates to:
-  /// **'I agree to the Terms of Service and Refund Policy.'**
-  String get subscriptionAcceptTerms;
-
-  /// No description provided for @subscriptionViewTerms.
-  ///
-  /// In en, this message translates to:
-  /// **'Terms of Service'**
-  String get subscriptionViewTerms;
-
-  /// No description provided for @subscriptionViewRefundPolicy.
-  ///
-  /// In en, this message translates to:
-  /// **'Refund Policy'**
-  String get subscriptionViewRefundPolicy;
-
-  /// No description provided for @subscriptionCreateOrder.
-  ///
-  /// In en, this message translates to:
-  /// **'Create payment order'**
-  String get subscriptionCreateOrder;
-
-  /// No description provided for @subscriptionPaymentTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Bank transfer payment'**
-  String get subscriptionPaymentTitle;
-
-  /// No description provided for @subscriptionPaymentInstruction.
-  ///
-  /// In en, this message translates to:
-  /// **'Transfer the exact amount using the details below before the order expires.'**
-  String get subscriptionPaymentInstruction;
-
-  /// No description provided for @subscriptionPaymentBank.
-  ///
-  /// In en, this message translates to:
-  /// **'Bank'**
-  String get subscriptionPaymentBank;
-
-  /// No description provided for @subscriptionPaymentAccountNumber.
-  ///
-  /// In en, this message translates to:
-  /// **'Account number'**
-  String get subscriptionPaymentAccountNumber;
-
-  /// No description provided for @subscriptionPaymentAccountName.
-  ///
-  /// In en, this message translates to:
-  /// **'Account name'**
-  String get subscriptionPaymentAccountName;
-
-  /// No description provided for @subscriptionPaymentAmount.
-  ///
-  /// In en, this message translates to:
-  /// **'Amount'**
-  String get subscriptionPaymentAmount;
-
-  /// No description provided for @subscriptionPaymentContent.
-  ///
-  /// In en, this message translates to:
-  /// **'Transfer content'**
-  String get subscriptionPaymentContent;
-
-  /// No description provided for @subscriptionPaymentExpires.
-  ///
-  /// In en, this message translates to:
-  /// **'Order expires'**
-  String get subscriptionPaymentExpires;
-
-  /// No description provided for @subscriptionPaymentCopy.
-  ///
-  /// In en, this message translates to:
-  /// **'Copy'**
-  String get subscriptionPaymentCopy;
-
-  /// No description provided for @subscriptionPaymentCopied.
-  ///
-  /// In en, this message translates to:
-  /// **'Copied to clipboard.'**
-  String get subscriptionPaymentCopied;
-
-  /// No description provided for @subscriptionPaymentClose.
-  ///
-  /// In en, this message translates to:
-  /// **'Close'**
-  String get subscriptionPaymentClose;
 
   /// No description provided for @coachClientTodayWorkoutTitle.
   ///

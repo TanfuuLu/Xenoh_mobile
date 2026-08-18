@@ -21,6 +21,7 @@ import '../../features/auth/presentation/screens/forgot_password_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/register_screen.dart';
 import '../../features/auth/presentation/screens/social_callback_screen.dart';
+import '../../features/auth/presentation/services/social_callback_uri.dart';
 import '../../features/blocks_reports/presentation/screens/blocklist_screen.dart';
 import '../../features/blocks_reports/presentation/screens/report_bug_screen.dart';
 import '../../features/coach_client/presentation/screens/chat_hub_screen.dart';
@@ -105,15 +106,10 @@ GoRouter router(Ref ref) {
     initialLocation: '/dashboard',
     debugLogDiagnostics: kDebugMode,
     refreshListenable: refresh,
-    errorBuilder: (_, state) {
-      final clientId = _clientAiInsightIdFromPath(state.uri.path);
-      if (clientId != null) {
-        return ClientAiInsightsScreen(clientId: clientId);
-      }
-      return NotFoundScreen(
-        isAuthenticated: ref.read(authControllerProvider).isAuthed,
-      );
-    },
+    errorBuilder: (_, state) => routerErrorScreenFor(
+      state.uri,
+      isAuthenticated: ref.read(authControllerProvider).isAuthed,
+    ),
     redirect: (context, state) {
       final auth = ref.read(authControllerProvider);
       final loc = state.matchedLocation;
@@ -175,9 +171,11 @@ GoRouter router(Ref ref) {
       ),
       GoRoute(
         path: '/auth/social-callback',
-        builder: (_, state) => _withMenu(
-          SocialCallbackScreen(ticket: state.uri.queryParameters['ticket']),
-        ),
+        builder: (_, state) => _socialCallback(state.uri),
+      ),
+      GoRoute(
+        path: '/social-callback',
+        builder: (_, state) => _socialCallback(state.uri),
       ),
       GoRoute(
         path: '/coach/clients/:clientId/ai-insight',
@@ -592,6 +590,33 @@ GoRouter router(Ref ref) {
 }
 
 Widget _withMenu(Widget child) => AppBottomMenuFrame(child: child);
+
+@visibleForTesting
+Widget routerErrorScreenFor(Uri uri, {required bool isAuthenticated}) {
+  if (isSupportedSocialCallbackUri(uri)) {
+    return _socialCallback(uri);
+  }
+
+  final clientId = _clientAiInsightIdFromPath(uri.path);
+  if (clientId != null) {
+    return ClientAiInsightsScreen(clientId: clientId);
+  }
+
+  return NotFoundScreen(isAuthenticated: isAuthenticated);
+}
+
+Widget _socialCallback(Uri uri) {
+  if (!isSupportedSocialCallbackUri(uri)) {
+    return const NotFoundScreen(isAuthenticated: false);
+  }
+
+  // No bottom menu bar here: this is a transient loading screen and the error
+  // state carries its own "back to login" action.
+  return SocialCallbackScreen(
+    ticket: uri.queryParameters['ticket'],
+    errorCode: uri.queryParameters['error'],
+  );
+}
 
 String? _clientAiInsightIdFromPath(String path) {
   final match = RegExp(

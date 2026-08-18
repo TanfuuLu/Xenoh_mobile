@@ -13,7 +13,8 @@ bool isPublicLocation(String location) =>
         location != '/competitions/mine') ||
     location.startsWith('/share/pr/') ||
     location == '/forgot-password' ||
-    location == '/auth/social-callback';
+    location == '/auth/social-callback' ||
+    location == '/social-callback';
 
 /// Returns the canonical redirect for the current authentication state.
 ///
@@ -29,6 +30,9 @@ String? routeAccessRedirect(AuthState auth, String location) {
     return atAuthScreen || publicRoute ? null : '/login';
   }
 
+  if (location == '/auth/social-callback' || location == '/social-callback') {
+    return '/dashboard';
+  }
   if (atAuthScreen || location == '/splash') return '/dashboard';
   final user = auth.sessionOrNull?.user;
   if (location.startsWith('/admin') && user?.isAdmin != true) {
