@@ -8,6 +8,8 @@ import '../../../../app/home_shell.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_dimens.dart';
 import '../../../../app/theme/app_typography.dart';
+import '../../../../core/sync/data_revision.dart';
+import '../../../../core/sync/data_topic.dart';
 import '../../../../core/utils/weight_units.dart';
 import '../../../../core/widgets/xn_card.dart';
 import '../../../../core/widgets/xn_chip.dart';
@@ -19,18 +21,19 @@ import '../../../shared_api/api_widgets.dart';
 import '../../../shared_api/xenoh_api.dart';
 
 final coachClientsProvider = FutureProvider.autoDispose<List<JsonMap>>((ref) {
+  ref.syncOn(const [DataTopic.coaching]);
   return ref.watch(xenohApiProvider).getList('/coach-client/my-clients');
 });
 
-final coachPendingRequestsProvider = FutureProvider.autoDispose<List<JsonMap>>(
-  (ref) {
-    return ref
-        .watch(xenohApiProvider)
-        .getList('/coach-client/pending-requests');
-  },
-);
+final coachPendingRequestsProvider = FutureProvider.autoDispose<List<JsonMap>>((
+  ref,
+) {
+  ref.syncOn(const [DataTopic.coaching]);
+  return ref.watch(xenohApiProvider).getList('/coach-client/pending-requests');
+});
 
 final coachDashboardProvider = FutureProvider.autoDispose<List<JsonMap>>((ref) {
+  ref.syncOn(const [DataTopic.coaching, DataTopic.training]);
   return ref.watch(xenohApiProvider).getList('/coach-client/dashboard');
 });
 

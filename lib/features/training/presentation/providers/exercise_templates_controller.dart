@@ -1,5 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../../core/sync/data_revision.dart';
+import '../../../../core/sync/data_topic.dart';
 import '../../data/repositories/training_repository_provider.dart';
 import '../../domain/entities/exercise_template.dart';
 
@@ -17,6 +19,7 @@ class ExerciseTemplatesController extends _$ExerciseTemplatesController {
     String? muscleGroup,
     String? clientId,
   }) {
+    ref.syncOn(const [DataTopic.exerciseLibrary]);
     return ref
         .watch(trainingRepositoryProvider)
         .getExerciseTemplates(muscleGroup: muscleGroup, clientId: clientId);

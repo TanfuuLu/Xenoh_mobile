@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../../core/sync/data_revision.dart';
+import '../../../../core/sync/data_topic.dart';
 import '../../data/repositories/profile_repository_provider.dart';
 import '../../domain/entities/bodyweight_log.dart';
 import '../../domain/entities/training_activity.dart';
@@ -14,7 +16,10 @@ part 'profile_controller.g.dart';
 @riverpod
 class MyProfileController extends _$MyProfileController {
   @override
-  Future<UserProfile> build() => ref.watch(profileRepositoryProvider).getMe();
+  Future<UserProfile> build() {
+    ref.syncOn(const [DataTopic.profile]);
+    return ref.watch(profileRepositoryProvider).getMe();
+  }
 
   Future<void> refresh() async {
     state = await AsyncValue.guard(
@@ -72,8 +77,10 @@ class MyProfileController extends _$MyProfileController {
 
 /// Bodyweight history (oldest → newest) for the profile chart.
 @riverpod
-Future<List<BodyweightLog>> bodyweightHistory(Ref ref) =>
-    ref.watch(profileRepositoryProvider).getBodyweightHistory();
+Future<List<BodyweightLog>> bodyweightHistory(Ref ref) {
+  ref.syncOn(const [DataTopic.bodyweight]);
+  return ref.watch(profileRepositoryProvider).getBodyweightHistory();
+}
 
 Future<void> deleteBodyweightLog(Ref ref, String id) =>
     ref.read(profileRepositoryProvider).deleteBodyweightLog(id);
@@ -84,12 +91,16 @@ Future<TrainingActivity> trainingActivity(
   Ref ref, {
   required int year,
   required int month,
-}) => ref
-    .watch(profileRepositoryProvider)
-    .getTrainingActivity(year: year, month: month);
+}) {
+  ref.syncOn(const [DataTopic.training]);
+  return ref
+      .watch(profileRepositoryProvider)
+      .getTrainingActivity(year: year, month: month);
+}
 
 final volumeHistoryProvider = FutureProvider.autoDispose
     .family<List<VolumeHistoryPoint>, int>((ref, months) {
+      ref.syncOn(const [DataTopic.training]);
       return ref
           .watch(profileRepositoryProvider)
           .getVolumeHistory(months: months);

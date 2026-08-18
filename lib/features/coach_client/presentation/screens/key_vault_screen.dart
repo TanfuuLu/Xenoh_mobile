@@ -5,6 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_dimens.dart';
 import '../../../../app/theme/app_typography.dart';
+import '../../../../core/sync/data_revision.dart';
+import '../../../../core/sync/data_topic.dart';
 import '../../../../core/utils/date_only.dart';
 import '../../../../core/widgets/xn_button.dart';
 import '../../../../core/widgets/xn_section.dart';
@@ -13,6 +15,7 @@ import '../../../shared_api/api_widgets.dart';
 import '../../../shared_api/xenoh_api.dart';
 
 final inviteCodesProvider = FutureProvider.autoDispose<List<JsonMap>>((ref) {
+  ref.syncOn(const [DataTopic.coaching]);
   return ref.watch(xenohApiProvider).getList('/coach-client/invite-codes');
 });
 
@@ -26,7 +29,6 @@ class KeyVaultScreen extends ConsumerWidget {
       builder: (_) => const _CreateCoachKeySheet(),
     );
     if (created == true) {
-      ref.invalidate(inviteCodesProvider);
       if (!context.mounted) return;
       final l10n = AppLocalizations.of(context);
       ScaffoldMessenger.of(context)
@@ -95,7 +97,6 @@ class KeyVaultScreen extends ConsumerWidget {
                               .delete(
                                 '/coach-client/invite-codes/${item['id']}',
                               );
-                          ref.invalidate(inviteCodesProvider);
                         },
                         icon: const Icon(
                           Icons.delete_outline_rounded,

@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../../core/network/api_language.dart';
+import '../../../../core/sync/data_revision.dart';
+import '../../../../core/sync/data_topic.dart';
 import '../../../../core/utils/weight_units.dart';
 import '../../../auth/presentation/providers/auth_controller.dart';
 import '../../../shared_api/xenoh_api.dart';
@@ -10,6 +12,7 @@ import '../../../shared_api/xenoh_api.dart';
 part 'preferences_provider.g.dart';
 
 final preferencesProvider = FutureProvider.autoDispose<JsonMap>((ref) {
+  ref.syncOn(const [DataTopic.profile]);
   return ref.watch(xenohApiProvider).getObject('/users/me/preferences');
 });
 

@@ -34,7 +34,7 @@ final class CycleOverviewControllerProvider
 }
 
 String _$cycleOverviewControllerHash() =>
-    r'8510e5140ee31dbdb16fbb03ed40acc90ce0425c';
+    r'70c67e837a73fa35b30ec23232375a7f209ef831';
 
 abstract class _$CycleOverviewController extends $AsyncNotifier<CycleOverview> {
   FutureOr<CycleOverview> build();
@@ -111,7 +111,7 @@ final class CycleLogsProvider
   }
 }
 
-String _$cycleLogsHash() => r'207d73cc78b56ff585712643244bb2a5eb62a73d';
+String _$cycleLogsHash() => r'431afa012b1a1efc3e67b03bc858a0032671155e';
 
 final class CycleLogsFamily extends $Family
     with
@@ -172,7 +172,7 @@ final class CycleSettingsProvider
   }
 }
 
-String _$cycleSettingsHash() => r'225588c1fe95646a6f7e6842f8d7c0d96a9f94f6';
+String _$cycleSettingsHash() => r'c09454a0235fc89a543c2f9dc8ac39af1f603551';
 
 @ProviderFor(cycleInsight)
 final cycleInsightProvider = CycleInsightFamily._();
@@ -274,7 +274,7 @@ final class CycleMutationControllerProvider
 }
 
 String _$cycleMutationControllerHash() =>
-    r'8e9144e25189696df0fd3a882c4e3e9c6279be86';
+    r'5ddba1c6edb5819395fce33ba4d331b21e5a2760';
 
 abstract class _$CycleMutationController extends $AsyncNotifier<void> {
   FutureOr<void> build();

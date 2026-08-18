@@ -160,7 +160,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             const SizedBox(height: AppSpacing.lg),
             SocialAuthButton(
               label: l10n.authContinueWithGoogle,
-              mark: 'G',
+              mark: const GoogleMark(),
               loading: _launchingProvider == ExternalAuthProvider.google,
               onPressed: _submitting || _launchingProvider != null
                   ? null
@@ -169,7 +169,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             const SizedBox(height: AppSpacing.sm),
             SocialAuthButton(
               label: l10n.authContinueWithFacebook,
-              mark: 'f',
+              mark: const FacebookMark(),
               loading: _launchingProvider == ExternalAuthProvider.facebook,
               onPressed: _submitting || _launchingProvider != null
                   ? null

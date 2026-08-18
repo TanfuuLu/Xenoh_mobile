@@ -2,6 +2,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:xenoh_mobile/core/models/paged_result.dart';
+import 'package:xenoh_mobile/core/sync/data_revision.dart';
+import 'package:xenoh_mobile/core/sync/data_topic.dart';
 import 'package:xenoh_mobile/features/training/data/repositories/training_repository_provider.dart';
 import 'package:xenoh_mobile/features/training/domain/entities/daily_workout.dart';
 import 'package:xenoh_mobile/features/training/domain/entities/exercise.dart';
@@ -192,7 +194,7 @@ void main() {
     },
   );
 
-  test('duplicatePlan delegates and refreshes the plan list', () async {
+  test('duplicatePlan delegates to the repository', () async {
     final repo = MockTrainingRepository();
     when(
       () => repo.getPlans(pageNumber: 1, pageSize: 20),
@@ -218,10 +220,30 @@ void main() {
         );
 
     expect(copied.id, '2');
-    verify(() => repo.getPlans(pageNumber: 1, pageSize: 20)).called(2);
+    // The list re-fetch is not the controller's job any more: the POST bumps
+    // `DataTopic.training`, which every training-backed provider watches.
+    verify(() => repo.getPlans(pageNumber: 1, pageSize: 20)).called(1);
   });
 
-  test('DaysController copies a day then refreshes', () async {
+  test(
+    'PlansController re-fetches when the training topic is bumped',
+    () async {
+      final repo = MockTrainingRepository();
+      when(
+        () => repo.getPlans(pageNumber: 1, pageSize: 20),
+      ).thenAnswer((_) async => _page([_plan('1')]));
+
+      final container = _container(repo);
+      await container.read(plansControllerProvider.future);
+
+      container.read(dataRevisionProvider(DataTopic.training).notifier).bump();
+      await container.read(plansControllerProvider.future);
+
+      verify(() => repo.getPlans(pageNumber: 1, pageSize: 20)).called(2);
+    },
+  );
+
+  test('DaysController copies a day', () async {
     final repo = MockTrainingRepository();
     when(
       () => repo.getDays('w1', pageNumber: 1, pageSize: 100),
@@ -240,7 +262,11 @@ void main() {
         .copyDay(sourceDailyWorkoutId: 'd1', targetDailyWorkoutId: 'd2');
 
     expect(copied, 3);
-    verify(() => repo.getDays('w1', pageNumber: 1, pageSize: 100)).called(2);
+    verify(() => repo.getDays('w1', pageNumber: 1, pageSize: 100)).called(1);
+
+    container.read(dataRevisionProvider(DataTopic.training).notifier).bump();
+    await container.read(daysControllerProvider('w1').future);
+    verify(() => repo.getDays('w1', pageNumber: 1, pageSize: 100)).called(1);
   });
 
   test('ExercisesController reorders and patches timer updates', () async {

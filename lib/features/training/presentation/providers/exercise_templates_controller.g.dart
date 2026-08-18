@@ -72,7 +72,7 @@ final class ExerciseTemplatesControllerProvider
 }
 
 String _$exerciseTemplatesControllerHash() =>
-    r'29aa74246c2c43d012714e12859a7ffcad1bc3ca';
+    r'cacf3c3f077a57ae0f79678289937c2ca805e13b';
 
 /// Exercise templates for the add-exercise picker, optionally filtered by
 /// muscle group (enum name, e.g. `Chest`).

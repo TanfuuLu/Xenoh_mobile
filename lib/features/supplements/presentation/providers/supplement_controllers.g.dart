@@ -72,7 +72,7 @@ final class SupplementRegimensProvider
 }
 
 String _$supplementRegimensHash() =>
-    r'22d4570fc7fa5df54332409c38c1a95a35fe85c9';
+    r'4d28798129019a3c19a50b348ec42574fb5a1784';
 
 final class SupplementRegimensFamily extends $Family
     with
@@ -160,7 +160,7 @@ final class SupplementDailyProvider
   }
 }
 
-String _$supplementDailyHash() => r'87042a453d0fb6d299d3bc600be865524261f78a';
+String _$supplementDailyHash() => r'1f09f0d826fe8ccea94255173821b7501494474c';
 
 final class SupplementDailyFamily extends $Family
     with
@@ -250,7 +250,7 @@ final class SupplementHistoryProvider
   }
 }
 
-String _$supplementHistoryHash() => r'0ead5a46408c6bffc682660db0393349886a9757';
+String _$supplementHistoryHash() => r'8a849cf2836e41408ae31ad209b8331f5225040a';
 
 final class SupplementHistoryFamily extends $Family
     with
@@ -306,7 +306,7 @@ final class SupplementMutationControllerProvider
 }
 
 String _$supplementMutationControllerHash() =>
-    r'7e3cce667709494f964b472bce49220d840f303a';
+    r'c10b21690c4b2f9a81cdf0c5325edb488d787c44';
 
 abstract class _$SupplementMutationController extends $AsyncNotifier<void> {
   FutureOr<void> build();

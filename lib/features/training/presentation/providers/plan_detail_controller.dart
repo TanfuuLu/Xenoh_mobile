@@ -1,5 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../../core/sync/data_revision.dart';
+import '../../../../core/sync/data_topic.dart';
 import '../../data/repositories/training_repository_provider.dart';
 import '../../domain/entities/plan.dart';
 import '../../domain/entities/weekly_workout.dart';
@@ -8,14 +10,17 @@ part 'plan_detail_controller.g.dart';
 
 /// Plan header detail (for the plan detail screen app bar / progress).
 @riverpod
-Future<Plan> planDetail(Ref ref, String planId) =>
-    ref.watch(trainingRepositoryProvider).getPlan(planId);
+Future<Plan> planDetail(Ref ref, String planId) {
+  ref.syncOn(const [DataTopic.training]);
+  return ref.watch(trainingRepositoryProvider).getPlan(planId);
+}
 
 /// Weeks within a plan.
 @riverpod
 class WeeksController extends _$WeeksController {
   @override
   Future<List<WeeklyWorkout>> build(String planId) async {
+    ref.syncOn(const [DataTopic.training]);
     final result = await ref
         .watch(trainingRepositoryProvider)
         .getWeeks(planId, pageNumber: 1, pageSize: 100);

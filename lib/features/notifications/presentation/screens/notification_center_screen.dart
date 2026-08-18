@@ -6,6 +6,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../app/theme/app_dimens.dart';
 import '../../../../core/realtime/realtime_service.dart';
+import '../../../../core/sync/data_revision.dart';
+import '../../../../core/sync/data_topic.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../auth/presentation/providers/auth_controller.dart';
 import '../../../auth/presentation/providers/auth_state.dart';
@@ -15,6 +17,7 @@ import '../../domain/notification_destination.dart';
 import '../widgets/notification_card.dart';
 
 final notificationsProvider = FutureProvider.autoDispose<List<JsonMap>>((ref) {
+  ref.syncOn(const [DataTopic.notifications]);
   return ref.watch(xenohApiProvider).getList('/notifications');
 });
 
@@ -30,9 +33,7 @@ class NotificationCenterScreen extends ConsumerWidget {
     ref.listen(realtimeEventsProvider, (_, next) {
       final event = next.value;
       if (event == null) return;
-      if (event.name == 'ReceiveNotification') {
-        ref.invalidate(notificationsProvider);
-      }
+      if (event.name == 'ReceiveNotification') {}
     });
 
     final l10n = AppLocalizations.of(context);
@@ -49,7 +50,6 @@ class NotificationCenterScreen extends ConsumerWidget {
             await ref
                 .read(xenohApiProvider)
                 .patchVoid('/notifications/read-all');
-            ref.invalidate(notificationsProvider);
           },
         ),
       ],
@@ -78,7 +78,6 @@ class NotificationCenterScreen extends ConsumerWidget {
                           await ref
                               .read(xenohApiProvider)
                               .patchVoid('/notifications/${item['id']}/read');
-                          ref.invalidate(notificationsProvider);
                         },
                   onTap: () => _openNotification(context, ref, item, isCoach),
                 ),

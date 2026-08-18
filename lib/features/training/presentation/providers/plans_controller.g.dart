@@ -36,7 +36,7 @@ final class PlansControllerProvider
   PlansController create() => PlansController();
 }
 
-String _$plansControllerHash() => r'7987b47d5e38a08aa567ded250ef147f998ea5ce';
+String _$plansControllerHash() => r'067f5ab0644aecc4ee4d25eb40437c2af462a737';
 
 /// Paginated list of the user's plans (with create / activate / delete).
 

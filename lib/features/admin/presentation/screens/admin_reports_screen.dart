@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../app/theme/app_dimens.dart';
+import '../../../../core/sync/data_revision.dart';
+import '../../../../core/sync/data_topic.dart';
 import '../../../../core/widgets/xn_section.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../shared_api/api_widgets.dart';
 import '../../../shared_api/xenoh_api.dart';
 
 final adminReportsProvider = FutureProvider.autoDispose<List<JsonMap>>((ref) {
+  ref.syncOn(const [DataTopic.admin]);
   return ref.watch(xenohApiProvider).getList('/admin/reports');
 });
 
@@ -56,7 +59,6 @@ class AdminReportsScreen extends ConsumerWidget {
                           'adminNote': l10n.adminReviewedOnMobileNote,
                         },
                       );
-                      ref.invalidate(adminReportsProvider);
                     },
                     itemBuilder: (_) => [
                       PopupMenuItem(

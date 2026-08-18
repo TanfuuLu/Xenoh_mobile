@@ -226,24 +226,43 @@ class _MacroTile extends StatelessWidget {
     final ratio = target != null && target! > 0
         ? (value / target!).clamp(0.0, 1.0)
         : 0.0;
+    // Deepened macro hue for text, so the tile can carry a saturated tint and
+    // still keep label/value contrast on the lighter amber and green.
+    final ink = Color.lerp(color, AppColors.ink900, 0.42)!;
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.08),
+        color: color.withValues(alpha: 0.16),
         borderRadius: BorderRadius.circular(AppRadius.md),
+        border: Border.all(color: color.withValues(alpha: 0.34)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            label,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              color: AppColors.fg3,
-              fontSize: 11,
-              fontWeight: FontWeight.w500,
-            ),
+          Row(
+            children: [
+              Container(
+                width: 7,
+                height: 7,
+                decoration: BoxDecoration(
+                  color: color,
+                  shape: BoxShape.circle,
+                ),
+              ),
+              const SizedBox(width: 5),
+              Expanded(
+                child: Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: ink,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
@@ -254,8 +273,8 @@ class _MacroTile extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             style: AppTypography.mono(
               12,
-              color: AppColors.fg1,
-              weight: FontWeight.w600,
+              color: ink,
+              weight: FontWeight.w700,
             ),
           ),
           const SizedBox(height: AppSpacing.sm),
@@ -264,7 +283,7 @@ class _MacroTile extends StatelessWidget {
             child: LinearProgressIndicator(
               value: ratio,
               minHeight: 4,
-              backgroundColor: AppColors.bg3,
+              backgroundColor: color.withValues(alpha: 0.22),
               valueColor: AlwaysStoppedAnimation(color),
             ),
           ),

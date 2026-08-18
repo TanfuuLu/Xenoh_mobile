@@ -64,15 +64,9 @@ void main() {
     );
   });
 
-  test('navigation selection matches the website active destination', () {
-    expect(
-      AppColors.navigationSelectedBackground,
-      const Color(0xFFFFF0E5),
-    );
-    expect(
-      AppColors.navigationSelectedForeground,
-      const Color(0xFF84371F),
-    );
+  test('navigation selection uses the filled clay capsule', () {
+    expect(AppColors.navigationSelectedBackground, AppColors.clay900);
+    expect(AppColors.navigationSelectedForeground, AppColors.fgOnClay);
 
     final theme = AppTheme.light();
     expect(

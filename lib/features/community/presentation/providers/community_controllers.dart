@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../../core/models/paged_result.dart';
+import '../../../../core/sync/data_revision.dart';
+import '../../../../core/sync/data_topic.dart';
 import '../../data/repositories/community_repository_provider.dart';
 import '../../domain/entities/community_models.dart';
 
@@ -13,11 +15,13 @@ Future<PagedResult<CommunityUserSummary>> communityUserSearch(
   Ref ref,
   String query,
 ) {
+  ref.syncOn(const [DataTopic.community]);
   return ref.watch(communityRepositoryProvider).searchUsers(query: query);
 }
 
 @riverpod
 Future<CommunityUserProfile> communityProfile(Ref ref, String userId) {
+  ref.syncOn(const [DataTopic.community]);
   return ref.watch(communityRepositoryProvider).getProfile(userId);
 }
 
@@ -25,6 +29,7 @@ Future<CommunityUserProfile> communityProfile(Ref ref, String userId) {
 class CommunitySettingsController extends _$CommunitySettingsController {
   @override
   Future<CommunitySettings> build() {
+    ref.syncOn(const [DataTopic.community]);
     return ref.watch(communityRepositoryProvider).getSettings();
   }
 
@@ -44,6 +49,7 @@ Future<List<TrainingDayShare>> userTrainingDayShares(
   required bool enabled,
 }) {
   if (!enabled) return Future.value(const []);
+  ref.syncOn(const [DataTopic.community]);
   return ref.watch(communityRepositoryProvider).getUserShares(userId);
 }
 
@@ -53,7 +59,10 @@ class CommunityFeedController extends _$CommunityFeedController {
   var _requestGeneration = 0;
 
   @override
-  Future<CommunityFeedState> build() => _fetchFirstPage();
+  Future<CommunityFeedState> build() {
+    ref.syncOn(const [DataTopic.community]);
+    return _fetchFirstPage();
+  }
 
   Future<CommunityFeedState> _fetchFirstPage() async {
     final page = await ref
@@ -126,12 +135,10 @@ class CommunityFeedController extends _$CommunityFeedController {
     } else {
       await repo.loveShare(share.id);
     }
-    ref.invalidateSelf();
   }
 
   Future<void> deleteShare(String shareId) async {
     await ref.read(communityRepositoryProvider).deleteShare(shareId);
-    ref.invalidateSelf();
   }
 }
 
@@ -177,8 +184,10 @@ class CommunityFeedState {
 @riverpod
 class FriendsController extends _$FriendsController {
   @override
-  Future<List<Friend>> build() =>
-      ref.watch(communityRepositoryProvider).getFriends();
+  Future<List<Friend>> build() {
+    ref.syncOn(const [DataTopic.community]);
+    return ref.watch(communityRepositoryProvider).getFriends();
+  }
 
   Future<void> refresh() async {
     state = await AsyncValue.guard(
@@ -188,7 +197,6 @@ class FriendsController extends _$FriendsController {
 
   Future<void> removeFriend(String userId) async {
     await ref.read(communityRepositoryProvider).removeFriend(userId);
-    ref.invalidateSelf();
   }
 }
 
@@ -197,6 +205,7 @@ Future<List<FriendRequest>> friendRequests(
   Ref ref,
   RequestDirection direction,
 ) {
+  ref.syncOn(const [DataTopic.community]);
   return ref.watch(communityRepositoryProvider).getFriendRequests(direction);
 }
 
@@ -211,7 +220,6 @@ class FriendActionController extends _$FriendActionController {
       () =>
           ref.read(communityRepositoryProvider).sendFriendRequest(targetUserId),
     );
-    _invalidateCommunity();
   }
 
   Future<void> accept(String requestId) async {
@@ -220,7 +228,6 @@ class FriendActionController extends _$FriendActionController {
       () =>
           ref.read(communityRepositoryProvider).acceptFriendRequest(requestId),
     );
-    _invalidateCommunity();
   }
 
   Future<void> reject(String requestId) async {
@@ -229,7 +236,6 @@ class FriendActionController extends _$FriendActionController {
       () =>
           ref.read(communityRepositoryProvider).rejectFriendRequest(requestId),
     );
-    _invalidateCommunity();
   }
 
   Future<void> remove(String userId) async {
@@ -237,16 +243,6 @@ class FriendActionController extends _$FriendActionController {
     state = await AsyncValue.guard(
       () => ref.read(communityRepositoryProvider).removeFriend(userId),
     );
-    _invalidateCommunity();
-  }
-
-  void _invalidateCommunity() {
-    ref
-      ..invalidate(communityRepositoryProvider)
-      ..invalidate(friendsControllerProvider)
-      ..invalidate(friendRequestsProvider)
-      ..invalidate(communityProfileProvider)
-      ..invalidate(communityUserSearchProvider);
   }
 }
 
@@ -265,7 +261,6 @@ class ShareActionController extends _$ShareActionController {
         await repo.loveShare(share.id);
       }
     });
-    _invalidateShares();
   }
 
   Future<void> deleteShare(String shareId) async {
@@ -273,7 +268,6 @@ class ShareActionController extends _$ShareActionController {
     state = await AsyncValue.guard(
       () => ref.read(communityRepositoryProvider).deleteShare(shareId),
     );
-    _invalidateShares();
   }
 
   Future<void> reportShare({
@@ -311,11 +305,5 @@ class ShareActionController extends _$ShareActionController {
       state = AsyncValue.error(error, stackTrace);
       rethrow;
     }
-  }
-
-  void _invalidateShares() {
-    ref
-      ..invalidate(communityFeedControllerProvider)
-      ..invalidate(userTrainingDaySharesProvider);
   }
 }

@@ -1,14 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../../dashboard/presentation/providers/dashboard_controller.dart';
+import '../../../../core/sync/data_revision.dart';
+import '../../../../core/sync/data_topic.dart';
 import '../../data/repositories/training_repository_provider.dart';
 import '../../domain/entities/exercise.dart';
 import '../../domain/entities/last_exercise_performance.dart';
-import 'days_controller.dart';
-import 'plan_detail_controller.dart';
-import 'plans_controller.dart';
-import 'week_analysis_provider.dart';
 
 part 'exercises_controller.g.dart';
 
@@ -19,6 +16,7 @@ typedef LastExercisePerformanceArgs = ({
 
 final lastExercisePerformanceProvider = FutureProvider.autoDispose
     .family<LastExercisePerformance, LastExercisePerformanceArgs>((ref, args) {
+      ref.syncOn(const [DataTopic.training]);
       return ref
           .watch(trainingRepositoryProvider)
           .getLastExercisePerformance(
@@ -28,6 +26,12 @@ final lastExercisePerformanceProvider = FutureProvider.autoDispose
     });
 
 /// Exercises (with their sets) for a daily workout.
+///
+/// Deliberately *not* wired to [DataTopic.training]: this is the workout
+/// logging hot path, and every mutation here already patches the affected
+/// exercise into state in place. Re-fetching the whole day on each completed
+/// set would be slower and visibly jumpier. Other screens still pick these
+/// changes up, because the same writes bump the topic they watch.
 @riverpod
 class ExercisesController extends _$ExercisesController {
   @override
@@ -64,11 +68,9 @@ class ExercisesController extends _$ExercisesController {
     final current = state.value;
     if (current == null) {
       await refresh();
-      _syncProgressCaches();
       return;
     }
     _patchExercise(updated);
-    _syncProgressCaches();
   }
 
   Future<void> updateSetPlan(
@@ -108,7 +110,6 @@ class ExercisesController extends _$ExercisesController {
         .read(trainingRepositoryProvider)
         .finishExerciseTimer(exerciseId);
     _patchExercise(updated);
-    _syncProgressCaches();
   }
 
   Future<void> setTimerDuration({
@@ -127,7 +128,6 @@ class ExercisesController extends _$ExercisesController {
   Future<void> completeDay() async {
     await ref.read(trainingRepositoryProvider).completeDay(dailyWorkoutId);
     await refresh();
-    _syncProgressCaches();
   }
 
   /// Add an exercise (from a template) to this day, then refetch so the new
@@ -150,7 +150,6 @@ class ExercisesController extends _$ExercisesController {
           notes: notes,
         );
     await refresh();
-    _syncProgressCaches();
   }
 
   /// Update an exercise's planned metrics and patch it in place.
@@ -173,11 +172,9 @@ class ExercisesController extends _$ExercisesController {
     final current = state.value;
     if (current == null) {
       await refresh();
-      _syncProgressCaches();
       return;
     }
     _patchExercise(updated);
-    _syncProgressCaches();
   }
 
   Future<void> updateExerciseNotes(String exerciseId, {String? notes}) async {
@@ -198,14 +195,12 @@ class ExercisesController extends _$ExercisesController {
     final current = state.value;
     if (current == null) {
       await refresh();
-      _syncProgressCaches();
       return;
     }
     state = AsyncValue.data([
       for (final ex in current)
         if (ex.id != exerciseId) ex,
     ]);
-    _syncProgressCaches();
   }
 
   Future<void> skipExercise(
@@ -216,17 +211,6 @@ class ExercisesController extends _$ExercisesController {
         .read(trainingRepositoryProvider)
         .skipExercise(exerciseId, isSkipped: isSkipped);
     _patchExercise(updated);
-    _syncProgressCaches();
-  }
-
-  void _syncProgressCaches() {
-    ref
-      ..invalidate(daysControllerProvider)
-      ..invalidate(weekAnalysisProvider)
-      ..invalidate(weeksControllerProvider)
-      ..invalidate(planDetailProvider)
-      ..invalidate(plansControllerProvider)
-      ..invalidate(dashboardControllerProvider);
   }
 
   void _patchExercise(Exercise updated) {

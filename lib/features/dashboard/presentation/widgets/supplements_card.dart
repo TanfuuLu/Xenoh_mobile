@@ -14,7 +14,11 @@ import '../../../supplements/presentation/providers/supplement_controllers.dart'
 /// Compact, read-only view of today's supplement adherence.
 /// Detailed recording and schedule management remain on `/supplements`.
 class SupplementsCard extends ConsumerWidget {
-  const SupplementsCard({super.key});
+  const SupplementsCard({this.onOpen, super.key});
+
+  /// Overrides the default tab switch, for hosts that would rather push
+  /// `/supplements` onto their own stack (so back returns to them).
+  final VoidCallback? onOpen;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -23,7 +27,7 @@ class SupplementsCard extends ConsumerWidget {
     final daily = ref.watch(supplementDailyProvider(date: today));
 
     return XnSection(
-      onTap: () => context.go('/supplements'),
+      onTap: onOpen ?? () => context.go('/supplements'),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

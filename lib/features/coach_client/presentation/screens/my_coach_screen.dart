@@ -148,7 +148,6 @@ class _CoachProfileBody extends ConsumerWidget {
     try {
       final api = ref.read(xenohApiProvider);
       await api.postVoid('/coach-client/$id/request-termination');
-      ref.invalidate(myCoachProvider);
     } catch (error) {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(

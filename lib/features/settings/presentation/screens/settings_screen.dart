@@ -189,7 +189,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         'trackRpe': trackRpe,
       });
       ref.read(appLocaleProvider.notifier).setLocale(language);
-      ref.invalidate(preferencesProvider);
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

@@ -21,6 +21,9 @@ class AppLocalizationsVi extends AppLocalizations {
   String get commonRetry => 'Thử lại';
 
   @override
+  String get commonRefresh => 'Làm mới';
+
+  @override
   String get commonRemove => 'Gỡ bỏ';
 
   @override
@@ -3895,83 +3898,6 @@ class AppLocalizationsVi extends AppLocalizations {
     );
     return '$_temp0';
   }
-
-  @override
-  String get subscriptionChoosePlanTitle => 'Chọn gói của bạn';
-
-  @override
-  String get subscriptionChoosePlanSubtitle =>
-      'Thanh toán trước theo kỳ hạn cố định. Gói không tự động gia hạn.';
-
-  @override
-  String get subscriptionCatalogEmpty => 'Hiện chưa có gói đăng ký khả dụng.';
-
-  @override
-  String get subscriptionUnlimitedClients => 'Không giới hạn học viên coaching';
-
-  @override
-  String get subscriptionPromotionLabel => 'Mã khuyến mãi';
-
-  @override
-  String get subscriptionPromotionHint => 'Nhập mã';
-
-  @override
-  String get subscriptionApplyPromotion => 'Áp dụng';
-
-  @override
-  String subscriptionPromotionApplied(String code, String amount) {
-    return 'Đã áp dụng mã $code. Tổng mới: $amount';
-  }
-
-  @override
-  String get subscriptionPromotionInvalid => 'Mã khuyến mãi không hợp lệ.';
-
-  @override
-  String get subscriptionAcceptTerms =>
-      'Tôi đồng ý với Điều khoản dịch vụ và Chính sách hoàn tiền.';
-
-  @override
-  String get subscriptionViewTerms => 'Điều khoản dịch vụ';
-
-  @override
-  String get subscriptionViewRefundPolicy => 'Chính sách hoàn tiền';
-
-  @override
-  String get subscriptionCreateOrder => 'Tạo đơn thanh toán';
-
-  @override
-  String get subscriptionPaymentTitle => 'Thanh toán chuyển khoản';
-
-  @override
-  String get subscriptionPaymentInstruction =>
-      'Chuyển chính xác số tiền theo thông tin bên dưới trước khi đơn hết hạn.';
-
-  @override
-  String get subscriptionPaymentBank => 'Ngân hàng';
-
-  @override
-  String get subscriptionPaymentAccountNumber => 'Số tài khoản';
-
-  @override
-  String get subscriptionPaymentAccountName => 'Tên tài khoản';
-
-  @override
-  String get subscriptionPaymentAmount => 'Số tiền';
-
-  @override
-  String get subscriptionPaymentContent => 'Nội dung chuyển khoản';
-
-  @override
-  String get subscriptionPaymentExpires => 'Đơn hết hạn';
-
-  @override
-  String get subscriptionPaymentCopy => 'Sao chép';
-
-  @override
-  String get subscriptionPaymentCopied => 'Đã sao chép.';
-
-  @override
-  String get subscriptionPaymentClose => 'Đóng';
 
   @override
   String get coachClientTodayWorkoutTitle => 'Buổi tập hôm nay của client';

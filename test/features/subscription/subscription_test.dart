@@ -48,7 +48,7 @@ void main() {
       expect(sub.isPro, isTrue);
     });
 
-    test('isProProvider is true only for an active Pro tier', () async {
+    test('an inactive Free tier is not Pro', () async {
       final repo = MockSubscriptionRepository();
       when(repo.getMySubscription).thenAnswer(
         (_) async => _sub(tier: 'Free', active: false),
@@ -57,9 +57,10 @@ void main() {
       final container = _container(repo);
       final sub = container.listen(subscriptionProvider, (_, _) {});
       addTearDown(sub.close);
-      await container.read(subscriptionProvider.future);
+      final subscription = await container.read(subscriptionProvider.future);
 
-      expect(container.read(isProProvider), isFalse);
+      expect(subscription.isPro, isFalse);
+      expect(subscription.isFree, isTrue);
     });
 
     test('Organizer is a distinct active subscription capability', () async {

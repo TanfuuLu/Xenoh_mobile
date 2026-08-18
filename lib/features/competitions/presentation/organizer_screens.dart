@@ -238,7 +238,6 @@ class _OrganizerRosterScreenState extends ConsumerState<OrganizerRosterScreen> {
           approve: approve,
           reason: approve ? null : l10n.organizerRejectedTitle,
         );
-    ref.invalidate(organizerRosterProvider(eventId));
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(l10n.organizerDecisionSaved)),
@@ -270,7 +269,6 @@ class _OrganizerRosterScreenState extends ConsumerState<OrganizerRosterScreen> {
           contactEmail: draft.contactEmail,
           contactPhone: draft.contactPhone,
         );
-    ref.invalidate(organizerRosterProvider(event.id));
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(l10n.organizerGuestAdded)),
@@ -287,7 +285,6 @@ class _OrganizerRosterScreenState extends ConsumerState<OrganizerRosterScreen> {
     await ref
         .read(competitionRepositoryProvider)
         .promoteWaitlist(eventId, registrationId);
-    ref.invalidate(organizerRosterProvider(eventId));
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(l10n.organizerWaitlistPromoted)),
@@ -334,7 +331,6 @@ class _OrganizerRosterScreenState extends ConsumerState<OrganizerRosterScreen> {
             registrationId,
             controller.text.trim(),
           );
-      ref.invalidate(organizerRosterProvider(eventId));
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(l10n.organizerGuestLinked)),
@@ -618,7 +614,6 @@ class _AdminOrganizerApplicationsScreenState
             decision: decision,
             reason: reason.text.trim(),
           );
-      ref.invalidate(adminOrganizerApplicationsProvider(_status));
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(l10n.adminOrganizerDecisionSaved)),
@@ -1621,7 +1616,6 @@ Future<void> _publishEvent(
 ) async {
   final l10n = AppLocalizations.of(context);
   await ref.read(competitionRepositoryProvider).publishEvent(eventId);
-  ref.invalidate(managedCompetitionsProvider);
   if (context.mounted) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(l10n.organizerEventPublished)),
@@ -1630,13 +1624,12 @@ Future<void> _publishEvent(
 }
 
 Future<void> _showCreateEvent(BuildContext context, WidgetRef ref) async {
-  final created = await showModalBottomSheet<bool>(
+  await showModalBottomSheet<bool>(
     context: context,
     isScrollControlled: true,
     useSafeArea: true,
     builder: (_) => const _CreateEventSheet(),
   );
-  if (created == true) ref.invalidate(managedCompetitionsProvider);
 }
 
 class _CreateEventSheet extends ConsumerStatefulWidget {

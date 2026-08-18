@@ -5,6 +5,8 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../config/app_config.dart';
 import '../storage/token_storage.dart';
+import '../sync/data_sync_bus.dart';
+import '../sync/data_sync_interceptor.dart';
 import 'api_language.dart';
 import 'auth_interceptor.dart';
 import 'cookie_jar_provider.dart';
@@ -49,6 +51,10 @@ Dio dio(Ref ref) {
           ref.read(sessionExpiredProvider.notifier).trigger(),
     ),
   );
+
+  // After auth (so refreshed-and-retried writes still sync) and before
+  // logging, which is debug-only.
+  dio.interceptors.add(DataSyncInterceptor(ref.watch(dataSyncBusProvider)));
 
   if (kDebugMode) {
     dio.interceptors.add(

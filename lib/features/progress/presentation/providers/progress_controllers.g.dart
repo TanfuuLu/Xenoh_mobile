@@ -50,7 +50,7 @@ final class ExercisePrsProvider
   }
 }
 
-String _$exercisePrsHash() => r'4f477823b80f9bec8e19dca0da92b10476835303';
+String _$exercisePrsHash() => r'db68c678b72925d9413e64ba5b9d84c847822e70';
 
 /// PR progression for one exercise template (oldest → newest).
 
@@ -114,7 +114,7 @@ final class ExercisePrHistoryProvider
   }
 }
 
-String _$exercisePrHistoryHash() => r'8539d3c4484b0a34b731cd0727e72e77148b5749';
+String _$exercisePrHistoryHash() => r'd244c9de475e1263ca125d814ce7d30b72ad6cc2';
 
 /// PR progression for one exercise template (oldest → newest).
 
@@ -198,7 +198,7 @@ final class PlanAnalyticsProvider
   }
 }
 
-String _$planAnalyticsHash() => r'08b9e852b4424a476ce269b269442101e89b94fb';
+String _$planAnalyticsHash() => r'95d77015717d2ecd309f72e3496b1b8211f8e431';
 
 /// Pro-gated analytics for one plan. Emits `ForbiddenFailure` for non-Pro.
 

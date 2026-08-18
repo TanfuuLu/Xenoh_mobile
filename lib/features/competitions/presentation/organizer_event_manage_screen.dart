@@ -266,7 +266,6 @@ class _OverviewTab extends ConsumerWidget {
     );
     if (confirmed == true) {
       await ref.read(competitionRepositoryProvider).deleteEvent(event.id);
-      ref.invalidate(managedCompetitionsProvider);
       if (context.mounted) {
         _message(context, l10n.organizerEventDeleted);
         context.pop();
@@ -348,7 +347,6 @@ class _CategoriesTab extends ConsumerWidget {
           capacity: result.capacity,
           displayOrder: event.categories.length,
         );
-    ref.invalidate(competitionDetailProvider(event.slug));
     if (context.mounted) {
       _message(context, AppLocalizations.of(context).organizerCategoryAdded);
     }
@@ -362,7 +360,6 @@ class _CategoriesTab extends ConsumerWidget {
     await ref
         .read(competitionRepositoryProvider)
         .deleteCategory(event.id, category.id);
-    ref.invalidate(competitionDetailProvider(event.slug));
     if (context.mounted) {
       _message(context, AppLocalizations.of(context).organizerCategoryRemoved);
     }

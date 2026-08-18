@@ -98,7 +98,6 @@ class _CompetitionApplySheetState extends ConsumerState<CompetitionApplySheet> {
                 ? null
                 : _facebook.text.trim(),
           );
-      ref.invalidate(myCompetitionsProvider);
       if (!mounted) return;
       Navigator.pop(context, true);
     } catch (error) {

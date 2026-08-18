@@ -610,11 +610,11 @@ Widget _socialCallback(Uri uri) {
     return const NotFoundScreen(isAuthenticated: false);
   }
 
-  return _withMenu(
-    SocialCallbackScreen(
-      ticket: uri.queryParameters['ticket'],
-      errorCode: uri.queryParameters['error'],
-    ),
+  // No bottom menu bar here: this is a transient loading screen and the error
+  // state carries its own "back to login" action.
+  return SocialCallbackScreen(
+    ticket: uri.queryParameters['ticket'],
+    errorCode: uri.queryParameters['error'],
   );
 }
 

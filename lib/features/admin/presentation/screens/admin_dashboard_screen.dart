@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../app/theme/app_dimens.dart';
+import '../../../../core/sync/data_revision.dart';
+import '../../../../core/sync/data_topic.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../shared_api/api_widgets.dart';
 import '../../../shared_api/xenoh_api.dart';
 
 final adminDashboardProvider = FutureProvider.autoDispose<JsonMap>((ref) {
+  ref.syncOn(const [DataTopic.admin]);
   return ref.watch(xenohApiProvider).getObject('/admin/dashboard');
 });
 

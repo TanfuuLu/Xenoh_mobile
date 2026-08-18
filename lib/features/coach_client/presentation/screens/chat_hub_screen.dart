@@ -6,6 +6,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_dimens.dart';
+import '../../../../core/sync/data_revision.dart';
+import '../../../../core/sync/data_topic.dart';
 import '../../../../core/utils/app_routes.dart';
 import '../../../../core/widgets/xn_section.dart';
 import '../../../../l10n/app_localizations.dart';
@@ -16,6 +18,7 @@ import 'clients_screen.dart';
 
 final messagesProvider = FutureProvider.autoDispose
     .family<List<JsonMap>, String>((ref, relId) async {
+      ref.syncOn(const [DataTopic.messages]);
       final page = await ref
           .watch(xenohApiProvider)
           .getObject('/messages/relationships/$relId?pageSize=50');

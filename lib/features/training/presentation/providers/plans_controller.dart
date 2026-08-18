@@ -1,5 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../../core/sync/data_revision.dart';
+import '../../../../core/sync/data_topic.dart';
 import '../../data/repositories/training_repository_provider.dart';
 import '../../domain/entities/plan.dart';
 
@@ -17,6 +19,7 @@ class PlansController extends _$PlansController {
 
   @override
   Future<List<Plan>> build() async {
+    ref.syncOn(const [DataTopic.training]);
     _page = 1;
     final result = await ref
         .watch(trainingRepositoryProvider)
@@ -59,7 +62,6 @@ class PlansController extends _$PlansController {
           startDate: startDate,
           endDate: endDate,
         );
-    await refresh();
     return plan;
   }
 
@@ -77,23 +79,19 @@ class PlansController extends _$PlansController {
           startDate: startDate,
           endDate: endDate,
         );
-    await refresh();
     return plan;
   }
 
   Future<void> deletePlan(String planId) async {
     await ref.read(trainingRepositoryProvider).deletePlan(planId);
-    await refresh();
   }
 
   Future<void> activate(String planId) async {
     await ref.read(trainingRepositoryProvider).activatePlan(planId);
-    await refresh();
   }
 
   Future<void> deactivate(String planId) async {
     await ref.read(trainingRepositoryProvider).deactivatePlan(planId);
-    await refresh();
   }
 
   Future<Plan> duplicatePlan({
@@ -110,7 +108,6 @@ class PlansController extends _$PlansController {
           startDate: startDate,
           endDate: endDate,
         );
-    await refresh();
     return plan;
   }
 }

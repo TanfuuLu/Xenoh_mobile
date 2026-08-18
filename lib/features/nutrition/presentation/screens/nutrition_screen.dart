@@ -16,6 +16,7 @@ import '../../../../core/widgets/xn_card.dart';
 import '../../../../core/widgets/xn_chip.dart';
 import '../../../../core/widgets/xn_section.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../dashboard/presentation/widgets/supplements_card.dart';
 import '../../../profile/presentation/providers/preferences_provider.dart';
 import '../../data/repositories/nutrition_repository_provider.dart';
 import '../../domain/entities/food_log.dart';
@@ -132,12 +133,6 @@ class _NutritionScreenState extends ConsumerState<NutritionScreen> {
                         unawaited(context.push('/nutrition/insight'));
                       case _NutritionAction.history:
                         unawaited(context.push('/nutrition/history'));
-                      case _NutritionAction.supplements:
-                        unawaited(context.push('/supplements'));
-                      case _NutritionAction.editProfile:
-                        if (summary.value case final data?) {
-                          unawaited(_editProfile(data.profile));
-                        }
                     }
                   },
                   itemBuilder: (context) => [
@@ -155,21 +150,6 @@ class _NutritionScreenState extends ConsumerState<NutritionScreen> {
                         label: l10n.nutritionHistoryTitle,
                       ),
                     ),
-                    PopupMenuItem(
-                      value: _NutritionAction.supplements,
-                      child: _MenuActionLabel(
-                        icon: Icons.medication_outlined,
-                        label: l10n.supplementsTitle,
-                      ),
-                    ),
-                    if (summary.value != null)
-                      PopupMenuItem(
-                        value: _NutritionAction.editProfile,
-                        child: _MenuActionLabel(
-                          icon: Icons.tune_rounded,
-                          label: l10n.nutritionEditProfileTooltip,
-                        ),
-                      ),
                   ],
                 ),
               ]
@@ -186,17 +166,6 @@ class _NutritionScreenState extends ConsumerState<NutritionScreen> {
                   onPressed: () =>
                       unawaited(context.push('/nutrition/history')),
                 ),
-                IconButton(
-                  tooltip: l10n.supplementsTitle,
-                  icon: const Icon(Icons.medication_outlined),
-                  onPressed: () => unawaited(context.push('/supplements')),
-                ),
-                if (summary.value case final data?)
-                  IconButton(
-                    tooltip: l10n.nutritionEditProfileTooltip,
-                    icon: const Icon(Icons.tune_rounded),
-                    onPressed: () => _editProfile(data.profile),
-                  ),
               ],
       ),
       body: RefreshIndicator(
@@ -262,6 +231,7 @@ class _NutritionScreenState extends ConsumerState<NutritionScreen> {
         _Header(
           summary: data,
           unit: weightUnit,
+          onEditProfile: () => _editProfile(data.profile),
         ),
         const SizedBox(height: AppSpacing.sm),
         _DateSelector(
@@ -297,6 +267,9 @@ class _NutritionScreenState extends ConsumerState<NutritionScreen> {
                   consumedCarbs:
                       totals?.totalCarbsG ?? data.todayLog?.carbsG ?? 0,
                   consumedFat: totals?.totalFatG ?? data.todayLog?.fatG ?? 0,
+                ),
+                SupplementsCard(
+                  onOpen: () => unawaited(context.push('/supplements')),
                 ),
                 _FoodLogCard(
                   title: selectedIsToday
@@ -364,7 +337,7 @@ class _NutritionScreenState extends ConsumerState<NutritionScreen> {
   }
 }
 
-enum _NutritionAction { insight, history, supplements, editProfile }
+enum _NutritionAction { insight, history }
 
 class _MenuActionLabel extends StatelessWidget {
   const _MenuActionLabel({required this.icon, required this.label});
@@ -624,11 +597,7 @@ class _MealSection extends ConsumerWidget {
                   unawaited(
                     ref
                         .read(mealPlanActionControllerProvider.notifier)
-                        .setChecked(
-                          date: date,
-                          itemId: item.id,
-                          checked: checked,
-                        ),
+                        .setChecked(itemId: item.id, checked: checked),
                   );
                 },
               ),
@@ -785,10 +754,15 @@ List<_CalculationItem> _buildCalculationItems(
 }
 
 class _Header extends StatelessWidget {
-  const _Header({required this.summary, required this.unit});
+  const _Header({
+    required this.summary,
+    required this.unit,
+    required this.onEditProfile,
+  });
 
   final NutritionSummary summary;
   final WeightUnit unit;
+  final VoidCallback onEditProfile;
 
   @override
   Widget build(BuildContext context) {
@@ -821,11 +795,27 @@ class _Header extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: AppSpacing.md),
-              Text(
-                l10n.nutritionScreenTitle.toUpperCase(),
-                style: _eyebrow.copyWith(
-                  color: AppColors.accentPress,
-                  fontWeight: FontWeight.w600,
+              Expanded(
+                child: Text(
+                  l10n.nutritionScreenTitle.toUpperCase(),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: _eyebrow.copyWith(
+                    color: AppColors.accentPress,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              const SizedBox(width: AppSpacing.sm),
+              IconButton(
+                tooltip: l10n.nutritionEditProfileTooltip,
+                onPressed: onEditProfile,
+                icon: const Icon(Icons.tune_rounded, size: 19),
+                visualDensity: VisualDensity.compact,
+                style: IconButton.styleFrom(
+                  foregroundColor: AppColors.buttonPrimary,
+                  backgroundColor: AppColors.buttonBg,
+                  side: const BorderSide(color: AppColors.buttonBorder),
                 ),
               ),
             ],

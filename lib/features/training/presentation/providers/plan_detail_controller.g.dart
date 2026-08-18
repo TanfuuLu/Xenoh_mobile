@@ -62,7 +62,7 @@ final class PlanDetailProvider
   }
 }
 
-String _$planDetailHash() => r'95e34bedf6ebdcda5909f8f74a820a2c9461f6a8';
+String _$planDetailHash() => r'd67daac13886065c18aae0b430b978ef96227443';
 
 /// Plan header detail (for the plan detail screen app bar / progress).
 
@@ -131,7 +131,7 @@ final class WeeksControllerProvider
   }
 }
 
-String _$weeksControllerHash() => r'7c5235120f6a2ffe99ced0f2f48e98f8cf1106de';
+String _$weeksControllerHash() => r'3ddfb0f64a0ff5958f6f28f8491857f01acc9a53';
 
 /// Weeks within a plan.
 

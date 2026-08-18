@@ -53,7 +53,7 @@ final class DaysControllerProvider
   }
 }
 
-String _$daysControllerHash() => r'0f1f1d90d00a166221f0b76ca5c0290bcc0b1c79';
+String _$daysControllerHash() => r'db0b3186132a6425ec662170197ac70af041941c';
 
 /// Days within a week.
 

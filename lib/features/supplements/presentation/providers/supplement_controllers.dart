@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../../core/sync/data_revision.dart';
+import '../../../../core/sync/data_topic.dart';
 import '../../../../core/utils/date_only.dart';
 import '../../data/repositories/supplement_repository_provider.dart';
 import '../../domain/entities/supplement_models.dart';
@@ -21,21 +23,24 @@ Future<List<SupplementRegimen>> supplementRegimens(
   Ref ref, {
   String? clientId,
   bool includeArchived = false,
-}) => ref
-    .watch(supplementRepositoryProvider)
-    .getRegimens(
-      clientId: clientId,
-      includeArchived: includeArchived,
-    );
+}) {
+  ref.syncOn(const [DataTopic.supplements]);
+  return ref
+      .watch(supplementRepositoryProvider)
+      .getRegimens(clientId: clientId, includeArchived: includeArchived);
+}
 
 @riverpod
 Future<SupplementDaily> supplementDaily(
   Ref ref, {
   required DateTime date,
   String? clientId,
-}) => ref
-    .watch(supplementRepositoryProvider)
-    .getDaily(DateOnly.truncate(date), clientId: clientId);
+}) {
+  ref.syncOn(const [DataTopic.supplements]);
+  return ref
+      .watch(supplementRepositoryProvider)
+      .getDaily(DateOnly.truncate(date), clientId: clientId);
+}
 
 @riverpod
 Future<SupplementHistory> supplementHistory(
@@ -43,9 +48,12 @@ Future<SupplementHistory> supplementHistory(
   required DateTime from,
   required DateTime to,
   String? clientId,
-}) => ref
-    .watch(supplementRepositoryProvider)
-    .getHistory(from: from, to: to, clientId: clientId);
+}) {
+  ref.syncOn(const [DataTopic.supplements]);
+  return ref
+      .watch(supplementRepositoryProvider)
+      .getHistory(from: from, to: to, clientId: clientId);
+}
 
 @riverpod
 class SupplementMutationController extends _$SupplementMutationController {
@@ -109,12 +117,6 @@ class SupplementMutationController extends _$SupplementMutationController {
       if (!ref.mounted) return succeeded;
 
       state = result;
-      if (succeeded) {
-        ref
-          ..invalidate(supplementRegimensProvider)
-          ..invalidate(supplementDailyProvider)
-          ..invalidate(supplementHistoryProvider);
-      }
       return succeeded;
     } finally {
       keepAlive.close();

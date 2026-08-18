@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_dimens.dart';
+import '../../../../core/sync/data_revision.dart';
+import '../../../../core/sync/data_topic.dart';
 import '../../../../core/utils/date_only.dart';
 import '../../../../core/widgets/error_view.dart';
 import '../../../../core/widgets/xn_card.dart';
@@ -21,28 +23,27 @@ typedef ClientNutritionHistoryArgs = ({
 
 final clientNutritionSummaryProvider = FutureProvider.autoDispose
     .family<NutritionSummary, String>((ref, clientId) {
+      ref.syncOn(const [DataTopic.nutrition, DataTopic.coaching]);
       return ref.watch(nutritionRepositoryProvider).getClientSummary(clientId);
     });
 
 final clientNutritionDailyLogProvider = FutureProvider.autoDispose
     .family<NutritionDailyLog?, ClientNutritionDateArgs>((ref, args) {
+      ref.syncOn(const [DataTopic.nutrition, DataTopic.coaching]);
       return ref
           .watch(nutritionRepositoryProvider)
           .getClientDailyLog(args.clientId, args.date);
     });
 
 final clientNutritionHistoryProvider = FutureProvider.autoDispose
-    .family<List<NutritionDailyLog>, ClientNutritionHistoryArgs>(
-      (ref, args) => args.enabled
+    .family<List<NutritionDailyLog>, ClientNutritionHistoryArgs>((ref, args) {
+      ref.syncOn(const [DataTopic.nutrition, DataTopic.coaching]);
+      return args.enabled
           ? ref
                 .watch(nutritionRepositoryProvider)
-                .getClientHistory(
-                  args.clientId,
-                  from: args.from,
-                  to: args.to,
-                )
-          : Future.value(const []),
-    );
+                .getClientHistory(args.clientId, from: args.from, to: args.to)
+          : Future.value(const []);
+    });
 
 class ClientNutritionScreen extends ConsumerStatefulWidget {
   const ClientNutritionScreen({required this.clientId, super.key});

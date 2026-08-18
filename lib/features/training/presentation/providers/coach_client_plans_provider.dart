@@ -1,6 +1,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/sync/data_revision.dart';
+import '../../../../core/sync/data_topic.dart';
 import '../../../../core/utils/date_only.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../profile/presentation/providers/preferences_provider.dart';
@@ -27,6 +29,7 @@ class CoachClientPlanGroup {
 /// Plans screen.
 final coachClientPlansProvider =
     FutureProvider.autoDispose<List<CoachClientPlanGroup>>((ref) async {
+      ref.syncOn(const [DataTopic.training, DataTopic.coaching]);
       final api = ref.watch(xenohApiProvider);
       final l10n = lookupAppLocalizations(
         ref.watch(appLocaleProvider) ?? const Locale('en'),

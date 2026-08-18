@@ -2,6 +2,8 @@ import 'dart:math' as math;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/sync/data_revision.dart';
+import '../../../../core/sync/data_topic.dart';
 import '../../data/repositories/training_repository_provider.dart';
 import '../../domain/entities/daily_workout.dart';
 import '../../domain/entities/exercise.dart';
@@ -11,6 +13,7 @@ final weekAnalysisProvider = FutureProvider.family<WeekAnalysis, String>((
   ref,
   weeklyWorkoutId,
 ) async {
+  ref.syncOn(const [DataTopic.training]);
   final repo = ref.watch(trainingRepositoryProvider);
   final daysPage = await repo.getDays(
     weeklyWorkoutId,

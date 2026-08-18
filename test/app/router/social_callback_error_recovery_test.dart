@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:xenoh_mobile/app/home_shell.dart';
 import 'package:xenoh_mobile/app/router/router.dart';
 import 'package:xenoh_mobile/features/auth/presentation/screens/social_callback_screen.dart';
 
@@ -10,10 +9,9 @@ void main() {
       isAuthenticated: false,
     );
 
-    expect(screen, isA<AppBottomMenuFrame>());
-    final callback = (screen as AppBottomMenuFrame).child;
-    expect(callback, isA<SocialCallbackScreen>());
-    final socialCallback = callback as SocialCallbackScreen;
+    // The callback is a transient loading screen: no bottom menu bar around it.
+    expect(screen, isA<SocialCallbackScreen>());
+    final socialCallback = screen as SocialCallbackScreen;
     expect(socialCallback.ticket, 'one-time');
     expect(socialCallback.errorCode, isNull);
   });

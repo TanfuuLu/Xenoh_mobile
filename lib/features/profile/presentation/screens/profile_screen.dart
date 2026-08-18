@@ -18,7 +18,6 @@ import '../../../../core/widgets/xn_animated_number.dart';
 import '../../../../core/widgets/xn_card.dart';
 import '../../../../core/widgets/xn_section.dart';
 import '../../../../l10n/app_localizations.dart';
-import '../../../dashboard/presentation/providers/dashboard_controller.dart';
 import '../../data/repositories/profile_background_repository.dart';
 import '../../domain/entities/training_activity.dart';
 import '../../domain/entities/user_profile.dart';
@@ -59,7 +58,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       await ref
           .read(myProfileControllerProvider.notifier)
           .uploadAvatar(image.path);
-      ref.invalidate(dashboardControllerProvider);
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
