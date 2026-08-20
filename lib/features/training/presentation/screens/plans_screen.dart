@@ -10,7 +10,6 @@ import '../../../../app/theme/app_dimens.dart';
 import '../../../../app/theme/app_typography.dart';
 import '../../../../core/widgets/async_value_view.dart';
 import '../../../../core/widgets/synced_background_card.dart';
-import '../../../../core/widgets/xn_card.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../auth/presentation/providers/auth_controller.dart';
 import '../../../auth/presentation/providers/auth_state.dart';
@@ -586,22 +585,9 @@ class _PlansHeader extends StatelessWidget {
             ],
           ),
           const SizedBox(height: AppSpacing.lg),
-          Row(
-            children: [
-              Expanded(
-                child: _HeaderMetric(
-                  label: l10n.trainingMyPlansTitle,
-                  value: '$myPlanCount',
-                ),
-              ),
-              const SizedBox(width: AppSpacing.sm),
-              Expanded(
-                child: _HeaderMetric(
-                  label: l10n.trainingCoachPlansTitle,
-                  value: '$coachPlanCount',
-                ),
-              ),
-            ],
+          _HeaderStats(
+            myPlanCount: myPlanCount,
+            coachPlanCount: coachPlanCount,
           ),
           const SizedBox(height: AppSpacing.lg),
           LayoutBuilder(
@@ -643,44 +629,96 @@ class _PlansHeader extends StatelessWidget {
   }
 }
 
-class _HeaderMetric extends StatelessWidget {
-  const _HeaderMetric({required this.label, required this.value});
+/// Plan counts as one translucent strip rather than two opaque cards: the
+/// header sits on a user-chosen photo, so tinted glass keeps the counts
+/// readable without competing with the actions below them.
+class _HeaderStats extends StatelessWidget {
+  const _HeaderStats({
+    required this.myPlanCount,
+    required this.coachPlanCount,
+  });
 
-  final String label;
-  final String value;
+  final int myPlanCount;
+  final int coachPlanCount;
 
   @override
   Widget build(BuildContext context) {
-    return XnCard(
+    final l10n = AppLocalizations.of(context);
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.fgOnClay.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(AppRadius.lg),
+        border: Border.all(
+          color: AppColors.fgOnClay.withValues(alpha: 0.16),
+        ),
+      ),
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.md,
-        vertical: AppSpacing.sm,
+        vertical: AppSpacing.md,
       ),
       child: Row(
         children: [
-          Text(
-            value,
-            style: AppTypography.mono(
-              18,
-              weight: FontWeight.w500,
-              color: AppColors.fg1,
+          Expanded(
+            child: _HeaderStat(
+              label: l10n.trainingMyPlansTitle,
+              value: myPlanCount,
             ),
           ),
-          const SizedBox(width: AppSpacing.sm),
+          Container(
+            width: 1,
+            height: 34,
+            color: AppColors.fgOnClay.withValues(alpha: 0.16),
+          ),
           Expanded(
-            child: Text(
-              label,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                color: AppColors.fg2,
-                fontSize: 11,
-                fontWeight: FontWeight.w500,
+            child: Padding(
+              padding: const EdgeInsets.only(left: AppSpacing.md),
+              child: _HeaderStat(
+                label: l10n.trainingCoachPlansTitle,
+                value: coachPlanCount,
               ),
             ),
           ),
         ],
       ),
+    );
+  }
+}
+
+class _HeaderStat extends StatelessWidget {
+  const _HeaderStat({required this.label, required this.value});
+
+  final String label;
+  final int value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          '$value',
+          style: AppTypography.display(
+            24,
+            weight: FontWeight.w700,
+            color: AppColors.fgOnClay,
+            height: 1,
+            letterSpacing: -0.5,
+          ),
+        ),
+        const SizedBox(height: 3),
+        Text(
+          label.toUpperCase(),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            color: AppColors.fgOnClay.withValues(alpha: 0.7),
+            fontSize: 10,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.8,
+          ),
+        ),
+      ],
     );
   }
 }
@@ -700,8 +738,12 @@ class _PillAction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bg = filled ? AppColors.buttonPrimary : AppColors.buttonBg;
-    final fg = filled ? AppColors.fgOnClay : AppColors.fg1;
+    // On the photo header the primary action is the solid light pill; the
+    // secondary one stays glass so it never outshouts it.
+    final bg = filled
+        ? AppColors.clay050
+        : AppColors.fgOnClay.withValues(alpha: 0.12);
+    final fg = filled ? AppColors.clay900 : AppColors.fgOnClay;
     return FilledButton.icon(
       onPressed: onPressed,
       icon: Icon(icon),
@@ -710,17 +752,19 @@ class _PillAction extends StatelessWidget {
         backgroundColor: bg,
         foregroundColor: fg,
         side: BorderSide(
-          color: filled ? AppColors.buttonPrimary : AppColors.buttonBorder,
+          color: filled
+              ? AppColors.clay050
+              : AppColors.fgOnClay.withValues(alpha: 0.28),
         ),
         shape: const StadiumBorder(),
         elevation: 0,
         iconSize: 19,
-        minimumSize: const Size.fromHeight(40),
+        minimumSize: const Size.fromHeight(44),
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-        padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 9),
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
         textStyle: const TextStyle(
           fontSize: 14,
-          fontWeight: FontWeight.w500,
+          fontWeight: FontWeight.w600,
         ),
       ),
     );

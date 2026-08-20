@@ -89,26 +89,98 @@ class ClientsScreen extends ConsumerWidget {
   ) async {
     final id = textOf(item, ['relationshipId', 'id'], fallback: '');
     if (id.isEmpty) return;
+    final confirmed = switch (action) {
+      _RelationshipAction.accept => Future.value(true),
+      _RelationshipAction.declineRequest => _confirmDeclineRequest(
+        context,
+        item,
+      ),
+      _RelationshipAction.endRelationship => _confirmEndRelationship(
+        context,
+        item,
+      ),
+    };
+    if (!await confirmed) return;
+    if (!context.mounted) return;
     try {
       final api = ref.read(xenohApiProvider);
       switch (action) {
         case _RelationshipAction.accept:
           await api.putObject('/coach-client/accept/$id', {});
-        case _RelationshipAction.acceptTermination:
-          await api.postVoid('/coach-client/$id/accept-termination');
-        case _RelationshipAction.rejectTermination:
-          await api.postVoid('/coach-client/$id/reject-termination');
+        // Declining and ending are the same one-sided call server-side; a
+        // request that was never accepted simply has no plans to tear down.
+        case _RelationshipAction.declineRequest:
+        case _RelationshipAction.endRelationship:
+          await api.postVoid('/coach-client/$id/end');
       }
-      ref
-        ..invalidate(coachDashboardProvider)
-        ..invalidate(coachPendingRequestsProvider)
-        ..invalidate(coachClientsProvider);
     } catch (error) {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(apiErrorMessage(error, context))),
       );
     }
+  }
+
+  Future<bool> _confirmEndRelationship(
+    BuildContext context,
+    JsonMap item,
+  ) async {
+    final l10n = AppLocalizations.of(context);
+    final name = textOf(
+      item,
+      ['fullName', 'clientName', 'name'],
+      fallback: l10n.coachClientDefaultName,
+    );
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(l10n.coachEndRelationshipConfirmTitle),
+        content: Text(l10n.coachEndRelationshipConfirmMessageCoach(name)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: Text(l10n.commonCancel),
+          ),
+          TextButton(
+            style: TextButton.styleFrom(foregroundColor: AppColors.danger),
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: Text(l10n.coachEndRelationshipAction),
+          ),
+        ],
+      ),
+    );
+    return confirmed ?? false;
+  }
+
+  Future<bool> _confirmDeclineRequest(
+    BuildContext context,
+    JsonMap item,
+  ) async {
+    final l10n = AppLocalizations.of(context);
+    final name = textOf(
+      item,
+      ['fullName', 'clientName', 'name'],
+      fallback: l10n.coachClientDefaultName,
+    );
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(l10n.coachDeclineRequestConfirmTitle),
+        content: Text(l10n.coachDeclineRequestConfirmMessage(name)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: Text(l10n.commonCancel),
+          ),
+          TextButton(
+            style: TextButton.styleFrom(foregroundColor: AppColors.danger),
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: Text(l10n.coachDeclineRequestAction),
+          ),
+        ],
+      ),
+    );
+    return confirmed ?? false;
   }
 
   void _openClient(BuildContext context, JsonMap item) {
@@ -577,9 +649,10 @@ class _RelationshipCard extends ConsumerWidget {
         ? clientId
         : textOf(item, ['relationshipId', 'id'], fallback: name);
     final statusActive = status.toLowerCase() == 'active';
-    final pendingTermination = status == 'PendingTermination';
-    final pendingInvite =
-        !pendingTermination && (pending || status == 'Pending');
+    final pendingInvite = pending || status == 'Pending';
+    final canEndRelationship =
+        !pendingInvite &&
+        (statusActive || status == 'Expired' || status == 'PendingRenewal');
 
     return XnSection(
       key: ValueKey('client-relationship-$relationshipKey'),
@@ -629,95 +702,46 @@ class _RelationshipCard extends ConsumerWidget {
                     ],
                     const SizedBox(height: AppSpacing.sm),
                     _ClientStatusLabel(
-                      label: _relationshipStatusLabel(status, l10n),
+                      label: status,
                       active: statusActive,
                     ),
                   ],
                 ),
               ),
               const SizedBox(width: AppSpacing.xs),
-              if (pendingInvite)
+              if (pendingInvite || canEndRelationship)
                 PopupMenuButton<_RelationshipAction>(
                   tooltip: l10n.coachRelationshipActionsTooltip,
                   icon: const Icon(Icons.more_horiz_rounded),
                   onSelected: onAction,
                   itemBuilder: (_) => [
-                    PopupMenuItem(
-                      value: _RelationshipAction.accept,
-                      child: Text(l10n.coachAcceptAction),
-                    ),
+                    if (pendingInvite) ...[
+                      PopupMenuItem(
+                        value: _RelationshipAction.accept,
+                        child: Text(l10n.coachAcceptAction),
+                      ),
+                      PopupMenuItem(
+                        key: ValueKey('decline-request-$relationshipKey'),
+                        value: _RelationshipAction.declineRequest,
+                        child: Text(
+                          l10n.coachDeclineRequestAction,
+                          style: const TextStyle(color: AppColors.danger),
+                        ),
+                      ),
+                    ],
+                    if (canEndRelationship)
+                      PopupMenuItem(
+                        key: ValueKey('end-relationship-$relationshipKey'),
+                        value: _RelationshipAction.endRelationship,
+                        child: Text(
+                          l10n.coachEndRelationshipAction,
+                          style: const TextStyle(color: AppColors.danger),
+                        ),
+                      ),
                   ],
                 ),
             ],
           ),
-          if (pendingTermination) ...[
-            const SizedBox(height: AppSpacing.md),
-            Container(
-              padding: const EdgeInsets.all(AppSpacing.md),
-              decoration: BoxDecoration(
-                color: AppColors.warningBg,
-                borderRadius: BorderRadius.circular(AppRadius.md),
-                border: Border.all(
-                  color: AppColors.warning.withValues(alpha: 0.24),
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Row(
-                    children: [
-                      const Icon(
-                        Icons.person_off_outlined,
-                        size: 18,
-                        color: AppColors.warning,
-                      ),
-                      const SizedBox(width: AppSpacing.sm),
-                      Expanded(
-                        child: Text(
-                          l10n.coachTerminationRequestedStatus,
-                          style: const TextStyle(
-                            color: AppColors.fg1,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: OutlinedButton(
-                          key: ValueKey(
-                            'reject-termination-$relationshipKey',
-                          ),
-                          onPressed: () => onAction(
-                            _RelationshipAction.rejectTermination,
-                          ),
-                          child: Text(l10n.coachRejectTerminationAction),
-                        ),
-                      ),
-                      const SizedBox(width: AppSpacing.sm),
-                      Expanded(
-                        child: FilledButton(
-                          key: ValueKey(
-                            'accept-termination-$relationshipKey',
-                          ),
-                          style: FilledButton.styleFrom(
-                            backgroundColor: AppColors.danger,
-                          ),
-                          onPressed: () => onAction(
-                            _RelationshipAction.acceptTermination,
-                          ),
-                          child: Text(l10n.coachAcceptTerminationAction),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
           if (plan != null || progress != null) ...[
             const SizedBox(height: AppSpacing.md),
             Container(
@@ -1109,11 +1133,6 @@ JsonMap? _dashboardForClient(List<JsonMap>? dashboard, String clientId) {
 
 enum _RelationshipAction {
   accept,
-  acceptTermination,
-  rejectTermination,
+  declineRequest,
+  endRelationship,
 }
-
-String _relationshipStatusLabel(String status, AppLocalizations l10n) =>
-    status == 'PendingTermination'
-    ? l10n.coachTerminationRequestedStatus
-    : status;

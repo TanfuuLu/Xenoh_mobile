@@ -155,12 +155,7 @@ class FriendsScreen extends ConsumerWidget {
                               onPressed: actionPending
                                   ? null
                                   : () => unawaited(
-                                      ref
-                                          .read(
-                                            friendActionControllerProvider
-                                                .notifier,
-                                          )
-                                          .remove(friend.userId),
+                                      _removeFriend(context, ref, friend),
                                     ),
                               icon: const Icon(Icons.person_remove_outlined),
                             ),
@@ -290,6 +285,15 @@ class _FriendRequestCard extends StatelessWidget {
       ),
     );
   }
+}
+
+Future<void> _removeFriend(
+  BuildContext context,
+  WidgetRef ref,
+  Friend friend,
+) async {
+  if (!await confirmRemoveFriend(context, friend.fullName)) return;
+  await ref.read(friendActionControllerProvider.notifier).remove(friend.userId);
 }
 
 class _EmptyLine extends StatelessWidget {

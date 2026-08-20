@@ -2,14 +2,17 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../app/home_shell.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_dimens.dart';
 import '../../../../app/theme/app_typography.dart';
+import '../../../../core/error/failure.dart';
 import '../../../../core/utils/date_only.dart';
 import '../../../../core/widgets/error_view.dart';
+import '../../../../core/widgets/pro_locked_view.dart';
 import '../../../../core/widgets/xn_chip.dart';
 import '../../../../core/widgets/xn_section.dart';
 import '../../../../l10n/app_localizations.dart';
@@ -82,7 +85,11 @@ class _DailyTab extends ConsumerWidget {
   final String? clientId;
   final ValueChanged<DateTime> onDateChanged;
 
-  bool get _canRecord => clientId == null;
+  /// The server rejects a dose recorded ahead of its day, so the actions are
+  /// hidden rather than offered and failed.
+  bool get _isFuture => date.isAfter(DateOnly.truncate(DateTime.now()));
+
+  bool get _canRecord => clientId == null && !_isFuture;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -114,15 +121,13 @@ class _DailyTab extends ConsumerWidget {
               canRecord: _canRecord,
               onStatus: (dose, status) => _record(context, ref, dose, status),
               onReset: (dose) => _reset(context, ref, dose),
+              onNote: (dose) => _editNote(context, ref, dose),
             ),
-            AsyncError(:final error) => SizedBox(
-              height: 420,
-              child: ErrorView.from(
-                error,
-                context,
-                onRetry: () => ref.invalidate(
-                  supplementDailyProvider(date: date, clientId: clientId),
-                ),
+            AsyncError(:final error) => _errorPanel(
+              context,
+              error,
+              () => ref.invalidate(
+                supplementDailyProvider(date: date, clientId: clientId),
               ),
             ),
             _ => const SizedBox(
@@ -130,11 +135,11 @@ class _DailyTab extends ConsumerWidget {
               child: Center(child: CircularProgressIndicator()),
             ),
           },
-          if (!_canRecord)
+          if (_footerMessage(l10n) case final message?)
             Padding(
               padding: const EdgeInsets.only(top: AppSpacing.md),
               child: Text(
-                l10n.supplementsCoachReadOnlyMessage,
+                message,
                 textAlign: TextAlign.center,
                 style: const TextStyle(color: AppColors.fg3, fontSize: 12),
               ),
@@ -144,19 +149,49 @@ class _DailyTab extends ConsumerWidget {
     );
   }
 
+  String? _footerMessage(AppLocalizations l10n) {
+    if (clientId != null) return l10n.supplementsCoachReadOnlyMessage;
+    if (_isFuture) return l10n.supplementsFutureDoseMessage;
+    return null;
+  }
+
   Future<void> _record(
     BuildContext context,
     WidgetRef ref,
     SupplementDailyDose dose,
-    SupplementIntakeStatus status,
-  ) async {
+    SupplementIntakeStatus status, {
+    String? note,
+  }) async {
     final controller = ref.read(supplementMutationControllerProvider.notifier);
     final success = await controller.recordDose(
       doseSlotId: dose.doseSlotId,
       date: date,
       status: status,
+      note: note,
     );
     if (!success && context.mounted) _showMutationError(context, ref);
+  }
+
+  /// Notes ride along with a status, so an existing dose is simply re-recorded
+  /// with the same status and the new note.
+  Future<void> _editNote(
+    BuildContext context,
+    WidgetRef ref,
+    SupplementDailyDose dose,
+  ) async {
+    final status = switch (dose.status) {
+      SupplementDoseStatus.skipped => SupplementIntakeStatus.skipped,
+      _ => SupplementIntakeStatus.taken,
+    };
+    final note = await _promptNote(context, initial: dose.note);
+    if (note == null || !context.mounted) return;
+    await _record(
+      context,
+      ref,
+      dose,
+      status,
+      note: note.isEmpty ? null : note,
+    );
   }
 
   Future<void> _reset(
@@ -243,12 +278,14 @@ class _DailyContent extends StatelessWidget {
     required this.canRecord,
     required this.onStatus,
     required this.onReset,
+    required this.onNote,
   });
 
   final SupplementDaily daily;
   final bool canRecord;
   final void Function(SupplementDailyDose, SupplementIntakeStatus) onStatus;
   final ValueChanged<SupplementDailyDose> onReset;
+  final ValueChanged<SupplementDailyDose> onNote;
 
   @override
   Widget build(BuildContext context) {
@@ -272,6 +309,7 @@ class _DailyContent extends StatelessWidget {
                   enabled: canRecord,
                   onStatus: (status) => onStatus(dose, status),
                   onReset: () => onReset(dose),
+                  onNote: () => onNote(dose),
                 ),
             ],
           ),
@@ -358,16 +396,19 @@ class _DoseRow extends StatelessWidget {
     required this.enabled,
     required this.onStatus,
     required this.onReset,
+    required this.onNote,
   });
 
   final SupplementDailyDose dose;
   final bool enabled;
   final ValueChanged<SupplementIntakeStatus> onStatus;
   final VoidCallback onReset;
+  final VoidCallback onNote;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final locale = Localizations.localeOf(context).toLanguageTag();
     final completed =
         dose.status == SupplementDoseStatus.taken ||
         dose.status == SupplementDoseStatus.skipped;
@@ -419,6 +460,40 @@ class _DoseRow extends StatelessWidget {
               ),
             ],
           ),
+          if (dose.recordedAt case final recordedAt?)
+            Padding(
+              padding: const EdgeInsets.only(left: 60, top: 4),
+              child: Text(
+                l10n.supplementsRecordedAtLabel(
+                  DateFormat.jm(locale).format(recordedAt.toLocal()),
+                ),
+                style: const TextStyle(color: AppColors.fg3, fontSize: 11),
+              ),
+            ),
+          if (dose.note case final note? when note.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(left: 60, top: 4),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Icon(
+                    Icons.sticky_note_2_outlined,
+                    size: 13,
+                    color: AppColors.fg3,
+                  ),
+                  const SizedBox(width: AppSpacing.xs),
+                  Expanded(
+                    child: Text(
+                      note,
+                      style: const TextStyle(
+                        color: AppColors.fg2,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           if (enabled) ...[
             const SizedBox(height: AppSpacing.md),
             Row(
@@ -444,6 +519,13 @@ class _DoseRow extends StatelessWidget {
                 ),
                 if (completed) ...[
                   const SizedBox(width: AppSpacing.xs),
+                  IconButton(
+                    tooltip: dose.note == null
+                        ? l10n.supplementsAddNoteTooltip
+                        : l10n.supplementsEditNoteTooltip,
+                    onPressed: onNote,
+                    icon: const Icon(Icons.edit_note_rounded),
+                  ),
                   IconButton(
                     tooltip: l10n.supplementsResetDoseTooltip,
                     onPressed: onReset,
@@ -532,19 +614,17 @@ class _RegimensTab extends ConsumerWidget {
                         : () => unawaited(
                             _archive(context, ref, regimen),
                           ),
+                    onDelete: () => unawaited(_delete(context, ref, regimen)),
                   ),
               ],
             ),
-            AsyncError(:final error) => SizedBox(
-              height: 420,
-              child: ErrorView.from(
-                error,
-                context,
-                onRetry: () => ref.invalidate(
-                  supplementRegimensProvider(
-                    clientId: clientId,
-                    includeArchived: includeArchived,
-                  ),
+            AsyncError(:final error) => _errorPanel(
+              context,
+              error,
+              () => ref.invalidate(
+                supplementRegimensProvider(
+                  clientId: clientId,
+                  includeArchived: includeArchived,
                 ),
               ),
             ),
@@ -615,6 +695,50 @@ class _RegimensTab extends ConsumerWidget {
         .archive(regimen.id, clientId: clientId);
     if (!success && context.mounted) _showMutationError(context, ref);
   }
+
+  /// Permanent removal — the schedule and every recorded dose go with it, so
+  /// the confirmation spells that out and the action is styled as destructive.
+  Future<void> _delete(
+    BuildContext context,
+    WidgetRef ref,
+    SupplementRegimen regimen,
+  ) async {
+    final l10n = AppLocalizations.of(context);
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(l10n.supplementsDeleteTitle),
+        content: Text(l10n.supplementsDeleteMessage(regimen.name)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: Text(l10n.commonCancel),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor: AppColors.danger,
+            ),
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: Text(l10n.supplementsDeleteButton),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+    final success = await ref
+        .read(supplementMutationControllerProvider.notifier)
+        .delete(regimen.id, clientId: clientId);
+    if (!context.mounted) return;
+    if (!success) {
+      _showMutationError(context, ref);
+      return;
+    }
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(content: Text(l10n.supplementsDeletedMessage)),
+      );
+  }
 }
 
 class _RegimenRow extends StatelessWidget {
@@ -622,15 +746,18 @@ class _RegimenRow extends StatelessWidget {
     required this.regimen,
     required this.onEdit,
     required this.onArchive,
+    required this.onDelete,
   });
 
   final SupplementRegimen regimen;
   final VoidCallback? onEdit;
   final VoidCallback? onArchive;
+  final VoidCallback onDelete;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final locale = Localizations.localeOf(context).toLanguageTag();
     return Padding(
       padding: const EdgeInsets.all(AppSpacing.lg),
       child: Row(
@@ -686,6 +813,30 @@ class _RegimenRow extends StatelessWidget {
                       ),
                     ),
                   ),
+                if (_scheduleLabel(l10n, locale) case final label?)
+                  Padding(
+                    padding: const EdgeInsets.only(top: AppSpacing.sm),
+                    child: Text(
+                      label,
+                      style: const TextStyle(
+                        color: AppColors.accent,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                if (regimen.createdBy case final creator?
+                    when creator.id != regimen.userId)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 3),
+                    child: Text(
+                      l10n.supplementsCreatedByLabel(creator.fullName),
+                      style: const TextStyle(
+                        color: AppColors.fg3,
+                        fontSize: 11,
+                      ),
+                    ),
+                  ),
               ],
             ),
           ),
@@ -693,6 +844,7 @@ class _RegimenRow extends StatelessWidget {
             onSelected: (value) {
               if (value == 'edit') onEdit?.call();
               if (value == 'archive') onArchive?.call();
+              if (value == 'delete') onDelete();
             },
             itemBuilder: (_) => [
               if (onEdit != null)
@@ -705,51 +857,97 @@ class _RegimenRow extends StatelessWidget {
                   value: 'archive',
                   child: Text(l10n.supplementsArchiveButton),
                 ),
+              PopupMenuItem(
+                value: 'delete',
+                child: Text(
+                  l10n.supplementsDeleteButton,
+                  style: const TextStyle(color: AppColors.danger),
+                ),
+              ),
             ],
           ),
         ],
       ),
     );
   }
+
+  /// The API returns the upcoming schedule version when one is pending, so the
+  /// row says which window the listed dose times belong to.
+  String? _scheduleLabel(AppLocalizations l10n, String locale) {
+    final from = regimen.scheduleEffectiveFrom;
+    if (from == null) return null;
+    final format = DateFormat.yMMMd(locale);
+    final today = DateOnly.truncate(DateTime.now());
+    if (from.isAfter(today)) {
+      return l10n.supplementsScheduleUpcomingLabel(format.format(from));
+    }
+    if (regimen.scheduleEffectiveTo case final to?) {
+      return l10n.supplementsScheduleEndsLabel(format.format(to));
+    }
+    return l10n.supplementsScheduleActiveLabel(format.format(from));
+  }
 }
 
-class _HistoryTab extends ConsumerWidget {
+/// Ranges the history endpoint accepts (it caps requests at 90 days).
+const _historyRanges = [7, 30, 90];
+
+class _HistoryTab extends ConsumerStatefulWidget {
   const _HistoryTab({required this.clientId});
 
   final String? clientId;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<_HistoryTab> createState() => _HistoryTabState();
+}
+
+class _HistoryTabState extends ConsumerState<_HistoryTab> {
+  int _days = 30;
+
+  @override
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final to = DateOnly.truncate(DateTime.now());
-    final from = to.subtract(const Duration(days: 29));
-    final value = ref.watch(
-      supplementHistoryProvider(
-        from: from,
-        to: to,
-        clientId: clientId,
-      ),
+    final from = to.subtract(Duration(days: _days - 1));
+    final family = supplementHistoryProvider(
+      from: from,
+      to: to,
+      clientId: widget.clientId,
     );
+    final value = ref.watch(family);
     return RefreshIndicator(
       color: AppColors.accent,
-      onRefresh: () async => ref.invalidate(
-        supplementHistoryProvider(
-          from: from,
-          to: to,
-          clientId: clientId,
-        ),
-      ),
+      onRefresh: () async {
+        ref.invalidate(family);
+        await ref.read(family.future);
+      },
       child: ListView(
         padding: const EdgeInsets.all(AppSpacing.lg),
         children: [
-          Text(
-            l10n.supplementsLastThirtyDaysLabel,
-            style: const TextStyle(
-              color: AppColors.fg3,
-              fontSize: 11,
-              fontWeight: FontWeight.w500,
-              letterSpacing: 0.7,
-            ),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  l10n.supplementsHistoryRangeLabel(_days),
+                  style: const TextStyle(
+                    color: AppColors.fg3,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w500,
+                    letterSpacing: 0.7,
+                  ),
+                ),
+              ),
+              for (final days in _historyRanges)
+                Padding(
+                  padding: const EdgeInsets.only(left: AppSpacing.xs),
+                  child: ChoiceChip(
+                    selected: _days == days,
+                    label: Text(l10n.supplementsRangeDaysLabel(days)),
+                    onSelected: (selected) {
+                      if (selected) setState(() => _days = days);
+                    },
+                  ),
+                ),
+            ],
           ),
           const SizedBox(height: AppSpacing.md),
           switch (value) {
@@ -772,19 +970,10 @@ class _HistoryTab extends ConsumerWidget {
                   ),
               ],
             ),
-            AsyncError(:final error) => SizedBox(
-              height: 420,
-              child: ErrorView.from(
-                error,
-                context,
-                onRetry: () => ref.invalidate(
-                  supplementHistoryProvider(
-                    from: from,
-                    to: to,
-                    clientId: clientId,
-                  ),
-                ),
-              ),
+            AsyncError(:final error) => _errorPanel(
+              context,
+              error,
+              () => ref.invalidate(family),
             ),
             _ => const SizedBox(
               height: 420,
@@ -880,9 +1069,9 @@ class _SupplementRegimenSheetState
     _form = TextEditingController(text: initial?.form);
     _instructions = TextEditingController(text: initial?.instructions);
     _notes = TextEditingController(text: initial?.notes);
-    _effectiveDate = _editing
-        ? DateOnly.truncate(DateTime.now())
-        : DateOnly.truncate(DateTime.now());
+    // Creating starts today; editing writes a new schedule version, which the
+    // server refuses to date earlier than tomorrow.
+    _effectiveDate = _firstEffectiveDate;
     _slots =
         initial?.doseSlots
             .map(_EditableDoseSlot.fromModel)
@@ -997,6 +1186,11 @@ class _SupplementRegimenSheetState
               trailing: const Icon(Icons.calendar_month_outlined),
               onTap: _pickEffectiveDate,
             ),
+            if (_editing)
+              Text(
+                l10n.supplementsEffectiveFromHint,
+                style: const TextStyle(color: AppColors.fg3, fontSize: 11),
+              ),
             const SizedBox(height: AppSpacing.lg),
             Row(
               children: [
@@ -1053,12 +1247,18 @@ class _SupplementRegimenSheetState
     );
   }
 
+  DateTime get _firstEffectiveDate {
+    final today = DateOnly.truncate(DateTime.now());
+    return _editing ? today.add(const Duration(days: 1)) : today;
+  }
+
   Future<void> _pickEffectiveDate() async {
+    final first = _firstEffectiveDate;
     final picked = await showDatePicker(
       context: context,
-      firstDate: DateOnly.truncate(DateTime.now()),
+      firstDate: first,
       lastDate: DateTime.now().add(const Duration(days: 3650)),
-      initialDate: _effectiveDate,
+      initialDate: _effectiveDate.isBefore(first) ? first : _effectiveDate,
     );
     if (picked != null) setState(() => _effectiveDate = picked);
   }
@@ -1067,18 +1267,21 @@ class _SupplementRegimenSheetState
     if (_formKey.currentState?.validate() != true) return;
     final l10n = AppLocalizations.of(context);
     if (_slots.any((slot) => slot.days.isEmpty)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.supplementsSelectWeekdayMessage)),
-      );
+      _warn(l10n.supplementsSelectWeekdayMessage);
+      return;
+    }
+    if (_slots.length > _maxDoseSlots) {
+      _warn(l10n.supplementsMaxDoseSlotsMessage);
       return;
     }
     final inputs = <SupplementDoseSlotInput>[];
     for (final slot in _slots) {
       final amount = double.tryParse(slot.amount.text.trim());
-      if (amount == null || amount <= 0 || slot.unit.text.trim().isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.supplementsInvalidDoseMessage)),
-        );
+      if (amount == null ||
+          amount <= 0 ||
+          amount > _maxDoseAmount ||
+          slot.unit.text.trim().isEmpty) {
+        _warn(l10n.supplementsInvalidDoseMessage);
         return;
       }
       inputs.add(
@@ -1089,6 +1292,10 @@ class _SupplementRegimenSheetState
           daysOfWeek: slot.days.toList(growable: false),
         ),
       );
+    }
+    if (_hasOverlap(inputs)) {
+      _warn(l10n.supplementsOverlapDoseMessage);
+      return;
     }
     final input = SupplementRegimenInput(
       name: _name.text,
@@ -1109,6 +1316,24 @@ class _SupplementRegimenSheetState
             clientId: widget.clientId,
           );
     if (success && mounted) Navigator.pop(context, true);
+  }
+
+  /// Same rule the server enforces: two slots may share a time only when their
+  /// weekdays are disjoint.
+  bool _hasOverlap(List<SupplementDoseSlotInput> slots) {
+    for (var i = 0; i < slots.length; i++) {
+      for (var j = i + 1; j < slots.length; j++) {
+        if (slots[i].time != slots[j].time) continue;
+        if (slots[i].daysOfWeek.any(slots[j].daysOfWeek.contains)) return true;
+      }
+    }
+    return false;
+  }
+
+  void _warn(String message) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
   }
 }
 
@@ -1467,6 +1692,83 @@ class _EmptyPanel extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Server-side dose-slot limits, mirrored so invalid input never round-trips.
+const _maxDoseSlots = 20;
+const _maxDoseAmount = 1000000.0;
+
+/// A 403 here means a coach without Pro is looking at client data — offer the
+/// upgrade instead of a retry that can never succeed.
+Widget _errorPanel(
+  BuildContext context,
+  Object error,
+  VoidCallback onRetry,
+) => SizedBox(
+  height: 420,
+  child: error is ForbiddenFailure
+      ? ProLockedView(
+          title: AppLocalizations.of(context).supplementsProFeatureTitle,
+          message: error.message,
+          onUpgrade: () => context.push('/subscription'),
+        )
+      : ErrorView.from(error, context, onRetry: onRetry),
+);
+
+/// Returns the entered note ('' clears it), or null when dismissed.
+Future<String?> _promptNote(BuildContext context, {String? initial}) =>
+    showDialog<String>(
+      context: context,
+      builder: (_) => _NoteDialog(initial: initial),
+    );
+
+/// Owns the note field's controller for exactly as long as the dialog is
+/// mounted. Disposing it right after `showDialog` completes is too early — the
+/// route is still running its exit animation with the field alive.
+class _NoteDialog extends StatefulWidget {
+  const _NoteDialog({this.initial});
+
+  final String? initial;
+
+  @override
+  State<_NoteDialog> createState() => _NoteDialogState();
+}
+
+class _NoteDialogState extends State<_NoteDialog> {
+  late final TextEditingController _controller = TextEditingController(
+    text: widget.initial,
+  );
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return AlertDialog(
+      title: Text(l10n.supplementsNoteTitle),
+      content: TextField(
+        controller: _controller,
+        autofocus: true,
+        maxLength: 300,
+        maxLines: 3,
+        decoration: InputDecoration(hintText: l10n.supplementsNoteHint),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text(l10n.commonCancel),
+        ),
+        FilledButton(
+          onPressed: () => Navigator.pop(context, _controller.text.trim()),
+          child: Text(l10n.commonSave),
+        ),
+      ],
     );
   }
 }

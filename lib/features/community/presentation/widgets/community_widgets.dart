@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -11,6 +13,7 @@ import '../../../../core/widgets/xn_card.dart';
 import '../../../../core/widgets/xn_chip.dart';
 import '../../../../core/widgets/xn_section.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../blocks_reports/presentation/widgets/moderation_dialogs.dart';
 import '../../../profile/presentation/providers/preferences_provider.dart';
 import '../../domain/entities/community_models.dart';
 import 'share_action_dialogs.dart';
@@ -128,12 +131,14 @@ class FriendActionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return switch (user.friendStatus) {
+      // Unfriending is destructive and one tap away from a button that
+      // otherwise just reads as a status, so it always confirms first.
       FriendStatus.accepted => XnButton(
         label: l10n.communityFriendsTitle,
         icon: Icons.check_rounded,
         variant: XnButtonVariant.secondary,
         loading: pending,
-        onPressed: onRemove,
+        onPressed: () => unawaited(_confirmRemove(context)),
       ),
       FriendStatus.pending
           when user.requestDirection == RequestDirection.incoming =>
@@ -166,6 +171,35 @@ class FriendActionButton extends StatelessWidget {
       ),
     };
   }
+
+  Future<void> _confirmRemove(BuildContext context) async {
+    if (await confirmRemoveFriend(context, user.fullName)) onRemove();
+  }
+}
+
+/// Asks before dropping a friendship. Shared so every entry point — profile,
+/// user cards, the friends list — warns with the same wording.
+Future<bool> confirmRemoveFriend(BuildContext context, String name) async {
+  final l10n = AppLocalizations.of(context);
+  final confirmed = await showDialog<bool>(
+    context: context,
+    builder: (dialogContext) => AlertDialog(
+      title: Text(l10n.communityRemoveFriendTitle),
+      content: Text(l10n.communityRemoveFriendMessage(name)),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(dialogContext).pop(false),
+          child: Text(l10n.commonCancel),
+        ),
+        TextButton(
+          style: TextButton.styleFrom(foregroundColor: AppColors.danger),
+          onPressed: () => Navigator.of(dialogContext).pop(true),
+          child: Text(l10n.communityRemoveFriendAction),
+        ),
+      ],
+    ),
+  );
+  return confirmed ?? false;
 }
 
 class TrainingDayShareCard extends ConsumerWidget {
@@ -258,10 +292,25 @@ class TrainingDayShareCard extends ConsumerWidget {
                 PopupMenuButton<String>(
                   tooltip: l10n.communityShareActionsTooltip,
                   onSelected: (action) async {
-                    if (action == 'report') {
-                      await showReportShareDialog(context, ref, share.id);
-                    } else if (action == 'copy') {
-                      await showCopyWorkoutSheet(context, ref, share.id);
+                    switch (action) {
+                      case 'report':
+                        await showReportShareDialog(context, ref, share.id);
+                      case 'copy':
+                        await showCopyWorkoutSheet(context, ref, share.id);
+                      case 'report_user':
+                        await showReportUserDialog(
+                          context,
+                          ref,
+                          userId: share.userId,
+                          userName: share.userFullName,
+                        );
+                      case 'block_user':
+                        await showBlockUserDialog(
+                          context,
+                          ref,
+                          userId: share.userId,
+                          userName: share.userFullName,
+                        );
                     }
                   },
                   itemBuilder: (_) => [
@@ -279,6 +328,28 @@ class TrainingDayShareCard extends ConsumerWidget {
                       child: ListTile(
                         leading: const Icon(Icons.flag_outlined),
                         title: Text(l10n.communityReportSubmit),
+                        contentPadding: EdgeInsets.zero,
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value: 'report_user',
+                      child: ListTile(
+                        leading: const Icon(Icons.person_off_outlined),
+                        title: Text(l10n.moderationReportUserAction),
+                        contentPadding: EdgeInsets.zero,
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value: 'block_user',
+                      child: ListTile(
+                        leading: const Icon(
+                          Icons.block_outlined,
+                          color: AppColors.danger,
+                        ),
+                        title: Text(
+                          l10n.moderationBlockUserAction,
+                          style: const TextStyle(color: AppColors.danger),
+                        ),
                         contentPadding: EdgeInsets.zero,
                       ),
                     ),
@@ -416,14 +487,16 @@ class _TrainedExerciseList extends StatelessWidget {
       children: [
         XnSectionEyebrow(l10n.communityExercisesMetricLabel),
         const SizedBox(height: AppSpacing.sm),
-        XnCardStack(
-          itemPadding: EdgeInsets.zero,
+        XnSectionGroup(
+          padding: EdgeInsets.zero,
           children: [
-            for (var index = 0; index < exercises.length; index++)
+            for (var index = 0; index < exercises.length; index++) ...[
+              if (index > 0) const _RowDivider(),
               _TrainedExerciseRow(
                 exercise: exercises[index],
                 displayOrder: index + 1,
               ),
+            ],
           ],
         ),
       ],
@@ -445,29 +518,23 @@ class _TrainedExerciseRow extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final completedSets = exercise.sets.where((set) => set.isCompleted).length;
 
+    final plannedSets = exercise.sets.length;
+    final isComplete = plannedSets > 0 && completedSets == plannedSets;
+
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.lg,
+        vertical: 13,
+      ),
       child: Row(
         children: [
-          Container(
-            width: 28,
-            height: 28,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: AppColors.bg2,
-              borderRadius: BorderRadius.circular(AppRadius.sm),
-              border: Border.all(color: AppColors.surfaceBorderSoft),
-            ),
+          SizedBox(
+            width: 20,
             child: Text(
               '$displayOrder',
-              style: const TextStyle(
-                color: AppColors.fg3,
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-              ),
+              style: AppTypography.mono(12, color: AppColors.fg4),
             ),
           ),
-          const SizedBox(width: AppSpacing.sm),
           Expanded(
             child: Text(
               exercise.name,
@@ -475,18 +542,18 @@ class _TrainedExerciseRow extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(
                 color: AppColors.fg1,
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ),
           const SizedBox(width: AppSpacing.sm),
-          Text(
-            '$completedSets/${exercise.sets.length} ${l10n.trainingSetsLabel}',
-            style: const TextStyle(
-              color: AppColors.fg3,
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-            ),
+          // Colour carries the completion state, so a finished exercise reads
+          // differently from a partial one at a glance.
+          XnChip(
+            compact: true,
+            tone: isComplete ? XnChipTone.sage : XnChipTone.neutral,
+            icon: isComplete ? Icons.check_rounded : null,
+            label: '$completedSets/$plannedSets ${l10n.trainingSetsLabel}',
           ),
         ],
       ),
@@ -494,46 +561,125 @@ class _TrainedExerciseRow extends StatelessWidget {
   }
 }
 
-class ProfileMetricCard extends StatelessWidget {
-  const ProfileMetricCard({
+/// Hairline between rows inside a panel, inset past the leading numeral.
+class _RowDivider extends StatelessWidget {
+  const _RowDivider();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Padding(
+      padding: EdgeInsets.only(left: AppSpacing.lg),
+      child: Divider(
+        height: 1,
+        thickness: 1,
+        color: AppColors.surfaceBorderSoft,
+      ),
+    );
+  }
+}
+
+/// One headline number on [ProfileMetricPanel].
+class ProfileMetric {
+  const ProfileMetric({
     required this.icon,
     required this.label,
     required this.value,
-    super.key,
   });
 
   final IconData icon;
   final String label;
   final String value;
+}
+
+/// Profile stats as a single panel of hairline-divided cells. Sized by its
+/// content — the grid this replaced used a fixed aspect ratio, which left most
+/// of every card empty.
+class ProfileMetricPanel extends StatelessWidget {
+  const ProfileMetricPanel({required this.metrics, super.key});
+
+  final List<ProfileMetric> metrics;
 
   @override
   Widget build(BuildContext context) {
-    return XnCard(
-      padding: const EdgeInsets.all(AppSpacing.md),
-      color: AppColors.bg2,
+    final rows = <Widget>[];
+    for (var index = 0; index < metrics.length; index += 2) {
+      if (index > 0) {
+        rows.add(
+          const Divider(
+            height: 1,
+            thickness: 1,
+            color: AppColors.surfaceBorderSoft,
+          ),
+        );
+      }
+      final right = index + 1 < metrics.length ? metrics[index + 1] : null;
+      rows.add(
+        IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(child: _MetricCell(metric: metrics[index])),
+              Container(width: 1, color: AppColors.surfaceBorderSoft),
+              Expanded(
+                child: right == null
+                    ? const SizedBox.shrink()
+                    : _MetricCell(metric: right),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return XnSectionGroup(padding: EdgeInsets.zero, children: rows);
+  }
+}
+
+class _MetricCell extends StatelessWidget {
+  const _MetricCell({required this.metric});
+
+  final ProfileMetric metric;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.lg,
+        vertical: AppSpacing.md,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Row(
             children: [
-              Icon(icon, size: 16, color: AppColors.fg3),
+              Icon(metric.icon, size: 14, color: AppColors.fg4),
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
-                  label,
+                  metric.label.toUpperCase(),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(color: AppColors.fg3, fontSize: 12),
+                  style: const TextStyle(
+                    color: AppColors.fg3,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.6,
+                  ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: AppSpacing.sm),
+          const SizedBox(height: 5),
           Text(
-            value,
+            metric.value,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: AppTypography.display(20, letterSpacing: 0),
+            style: AppTypography.display(
+              21,
+              weight: FontWeight.w600,
+              letterSpacing: -0.2,
+            ),
           ),
         ],
       ),

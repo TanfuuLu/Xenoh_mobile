@@ -13,6 +13,7 @@ import '../../../../core/widgets/chat_composer.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../auth/presentation/providers/auth_controller.dart';
 import '../../../auth/presentation/providers/auth_state.dart';
+import '../../../blocks_reports/presentation/widgets/moderation_dialogs.dart';
 import '../../../shared_api/api_widgets.dart';
 import '../../../shared_api/xenoh_api.dart';
 import '../providers/chat_unread_controller.dart';
@@ -76,9 +77,59 @@ class _RelationshipChatScreenState
     final peerName = widget.peerName.trim().isEmpty
         ? l10n.coachChatUserFallback
         : widget.peerName.trim();
+    final peerId = _peerId(messages.value, myId);
 
     return Scaffold(
-      appBar: AppBar(title: Text(peerName)),
+      appBar: AppBar(
+        title: Text(peerName),
+        actions: [
+          if (peerId != null)
+            PopupMenuButton<String>(
+              tooltip: l10n.moderationActionsTooltip,
+              onSelected: (action) async {
+                if (action == 'report_user') {
+                  await showReportUserDialog(
+                    context,
+                    ref,
+                    userId: peerId,
+                    userName: peerName,
+                  );
+                } else if (action == 'block_user') {
+                  await showBlockUserDialog(
+                    context,
+                    ref,
+                    userId: peerId,
+                    userName: peerName,
+                  );
+                }
+              },
+              itemBuilder: (_) => [
+                PopupMenuItem(
+                  value: 'report_user',
+                  child: ListTile(
+                    leading: const Icon(Icons.flag_outlined),
+                    title: Text(l10n.moderationReportUserAction),
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                ),
+                PopupMenuItem(
+                  value: 'block_user',
+                  child: ListTile(
+                    leading: const Icon(
+                      Icons.block_outlined,
+                      color: AppColors.danger,
+                    ),
+                    title: Text(
+                      l10n.moderationBlockUserAction,
+                      style: const TextStyle(color: AppColors.danger),
+                    ),
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                ),
+              ],
+            ),
+        ],
+      ),
       body: Column(
         children: [
           Expanded(child: _body(messages, myId, l10n)),
@@ -95,6 +146,18 @@ class _RelationshipChatScreenState
         ],
       ),
     );
+  }
+
+  /// The chat route carries only the relationship id and the peer's display
+  /// name, so the peer's user id comes from whichever message they sent. An
+  /// empty thread yields null — and has nothing to report or block over.
+  String? _peerId(List<JsonMap>? messages, String? myId) {
+    if (messages == null || myId == null) return null;
+    for (final msg in messages) {
+      final senderId = textOf(msg, ['senderId']);
+      if (senderId.isNotEmpty && senderId != myId) return senderId;
+    }
+    return null;
   }
 
   Widget _body(

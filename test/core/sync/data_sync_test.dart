@@ -54,6 +54,28 @@ void main() {
       );
     });
 
+    test('ending a coaching relationship syncs everything it tears down', () {
+      // The server deletes the coach's plans and file shares on /end and
+      // revokes the coach's read access to client nutrition and supplements,
+      // so refreshing only the coaching lists would leave all of it on screen.
+      expect(topicsForMutation(method: 'POST', path: '/coach-client/r1/end'), {
+        DataTopic.coaching,
+        DataTopic.training,
+        DataTopic.storage,
+        DataTopic.messages,
+        DataTopic.nutrition,
+        DataTopic.supplements,
+      });
+      // Every other coaching write stays narrow.
+      expect(
+        topicsForMutation(
+          method: 'POST',
+          path: '/coach-client/connect-by-code',
+        ),
+        {DataTopic.coaching},
+      );
+    });
+
     test('reads comments as community data, not training data', () {
       expect(
         topicsForMutation(method: 'POST', path: '/plans/p1/comments'),

@@ -53,6 +53,10 @@ class SupplementRepositoryImpl implements SupplementRepository {
       _guard(() => _remote.archiveRegimen(regimenId, clientId: clientId));
 
   @override
+  Future<void> deleteRegimen(String regimenId, {String? clientId}) =>
+      _guard(() => _remote.deleteRegimen(regimenId, clientId: clientId));
+
+  @override
   Future<SupplementDaily> getDaily(DateTime date, {String? clientId}) =>
       _guard(() => _remote.getDaily(date, clientId: clientId));
 

@@ -96,6 +96,22 @@ Set<DataTopic> topicsForMutation({
 
     case 'coach':
     case 'coach-client':
+      // Ending a relationship reaches well past the coaching lists: the backend
+      // deletes the coach-authored plans, revokes the files the two shared, and
+      // closes the chat thread. It also drops the coach's read access to the
+      // client's nutrition and supplement data, which the coach has its own
+      // screens for. Without these both sides keep rendering data that is gone
+      // — or no longer theirs to see — until the app restarts.
+      if (has('end')) {
+        return const {
+          DataTopic.coaching,
+          DataTopic.training,
+          DataTopic.storage,
+          DataTopic.messages,
+          DataTopic.nutrition,
+          DataTopic.supplements,
+        };
+      }
       return const {DataTopic.coaching};
 
     case 'messages':

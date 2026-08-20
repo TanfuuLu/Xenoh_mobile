@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -5,14 +7,15 @@ import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_dimens.dart';
 import '../../../../app/theme/app_typography.dart';
+import '../../../../core/widgets/xn_chip.dart';
 import '../../../../core/widgets/xn_progress.dart';
 import '../../../../core/widgets/xn_section.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../supplements/domain/entities/supplement_models.dart';
 import '../../../supplements/presentation/providers/supplement_controllers.dart';
 
-/// Compact, read-only view of today's supplement adherence.
-/// Detailed recording and schedule management remain on `/supplements`.
+/// Compact view of today's supplement adherence. Doses can be marked taken
+/// straight from here; skipping, notes and schedules stay on `/supplements`.
 class SupplementsCard extends ConsumerWidget {
   const SupplementsCard({this.onOpen, super.key});
 
@@ -161,13 +164,13 @@ class _SupplementsContent extends StatelessWidget {
   }
 }
 
-class _DosePreview extends StatelessWidget {
+class _DosePreview extends ConsumerWidget {
   const _DosePreview({required this.dose});
 
   final SupplementDailyDose dose;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final tone = _statusTone(dose.status);
     return Row(
       children: [
@@ -197,18 +200,89 @@ class _DosePreview extends StatelessWidget {
                 ),
               ),
               Text(
-                '${_formatAmount(dose.amount)} ${dose.unit}',
+                '${_formatAmount(dose.amount)} ${dose.unit}'
+                ' · ${_formatTime(dose.time)}',
                 style: AppTypography.mono(11, color: AppColors.fg3),
               ),
             ],
           ),
         ),
-        Text(
-          dose.time,
-          style: AppTypography.mono(12, color: AppColors.fg2),
-        ),
+        const SizedBox(width: AppSpacing.sm),
+        _DoseAction(dose: dose),
       ],
     );
+  }
+}
+
+/// Marks a dose taken without leaving the dashboard. Already-recorded doses
+/// show their state instead — changing or undoing one stays on `/supplements`,
+/// where skip, reset and notes live.
+class _DoseAction extends ConsumerWidget {
+  const _DoseAction({required this.dose});
+
+  final SupplementDailyDose dose;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    switch (dose.status) {
+      case SupplementDoseStatus.taken:
+        return XnChip(
+          compact: true,
+          tone: XnChipTone.sage,
+          icon: Icons.check_rounded,
+          label: l10n.supplementsStatusTaken,
+        );
+      case SupplementDoseStatus.skipped:
+        return XnChip(
+          compact: true,
+          tone: XnChipTone.neutral,
+          label: l10n.supplementsStatusSkipped,
+        );
+      case SupplementDoseStatus.pending:
+      case SupplementDoseStatus.missed:
+        final pending = ref
+            .watch(supplementMutationControllerProvider)
+            .isLoading;
+        // An empty circle plus an imperative label: a tick with a past-tense
+        // word reads as a status, which is what the recorded rows already use.
+        return OutlinedButton.icon(
+          onPressed: pending ? null : () => unawaited(_record(context, ref)),
+          icon: const Icon(Icons.radio_button_unchecked_rounded, size: 16),
+          label: Text(l10n.supplementsMarkTakenAction),
+          style: OutlinedButton.styleFrom(
+            foregroundColor: AppColors.accent,
+            side: const BorderSide(color: AppColors.accent),
+            visualDensity: VisualDensity.compact,
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.md,
+              vertical: 7,
+            ),
+            shape: const StadiumBorder(),
+            textStyle: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        );
+    }
+  }
+
+  Future<void> _record(BuildContext context, WidgetRef ref) async {
+    final now = DateTime.now();
+    final success = await ref
+        .read(supplementMutationControllerProvider.notifier)
+        .recordDose(
+          doseSlotId: dose.doseSlotId,
+          date: DateTime(now.year, now.month, now.day),
+          status: SupplementIntakeStatus.taken,
+        );
+    if (success || !context.mounted) return;
+    final error = ref.read(supplementMutationControllerProvider).error;
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text('$error')));
   }
 }
 
@@ -262,6 +336,10 @@ class _SupplementsError extends StatelessWidget {
     icon: Icons.schedule_rounded,
   ),
 };
+
+/// The API sends `HH:mm:ss`; the card only has room for the clock time.
+String _formatTime(String value) =>
+    value.length >= 5 ? value.substring(0, 5) : value;
 
 String _formatAmount(double value) => value == value.roundToDouble()
     ? value.toStringAsFixed(0)

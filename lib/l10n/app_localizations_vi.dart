@@ -1217,27 +1217,30 @@ class AppLocalizationsVi extends AppLocalizations {
   String get coachRelationshipActionsTooltip => 'Thao tác quan hệ';
 
   @override
-  String get coachRequestTerminationAction => 'Yêu cầu kết thúc';
+  String get coachEndRelationshipAction => 'Kết thúc huấn luyện';
 
   @override
-  String get coachAcceptTerminationAction => 'Kết thúc quan hệ';
+  String get coachEndRelationshipConfirmTitle => 'Kết thúc quan hệ huấn luyện?';
 
   @override
-  String get coachRejectTerminationAction => 'Giữ quan hệ';
+  String get coachEndRelationshipConfirmMessageClient =>
+      'Quan hệ sẽ kết thúc ngay lập tức và huấn luyện viên được thông báo. Các giáo án họ viết cho bạn sẽ bị xóa, gồm cả những buổi tập bạn đã ghi nhận theo giáo án đó, và các tệp họ đã chia sẻ cũng bị thu hồi.';
 
   @override
-  String get coachTerminationRequestedStatus => 'Đã yêu cầu kết thúc';
+  String coachEndRelationshipConfirmMessageCoach(String name) {
+    return 'Quan hệ với $name sẽ kết thúc ngay lập tức và họ được thông báo. Các giáo án bạn viết cho họ sẽ bị xóa, gồm cả những buổi tập đã ghi nhận theo giáo án đó, và họ sẽ mất quyền xem các tệp bạn đã chia sẻ.';
+  }
 
   @override
-  String get coachTerminationPendingClientMessage =>
-      'Đang chờ huấn luyện viên chấp nhận hoặc từ chối yêu cầu.';
+  String get coachDeclineRequestAction => 'Từ chối yêu cầu';
 
   @override
-  String get coachTerminationConfirmTitle => 'Yêu cầu kết thúc quan hệ?';
+  String get coachDeclineRequestConfirmTitle => 'Từ chối yêu cầu này?';
 
   @override
-  String get coachTerminationConfirmMessage =>
-      'Huấn luyện viên phải phản hồi trước khi quan hệ huấn luyện kết thúc.';
+  String coachDeclineRequestConfirmMessage(String name) {
+    return '$name sẽ được thông báo yêu cầu bị từ chối. Không có gì khác bị ảnh hưởng — họ có thể gửi yêu cầu mới sau.';
+  }
 
   @override
   String get coachAcceptAction => 'Chấp nhận';
@@ -1480,6 +1483,20 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get authRegisterCta => 'Đăng ký';
+
+  @override
+  String get authConsentText =>
+      'Tôi đồng ý với [[terms]] và [[privacy]], bao gồm quy định về nội dung cộng đồng áp dụng cho mọi nội dung tôi đăng trên Xenoh.';
+
+  @override
+  String get authConsentTermsLink => 'Điều khoản';
+
+  @override
+  String get authConsentPrivacyLink => 'Chính sách quyền riêng tư';
+
+  @override
+  String get authConsentRequiredError =>
+      'Hãy đồng ý với Điều khoản và Chính sách quyền riêng tư để tạo tài khoản';
 
   @override
   String get authSelectOneHint => 'Chọn một';
@@ -3706,6 +3723,17 @@ class AppLocalizationsVi extends AppLocalizations {
   String get communityRemoveFriendTooltip => 'Xóa bạn bè';
 
   @override
+  String get communityRemoveFriendTitle => 'Xóa bạn bè?';
+
+  @override
+  String communityRemoveFriendMessage(String name) {
+    return 'Xóa $name khỏi danh sách bạn bè? Hai bên sẽ không còn thấy buổi tập được chia sẻ của nhau, và họ không nhận được thông báo.';
+  }
+
+  @override
+  String get communityRemoveFriendAction => 'Xóa';
+
+  @override
   String get communitySentRequestsTitle => 'Lời mời đã gửi';
 
   @override
@@ -4348,6 +4376,13 @@ class AppLocalizationsVi extends AppLocalizations {
       'Tính năng AI có thể bị giới hạn theo gói đăng ký, hạn mức và tình trạng backend. Ứng dụng di động hiển thị trạng thái nâng cấp, hạn mức và lỗi khi API trả về.';
 
   @override
+  String get legalTermsCommunityContentTitle => 'Nội dung cộng đồng';
+
+  @override
+  String get legalTermsCommunityContentBody =>
+      'Bài đăng, bình luận, hình ảnh và tin nhắn bạn chia sẻ vẫn thuộc về bạn, và bạn chịu trách nhiệm về chúng. Không đăng nội dung vi phạm pháp luật, thù ghét, quấy rối, khiêu dâm hoặc xâm phạm quyền của người khác, và không trình bày lời khuyên y tế như thể đến từ Xenoh. Nội dung bị báo cáo có thể được xem xét, ẩn hoặc gỡ bỏ; vi phạm nhiều lần có thể khiến bạn mất quyền dùng tính năng cộng đồng.';
+
+  @override
   String get legalRefundTitle => 'Chính sách hoàn tiền';
 
   @override
@@ -4608,6 +4643,83 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get communityShareActionsTooltip => 'Thao tác bài chia sẻ';
+
+  @override
+  String get moderationActionsTooltip => 'Tùy chọn an toàn';
+
+  @override
+  String get moderationReasonLabel => 'Lý do';
+
+  @override
+  String get moderationReasonHarassment => 'Quấy rối';
+
+  @override
+  String get moderationReasonSpam => 'Spam';
+
+  @override
+  String get moderationReasonScam => 'Lừa đảo';
+
+  @override
+  String get moderationReasonInappropriate => 'Nội dung không phù hợp';
+
+  @override
+  String get moderationReasonOther => 'Khác';
+
+  @override
+  String get moderationBlockUserAction => 'Chặn người dùng';
+
+  @override
+  String moderationBlockUserTitle(String name) {
+    return 'Chặn $name?';
+  }
+
+  @override
+  String get moderationBlockUserMessage =>
+      'Họ sẽ không thể nhắn tin cho bạn hoặc xem bài chia sẻ của bạn. Bạn có thể bỏ chặn trong Cài đặt, mục Người dùng đã chặn.';
+
+  @override
+  String get moderationBlockReasonHint => 'Lý do (không bắt buộc)';
+
+  @override
+  String get moderationBlockConfirm => 'Chặn';
+
+  @override
+  String moderationBlockSuccess(String name) {
+    return 'Đã chặn $name.';
+  }
+
+  @override
+  String get moderationReportUserAction => 'Báo cáo người dùng';
+
+  @override
+  String moderationReportUserTitle(String name) {
+    return 'Báo cáo $name';
+  }
+
+  @override
+  String get moderationReportUserHint => 'Mô tả chuyện đã xảy ra';
+
+  @override
+  String get moderationReportUserSuccess => 'Đã gửi báo cáo để xem xét.';
+
+  @override
+  String get moderationReportAiAction => 'Báo cáo câu trả lời này';
+
+  @override
+  String get moderationReportAiTitle => 'Báo cáo câu trả lời AI';
+
+  @override
+  String get moderationReportAiMessage =>
+      'Cho chúng tôi biết câu trả lời này có vấn đề gì. Nội dung bên dưới sẽ được đính kèm vào báo cáo.';
+
+  @override
+  String get moderationReportAiHint => 'Vấn đề là gì?';
+
+  @override
+  String get moderationReportAiSuccess => 'Đã gửi báo cáo. Cảm ơn bạn.';
+
+  @override
+  String get moderationReportAiBugTitle => 'Báo cáo câu trả lời của AI coach';
 
   @override
   String get competitionTitleLabel => 'Tiêu đề';
@@ -5352,6 +5464,9 @@ class AppLocalizationsVi extends AppLocalizations {
   String get supplementsMarkTakenButton => 'Đã dùng';
 
   @override
+  String get supplementsMarkTakenAction => 'Đánh dấu';
+
+  @override
   String get supplementsSkipButton => 'Bỏ qua';
 
   @override
@@ -5406,9 +5521,6 @@ class AppLocalizationsVi extends AppLocalizations {
   String supplementsDoseSlotCount(int count) {
     return '$count thời điểm dùng';
   }
-
-  @override
-  String get supplementsLastThirtyDaysLabel => '30 NGÀY GẦN NHẤT';
 
   @override
   String get supplementsNoHistoryTitle => 'Chưa có lịch sử tuân thủ';
@@ -5475,4 +5587,84 @@ class AppLocalizationsVi extends AppLocalizations {
   @override
   String get supplementsInvalidDoseMessage =>
       'Nhập số lượng và đơn vị hợp lệ cho mỗi liều.';
+
+  @override
+  String get supplementsMaxDoseSlotsMessage =>
+      'Mỗi lịch chỉ có tối đa 20 thời điểm dùng.';
+
+  @override
+  String get supplementsOverlapDoseMessage =>
+      'Hai liều không thể trùng giờ trong cùng một ngày.';
+
+  @override
+  String get supplementsEffectiveFromHint =>
+      'Thay đổi lịch sớm nhất chỉ có hiệu lực từ ngày mai.';
+
+  @override
+  String get supplementsProFeatureTitle => 'Tính năng Pro';
+
+  @override
+  String get supplementsDeleteButton => 'Xóa vĩnh viễn';
+
+  @override
+  String get supplementsDeleteTitle => 'Xóa lịch dùng?';
+
+  @override
+  String supplementsDeleteMessage(String name) {
+    return 'Xóa vĩnh viễn $name? Lịch dùng và toàn bộ lịch sử tuân thủ sẽ bị xóa. Không thể hoàn tác.';
+  }
+
+  @override
+  String get supplementsDeletedMessage => 'Đã xóa lịch bổ sung.';
+
+  @override
+  String get supplementsFutureDoseMessage =>
+      'Chỉ có thể ghi nhận liều khi đã đến ngày đó.';
+
+  @override
+  String get supplementsNoteTitle => 'Ghi chú liều dùng';
+
+  @override
+  String get supplementsNoteHint => 'Ghi chú tùy chọn (tối đa 300 ký tự)';
+
+  @override
+  String get supplementsAddNoteTooltip => 'Thêm ghi chú';
+
+  @override
+  String get supplementsEditNoteTooltip => 'Sửa ghi chú';
+
+  @override
+  String supplementsRecordedAtLabel(String time) {
+    return 'Ghi nhận $time';
+  }
+
+  @override
+  String supplementsScheduleActiveLabel(String date) {
+    return 'Áp dụng từ $date';
+  }
+
+  @override
+  String supplementsScheduleUpcomingLabel(String date) {
+    return 'Lịch mới từ $date';
+  }
+
+  @override
+  String supplementsScheduleEndsLabel(String date) {
+    return 'Kết thúc $date';
+  }
+
+  @override
+  String supplementsCreatedByLabel(String name) {
+    return 'Thêm bởi $name';
+  }
+
+  @override
+  String supplementsHistoryRangeLabel(int days) {
+    return '$days NGÀY GẦN NHẤT';
+  }
+
+  @override
+  String supplementsRangeDaysLabel(int days) {
+    return '$days ngày';
+  }
 }

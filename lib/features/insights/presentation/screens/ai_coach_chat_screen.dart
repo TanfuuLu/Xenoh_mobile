@@ -8,6 +8,7 @@ import '../../../../app/theme/app_dimens.dart';
 import '../../../../core/widgets/chat_bubble.dart';
 import '../../../../core/widgets/chat_composer.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../blocks_reports/presentation/widgets/moderation_dialogs.dart';
 import '../../../profile/presentation/providers/preferences_provider.dart';
 import '../../../shared_api/ai_widgets.dart';
 import '../../../shared_api/api_widgets.dart';
@@ -129,6 +130,24 @@ class _AiCoachChatScreenState extends ConsumerState<AiCoachChatScreen> {
               icon: const Icon(Icons.add_comment_outlined),
               onPressed: () => unawaited(_createConversation()),
             ),
+          // Long-pressing a bubble reports that specific response; this menu
+          // exists so the affordance is discoverable without the gesture.
+          if (_lastAssistantMessage != null)
+            PopupMenuButton<String>(
+              tooltip: l10n.moderationActionsTooltip,
+              onSelected: (_) =>
+                  unawaited(_reportResponse(_lastAssistantMessage!)),
+              itemBuilder: (_) => [
+                PopupMenuItem(
+                  value: 'report_ai',
+                  child: ListTile(
+                    leading: const Icon(Icons.flag_outlined),
+                    title: Text(l10n.moderationReportAiAction),
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                ),
+              ],
+            ),
         ],
       ),
       body: Column(
@@ -161,6 +180,16 @@ class _AiCoachChatScreenState extends ConsumerState<AiCoachChatScreen> {
       ),
     );
   }
+
+  String? get _lastAssistantMessage {
+    for (var i = _messages.length - 1; i >= 0; i--) {
+      if (_messages[i].role != 'user') return _messages[i].content;
+    }
+    return null;
+  }
+
+  Future<void> _reportResponse(String content) =>
+      showReportAiResponseDialog(context, ref, content: content);
 
   Widget _body(AppLocalizations l10n) {
     if (_initializing) {
@@ -200,6 +229,9 @@ class _AiCoachChatScreenState extends ConsumerState<AiCoachChatScreen> {
           mine: msg.role == 'user',
           author: msg.role == 'user' ? null : l10n.aiCoachChatAuthorLabel,
           markdown: msg.role != 'user',
+          onReport: msg.role == 'user'
+              ? null
+              : () => unawaited(_reportResponse(msg.content)),
         );
       },
     );

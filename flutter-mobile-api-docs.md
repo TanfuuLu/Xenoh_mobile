@@ -45,7 +45,8 @@ Content-Type: application/json
 - `Gender`: `Male`, `Female`, `Other`
 - `DevelopmentDirection`: `Strength`, `Hypertrophy`, `FatLoss`, `Recomposition`, `Endurance`, `GeneralHealth`
 - `TrainingDiscipline`: `Powerlifting`, `Bodybuilding`, `Weightlifting`, `Calisthenics`, `CrossFit`, `Running`, `GeneralFitness`
-- `RelationshipStatus`: `Pending`, `Active`, `PendingTermination`, `Expired`
+- `RelationshipStatus`: `Pending`, `Active`, `Ended`, `Expired`, `PendingRenewal`
+  (`PendingTermination` is legacy — the server never writes it any more)
 - `PlanType`: `Self`, `Coach`
 - `MuscleGroup`: `Chest`, `Back`, `Shoulders`, `Biceps`, `Triceps`, `Forearms`, `Abs`, `Glutes`, `Quads`, `Hamstrings`, `Calves`, `FullBody`, `Cardio`, `Traps`, `Neck`, `Adductors`, `Abductors`
 
@@ -564,13 +565,21 @@ AI behavior:
 
 ```http
 PUT    /api/coach-client/accept/{relationshipId}
-POST   /api/coach-client/{relationshipId}/request-termination
-POST   /api/coach-client/{relationshipId}/accept-termination
-POST   /api/coach-client/{relationshipId}/reject-termination
+POST   /api/coach-client/{relationshipId}/end
 ```
 
-Termination is client-initiated. The coach can accept or reject only while
-the relationship status is `PendingTermination`.
+Ending is one-sided: either participant calls `/end`, the relationship goes
+straight to `Ended`, and the other party gets a notification rather than an
+approval prompt. It also works on a still-`Pending` request, which is how a
+coach declines one.
+
+Ending an established relationship deletes the coach-authored plans owned by
+that client — along with the sessions logged against them — and revokes the
+files the two shared, so confirm before calling it. Declining a `Pending`
+request touches neither.
+
+The old `request-termination` / `accept-termination` routes are deprecated
+aliases for `/end`; `reject-termination` returns `410`.
 
 ### Coach And Client Lists
 

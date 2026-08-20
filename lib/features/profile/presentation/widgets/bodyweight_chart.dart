@@ -5,8 +5,9 @@ import '../../../../app/theme/app_typography.dart';
 import '../../../../core/utils/weight_units.dart';
 import '../../domain/entities/bodyweight_log.dart';
 
-/// Lightweight line chart of bodyweight over time (no external chart dep).
-/// [logs] must be sorted oldest → newest, values in kg; displayed in [unit].
+/// Sparkline of bodyweight over time (no external chart dep): a smoothed line
+/// over a fading gradient, with the date range as the only chrome. [logs] must
+/// be sorted oldest → newest, values in kg; displayed in [unit].
 class BodyweightChart extends StatelessWidget {
   const BodyweightChart({
     required this.logs,
@@ -35,10 +36,12 @@ class _ChartPainter extends CustomPainter {
   final List<BodyweightLog> logs;
   final WeightUnit unit;
 
-  static const _leftPad = 36.0;
-  static const _topPad = 12.0;
-  static const _bottomPad = 34.0;
-  static const _rightPad = 4.0;
+  // No y-axis labels to leave room for, so the line runs edge to edge; the
+  // side padding only keeps the endpoint dot from clipping.
+  static const _leftPad = 2.0;
+  static const _rightPad = 8.0;
+  static const _topPad = 14.0;
+  static const _bottomPad = 26.0;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -65,69 +68,87 @@ class _ChartPainter extends CustomPainter {
         : chartLeft + chartW * i / (logs.length - 1);
     double yAt(double w) => _topPad + chartH * (1 - (w - minW) / range);
 
-    // Horizontal gridlines + min/max axis labels.
-    final gridPaint = Paint()
-      ..color = AppColors.surfaceBorderSoft
-      ..strokeWidth = 1;
-    for (final w in [maxW, minW]) {
-      final y = yAt(w);
-      canvas.drawLine(Offset(chartLeft, y), Offset(chartRight, y), gridPaint);
-      _label(canvas, w.toStringAsFixed(0), Offset(0, y - 6));
-    }
-
     final points = [
       for (var i = 0; i < logs.length; i++) Offset(xAt(i), yAt(weights[i])),
     ];
 
-    // Area fill under the line.
     if (points.length > 1) {
-      final fill = Path()..moveTo(points.first.dx, chartBottom);
-      for (final p in points) {
-        fill.lineTo(p.dx, p.dy);
-      }
-      fill
+      final line = _smoothPath(points);
+
+      // Gradient area, fading to nothing at the baseline.
+      final fill = Path.from(line)
         ..lineTo(points.last.dx, chartBottom)
+        ..lineTo(points.first.dx, chartBottom)
         ..close();
-      canvas.drawPath(
-        fill,
-        Paint()..color = AppColors.accent.withValues(alpha: 0.10),
-      );
+      canvas
+        ..drawPath(
+          fill,
+          Paint()
+            ..shader =
+                LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    AppColors.accent.withValues(alpha: 0.22),
+                    AppColors.accent.withValues(alpha: 0),
+                  ],
+                ).createShader(
+                  Rect.fromLTRB(chartLeft, _topPad, chartRight, chartBottom),
+                ),
+        )
+        ..drawPath(
+          line,
+          Paint()
+            ..color = AppColors.accent
+            ..strokeWidth = 2
+            ..style = PaintingStyle.stroke
+            ..strokeJoin = StrokeJoin.round
+            ..strokeCap = StrokeCap.round,
+        );
     }
 
-    // Line.
-    final linePaint = Paint()
-      ..color = AppColors.accent
-      ..strokeWidth = 2.5
-      ..style = PaintingStyle.stroke
-      ..strokeJoin = StrokeJoin.round
-      ..strokeCap = StrokeCap.round;
-    if (points.length > 1) {
-      final path = Path()..moveTo(points.first.dx, points.first.dy);
-      for (final p in points.skip(1)) {
-        path.lineTo(p.dx, p.dy);
-      }
-      canvas.drawPath(path, linePaint);
-    }
-
-    // Endpoint dot.
+    // Endpoint: soft halo, solid dot, punched-out centre.
     final last = points.last;
     canvas
-      ..drawCircle(last, 4.5, Paint()..color = AppColors.accent)
-      ..drawCircle(last, 2, Paint()..color = AppColors.bg2);
+      ..drawCircle(
+        last,
+        8,
+        Paint()..color = AppColors.accent.withValues(alpha: 0.16),
+      )
+      ..drawCircle(last, 4, Paint()..color = AppColors.accent)
+      ..drawCircle(last, 1.6, Paint()..color = AppColors.bg2);
 
     _paintDateAxis(canvas, size, xAt, chartBottom);
   }
 
-  void _label(Canvas canvas, String text, Offset offset) {
-    TextPainter(
-        text: TextSpan(
-          text: text,
-          style: AppTypography.mono(10, color: AppColors.fg3),
-        ),
-        textDirection: TextDirection.ltr,
-      )
-      ..layout(maxWidth: _leftPad - 4)
-      ..paint(canvas, offset);
+  /// Catmull-Rom through every point, converted to cubics. Control points are
+  /// clamped to their segment so a smoothed curve never invents a high or low
+  /// the user never weighed.
+  Path _smoothPath(List<Offset> points) {
+    final path = Path()..moveTo(points.first.dx, points.first.dy);
+    for (var i = 0; i < points.length - 1; i++) {
+      final previous = i == 0 ? points[i] : points[i - 1];
+      final start = points[i];
+      final end = points[i + 1];
+      final next = i + 2 < points.length ? points[i + 2] : end;
+
+      final c1 = Offset(
+        start.dx + (end.dx - previous.dx) / 6,
+        _clampBetween(start.dy + (end.dy - previous.dy) / 6, start.dy, end.dy),
+      );
+      final c2 = Offset(
+        end.dx - (next.dx - start.dx) / 6,
+        _clampBetween(end.dy - (next.dy - start.dy) / 6, start.dy, end.dy),
+      );
+      path.cubicTo(c1.dx, c1.dy, c2.dx, c2.dy, end.dx, end.dy);
+    }
+    return path;
+  }
+
+  double _clampBetween(double value, double a, double b) {
+    final low = a < b ? a : b;
+    final high = a < b ? b : a;
+    return value < low ? low : (value > high ? high : value);
   }
 
   void _paintDateAxis(
@@ -136,22 +157,11 @@ class _ChartPainter extends CustomPainter {
     double Function(int index) xAt,
     double chartBottom,
   ) {
-    final ticks = _dateTickIndexes(size.width);
-    final tickPaint = Paint()
-      ..color = AppColors.surfaceBorderSoft
-      ..strokeWidth = 1;
-
-    for (final index in ticks) {
-      final x = xAt(index);
-      canvas.drawLine(
-        Offset(x, chartBottom),
-        Offset(x, chartBottom + 4),
-        tickPaint,
-      );
+    for (final index in _dateTickIndexes(size.width)) {
       _dateLabel(
         canvas,
         _formatDate(logs[index].date),
-        Offset(x, chartBottom + 8),
+        Offset(xAt(index), chartBottom + 10),
         switch (index) {
           0 => _DateLabelAlign.left,
           _ when index == logs.length - 1 => _DateLabelAlign.right,

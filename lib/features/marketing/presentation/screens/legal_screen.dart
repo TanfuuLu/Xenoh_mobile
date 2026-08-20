@@ -61,6 +61,10 @@ LegalPageContent legalPageContent(LegalPageKind kind, AppLocalizations l10n) =>
             title: l10n.legalTermsAiLimitsTitle,
             body: l10n.legalTermsAiLimitsBody,
           ),
+          LegalSection(
+            title: l10n.legalTermsCommunityContentTitle,
+            body: l10n.legalTermsCommunityContentBody,
+          ),
         ],
       ),
       LegalPageKind.refund => LegalPageContent(

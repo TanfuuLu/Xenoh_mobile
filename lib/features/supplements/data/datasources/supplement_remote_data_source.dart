@@ -54,6 +54,15 @@ class SupplementRemoteDataSource {
     String? clientId,
   }) => _dio.delete<void>('${_base(clientId)}/regimens/$regimenId');
 
+  /// Permanent removal: drops the regimen, every schedule version, and the
+  /// intake history. Distinct from [archiveRegimen], which keeps the history.
+  Future<void> deleteRegimen(
+    String regimenId, {
+    String? clientId,
+  }) => _dio.delete<void>(
+    '${_base(clientId)}/regimens/$regimenId/permanent',
+  );
+
   Future<SupplementDaily> getDaily(
     DateTime date, {
     String? clientId,

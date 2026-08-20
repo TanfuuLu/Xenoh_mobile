@@ -78,39 +78,79 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets(
-    'coach sees termination response buttons only after client requests it',
-    (tester) async {
-      final api = _RelationshipApi();
-      await _pumpCoachClients(
-        tester,
-        api: api,
-        clients: const [
-          {
-            'id': 'relationship-1',
-            'clientId': 'client-1',
-            'clientName': 'Demo Athlete',
-            'status': 'PendingTermination',
-          },
-        ],
-      );
+  testWidgets('coach ends a relationship without the client approving', (
+    tester,
+  ) async {
+    final api = _RelationshipApi();
+    await _pumpCoachClients(
+      tester,
+      api: api,
+      clients: const [
+        {
+          'id': 'relationship-1',
+          'clientId': 'client-1',
+          'clientName': 'Demo Athlete',
+          'status': 'Active',
+        },
+      ],
+    );
 
-      expect(find.text('End relationship'), findsOneWidget);
-      expect(find.text('Keep relationship'), findsOneWidget);
-      expect(find.text('Request renewal'), findsNothing);
-      expect(find.text('Disconnect'), findsNothing);
+    await tester.tap(find.byIcon(Icons.more_horiz_rounded));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('End coaching').last);
+    await tester.pumpAndSettle();
 
-      await tester.tap(find.text('End relationship'));
-      await tester.pump();
+    // Confirmation names the client and spells out that plans are deleted.
+    expect(find.text('End the coaching relationship?'), findsOneWidget);
+    expect(
+      find.textContaining('The plans you wrote for them are deleted'),
+      findsOneWidget,
+    );
+    expect(api.postedPaths, isEmpty);
 
-      expect(
-        api.postedPaths,
-        contains('/coach-client/relationship-1/accept-termination'),
-      );
-    },
-  );
+    await tester.tap(find.text('End coaching').last);
+    await tester.pumpAndSettle();
 
-  testWidgets('coach sees no lifecycle action for an active relationship', (
+    expect(api.postedPaths, contains('/coach-client/relationship-1/end'));
+  });
+
+  testWidgets('coach can decline a request that was never accepted', (
+    tester,
+  ) async {
+    final api = _RelationshipApi();
+    await _pumpCoachClients(
+      tester,
+      api: api,
+      clients: const [
+        {
+          'id': 'relationship-1',
+          'clientId': 'client-1',
+          'clientName': 'Demo Athlete',
+          'status': 'Pending',
+        },
+      ],
+    );
+
+    await tester.tap(find.byIcon(Icons.more_horiz_rounded));
+    await tester.pumpAndSettle();
+    // A pending request offers both answers, not just accept.
+    expect(find.text('Accept'), findsOneWidget);
+    await tester.tap(find.text('Decline request').last);
+    await tester.pumpAndSettle();
+
+    // Declining touches no plans, so the copy must not threaten deletion.
+    expect(find.text('Decline this request?'), findsOneWidget);
+    expect(find.textContaining('are deleted'), findsNothing);
+    expect(api.postedPaths, isEmpty);
+
+    await tester.tap(find.text('Decline request').last);
+    await tester.pumpAndSettle();
+
+    // Declining and ending are the same one-sided call server-side.
+    expect(api.postedPaths, contains('/coach-client/relationship-1/end'));
+  });
+
+  testWidgets('coach sees no accept or reject termination choice', (
     tester,
   ) async {
     await _pumpCoachClients(
@@ -126,45 +166,13 @@ void main() {
       ],
     );
 
-    expect(find.text('Request termination'), findsNothing);
     expect(find.text('End relationship'), findsNothing);
     expect(find.text('Keep relationship'), findsNothing);
+    expect(find.text('Termination requested'), findsNothing);
     expect(find.text('Request renewal'), findsNothing);
-    expect(find.text('Disconnect'), findsNothing);
   });
 
-  testWidgets(
-    'client can only request termination from an active relationship',
-    (
-      tester,
-    ) async {
-      final api = _RelationshipApi(
-        myCoach: const {
-          'id': 'relationship-1',
-          'coachId': 'coach-1',
-          'coachName': 'Demo Coach',
-          'status': 'Active',
-        },
-      );
-      await _pumpMyCoach(tester, api);
-
-      expect(find.text('Request termination'), findsOneWidget);
-      expect(find.text('Request renewal'), findsNothing);
-      expect(find.text('Disconnect'), findsNothing);
-
-      await tester.tap(find.text('Request termination'));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('Request termination').last);
-      await tester.pumpAndSettle();
-
-      expect(
-        api.postedPaths,
-        contains('/coach-client/relationship-1/request-termination'),
-      );
-    },
-  );
-
-  testWidgets('client sees a waiting state after requesting termination', (
+  testWidgets('client ends the relationship without the coach approving', (
     tester,
   ) async {
     final api = _RelationshipApi(
@@ -172,17 +180,48 @@ void main() {
         'id': 'relationship-1',
         'coachId': 'coach-1',
         'coachName': 'Demo Coach',
-        'status': 'PendingTermination',
+        'status': 'Active',
       },
     );
     await _pumpMyCoach(tester, api);
 
-    expect(find.text('Termination requested'), findsOneWidget);
+    expect(find.text('End coaching'), findsOneWidget);
+    expect(find.text('Request termination'), findsNothing);
+    expect(find.text('Request renewal'), findsNothing);
+
+    await tester.tap(find.text('End coaching'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('End the coaching relationship?'), findsOneWidget);
     expect(
-      find.text('Waiting for your coach to accept or reject the request.'),
+      find.textContaining('the sessions you already logged against them'),
       findsOneWidget,
     );
-    expect(find.text('Request termination'), findsNothing);
+
+    await tester.tap(find.text('End coaching').last);
+    await tester.pumpAndSettle();
+
+    expect(api.postedPaths, contains('/coach-client/relationship-1/end'));
+  });
+
+  testWidgets('client sees no waiting state, because ending is immediate', (
+    tester,
+  ) async {
+    final api = _RelationshipApi(
+      myCoach: const {
+        'id': 'relationship-1',
+        'coachId': 'coach-1',
+        'coachName': 'Demo Coach',
+        'status': 'Active',
+      },
+    );
+    await _pumpMyCoach(tester, api);
+
+    expect(
+      find.text('Waiting for your coach to accept or reject the request.'),
+      findsNothing,
+    );
+    expect(find.text('Termination requested'), findsNothing);
   });
 }
 

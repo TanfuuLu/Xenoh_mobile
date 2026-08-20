@@ -2330,47 +2330,47 @@ abstract class AppLocalizations {
   /// **'Relationship actions'**
   String get coachRelationshipActionsTooltip;
 
-  /// No description provided for @coachRequestTerminationAction.
+  /// Button that ends a coach-client relationship. Ending is one-sided: the other party is notified, not asked.
   ///
   /// In en, this message translates to:
-  /// **'Request termination'**
-  String get coachRequestTerminationAction;
+  /// **'End coaching'**
+  String get coachEndRelationshipAction;
 
-  /// No description provided for @coachAcceptTerminationAction.
+  /// Title of the confirmation dialog shown before ending a coach-client relationship
   ///
   /// In en, this message translates to:
-  /// **'End relationship'**
-  String get coachAcceptTerminationAction;
+  /// **'End the coaching relationship?'**
+  String get coachEndRelationshipConfirmTitle;
 
-  /// No description provided for @coachRejectTerminationAction.
+  /// Confirmation body shown to a client ending their relationship with a coach
   ///
   /// In en, this message translates to:
-  /// **'Keep relationship'**
-  String get coachRejectTerminationAction;
+  /// **'This ends the relationship straight away and your coach is notified. The plans they wrote for you are deleted, including the sessions you already logged against them, and the files they shared with you are removed.'**
+  String get coachEndRelationshipConfirmMessageClient;
 
-  /// No description provided for @coachTerminationRequestedStatus.
+  /// Confirmation body shown to a coach ending a relationship
   ///
   /// In en, this message translates to:
-  /// **'Termination requested'**
-  String get coachTerminationRequestedStatus;
+  /// **'This ends the relationship with {name} straight away and they are notified. The plans you wrote for them are deleted, including the sessions already logged against those plans, and they lose access to the files you shared.'**
+  String coachEndRelationshipConfirmMessageCoach(String name);
 
-  /// No description provided for @coachTerminationPendingClientMessage.
+  /// Menu action a coach uses to turn down a client's pending join request
   ///
   /// In en, this message translates to:
-  /// **'Waiting for your coach to accept or reject the request.'**
-  String get coachTerminationPendingClientMessage;
+  /// **'Decline request'**
+  String get coachDeclineRequestAction;
 
-  /// No description provided for @coachTerminationConfirmTitle.
+  /// Title of the confirmation dialog shown before declining a pending join request
   ///
   /// In en, this message translates to:
-  /// **'Request relationship termination?'**
-  String get coachTerminationConfirmTitle;
+  /// **'Decline this request?'**
+  String get coachDeclineRequestConfirmTitle;
 
-  /// No description provided for @coachTerminationConfirmMessage.
+  /// Confirmation body shown to a coach declining a pending join request
   ///
   /// In en, this message translates to:
-  /// **'Your coach must respond before the coaching relationship ends.'**
-  String get coachTerminationConfirmMessage;
+  /// **'{name} is told the request was turned down. Nothing else is affected — they can send a new request later.'**
+  String coachDeclineRequestConfirmMessage(String name);
 
   /// No description provided for @coachAcceptAction.
   ///
@@ -2815,6 +2815,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Register'**
   String get authRegisterCta;
+
+  /// Registration consent checkbox label. [[terms]] and [[privacy]] are replaced by tappable links and must be kept verbatim in translations.
+  ///
+  /// In en, this message translates to:
+  /// **'I agree to the [[terms]] and the [[privacy]], including the community content rules that apply to anything I post on Xenoh.'**
+  String get authConsentText;
+
+  /// Link text for the Terms page inside the registration consent label
+  ///
+  /// In en, this message translates to:
+  /// **'Terms'**
+  String get authConsentTermsLink;
+
+  /// Link text for the Privacy page inside the registration consent label
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get authConsentPrivacyLink;
+
+  /// Validation error shown when the registration consent checkbox is not ticked
+  ///
+  /// In en, this message translates to:
+  /// **'Accept the Terms and Privacy Policy to create an account'**
+  String get authConsentRequiredError;
 
   /// Generic dropdown hint on the register screen
   ///
@@ -6833,6 +6857,24 @@ abstract class AppLocalizations {
   /// **'Remove friend'**
   String get communityRemoveFriendTooltip;
 
+  /// No description provided for @communityRemoveFriendTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove friend?'**
+  String get communityRemoveFriendTitle;
+
+  /// No description provided for @communityRemoveFriendMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove {name} from your friends? You will stop seeing each other’s shared workouts, and they are not notified.'**
+  String communityRemoveFriendMessage(String name);
+
+  /// No description provided for @communityRemoveFriendAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get communityRemoveFriendAction;
+
   /// No description provided for @communitySentRequestsTitle.
   ///
   /// In en, this message translates to:
@@ -7991,6 +8033,18 @@ abstract class AppLocalizations {
   /// **'AI features may be gated by subscription tier, quota, and backend availability. The mobile app displays upgrade, quota, and failure states when returned by the API.'**
   String get legalTermsAiLimitsBody;
 
+  /// No description provided for @legalTermsCommunityContentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Community Content'**
+  String get legalTermsCommunityContentTitle;
+
+  /// No description provided for @legalTermsCommunityContentBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Posts, comments, photos, and messages you share stay your content, and you are responsible for them. Do not post anything unlawful, hateful, harassing, sexually explicit, or that infringes someone else\'s rights, and do not present medical advice as coming from Xenoh. Reported content may be reviewed, hidden, or removed, and repeat violations may cost you access to community features.'**
+  String get legalTermsCommunityContentBody;
+
   /// No description provided for @legalRefundTitle.
   ///
   /// In en, this message translates to:
@@ -8446,6 +8500,144 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Share actions'**
   String get communityShareActionsTooltip;
+
+  /// No description provided for @moderationActionsTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Safety actions'**
+  String get moderationActionsTooltip;
+
+  /// No description provided for @moderationReasonLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason'**
+  String get moderationReasonLabel;
+
+  /// No description provided for @moderationReasonHarassment.
+  ///
+  /// In en, this message translates to:
+  /// **'Harassment'**
+  String get moderationReasonHarassment;
+
+  /// No description provided for @moderationReasonSpam.
+  ///
+  /// In en, this message translates to:
+  /// **'Spam'**
+  String get moderationReasonSpam;
+
+  /// No description provided for @moderationReasonScam.
+  ///
+  /// In en, this message translates to:
+  /// **'Scam'**
+  String get moderationReasonScam;
+
+  /// No description provided for @moderationReasonInappropriate.
+  ///
+  /// In en, this message translates to:
+  /// **'Inappropriate content'**
+  String get moderationReasonInappropriate;
+
+  /// No description provided for @moderationReasonOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get moderationReasonOther;
+
+  /// No description provided for @moderationBlockUserAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Block user'**
+  String get moderationBlockUserAction;
+
+  /// No description provided for @moderationBlockUserTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Block {name}?'**
+  String moderationBlockUserTitle(String name);
+
+  /// No description provided for @moderationBlockUserMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'They will not be able to message you or see your shares. You can undo this in Settings, under Blocked users.'**
+  String get moderationBlockUserMessage;
+
+  /// No description provided for @moderationBlockReasonHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason (optional)'**
+  String get moderationBlockReasonHint;
+
+  /// No description provided for @moderationBlockConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Block'**
+  String get moderationBlockConfirm;
+
+  /// No description provided for @moderationBlockSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} is now blocked.'**
+  String moderationBlockSuccess(String name);
+
+  /// No description provided for @moderationReportUserAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Report user'**
+  String get moderationReportUserAction;
+
+  /// No description provided for @moderationReportUserTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Report {name}'**
+  String moderationReportUserTitle(String name);
+
+  /// No description provided for @moderationReportUserHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe what happened'**
+  String get moderationReportUserHint;
+
+  /// No description provided for @moderationReportUserSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Report submitted for review.'**
+  String get moderationReportUserSuccess;
+
+  /// No description provided for @moderationReportAiAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Report this response'**
+  String get moderationReportAiAction;
+
+  /// No description provided for @moderationReportAiTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Report AI response'**
+  String get moderationReportAiTitle;
+
+  /// No description provided for @moderationReportAiMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell us what is wrong with this response. The text below is attached to your report.'**
+  String get moderationReportAiMessage;
+
+  /// No description provided for @moderationReportAiHint.
+  ///
+  /// In en, this message translates to:
+  /// **'What is wrong with it?'**
+  String get moderationReportAiHint;
+
+  /// No description provided for @moderationReportAiSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Response reported. Thank you.'**
+  String get moderationReportAiSuccess;
+
+  /// No description provided for @moderationReportAiBugTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'AI coach response reported'**
+  String get moderationReportAiBugTitle;
 
   /// No description provided for @competitionTitleLabel.
   ///
@@ -9881,6 +10073,12 @@ abstract class AppLocalizations {
   /// **'Taken'**
   String get supplementsMarkTakenButton;
 
+  /// No description provided for @supplementsMarkTakenAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark taken'**
+  String get supplementsMarkTakenAction;
+
   /// No description provided for @supplementsSkipButton.
   ///
   /// In en, this message translates to:
@@ -9982,12 +10180,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count, plural, =1{1 dose time} other{{count} dose times}}'**
   String supplementsDoseSlotCount(int count);
-
-  /// No description provided for @supplementsLastThirtyDaysLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'LAST 30 DAYS'**
-  String get supplementsLastThirtyDaysLabel;
 
   /// No description provided for @supplementsNoHistoryTitle.
   ///
@@ -10114,6 +10306,126 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Enter a valid amount and unit for every dose.'**
   String get supplementsInvalidDoseMessage;
+
+  /// No description provided for @supplementsMaxDoseSlotsMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'A schedule can hold at most 20 dose times.'**
+  String get supplementsMaxDoseSlotsMessage;
+
+  /// No description provided for @supplementsOverlapDoseMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Two doses cannot share the same time on the same weekday.'**
+  String get supplementsOverlapDoseMessage;
+
+  /// No description provided for @supplementsEffectiveFromHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Schedule changes take effect from tomorrow at the earliest.'**
+  String get supplementsEffectiveFromHint;
+
+  /// No description provided for @supplementsProFeatureTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pro feature'**
+  String get supplementsProFeatureTitle;
+
+  /// No description provided for @supplementsDeleteButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete permanently'**
+  String get supplementsDeleteButton;
+
+  /// No description provided for @supplementsDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete schedule?'**
+  String get supplementsDeleteTitle;
+
+  /// No description provided for @supplementsDeleteMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Permanently delete {name}? Its schedule and all adherence history are removed. This cannot be undone.'**
+  String supplementsDeleteMessage(String name);
+
+  /// No description provided for @supplementsDeletedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Supplement schedule deleted.'**
+  String get supplementsDeletedMessage;
+
+  /// No description provided for @supplementsFutureDoseMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Doses can only be recorded once the day has arrived.'**
+  String get supplementsFutureDoseMessage;
+
+  /// No description provided for @supplementsNoteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Dose note'**
+  String get supplementsNoteTitle;
+
+  /// No description provided for @supplementsNoteHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional note (max 300 characters)'**
+  String get supplementsNoteHint;
+
+  /// No description provided for @supplementsAddNoteTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Add note'**
+  String get supplementsAddNoteTooltip;
+
+  /// No description provided for @supplementsEditNoteTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit note'**
+  String get supplementsEditNoteTooltip;
+
+  /// No description provided for @supplementsRecordedAtLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Recorded {time}'**
+  String supplementsRecordedAtLabel(String time);
+
+  /// No description provided for @supplementsScheduleActiveLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Active since {date}'**
+  String supplementsScheduleActiveLabel(String date);
+
+  /// No description provided for @supplementsScheduleUpcomingLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'New schedule from {date}'**
+  String supplementsScheduleUpcomingLabel(String date);
+
+  /// No description provided for @supplementsScheduleEndsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Ends {date}'**
+  String supplementsScheduleEndsLabel(String date);
+
+  /// No description provided for @supplementsCreatedByLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Added by {name}'**
+  String supplementsCreatedByLabel(String name);
+
+  /// No description provided for @supplementsHistoryRangeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'LAST {days} DAYS'**
+  String supplementsHistoryRangeLabel(int days);
+
+  /// No description provided for @supplementsRangeDaysLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{days}d'**
+  String supplementsRangeDaysLabel(int days);
 }
 
 class _AppLocalizationsDelegate

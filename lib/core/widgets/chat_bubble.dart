@@ -9,8 +9,9 @@ import 'chat_attachment.dart';
 
 /// A single chat message bubble. [mine] right-aligns it with the clay accent
 /// fill; otherwise it's a left-aligned light bubble. An optional [author] label
-/// and [timestamp] caption frame the text, and a long-press triggers [onDelete]
-/// when provided. Optional [attachments] (the message DTO's `attachments`
+/// and [timestamp] caption frame the text, and a long-press offers whichever of
+/// [onDelete] and [onReport] are provided. Optional [attachments] (the message
+/// DTO's `attachments`
 /// array — `{id, fileName, contentType, sizeBytes, isImage}`) render as inline
 /// image thumbnails or file cards above the text.
 class ChatBubble extends StatelessWidget {
@@ -20,6 +21,7 @@ class ChatBubble extends StatelessWidget {
     this.author,
     this.timestamp,
     this.onDelete,
+    this.onReport,
     this.attachments,
     this.markdown = false,
     super.key,
@@ -30,6 +32,11 @@ class ChatBubble extends StatelessWidget {
   final String? author;
   final String? timestamp;
   final VoidCallback? onDelete;
+
+  /// Flags this message's content. Long-pressing offers it alongside
+  /// [onDelete]; when only one of the two is set, the gesture runs it directly.
+  final VoidCallback? onReport;
+
   final List<Map<String, dynamic>>? attachments;
 
   /// Renders a small subset of Markdown (`**bold**`, `*italic*`, bullets) in the
@@ -44,7 +51,9 @@ class ChatBubble extends StatelessWidget {
     const radius = Radius.circular(AppRadius.lg);
 
     final bubble = GestureDetector(
-      onLongPress: onDelete == null ? null : () => _confirmDelete(context),
+      onLongPress: onDelete == null && onReport == null
+          ? null
+          : () => _showActions(context),
       child: Container(
         constraints: BoxConstraints(
           maxWidth: MediaQuery.sizeOf(context).width * 0.78,
@@ -129,6 +138,47 @@ class ChatBubble extends StatelessWidget {
         child: bubble,
       ),
     );
+  }
+
+  Future<void> _showActions(BuildContext context) async {
+    if (onReport == null) return _confirmDelete(context);
+    if (onDelete == null) {
+      onReport!.call();
+      return;
+    }
+    final l10n = AppLocalizations.of(context);
+    final choice = await showModalBottomSheet<String>(
+      context: context,
+      backgroundColor: AppColors.bgPage,
+      builder: (sheetContext) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.flag_outlined),
+              title: Text(l10n.communityReportSubmit),
+              onTap: () => Navigator.pop(sheetContext, 'report'),
+            ),
+            ListTile(
+              leading: const Icon(
+                Icons.delete_outline,
+                color: AppColors.danger,
+              ),
+              title: Text(
+                l10n.commonDelete,
+                style: const TextStyle(color: AppColors.danger),
+              ),
+              onTap: () => Navigator.pop(sheetContext, 'delete'),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (choice == 'report') {
+      onReport!.call();
+    } else if (choice == 'delete' && context.mounted) {
+      await _confirmDelete(context);
+    }
   }
 
   Future<void> _confirmDelete(BuildContext context) async {

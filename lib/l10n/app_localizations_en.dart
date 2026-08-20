@@ -1210,28 +1210,31 @@ class AppLocalizationsEn extends AppLocalizations {
   String get coachRelationshipActionsTooltip => 'Relationship actions';
 
   @override
-  String get coachRequestTerminationAction => 'Request termination';
+  String get coachEndRelationshipAction => 'End coaching';
 
   @override
-  String get coachAcceptTerminationAction => 'End relationship';
+  String get coachEndRelationshipConfirmTitle =>
+      'End the coaching relationship?';
 
   @override
-  String get coachRejectTerminationAction => 'Keep relationship';
+  String get coachEndRelationshipConfirmMessageClient =>
+      'This ends the relationship straight away and your coach is notified. The plans they wrote for you are deleted, including the sessions you already logged against them, and the files they shared with you are removed.';
 
   @override
-  String get coachTerminationRequestedStatus => 'Termination requested';
+  String coachEndRelationshipConfirmMessageCoach(String name) {
+    return 'This ends the relationship with $name straight away and they are notified. The plans you wrote for them are deleted, including the sessions already logged against those plans, and they lose access to the files you shared.';
+  }
 
   @override
-  String get coachTerminationPendingClientMessage =>
-      'Waiting for your coach to accept or reject the request.';
+  String get coachDeclineRequestAction => 'Decline request';
 
   @override
-  String get coachTerminationConfirmTitle =>
-      'Request relationship termination?';
+  String get coachDeclineRequestConfirmTitle => 'Decline this request?';
 
   @override
-  String get coachTerminationConfirmMessage =>
-      'Your coach must respond before the coaching relationship ends.';
+  String coachDeclineRequestConfirmMessage(String name) {
+    return '$name is told the request was turned down. Nothing else is affected — they can send a new request later.';
+  }
 
   @override
   String get coachAcceptAction => 'Accept';
@@ -1472,6 +1475,20 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get authRegisterCta => 'Register';
+
+  @override
+  String get authConsentText =>
+      'I agree to the [[terms]] and the [[privacy]], including the community content rules that apply to anything I post on Xenoh.';
+
+  @override
+  String get authConsentTermsLink => 'Terms';
+
+  @override
+  String get authConsentPrivacyLink => 'Privacy Policy';
+
+  @override
+  String get authConsentRequiredError =>
+      'Accept the Terms and Privacy Policy to create an account';
 
   @override
   String get authSelectOneHint => 'Select one';
@@ -3698,6 +3715,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get communityRemoveFriendTooltip => 'Remove friend';
 
   @override
+  String get communityRemoveFriendTitle => 'Remove friend?';
+
+  @override
+  String communityRemoveFriendMessage(String name) {
+    return 'Remove $name from your friends? You will stop seeing each other’s shared workouts, and they are not notified.';
+  }
+
+  @override
+  String get communityRemoveFriendAction => 'Remove';
+
+  @override
   String get communitySentRequestsTitle => 'Sent requests';
 
   @override
@@ -4339,6 +4367,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'AI features may be gated by subscription tier, quota, and backend availability. The mobile app displays upgrade, quota, and failure states when returned by the API.';
 
   @override
+  String get legalTermsCommunityContentTitle => 'Community Content';
+
+  @override
+  String get legalTermsCommunityContentBody =>
+      'Posts, comments, photos, and messages you share stay your content, and you are responsible for them. Do not post anything unlawful, hateful, harassing, sexually explicit, or that infringes someone else\'s rights, and do not present medical advice as coming from Xenoh. Reported content may be reviewed, hidden, or removed, and repeat violations may cost you access to community features.';
+
+  @override
   String get legalRefundTitle => 'Refund Policy';
 
   @override
@@ -4596,6 +4631,83 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get communityShareActionsTooltip => 'Share actions';
+
+  @override
+  String get moderationActionsTooltip => 'Safety actions';
+
+  @override
+  String get moderationReasonLabel => 'Reason';
+
+  @override
+  String get moderationReasonHarassment => 'Harassment';
+
+  @override
+  String get moderationReasonSpam => 'Spam';
+
+  @override
+  String get moderationReasonScam => 'Scam';
+
+  @override
+  String get moderationReasonInappropriate => 'Inappropriate content';
+
+  @override
+  String get moderationReasonOther => 'Other';
+
+  @override
+  String get moderationBlockUserAction => 'Block user';
+
+  @override
+  String moderationBlockUserTitle(String name) {
+    return 'Block $name?';
+  }
+
+  @override
+  String get moderationBlockUserMessage =>
+      'They will not be able to message you or see your shares. You can undo this in Settings, under Blocked users.';
+
+  @override
+  String get moderationBlockReasonHint => 'Reason (optional)';
+
+  @override
+  String get moderationBlockConfirm => 'Block';
+
+  @override
+  String moderationBlockSuccess(String name) {
+    return '$name is now blocked.';
+  }
+
+  @override
+  String get moderationReportUserAction => 'Report user';
+
+  @override
+  String moderationReportUserTitle(String name) {
+    return 'Report $name';
+  }
+
+  @override
+  String get moderationReportUserHint => 'Describe what happened';
+
+  @override
+  String get moderationReportUserSuccess => 'Report submitted for review.';
+
+  @override
+  String get moderationReportAiAction => 'Report this response';
+
+  @override
+  String get moderationReportAiTitle => 'Report AI response';
+
+  @override
+  String get moderationReportAiMessage =>
+      'Tell us what is wrong with this response. The text below is attached to your report.';
+
+  @override
+  String get moderationReportAiHint => 'What is wrong with it?';
+
+  @override
+  String get moderationReportAiSuccess => 'Response reported. Thank you.';
+
+  @override
+  String get moderationReportAiBugTitle => 'AI coach response reported';
 
   @override
   String get competitionTitleLabel => 'Title';
@@ -5342,6 +5454,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get supplementsMarkTakenButton => 'Taken';
 
   @override
+  String get supplementsMarkTakenAction => 'Mark taken';
+
+  @override
   String get supplementsSkipButton => 'Skip';
 
   @override
@@ -5402,9 +5517,6 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return '$_temp0';
   }
-
-  @override
-  String get supplementsLastThirtyDaysLabel => 'LAST 30 DAYS';
 
   @override
   String get supplementsNoHistoryTitle => 'No adherence history';
@@ -5471,4 +5583,84 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get supplementsInvalidDoseMessage =>
       'Enter a valid amount and unit for every dose.';
+
+  @override
+  String get supplementsMaxDoseSlotsMessage =>
+      'A schedule can hold at most 20 dose times.';
+
+  @override
+  String get supplementsOverlapDoseMessage =>
+      'Two doses cannot share the same time on the same weekday.';
+
+  @override
+  String get supplementsEffectiveFromHint =>
+      'Schedule changes take effect from tomorrow at the earliest.';
+
+  @override
+  String get supplementsProFeatureTitle => 'Pro feature';
+
+  @override
+  String get supplementsDeleteButton => 'Delete permanently';
+
+  @override
+  String get supplementsDeleteTitle => 'Delete schedule?';
+
+  @override
+  String supplementsDeleteMessage(String name) {
+    return 'Permanently delete $name? Its schedule and all adherence history are removed. This cannot be undone.';
+  }
+
+  @override
+  String get supplementsDeletedMessage => 'Supplement schedule deleted.';
+
+  @override
+  String get supplementsFutureDoseMessage =>
+      'Doses can only be recorded once the day has arrived.';
+
+  @override
+  String get supplementsNoteTitle => 'Dose note';
+
+  @override
+  String get supplementsNoteHint => 'Optional note (max 300 characters)';
+
+  @override
+  String get supplementsAddNoteTooltip => 'Add note';
+
+  @override
+  String get supplementsEditNoteTooltip => 'Edit note';
+
+  @override
+  String supplementsRecordedAtLabel(String time) {
+    return 'Recorded $time';
+  }
+
+  @override
+  String supplementsScheduleActiveLabel(String date) {
+    return 'Active since $date';
+  }
+
+  @override
+  String supplementsScheduleUpcomingLabel(String date) {
+    return 'New schedule from $date';
+  }
+
+  @override
+  String supplementsScheduleEndsLabel(String date) {
+    return 'Ends $date';
+  }
+
+  @override
+  String supplementsCreatedByLabel(String name) {
+    return 'Added by $name';
+  }
+
+  @override
+  String supplementsHistoryRangeLabel(int days) {
+    return 'LAST $days DAYS';
+  }
+
+  @override
+  String supplementsRangeDaysLabel(int days) {
+    return '${days}d';
+  }
 }

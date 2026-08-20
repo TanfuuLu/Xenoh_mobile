@@ -36,7 +36,8 @@ or links to a purchase.
 | Launcher icon + adaptive icon + splash | Pass | `mipmap-anydpi-v26/ic_launcher.xml`, night variants, `flutter_native_splash.yaml` |
 | In-app account deletion | Pass, and localized | `account_deletion_request_screen.dart`, `accountDeletionSettingsLabel` in both `app_en.arb`/`app_vi.arb` |
 | Public unauthenticated legal routes | Pass | `/privacy`, `/terms`, `/refund-policy`, `/account-deletion` all in `isPublicLocation` |
-| UGC report/block surface | Present | `features/blocks_reports`, `/settings/blocklist`, `/admin/moderation` |
+| UGC report/block surface | Pass — see §2 B5 (the earlier "Present" was wrong: blocking could not be initiated at all) | `moderation_dialogs.dart`, `/settings/blocklist`, `/admin/moderation` |
+| AI output reportable | Pass | `moderation_dialogs.dart` → `POST /bug-reports`, wired into the AI coach chat |
 | Admin surfaces gated | Pass client-side | `routeAccessRedirect` bounces non-admins off `/admin*` |
 | Notification runtime permission requested | Pass | `workout_notification_service_io.dart:85` |
 
@@ -94,6 +95,40 @@ session cannot refresh afterwards, and run the email-based
 `POST /auth/account-deletion-requests` + verify pair. This is a smoke test, not
 a build task.
 
+### B5 — UGC moderation affordances missing — **RESOLVED**
+
+The §1 table previously recorded the report/block surface as "Present". Only
+half of it was. `blocklist_screen.dart` called `GET /users/me/blocks` and
+`DELETE /users/{id}/block`, and **nothing in `lib/` ever POSTed a block** — the
+backend has supported `POST /users/{userId}/block` all along
+(`API_ENDPOINTS.md:983`), so the blocklist screen could only ever render "No
+blocked users". Reporting covered training-day shares only; there was no way to
+report a *user*, despite `POST /users/{userId}/reports` also already existing.
+Direct messages had neither affordance, and AI responses could not be flagged
+at all — a Generative AI policy requirement.
+
+Fixed client-side; no backend work was needed:
+
+- New `features/blocks_reports/presentation/widgets/moderation_dialogs.dart` is
+  the single implementation of block, report-user, and report-AI-response.
+  Reason values are sent to the API in English; only the labels are localized.
+- Wired into the community post menu, the athlete profile app bar, and the
+  coach-client chat app bar. The chat route carries no peer user id, so it is
+  derived from the first message the peer sent — an empty thread has nothing to
+  report over anyway.
+- AI coach chat: long-press any assistant bubble, plus an app-bar menu item so
+  the affordance is discoverable without knowing the gesture. There is no
+  dedicated AI-report endpoint, so this rides on `POST /bug-reports` (decided,
+  not accidental) with the offending text attached verbatim.
+- `ChatBubble` gained `onReport` alongside `onDelete`; when both are set the
+  long-press opens a chooser instead of going straight to delete.
+- The hardcoded English reason list in `share_action_dialogs.dart` is now
+  localized in both `app_en.arb` and `app_vi.arb`.
+- Guard test `test/features/blocks_reports/moderation_surface_test.dart` fails
+  if the block POST, either report path, or the localized reasons regress.
+
+`flutter analyze` clean, 362 tests pass.
+
 ### B4 — Play Console track entirely unstarted
 
 Nothing in the repo is Console work, but it is on the critical path: Data
@@ -111,10 +146,10 @@ longest pole.
 |---|---|---|
 | R1 | Foreground-service declaration | `FOREGROUND_SERVICE_DATA_SYNC` requires a Console declaration form with a video demo of the workout notification and a justification. `dataSync` is also a scrutinised type — be ready to argue why the ongoing workout notification needs it, or narrow the use. |
 | R2 | Sensitive health data | The app has menstrual-cycle tracking (`features/cycle`), nutrition, bodyweight, DOB and gender. Data Safety must declare "Health and fitness" and personal identifiers, and the privacy policy text must match answer-for-answer. Mismatch is a common rejection cause. |
-| R3 | AI features | AI coach chat and AI insights. Play's Generative-AI policy requires an in-app way to report offensive AI output. Confirm the existing report flow covers AI responses, not just community posts. |
+| R3 | AI features | **Closed by B5.** AI responses are now reportable from the AI coach chat via `POST /bug-reports`. Remaining Console work: declare the AI feature and be ready to describe the reporting path. |
 | R4 | Admin screens in the shipped build | `/admin/payments`, `/admin/finance`, `/admin/promotions` ship in the AAB. Fine if the reviewer account is a plain user — but do not hand reviewers an admin account, or they will see payment-order administration in an app declared to have no payments. |
 | R5 | Version numbers | Currently `0.1.0+1`. Decide the public 1.0.0 story before first upload; `versionCode` can never be reused. |
-| R6 | UGC policy pack | Public community + direct messages means Play expects in-app reporting, blocking, a moderation commitment, and Terms acceptance before posting. The pieces exist; nobody has confirmed each path end-to-end. |
+| R6 | UGC policy pack | Reporting and blocking now exist on every UGC surface (B5). Two gaps remain: **registration shows no Terms/Privacy acceptance at all** (`register_screen.dart` has no legal link), and no one has walked each path end-to-end on a device. |
 | R7 | 16 KB page-size compliance | Required for new apps on targetSdk 35+. Flutter 3.44's engine should comply, but Play rejects at upload if any bundled `.so` is not 16 KB-aligned — the internal-testing upload is the cheap way to find out. |
 | R8 | Keystore survivability | The upload key exists and is correct, but this audit cannot verify an off-machine backup or Play App Signing enrolment. Losing it before enrolment means never updating the app under this package name. |
 | R9 | Competition entry fees | `features/competitions` still has bank-account fields, an expected fee, and a receipt upload for event registration. Play exempts payment for **physical/real-world** goods and services, which event registration is — so this is allowed, but the listing and the screens must read unmistakably as registration for a real-world event, not as unlocking app content. |
@@ -212,5 +247,8 @@ Ship to production only when every one of these is true:
 - [ ] AAB signed by the Xenoh upload key, enrolled in Play App Signing, key backed up off-machine
 - [ ] Foreground-service declaration accepted
 - [ ] Reviewer account works for every gated flow
+- [ ] Report and block walked end-to-end on device: community post, athlete
+      profile, direct message, AI coach response — each landing in `/admin/reports`
+      or `/admin/bug-reports`, and the block appearing in `/settings/blocklist`
 - [ ] Closed testing complete (12 testers × 14 days) with no crashes
 - [ ] Pre-launch report clean

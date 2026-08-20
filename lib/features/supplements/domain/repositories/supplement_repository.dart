@@ -19,6 +19,10 @@ abstract interface class SupplementRepository {
 
   Future<void> archiveRegimen(String regimenId, {String? clientId});
 
+  /// Permanently deletes a regimen and its adherence history. Unlike
+  /// [archiveRegimen] this cannot be undone.
+  Future<void> deleteRegimen(String regimenId, {String? clientId});
+
   Future<SupplementDaily> getDaily(DateTime date, {String? clientId});
 
   Future<SupplementDailyDose> recordDose({

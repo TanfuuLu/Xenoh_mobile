@@ -85,10 +85,19 @@ class SupplementMutationController extends _$SupplementMutationController {
         .archiveRegimen(regimenId, clientId: clientId),
   );
 
+  /// Permanent removal (regimen + schedule versions + adherence history).
+  /// [archive] is the reversible option; this one is not.
+  Future<bool> delete(String regimenId, {String? clientId}) => _run(
+    () => ref
+        .read(supplementRepositoryProvider)
+        .deleteRegimen(regimenId, clientId: clientId),
+  );
+
   Future<bool> recordDose({
     required String doseSlotId,
     required DateTime date,
     required SupplementIntakeStatus status,
+    String? note,
   }) => _run(
     () => ref
         .read(supplementRepositoryProvider)
@@ -96,6 +105,7 @@ class SupplementMutationController extends _$SupplementMutationController {
           doseSlotId: doseSlotId,
           date: date,
           status: status,
+          note: note,
         ),
   );
 

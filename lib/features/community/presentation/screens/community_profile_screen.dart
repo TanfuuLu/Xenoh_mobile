@@ -14,6 +14,7 @@ import '../../../../core/widgets/xn_chip.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../auth/presentation/providers/auth_controller.dart';
 import '../../../auth/presentation/providers/auth_state.dart';
+import '../../../blocks_reports/presentation/widgets/moderation_dialogs.dart';
 import '../../../profile/presentation/providers/preferences_provider.dart';
 import '../../domain/entities/community_models.dart';
 import '../providers/community_controllers.dart';
@@ -38,7 +39,57 @@ class CommunityProfileScreen extends ConsumerWidget {
         .id;
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.communityAthleteTitle)),
+      appBar: AppBar(
+        title: Text(l10n.communityAthleteTitle),
+        actions: [
+          if (currentUserId != null && currentUserId != userId)
+            PopupMenuButton<String>(
+              tooltip: l10n.moderationActionsTooltip,
+              onSelected: (action) async {
+                final name = profile.value?.fullName ?? '';
+                if (action == 'report_user') {
+                  await showReportUserDialog(
+                    context,
+                    ref,
+                    userId: userId,
+                    userName: name,
+                  );
+                } else if (action == 'block_user') {
+                  await showBlockUserDialog(
+                    context,
+                    ref,
+                    userId: userId,
+                    userName: name,
+                  );
+                }
+              },
+              itemBuilder: (_) => [
+                PopupMenuItem(
+                  value: 'report_user',
+                  child: ListTile(
+                    leading: const Icon(Icons.flag_outlined),
+                    title: Text(l10n.moderationReportUserAction),
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                ),
+                PopupMenuItem(
+                  value: 'block_user',
+                  child: ListTile(
+                    leading: const Icon(
+                      Icons.block_outlined,
+                      color: AppColors.danger,
+                    ),
+                    title: Text(
+                      l10n.moderationBlockUserAction,
+                      style: const TextStyle(color: AppColors.danger),
+                    ),
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                ),
+              ],
+            ),
+        ],
+      ),
       body: RefreshIndicator(
         color: AppColors.accent,
         onRefresh: () async {
@@ -155,15 +206,9 @@ class CommunityProfileScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: AppSpacing.lg),
                 if (data.canViewStats) ...[
-                  GridView.count(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: AppSpacing.sm,
-                    mainAxisSpacing: AppSpacing.sm,
-                    childAspectRatio: 1.55,
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    children: [
-                      ProfileMetricCard(
+                  ProfileMetricPanel(
+                    metrics: [
+                      ProfileMetric(
                         icon: Icons.local_fire_department_outlined,
                         label: l10n.communityStreakLabel,
                         value: data.currentStreak == null
@@ -172,19 +217,19 @@ class CommunityProfileScreen extends ConsumerWidget {
                                 data.currentStreak!,
                               ),
                       ),
-                      ProfileMetricCard(
+                      ProfileMetric(
                         icon: Icons.monitor_weight_outlined,
                         label: l10n.communityBodyweightLabel,
                         value: data.latestBodyweight == null
                             ? '-'
                             : '${formatWeight(unit.fromKg(data.latestBodyweight!))} ${unit.suffix}',
                       ),
-                      ProfileMetricCard(
+                      ProfileMetric(
                         icon: Icons.speed_outlined,
                         label: l10n.communityDotsLabel,
                         value: data.dotsScore?.toStringAsFixed(1) ?? '-',
                       ),
-                      ProfileMetricCard(
+                      ProfileMetric(
                         icon: Icons.timer_outlined,
                         label: l10n.communityTimeTrainedLabel,
                         value: _duration(data.totalTrainingDurationSeconds),

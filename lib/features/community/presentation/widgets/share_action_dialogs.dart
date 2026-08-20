@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_dimens.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../blocks_reports/presentation/widgets/moderation_dialogs.dart';
 import '../../../shared_api/xenoh_api.dart';
 import '../../../training/domain/entities/daily_workout.dart';
 import '../../../training/domain/entities/plan.dart';
@@ -13,20 +14,12 @@ import '../../../training/presentation/providers/plan_detail_controller.dart';
 import '../../../training/presentation/providers/plans_controller.dart';
 import '../providers/community_controllers.dart';
 
-const _reportReasons = [
-  'Harassment',
-  'Spam',
-  'Scam',
-  'Inappropriate',
-  'Other',
-];
-
 Future<void> showReportShareDialog(
   BuildContext context,
   WidgetRef ref,
   String shareId,
 ) async {
-  var reason = _reportReasons.first;
+  var reason = shareReportReasons.first;
   final details = TextEditingController();
   final submitted = await showDialog<bool>(
     context: context,
@@ -38,9 +31,20 @@ Future<void> showReportShareDialog(
           children: [
             DropdownButtonFormField<String>(
               initialValue: reason,
+              decoration: InputDecoration(
+                labelText: AppLocalizations.of(context).moderationReasonLabel,
+              ),
               items: [
-                for (final value in _reportReasons)
-                  DropdownMenuItem(value: value, child: Text(value)),
+                for (final value in shareReportReasons)
+                  DropdownMenuItem(
+                    value: value,
+                    child: Text(
+                      moderationReasonLabel(
+                        value,
+                        AppLocalizations.of(context),
+                      ),
+                    ),
+                  ),
               ],
               onChanged: (value) => setState(() => reason = value ?? reason),
             ),

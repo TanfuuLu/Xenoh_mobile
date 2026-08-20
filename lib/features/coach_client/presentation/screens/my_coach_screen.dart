@@ -97,8 +97,8 @@ class _CoachProfileBody extends ConsumerWidget {
               ),
             ),
           ),
-          onRequestTermination: () =>
-              _confirmTermination(context, ref, relationship),
+          onEndRelationship: () =>
+              _confirmEndRelationship(context, ref, relationship),
         ),
         if (bio != null && bio.trim().isNotEmpty) ...[
           const SizedBox(height: AppSpacing.md),
@@ -110,7 +110,7 @@ class _CoachProfileBody extends ConsumerWidget {
     );
   }
 
-  Future<void> _confirmTermination(
+  Future<void> _confirmEndRelationship(
     BuildContext context,
     WidgetRef ref,
     JsonMap relationship,
@@ -119,26 +119,27 @@ class _CoachProfileBody extends ConsumerWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: Text(l10n.coachTerminationConfirmTitle),
-        content: Text(l10n.coachTerminationConfirmMessage),
+        title: Text(l10n.coachEndRelationshipConfirmTitle),
+        content: Text(l10n.coachEndRelationshipConfirmMessageClient),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(false),
             child: Text(l10n.commonCancel),
           ),
           TextButton(
+            style: TextButton.styleFrom(foregroundColor: AppColors.danger),
             onPressed: () => Navigator.of(dialogContext).pop(true),
-            child: Text(l10n.coachRequestTerminationAction),
+            child: Text(l10n.coachEndRelationshipAction),
           ),
         ],
       ),
     );
     if (confirmed != true) return;
     if (!context.mounted) return;
-    await _requestTermination(context, ref, relationship);
+    await _endRelationship(context, ref, relationship);
   }
 
-  Future<void> _requestTermination(
+  Future<void> _endRelationship(
     BuildContext context,
     WidgetRef ref,
     JsonMap relationship,
@@ -147,7 +148,7 @@ class _CoachProfileBody extends ConsumerWidget {
     if (id.isEmpty) return;
     try {
       final api = ref.read(xenohApiProvider);
-      await api.postVoid('/coach-client/$id/request-termination');
+      await api.postVoid('/coach-client/$id/end');
     } catch (error) {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -161,7 +162,7 @@ class _CoachCard extends StatelessWidget {
   const _CoachCard({
     required this.relationship,
     required this.onMessage,
-    required this.onRequestTermination,
+    required this.onEndRelationship,
     required this.unreadCount,
     this.profile,
   });
@@ -169,7 +170,7 @@ class _CoachCard extends StatelessWidget {
   final JsonMap relationship;
   final JsonMap? profile;
   final VoidCallback onMessage;
-  final VoidCallback onRequestTermination;
+  final VoidCallback onEndRelationship;
   final int unreadCount;
 
   @override
@@ -195,7 +196,6 @@ class _CoachCard extends StatelessWidget {
         : _coachSocialLinks(profile!);
     final startDate = _parseDate(relationship['startDate']);
     final endDate = _parseDate(relationship['endDate']);
-    final terminationPending = status == 'PendingTermination';
 
     return XnCard(
       child: Column(
@@ -243,9 +243,7 @@ class _CoachCard extends StatelessWidget {
                             compact: true,
                           ),
                         XnChip(
-                          label: terminationPending
-                              ? l10n.coachTerminationRequestedStatus
-                              : status,
+                          label: status,
                           tone: _statusTone(status),
                           compact: true,
                         ),
@@ -321,49 +319,17 @@ class _CoachCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: AppSpacing.sm),
-          if (terminationPending)
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(AppSpacing.md),
-              decoration: BoxDecoration(
-                color: AppColors.warningBg,
-                borderRadius: BorderRadius.circular(AppRadius.md),
-                border: Border.all(
-                  color: AppColors.warning.withValues(alpha: 0.24),
-                ),
-              ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Icon(
-                    Icons.schedule_rounded,
-                    size: 18,
-                    color: AppColors.warning,
-                  ),
-                  const SizedBox(width: AppSpacing.sm),
-                  Expanded(
-                    child: Text(
-                      l10n.coachTerminationPendingClientMessage,
-                      style: const TextStyle(
-                        color: AppColors.fg2,
-                        height: 1.35,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            )
-          else if (status == 'Active')
+          if (status == 'Active')
             SizedBox(
               width: double.infinity,
               child: OutlinedButton.icon(
-                onPressed: onRequestTermination,
+                onPressed: onEndRelationship,
                 style: OutlinedButton.styleFrom(
                   foregroundColor: AppColors.danger,
                   side: const BorderSide(color: AppColors.danger),
                 ),
                 icon: const Icon(Icons.person_off_outlined, size: 18),
-                label: Text(l10n.coachRequestTerminationAction),
+                label: Text(l10n.coachEndRelationshipAction),
               ),
             ),
         ],
@@ -488,8 +454,6 @@ XnChipTone _statusTone(String status) {
       return XnChipTone.sage;
     case 'Pending':
       return XnChipTone.info;
-    case 'PendingTermination':
-      return XnChipTone.warn;
     case 'Expired':
       return XnChipTone.danger;
     default:

@@ -37,6 +37,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   TrainingDiscipline? _trainingDiscipline;
   DateTime? _dob;
   bool _obscure = true;
+  bool _acceptedTerms = false;
   bool _submitting = false;
 
   @override
@@ -158,6 +159,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 trainingDiscipline: _trainingDiscipline,
                 height: _height,
                 bodyweight: _bodyweight,
+                acceptedTerms: _acceptedTerms,
                 submitting: _submitting,
                 onGenderChanged: (v) => setState(() => _gender = v),
                 onDevelopmentDirectionChanged: (v) =>
@@ -165,6 +167,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 onTrainingDisciplineChanged: (v) =>
                     setState(() => _trainingDiscipline = v),
                 onPickDob: _pickDob,
+                onAcceptedTermsChanged: (v) =>
+                    setState(() => _acceptedTerms = v),
                 onBack: _submitting ? null : () => setState(() => _step = 0),
                 onSubmit: _submit,
               ),
@@ -276,11 +280,13 @@ class _ProfileStep extends StatelessWidget {
     required this.trainingDiscipline,
     required this.height,
     required this.bodyweight,
+    required this.acceptedTerms,
     required this.submitting,
     required this.onGenderChanged,
     required this.onDevelopmentDirectionChanged,
     required this.onTrainingDisciplineChanged,
     required this.onPickDob,
+    required this.onAcceptedTermsChanged,
     required this.onBack,
     required this.onSubmit,
     super.key,
@@ -293,11 +299,13 @@ class _ProfileStep extends StatelessWidget {
   final TrainingDiscipline? trainingDiscipline;
   final TextEditingController height;
   final TextEditingController bodyweight;
+  final bool acceptedTerms;
   final bool submitting;
   final ValueChanged<Gender?> onGenderChanged;
   final ValueChanged<DevelopmentDirection?> onDevelopmentDirectionChanged;
   final ValueChanged<TrainingDiscipline?> onTrainingDisciplineChanged;
   final VoidCallback onPickDob;
+  final ValueChanged<bool> onAcceptedTermsChanged;
   final VoidCallback? onBack;
   final VoidCallback onSubmit;
 
@@ -374,6 +382,12 @@ class _ProfileStep extends StatelessWidget {
             onChanged: onTrainingDisciplineChanged,
           ),
           const SizedBox(height: AppSpacing.xl),
+          _ConsentField(
+            accepted: acceptedTerms,
+            enabled: !submitting,
+            onChanged: onAcceptedTermsChanged,
+          ),
+          const SizedBox(height: AppSpacing.xl),
           _ProfileActions(
             submitting: submitting,
             onBack: onBack,
@@ -433,6 +447,128 @@ class _ProfileActions extends StatelessWidget {
         );
       },
     );
+  }
+}
+
+class _ConsentField extends StatelessWidget {
+  const _ConsentField({
+    required this.accepted,
+    required this.enabled,
+    required this.onChanged,
+  });
+
+  final bool accepted;
+  final bool enabled;
+  final ValueChanged<bool> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return FormField<bool>(
+      initialValue: accepted,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      validator: (value) =>
+          (value ?? false) ? null : l10n.authConsentRequiredError,
+      builder: (field) {
+        void toggle({required bool value}) {
+          onChanged(value);
+          field.didChange(value);
+        }
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: Checkbox(
+                    value: accepted,
+                    onChanged: enabled
+                        ? (v) => toggle(value: v ?? false)
+                        : null,
+                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                ),
+                const SizedBox(width: AppSpacing.md),
+                Expanded(
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: enabled ? () => toggle(value: !accepted) : null,
+                    child: const _ConsentText(),
+                  ),
+                ),
+              ],
+            ),
+            if (field.hasError) ...[
+              const SizedBox(height: AppSpacing.sm),
+              Text(
+                field.errorText!,
+                style: const TextStyle(color: AppColors.danger, fontSize: 12),
+              ),
+            ],
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _ConsentText extends StatelessWidget {
+  const _ConsentText();
+
+  static final _linkPattern = RegExp(r'\[\[(terms|privacy)\]\]');
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    const baseStyle = TextStyle(
+      color: AppColors.fg2,
+      fontSize: 13,
+      height: 1.45,
+    );
+    final linkStyle = baseStyle.copyWith(
+      color: AppColors.accent,
+      fontWeight: FontWeight.w600,
+      decoration: TextDecoration.underline,
+      decorationColor: AppColors.accent,
+    );
+
+    final text = l10n.authConsentText;
+    final spans = <InlineSpan>[];
+    var cursor = 0;
+    for (final match in _linkPattern.allMatches(text)) {
+      if (match.start > cursor) {
+        spans.add(TextSpan(text: text.substring(cursor, match.start)));
+      }
+      final isTerms = match.group(1) == 'terms';
+      spans.add(
+        WidgetSpan(
+          alignment: PlaceholderAlignment.baseline,
+          baseline: TextBaseline.alphabetic,
+          child: Semantics(
+            link: true,
+            child: GestureDetector(
+              onTap: () => context.push(isTerms ? '/terms' : '/privacy'),
+              child: Text(
+                isTerms
+                    ? l10n.authConsentTermsLink
+                    : l10n.authConsentPrivacyLink,
+                style: linkStyle,
+              ),
+            ),
+          ),
+        ),
+      );
+      cursor = match.end;
+    }
+    if (cursor < text.length) {
+      spans.add(TextSpan(text: text.substring(cursor)));
+    }
+
+    return Text.rich(TextSpan(style: baseStyle, children: spans));
   }
 }
 

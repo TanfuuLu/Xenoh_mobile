@@ -264,8 +264,8 @@ Rules:
 - Attention levels/reasons
 - Pending requests
 - Accept relationship
-- Request/accept/reject termination
-- Client-requested termination with coach accept/reject
+- End relationship (one-sided — either party, no approval step)
+- Decline a pending request
 - Client profile
 - Client today workout
 - Client AI brief
