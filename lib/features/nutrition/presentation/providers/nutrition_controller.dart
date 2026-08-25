@@ -5,6 +5,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../../core/sync/data_revision.dart';
 import '../../../../core/sync/data_topic.dart';
+import '../../../../core/utils/current_date_provider.dart';
 import '../../../profile/presentation/providers/preferences_provider.dart';
 import '../../data/repositories/nutrition_repository_provider.dart';
 import '../../domain/entities/food.dart';
@@ -21,6 +22,7 @@ class NutritionController extends _$NutritionController {
   Future<NutritionSummary> build() {
     ref
       ..watch(appLocaleProvider)
+      ..watch(currentDateProvider)
       ..syncOn(const [DataTopic.nutrition]);
     return ref.watch(nutritionRepositoryProvider).getSummary();
   }

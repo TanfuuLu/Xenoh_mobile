@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:xenoh_mobile/app/theme/app_theme.dart';
+import 'package:xenoh_mobile/core/utils/current_date_provider.dart';
 import 'package:xenoh_mobile/features/dashboard/presentation/widgets/supplements_card.dart';
 import 'package:xenoh_mobile/features/supplements/data/repositories/supplement_repository_provider.dart';
 import 'package:xenoh_mobile/features/supplements/domain/entities/supplement_models.dart';
@@ -23,6 +24,7 @@ void main() {
     addTearDown(tester.view.reset);
 
     final repository = _MockSupplementRepository();
+    final today = DateTime(2030, 1, 2);
     when(
       () => repository.getDaily(any(), clientId: any(named: 'clientId')),
     ).thenAnswer((_) async => _daily(SupplementDoseStatus.pending));
@@ -38,6 +40,7 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
+          currentDateProvider.overrideWithValue(today),
           supplementRepositoryProvider.overrideWithValue(repository),
         ],
         child: MaterialApp(
@@ -68,8 +71,7 @@ void main() {
               ),
             ).captured.single
             as DateTime;
-    final now = DateTime.now();
-    expect(recorded, DateTime(now.year, now.month, now.day));
+    expect(recorded, today);
   });
 
   testWidgets('an already recorded dose shows its state, not a button', (

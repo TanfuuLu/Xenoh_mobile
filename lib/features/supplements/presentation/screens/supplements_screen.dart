@@ -11,6 +11,7 @@ import '../../../../app/theme/app_dimens.dart';
 import '../../../../app/theme/app_typography.dart';
 import '../../../../core/error/failure.dart';
 import '../../../../core/error/failure_l10n.dart';
+import '../../../../core/utils/current_date_provider.dart';
 import '../../../../core/utils/date_only.dart';
 import '../../../../core/widgets/error_view.dart';
 import '../../../../core/widgets/pro_locked_view.dart';
@@ -30,7 +31,7 @@ class SupplementsScreen extends ConsumerStatefulWidget {
 }
 
 class _SupplementsScreenState extends ConsumerState<SupplementsScreen> {
-  DateTime _date = DateOnly.truncate(DateTime.now());
+  DateTime? _pinnedDate;
   bool _includeArchived = false;
 
   bool get _isClient => widget.clientId != null;
@@ -38,6 +39,8 @@ class _SupplementsScreenState extends ConsumerState<SupplementsScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final today = ref.watch(currentDateProvider);
+    final date = _pinnedDate ?? today;
     return DefaultTabController(
       length: 3,
       child: Scaffold(
@@ -57,9 +60,13 @@ class _SupplementsScreenState extends ConsumerState<SupplementsScreen> {
         body: TabBarView(
           children: [
             _DailyTab(
-              date: _date,
+              date: date,
+              today: today,
               clientId: widget.clientId,
-              onDateChanged: (value) => setState(() => _date = value),
+              onDateChanged: (value) => setState(() {
+                final selected = DateOnly.truncate(value);
+                _pinnedDate = selected == today ? null : selected;
+              }),
             ),
             _RegimensTab(
               clientId: widget.clientId,
@@ -78,17 +85,19 @@ class _SupplementsScreenState extends ConsumerState<SupplementsScreen> {
 class _DailyTab extends ConsumerWidget {
   const _DailyTab({
     required this.date,
+    required this.today,
     required this.clientId,
     required this.onDateChanged,
   });
 
   final DateTime date;
+  final DateTime today;
   final String? clientId;
   final ValueChanged<DateTime> onDateChanged;
 
   /// The server rejects a dose recorded ahead of its day, so the actions are
   /// hidden rather than offered and failed.
-  bool get _isFuture => date.isAfter(DateOnly.truncate(DateTime.now()));
+  bool get _isFuture => date.isAfter(today);
 
   bool get _canRecord => clientId == null && !_isFuture;
 
@@ -113,6 +122,7 @@ class _DailyTab extends ConsumerWidget {
         children: [
           _DateSelector(
             date: date,
+            today: today,
             onChanged: onDateChanged,
           ),
           const SizedBox(height: AppSpacing.md),
@@ -208,16 +218,20 @@ class _DailyTab extends ConsumerWidget {
 }
 
 class _DateSelector extends StatelessWidget {
-  const _DateSelector({required this.date, required this.onChanged});
+  const _DateSelector({
+    required this.date,
+    required this.today,
+    required this.onChanged,
+  });
 
   final DateTime date;
+  final DateTime today;
   final ValueChanged<DateTime> onChanged;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final locale = Localizations.localeOf(context).toLanguageTag();
-    final today = DateOnly.truncate(DateTime.now());
     return XnSection(
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.md,
@@ -237,7 +251,7 @@ class _DateSelector extends StatelessWidget {
                 final picked = await showDatePicker(
                   context: context,
                   firstDate: DateTime(2020),
-                  lastDate: DateTime.now().add(const Duration(days: 365)),
+                  lastDate: today.add(const Duration(days: 365)),
                   initialDate: date,
                 );
                 if (picked != null) onChanged(picked);
@@ -556,6 +570,7 @@ class _RegimensTab extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
+    final today = ref.watch(currentDateProvider);
     final value = ref.watch(
       supplementRegimensProvider(
         clientId: clientId,
@@ -605,6 +620,7 @@ class _RegimensTab extends ConsumerWidget {
                 for (final regimen in value)
                   _RegimenRow(
                     regimen: regimen,
+                    today: today,
                     onEdit: regimen.isArchived
                         ? null
                         : () => unawaited(
@@ -745,12 +761,14 @@ class _RegimensTab extends ConsumerWidget {
 class _RegimenRow extends StatelessWidget {
   const _RegimenRow({
     required this.regimen,
+    required this.today,
     required this.onEdit,
     required this.onArchive,
     required this.onDelete,
   });
 
   final SupplementRegimen regimen;
+  final DateTime today;
   final VoidCallback? onEdit;
   final VoidCallback? onArchive;
   final VoidCallback onDelete;
@@ -878,7 +896,6 @@ class _RegimenRow extends StatelessWidget {
     final from = regimen.scheduleEffectiveFrom;
     if (from == null) return null;
     final format = DateFormat.yMMMd(locale);
-    final today = DateOnly.truncate(DateTime.now());
     if (from.isAfter(today)) {
       return l10n.supplementsScheduleUpcomingLabel(format.format(from));
     }
@@ -907,7 +924,7 @@ class _HistoryTabState extends ConsumerState<_HistoryTab> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final to = DateOnly.truncate(DateTime.now());
+    final to = ref.watch(currentDateProvider);
     final from = to.subtract(Duration(days: _days - 1));
     final family = supplementHistoryProvider(
       from: from,
@@ -1249,7 +1266,7 @@ class _SupplementRegimenSheetState
   }
 
   DateTime get _firstEffectiveDate {
-    final today = DateOnly.truncate(DateTime.now());
+    final today = ref.read(currentDateProvider);
     return _editing ? today.add(const Duration(days: 1)) : today;
   }
 
@@ -1258,7 +1275,7 @@ class _SupplementRegimenSheetState
     final picked = await showDatePicker(
       context: context,
       firstDate: first,
-      lastDate: DateTime.now().add(const Duration(days: 3650)),
+      lastDate: first.add(const Duration(days: 3650)),
       initialDate: _effectiveDate.isBefore(first) ? first : _effectiveDate,
     );
     if (picked != null) setState(() => _effectiveDate = picked);
@@ -1298,13 +1315,16 @@ class _SupplementRegimenSheetState
       _warn(l10n.supplementsOverlapDoseMessage);
       return;
     }
+    final firstEffectiveDate = _firstEffectiveDate;
     final input = SupplementRegimenInput(
       name: _name.text,
       brand: _brand.text,
       form: _form.text,
       instructions: _instructions.text,
       notes: _notes.text,
-      effectiveDate: _effectiveDate,
+      effectiveDate: _effectiveDate.isBefore(firstEffectiveDate)
+          ? firstEffectiveDate
+          : _effectiveDate,
       doseSlots: inputs,
     );
     final controller = ref.read(supplementMutationControllerProvider.notifier);

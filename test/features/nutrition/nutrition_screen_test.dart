@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:xenoh_mobile/core/utils/current_date_provider.dart';
 import 'package:xenoh_mobile/core/widgets/xn_card.dart';
 import 'package:xenoh_mobile/features/dashboard/presentation/widgets/supplements_card.dart';
 import 'package:xenoh_mobile/features/nutrition/data/repositories/nutrition_repository_provider.dart';
@@ -240,4 +241,30 @@ void main() {
       ),
     );
   });
+
+  test(
+    'nutrition summary refetches when the local calendar day changes',
+    () async {
+      final repo = MockNutritionRepository();
+      when(repo.getSummary).thenAnswer((_) async => _summary);
+      final firstDay = DateTime(2030, 1, 1);
+      final secondDay = DateTime(2030, 1, 2);
+      final container = ProviderContainer(
+        overrides: [
+          currentDateProvider.overrideWithValue(firstDay),
+          nutritionRepositoryProvider.overrideWithValue(repo),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      await container.read(nutritionControllerProvider.future);
+      container.updateOverrides([
+        currentDateProvider.overrideWithValue(secondDay),
+        nutritionRepositoryProvider.overrideWithValue(repo),
+      ]);
+      await container.read(nutritionControllerProvider.future);
+
+      verify(repo.getSummary).called(2);
+    },
+  );
 }

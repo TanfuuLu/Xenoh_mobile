@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:xenoh_mobile/app/theme/app_theme.dart';
+import 'package:xenoh_mobile/core/utils/current_date_provider.dart';
 import 'package:xenoh_mobile/core/utils/date_only.dart';
 import 'package:xenoh_mobile/features/supplements/data/datasources/supplement_remote_data_source.dart';
 import 'package:xenoh_mobile/features/supplements/data/repositories/supplement_repository_provider.dart';
@@ -143,6 +144,54 @@ void main() {
       findsOneWidget,
     );
     expect(find.text('Skip'), findsNothing);
+  });
+
+  testWidgets('opens on the shared local calendar day', (tester) async {
+    final repository = _MockSupplementRepository();
+    final today = DateTime(2030, 1, 2);
+    final tomorrow = DateTime(2030, 1, 3);
+    when(
+      () => repository.getDaily(any(), clientId: any(named: 'clientId')),
+    ).thenAnswer((invocation) async {
+      final date = invocation.positionalArguments.first as DateTime;
+      return _daily(date);
+    });
+
+    final container = ProviderContainer(
+      overrides: [
+        currentDateProvider.overrideWithValue(today),
+        supplementRepositoryProvider.overrideWithValue(repository),
+      ],
+    );
+    addTearDown(container.dispose);
+
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: MaterialApp(
+          theme: AppTheme.light(),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: const SupplementsScreen(),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    verify(
+      () => repository.getDaily(today, clientId: any(named: 'clientId')),
+    ).called(1);
+    expect(find.textContaining('2030'), findsOneWidget);
+
+    container.updateOverrides([
+      currentDateProvider.overrideWithValue(tomorrow),
+      supplementRepositoryProvider.overrideWithValue(repository),
+    ]);
+    await tester.pumpAndSettle();
+
+    verify(
+      () => repository.getDaily(tomorrow, clientId: any(named: 'clientId')),
+    ).called(1);
   });
 }
 

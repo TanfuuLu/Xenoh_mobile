@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_dimens.dart';
 import '../../../../app/theme/app_typography.dart';
+import '../../../../core/utils/current_date_provider.dart';
 import '../../../../core/widgets/xn_chip.dart';
 import '../../../../core/widgets/xn_progress.dart';
 import '../../../../core/widgets/xn_section.dart';
@@ -25,8 +26,7 @@ class SupplementsCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
+    final today = ref.watch(currentDateProvider);
     final daily = ref.watch(supplementDailyProvider(date: today));
 
     return XnSection(
@@ -256,12 +256,11 @@ class _DoseAction extends ConsumerWidget {
   }
 
   Future<void> _record(BuildContext context, WidgetRef ref) async {
-    final now = DateTime.now();
     final success = await ref
         .read(supplementMutationControllerProvider.notifier)
         .recordDose(
           doseSlotId: dose.doseSlotId,
-          date: DateTime(now.year, now.month, now.day),
+          date: ref.read(currentDateProvider),
           status: SupplementIntakeStatus.taken,
         );
     if (success || !context.mounted) return;

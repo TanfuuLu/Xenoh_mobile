@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:xenoh_mobile/app/theme/app_theme.dart';
+import 'package:xenoh_mobile/core/utils/current_date_provider.dart';
 import 'package:xenoh_mobile/features/nutrition/data/repositories/nutrition_repository_provider.dart';
 import 'package:xenoh_mobile/features/nutrition/domain/entities/nutrition_summary.dart';
 import 'package:xenoh_mobile/features/nutrition/domain/repositories/nutrition_repository.dart';
@@ -82,16 +83,54 @@ void main() {
       ),
     );
   });
+
+  testWidgets('uses the shared local day for its rolling history', (
+    tester,
+  ) async {
+    final repository = _MockNutritionRepository();
+    final today = DateTime(2030, 1, 14);
+    when(repository.getSummary).thenAnswer(
+      (_) async => const NutritionSummary(
+        profile: NutritionProfile(activityLevel: 'Light', goal: 'Maintain'),
+        calculation: NutritionCalculation(missingFields: []),
+        canUseAdvancedAnalysis: true,
+      ),
+    );
+    when(
+      () => repository.getHistory(
+        from: any(named: 'from'),
+        to: any(named: 'to'),
+      ),
+    ).thenAnswer((_) async => const []);
+
+    await _pump(
+      tester,
+      repository,
+      const NutritionInsightScreen(),
+      today: today,
+    );
+
+    verify(
+      () => repository.getHistory(
+        from: DateTime(2030, 1, 1),
+        to: today,
+      ),
+    ).called(1);
+  });
 }
 
 Future<void> _pump(
   WidgetTester tester,
   NutritionRepository repository,
-  Widget child,
-) async {
+  Widget child, {
+  DateTime? today,
+}) async {
   await tester.pumpWidget(
     ProviderScope(
-      overrides: [nutritionRepositoryProvider.overrideWithValue(repository)],
+      overrides: [
+        if (today != null) currentDateProvider.overrideWithValue(today),
+        nutritionRepositoryProvider.overrideWithValue(repository),
+      ],
       child: MaterialApp(
         theme: AppTheme.light(),
         localizationsDelegates: AppLocalizations.localizationsDelegates,

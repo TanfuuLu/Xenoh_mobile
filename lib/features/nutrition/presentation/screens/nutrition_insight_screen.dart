@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_dimens.dart';
-import '../../../../core/utils/date_only.dart';
+import '../../../../core/utils/current_date_provider.dart';
 import '../../../../core/utils/weight_units.dart';
 import '../../../../core/widgets/error_view.dart';
 import '../../../../core/widgets/pro_locked_view.dart';
@@ -53,7 +53,7 @@ class NutritionInsightScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final now = DateOnly.truncate(DateTime.now());
+    final now = ref.watch(currentDateProvider);
     final args = (
       clientId: clientId,
       from: now.subtract(const Duration(days: 13)),
