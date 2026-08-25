@@ -47,6 +47,8 @@ dependencies:
   fl_chart: ^1.2.0
   intl: ^0.20.2
   connectivity_plus: ^7.1.1
+  cached_network_image: ^3.4.1
+  flutter_cache_manager: ^3.4.2
   # Local fork (packages/flutter_foreground_task) — adds `largeIconPath`
   # support to NotificationIcon so the ongoing notification can show the
   # current exercise's photo (upstream v9.2.2 has no way to set a bitmap

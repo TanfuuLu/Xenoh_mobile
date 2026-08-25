@@ -16,6 +16,7 @@ import '../features/dashboard/presentation/providers/dashboard_controller.dart';
 import '../features/profile/domain/entities/user_profile.dart';
 import '../features/profile/presentation/providers/profile_controller.dart';
 import '../features/subscription/presentation/providers/subscription_controllers.dart';
+import '../features/training/presentation/providers/exercise_image_cache_warmup_provider.dart';
 import '../l10n/app_localizations.dart';
 import 'navigation/home_navigation.dart';
 import 'theme/app_colors.dart';
@@ -84,7 +85,9 @@ class HomeShell extends ConsumerWidget {
       unawaited(ref.read(realtimeServiceProvider).disconnect());
     } else {
       unawaited(ref.read(realtimeServiceProvider).connect());
-      ref.watch(chatUnreadControllerProvider);
+      ref
+        ..watch(chatUnreadControllerProvider)
+        ..watch(exerciseImageCacheWarmupProvider);
     }
     ref.listen(realtimeEventsProvider, (_, next) {
       final event = next.value;

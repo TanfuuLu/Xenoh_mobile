@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../../app/theme/app_colors.dart';
@@ -44,12 +45,19 @@ class ExerciseThumbnail extends StatelessWidget {
             padding: EdgeInsets.all(hasImage ? 0 : 4),
             child: !hasImage
                 ? _Fallback(exerciseKind: exerciseKind, size: size)
-                : Image.network(
-                    url,
+                : CachedNetworkImage(
+                    imageUrl: url,
                     fit: BoxFit.cover,
                     alignment: Alignment.center,
-                    cacheWidth: cacheWidth,
-                    errorBuilder: (_, _, _) =>
+                    memCacheWidth: cacheWidth,
+                    memCacheHeight: cacheWidth,
+                    maxWidthDiskCache: cacheWidth,
+                    maxHeightDiskCache: cacheWidth,
+                    fadeInDuration: const Duration(milliseconds: 150),
+                    fadeOutDuration: Duration.zero,
+                    placeholder: (_, _) =>
+                        _Fallback(exerciseKind: exerciseKind, size: size),
+                    errorWidget: (_, _, _) =>
                         _Fallback(exerciseKind: exerciseKind, size: size),
                   ),
           ),

@@ -6,7 +6,10 @@ class ExerciseImageCacheWarmer {
   ExerciseImageCacheWarmer({
     required ExerciseImageDownload download,
     this.maxConcurrentDownloads = 4,
-  }) : assert(maxConcurrentDownloads > 0),
+  }) : assert(
+         maxConcurrentDownloads > 0,
+         'maxConcurrentDownloads must be greater than zero',
+       ),
        _download = download;
 
   final ExerciseImageDownload _download;
