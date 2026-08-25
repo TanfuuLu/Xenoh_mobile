@@ -4,6 +4,7 @@ import '../../app/theme/app_colors.dart';
 import '../../app/theme/app_dimens.dart';
 import '../../l10n/app_localizations.dart';
 import '../error/failure.dart';
+import '../error/failure_l10n.dart';
 import 'xn_button.dart';
 
 /// Full-bleed error state with a retry action. Never a silent empty state.
@@ -17,9 +18,10 @@ class ErrorView extends StatelessWidget {
     VoidCallback? onRetry,
     Key? key,
   }) {
+    final l10n = AppLocalizations.of(context);
     final message = error is Failure
-        ? error.message
-        : AppLocalizations.of(context).commonSomethingWentWrong;
+        ? localizedFailureMessage(error, l10n)
+        : l10n.commonSomethingWentWrong;
     return ErrorView(message: message, onRetry: onRetry, key: key);
   }
 

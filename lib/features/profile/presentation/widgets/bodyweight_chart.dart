@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_typography.dart';
+import '../../../../core/utils/date_labels.dart';
 import '../../../../core/utils/weight_units.dart';
 import '../../domain/entities/bodyweight_log.dart';
 
@@ -25,16 +26,23 @@ class BodyweightChart extends StatelessWidget {
     return SizedBox(
       height: height,
       width: double.infinity,
-      child: CustomPaint(painter: _ChartPainter(logs, unit)),
+      child: CustomPaint(
+        painter: _ChartPainter(
+          logs,
+          unit,
+          Localizations.localeOf(context).toString(),
+        ),
+      ),
     );
   }
 }
 
 class _ChartPainter extends CustomPainter {
-  _ChartPainter(this.logs, this.unit);
+  _ChartPainter(this.logs, this.unit, this.locale);
 
   final List<BodyweightLog> logs;
   final WeightUnit unit;
+  final String locale;
 
   // No y-axis labels to leave room for, so the line runs edge to edge; the
   // side padding only keeps the endpoint dot from clipping.
@@ -200,25 +208,12 @@ class _ChartPainter extends CustomPainter {
   }
 
   String _formatDate(DateTime date) {
-    const months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
-    return '${months[date.month - 1]} ${date.day}';
+    return DateLabels.monthDay(date, locale);
   }
 
   @override
-  bool shouldRepaint(_ChartPainter old) => old.logs != logs || old.unit != unit;
+  bool shouldRepaint(_ChartPainter old) =>
+      old.logs != logs || old.unit != unit || old.locale != locale;
 }
 
 enum _DateLabelAlign { left, center, right }

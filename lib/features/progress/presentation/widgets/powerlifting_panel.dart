@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_dimens.dart';
 import '../../../../app/theme/app_typography.dart';
+import '../../../../core/utils/date_labels.dart';
 import '../../../../core/utils/weight_units.dart';
 import '../../../../core/widgets/xn_section.dart';
 import '../../../../l10n/app_localizations.dart';
@@ -302,6 +303,7 @@ class _PrRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final locale = Localizations.localeOf(context).toString();
     final accent = _liftColor(lift);
     return Row(
       children: [
@@ -335,7 +337,9 @@ class _PrRow extends StatelessWidget {
               ),
             ),
             Text(
-              l10n.powerliftingE1rmPrefixLabel(_formatDate(event.date)),
+              l10n.powerliftingE1rmPrefixLabel(
+                _formatDate(event.date, locale),
+              ),
               style: AppTypography.mono(10, color: AppColors.fg3),
             ),
           ],
@@ -482,22 +486,5 @@ Color _liftColor(CompetitionLift lift) => switch (lift) {
   CompetitionLift.deadlift => AppColors.success,
 };
 
-const _monthAbbr = [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'May',
-  'Jun',
-  'Jul',
-  'Aug',
-  'Sep',
-  'Oct',
-  'Nov',
-  'Dec',
-];
-
-String _formatDate(DateTime d) {
-  final local = d.toLocal();
-  return '${_monthAbbr[local.month - 1]} ${local.day}';
-}
+String _formatDate(DateTime d, String locale) =>
+    DateLabels.monthDay(d.toLocal(), locale);

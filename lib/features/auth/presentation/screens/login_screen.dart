@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_dimens.dart';
 import '../../../../core/config/app_config.dart';
+import '../../../../core/error/failure_l10n.dart';
 import '../../../../core/widgets/xn_button.dart';
 import '../../../../core/widgets/xn_input.dart';
 import '../../../../l10n/app_localizations.dart';
@@ -56,7 +57,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     if (failure != null) {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
-        ..showSnackBar(SnackBar(content: Text(failure.message)));
+        ..showSnackBar(
+          SnackBar(
+            content: Text(
+              localizedFailureMessage(
+                failure,
+                AppLocalizations.of(context),
+              ),
+            ),
+          ),
+        );
     }
     // On success the router redirect navigates away automatically.
   }

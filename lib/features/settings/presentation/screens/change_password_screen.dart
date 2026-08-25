@@ -5,6 +5,7 @@ import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_dimens.dart';
 import '../../../../app/theme/app_typography.dart';
 import '../../../../core/error/failure.dart';
+import '../../../../core/error/failure_l10n.dart';
 import '../../../../core/widgets/xn_button.dart';
 import '../../../../core/widgets/xn_card.dart';
 import '../../../../core/widgets/xn_input.dart';
@@ -143,7 +144,13 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
         );
         setState(() {
           _oldPasswordError =
-              oldError ?? (newError == null ? failure.message : null);
+              oldError ??
+              (newError == null
+                  ? localizedFailureMessage(
+                      failure,
+                      AppLocalizations.of(context),
+                    )
+                  : null);
           _newPasswordError = newError;
         });
         return;

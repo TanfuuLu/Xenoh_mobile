@@ -270,7 +270,7 @@ class _OwnedFileCard extends ConsumerWidget {
                 client['clientName']?.toString() ??
                     client['fullName']?.toString() ??
                     client['name']?.toString() ??
-                    'Client',
+                    AppLocalizations.of(context).coachClientDefaultName,
               ),
             ),
         ],

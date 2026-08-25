@@ -6,6 +6,7 @@ import '../../../../app/theme/app_dimens.dart';
 import '../../../../app/theme/app_typography.dart';
 import '../../../../core/widgets/error_view.dart';
 import '../../../../core/widgets/exercise_thumbnail.dart';
+import '../../../../core/widgets/xn_card.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../domain/entities/exercise_template.dart';
 import '../providers/exercise_templates_controller.dart';
@@ -155,10 +156,13 @@ class _ExerciseTemplatePickerSheetState
                     );
                   }
                   return ListView.separated(
-                    padding: const EdgeInsets.only(bottom: AppSpacing.xl),
+                    padding: const EdgeInsets.only(
+                      top: AppSpacing.sm,
+                      bottom: AppSpacing.xl,
+                    ),
                     itemCount: filtered.length,
                     separatorBuilder: (_, _) =>
-                        const Divider(height: 1, color: AppColors.border1),
+                        const SizedBox(height: AppSpacing.md),
                     itemBuilder: (_, i) => _TemplateTile(
                       template: filtered[i],
                       muscleGroup: _muscle,
@@ -211,24 +215,46 @@ class _TemplateTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    return ListTile(
-      contentPadding: EdgeInsets.zero,
-      leading: ExerciseThumbnail(
-        imageUrl: template.imageUrl,
-        exerciseKind: template.exerciseKind,
-      ),
-      title: Text(
-        template.name,
-        style: const TextStyle(fontWeight: FontWeight.w500),
-      ),
-      subtitle: Text(
-        '${muscleGroupLabel(template.primaryMuscleGroup, l10n)} - '
-        '${exerciseKindLabel(template.exerciseKind, l10n)}'
-        '${template.isCustom ? ' - ${l10n.trainingCustomLabel}' : ''}',
-        style: const TextStyle(color: AppColors.fg2, fontSize: 13),
-      ),
-      trailing: template.isCustom
-          ? PopupMenuButton<_TemplateAction>(
+    return XnCard(
+      key: ValueKey('exercise-template-picker-card-${template.id}'),
+      padding: const EdgeInsets.all(AppSpacing.md),
+      onTap: () => Navigator.pop(context, template),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          ExerciseThumbnail(
+            imageUrl: template.imageUrl,
+            exerciseKind: template.exerciseKind,
+            size: 48,
+          ),
+          const SizedBox(width: AppSpacing.md),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  template.name,
+                  maxLines: 2,
+                  style: AppTypography.display(16, letterSpacing: 0),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  '${muscleGroupLabel(template.primaryMuscleGroup, l10n)} - '
+                  '${exerciseKindLabel(template.exerciseKind, l10n)}'
+                  '${template.isCustom ? ' - ${l10n.trainingCustomLabel}' : ''}',
+                  maxLines: 2,
+                  style: const TextStyle(
+                    color: AppColors.fg2,
+                    fontSize: 13,
+                    height: 1.25,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: AppSpacing.sm),
+          if (template.isCustom)
+            PopupMenuButton<_TemplateAction>(
               icon: const Icon(Icons.more_vert_rounded),
               onSelected: (action) => switch (action) {
                 _TemplateAction.select => Navigator.pop(context, template),
@@ -268,8 +294,16 @@ class _TemplateTile extends ConsumerWidget {
                 ),
               ],
             )
-          : const Icon(Icons.add_circle_outline_rounded),
-      onTap: () => Navigator.pop(context, template),
+          else
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+              child: Icon(
+                Icons.add_circle_outline_rounded,
+                color: AppColors.fg2,
+              ),
+            ),
+        ],
+      ),
     );
   }
 

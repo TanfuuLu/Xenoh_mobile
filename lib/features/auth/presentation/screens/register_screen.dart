@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_dimens.dart';
 import '../../../../app/theme/app_typography.dart';
+import '../../../../core/error/failure_l10n.dart';
 import '../../../../core/utils/date_only.dart';
 import '../../../../core/widgets/xn_button.dart';
 import '../../../../core/widgets/xn_dropdown.dart';
@@ -96,7 +97,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     if (!mounted) return;
     setState(() => _submitting = false);
     if (failure != null) {
-      _toast(failure.message);
+      _toast(
+        localizedFailureMessage(failure, AppLocalizations.of(context)),
+      );
       return;
     }
 

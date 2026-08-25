@@ -54,6 +54,10 @@ abstract final class AppColors {
   static const accent2 = sage500;
   static const accent2Soft = sage100;
 
+  // Own chat messages. A muted clay rather than the full accent — a column of
+  // accent-filled bubbles was too bright to read against the paper canvas.
+  static const chatBubbleMine = clay800;
+
   // Navigation active state. A filled clay capsule with a light glyph, which
   // matches the drawer's selected item instead of the old pale peach tint.
   static const navigationSelectedBackground = clay900;

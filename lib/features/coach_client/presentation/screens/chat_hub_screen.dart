@@ -117,6 +117,7 @@ class _ChatClientCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final name =
         _relationshipText(
           relationship,
@@ -175,7 +176,7 @@ class _ChatClientCard extends StatelessWidget {
                     const SizedBox(width: 6),
                     Expanded(
                       child: Text(
-                        email ?? 'Email unavailable',
+                        email ?? l10n.coachChatEmailUnavailable,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
@@ -229,7 +230,9 @@ class _ClientAvatar extends StatelessWidget {
 
     return Semantics(
       image: true,
-      label: '$name avatar',
+      label: AppLocalizations.of(context).coachChatAvatarSemanticLabel(
+        name,
+      ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(AppRadius.md),
         child: SizedBox.square(

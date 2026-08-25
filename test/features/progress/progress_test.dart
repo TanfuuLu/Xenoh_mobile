@@ -244,8 +244,25 @@ void main() {
           title: 'Repeat or simplify the week',
           message:
               'The current load may be too much. Reduce friction, repeat key sessions, and rebuild consistency.',
-          metricLabel: 'Training stress',
+          metricLabel: 'Training score',
           metricValue: '50',
+        ),
+        TrainingInsight(
+          type: 'VolumeTrend',
+          severity: 'Info',
+          title: 'More volume history needed',
+          message: 'The previous completed week has no usable volume baseline.',
+          metricLabel: 'Weeks logged',
+          metricValue: '13',
+        ),
+        TrainingInsight(
+          type: 'Recommendation',
+          severity: 'Info',
+          title: 'Hold the plan steady',
+          message:
+              'Maintain current targets and aim for cleaner execution before progressing.',
+          metricLabel: 'Training score',
+          metricValue: '77',
         ),
       ],
     );
@@ -267,7 +284,82 @@ void main() {
     );
 
     expect(find.text('Lặp lại hoặc đơn giản hóa tuần tập'), findsOneWidget);
-    expect(find.text('Căng thẳng tập luyện: 50'), findsOneWidget);
+    expect(find.text('Điểm tập luyện: 50'), findsOneWidget);
     expect(find.text('Repeat or simplify the week'), findsNothing);
+
+    // Insights the localizer used to miss, so they rendered in English.
+    expect(find.text('Cần thêm dữ liệu khối lượng'), findsOneWidget);
+    expect(
+      find.text('Tuần hoàn tất trước đó chưa có khối lượng nền để so sánh.'),
+      findsOneWidget,
+    );
+    expect(find.text('Số tuần đã ghi nhận: 13'), findsOneWidget);
+    expect(find.text('Giữ nguyên kế hoạch'), findsOneWidget);
+    expect(find.text('Điểm tập luyện: 77'), findsOneWidget);
+    expect(find.text('More volume history needed'), findsNothing);
+    expect(find.text('Hold the plan steady'), findsNothing);
+  });
+
+  testWidgets('weights and volume follow the kg/lb preference', (tester) async {
+    await tester.binding.setSurfaceSize(const Size(390, 1400));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    Future<void> pumpWith(WeightUnit unit) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: Scaffold(
+            body: SingleChildScrollView(
+              child: PlanAnalyticsView(analytics: _analytics(), unit: unit),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+    }
+
+    await pumpWith(WeightUnit.kg);
+    expect(find.text('42.0k kg'), findsOneWidget);
+
+    // 42 000 kg -> 92 594 lb, rendered compactly and with the lb suffix.
+    await pumpWith(WeightUnit.lb);
+    expect(find.text('42.0k kg'), findsNothing);
+    expect(find.text('92.6k lb'), findsOneWidget);
+  });
+
+  testWidgets('RPE tiles disappear when the user does not track RPE', (
+    tester,
+  ) async {
+    await tester.binding.setSurfaceSize(const Size(390, 1400));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    Future<void> pumpWith({required bool trackRpe}) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: Scaffold(
+            body: SingleChildScrollView(
+              child: PlanAnalyticsView(
+                analytics: _analytics(),
+                unit: WeightUnit.kg,
+                trackRpe: trackRpe,
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+    }
+
+    // Stat tiles upper-case their label.
+    await pumpWith(trackRpe: true);
+    expect(find.text('AVG RPE'), findsOneWidget);
+    expect(find.text('HIGH-RPE SETS'), findsOneWidget);
+
+    await pumpWith(trackRpe: false);
+    expect(find.text('AVG RPE'), findsNothing);
+    expect(find.text('HIGH-RPE SETS'), findsNothing);
   });
 }

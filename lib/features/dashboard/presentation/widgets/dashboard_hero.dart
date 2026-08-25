@@ -12,16 +12,9 @@ import '../../domain/entities/personal_dashboard.dart';
 
 /// High-signal greeting panel with streak + level/XP progress.
 class DashboardHero extends StatelessWidget {
-  const DashboardHero({
-    required this.profile,
-    this.backgroundImagePath,
-    this.backgroundAlignment = Alignment.center,
-    super.key,
-  });
+  const DashboardHero({required this.profile, super.key});
 
   final DashboardProfile profile;
-  final String? backgroundImagePath;
-  final Alignment backgroundAlignment;
 
   @override
   Widget build(BuildContext context) {
@@ -32,8 +25,6 @@ class DashboardHero extends StatelessWidget {
         : (profile.totalXp / xpTotal).clamp(0.0, 1.0);
 
     return SyncedBackgroundCard(
-      backgroundImagePath: backgroundImagePath,
-      backgroundAlignment: backgroundAlignment,
       padding: const EdgeInsets.all(AppSpacing.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

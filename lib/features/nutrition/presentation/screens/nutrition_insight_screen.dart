@@ -5,10 +5,12 @@ import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_dimens.dart';
 import '../../../../core/utils/date_only.dart';
+import '../../../../core/utils/weight_units.dart';
 import '../../../../core/widgets/error_view.dart';
 import '../../../../core/widgets/pro_locked_view.dart';
 import '../../../../core/widgets/xn_card.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../profile/presentation/providers/preferences_provider.dart';
 import '../../../shared_api/api_widgets.dart';
 import '../../data/repositories/nutrition_repository_provider.dart';
 import '../../domain/entities/nutrition_summary.dart';
@@ -155,20 +157,23 @@ class _InsightContent extends StatelessWidget {
   }
 }
 
-class _SignalGrid extends StatelessWidget {
+class _SignalGrid extends ConsumerWidget {
   const _SignalGrid({required this.insight});
 
   final NutritionInsight insight;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
+    final unit = ref.watch(weightUnitProvider);
     final signals = [
       (
         l10n.nutritionInsightWeightGap,
         insight.weightGapKg == null
             ? l10n.nutritionInsightMissing
-            : '${insight.weightGapKg! > 0 ? '+' : ''}${insight.weightGapKg!.toStringAsFixed(1)} kg',
+            : '${insight.weightGapKg! > 0 ? '+' : ''}'
+                  '${formatWeight(unit.fromKg(insight.weightGapKg!))} '
+                  '${unit.suffix}',
       ),
       (
         l10n.nutritionInsightCalorieConsistency,

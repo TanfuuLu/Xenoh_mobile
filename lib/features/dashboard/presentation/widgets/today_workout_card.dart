@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_dimens.dart';
 import '../../../../app/theme/app_typography.dart';
+import '../../../../core/utils/date_labels.dart';
 import '../../../../core/utils/weight_units.dart';
 import '../../../../core/widgets/xn_animated_number.dart';
 import '../../../../core/widgets/xn_chip.dart';
@@ -91,7 +92,10 @@ class TodayWorkoutCard extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            w.dayOfWeek,
+            DateLabels.weekday(
+              w.date,
+              Localizations.localeOf(context).toString(),
+            ),
             style: AppTypography.display(20, letterSpacing: 0),
           ),
           const SizedBox(height: AppSpacing.md),

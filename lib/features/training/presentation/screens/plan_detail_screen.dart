@@ -7,11 +7,14 @@ import 'package:intl/intl.dart' as intl;
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_dimens.dart';
 import '../../../../app/theme/app_typography.dart';
+import '../../../../core/utils/date_labels.dart';
+import '../../../../core/utils/weight_units.dart';
 import '../../../../core/widgets/async_value_view.dart';
-import '../../../../core/widgets/xn_card.dart';
+import '../../../../core/widgets/synced_background_card.dart';
 import '../../../../core/widgets/xn_chip.dart';
 import '../../../../core/widgets/xn_progress.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../profile/presentation/providers/preferences_provider.dart';
 import '../../domain/entities/plan.dart';
 import '../../domain/entities/weekly_workout.dart';
 import '../navigation/training_route_scope.dart';
@@ -19,6 +22,7 @@ import '../providers/plan_detail_controller.dart';
 import '../providers/plans_controller.dart';
 import '../providers/week_analysis_provider.dart';
 import '../widgets/create_plan_sheet.dart';
+import '../widgets/timeline_card_metrics.dart';
 
 enum _PlanAction {
   analytics,
@@ -193,14 +197,11 @@ class PlanDetailScreen extends ConsumerWidget {
                 ),
                 SliverLayoutBuilder(
                   builder: (context, constraints) {
-                    final textScale = MediaQuery.textScalerOf(
+                    final cardHeight = trainingTimelineCardHeight(
                       context,
-                    ).scale(1).clamp(1.0, 1.6);
-                    final narrow = constraints.crossAxisExtent < 380;
-                    final cardHeight =
-                        (narrow ? 462.0 : 430.0) +
-                        ((textScale - 1) * 180) +
-                        (items.any((week) => week.hasWarning) ? 34 : 0);
+                      crossAxisExtent: constraints.crossAxisExtent,
+                      extraLines: items.any((week) => week.hasWarning) ? 1 : 0,
+                    );
                     return SliverToBoxAdapter(
                       child: SizedBox(
                         height: cardHeight,
@@ -359,27 +360,12 @@ String? _currentWeekId(List<WeeklyWorkout> weeks) {
 
 DateTime _dateOnly(DateTime date) => DateTime(date.year, date.month, date.day);
 
-const _monthAbbr = [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'May',
-  'Jun',
-  'Jul',
-  'Aug',
-  'Sep',
-  'Oct',
-  'Nov',
-  'Dec',
-];
-
 /// e.g. `Jan 5 – 11` (same month) or `Jan 28 – Feb 3` (across months).
-String _formatWeekRange(DateTime start, DateTime end) {
-  final startLabel = '${_monthAbbr[start.month - 1]} ${start.day}';
+String _formatWeekRange(DateTime start, DateTime end, String locale) {
+  final startLabel = DateLabels.monthDay(start, locale);
   final endLabel = start.month == end.month
       ? '${end.day}'
-      : '${_monthAbbr[end.month - 1]} ${end.day}';
+      : DateLabels.monthDay(end, locale);
   return '$startLabel – $endLabel';
 }
 
@@ -582,7 +568,11 @@ class _WeekCard extends ConsumerWidget {
         ),
         const SizedBox(height: AppSpacing.sm),
         Text(
-          _formatWeekRange(week.startDate, week.endDate),
+          _formatWeekRange(
+            week.startDate,
+            week.endDate,
+            Localizations.localeOf(context).toString(),
+          ),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: AppTypography.mono(
@@ -739,6 +729,7 @@ class _WeekAtGlance extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
+    final unit = ref.watch(weightUnitProvider);
     final analysis = ref.watch(weekAnalysisProvider(weekId));
 
     return DecoratedBox(
@@ -776,8 +767,8 @@ class _WeekAtGlance extends ConsumerWidget {
                         color: AppColors.success,
                         label: l10n.progressVolumeLabel,
                         value:
-                            '${_formatWeekVolume(context, data.actualVolume)} '
-                            'kg-reps',
+                            '${_formatWeekVolume(context, unit.fromKg(data.actualVolume))} '
+                            '${l10n.trainingVolumeUnitLabel(unit.suffix)}',
                       ),
                       _WeekAtGlanceRow(
                         icon: Icons.layers_outlined,
@@ -1005,11 +996,11 @@ class _PlanWeeksSummary extends StatelessWidget {
     final warnings = weeks.where((week) => week.hasWarning).length;
     final progress = totalDays == 0 ? 0.0 : completedDays / totalDays;
 
-    return XnCard(
-      color: AppColors.clay900,
-      border: Border.all(
-        color: AppColors.fgOnClay.withValues(alpha: 0.08),
-      ),
+    return SyncedBackgroundCard(
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      borderRadius: AppRadius.lg,
+      minHeight: 0,
+      fallbackColor: AppColors.clay900,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

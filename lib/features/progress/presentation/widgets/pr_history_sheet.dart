@@ -7,9 +7,11 @@ import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_dimens.dart';
 import '../../../../app/theme/app_typography.dart';
 import '../../../../core/config/app_config.dart';
+import '../../../../core/utils/weight_units.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../auth/presentation/providers/auth_controller.dart';
 import '../../../auth/presentation/providers/auth_state.dart';
+import '../../../profile/presentation/providers/preferences_provider.dart';
 import '../../domain/entities/exercise_pr.dart';
 import '../providers/progress_controllers.dart';
 import 'pr_line_chart.dart';
@@ -24,6 +26,7 @@ class PrHistorySheet extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final history = ref.watch(exercisePrHistoryProvider(pr.exerciseTemplateId));
+    final unit = ref.watch(weightUnitProvider);
 
     return DraggableScrollableSheet(
       expand: false,
@@ -68,13 +71,13 @@ class PrHistorySheet extends ConsumerWidget {
                         textBaseline: TextBaseline.alphabetic,
                         children: [
                           Text(
-                            _compact(pr.currentWeight),
+                            formatWeight(unit.fromKg(pr.currentWeight)),
                             style: AppTypography.display(28),
                           ),
                           const SizedBox(width: 4),
-                          const Text(
-                            'kg',
-                            style: TextStyle(color: AppColors.fg3),
+                          Text(
+                            unit.suffix,
+                            style: const TextStyle(color: AppColors.fg3),
                           ),
                           const SizedBox(width: AppSpacing.sm),
                           Text(
@@ -94,7 +97,7 @@ class PrHistorySheet extends ConsumerWidget {
               ],
             ),
             const SizedBox(height: AppSpacing.lg),
-            _historySection(context, history),
+            _historySection(context, history, unit),
           ],
         ),
       ),
@@ -104,6 +107,7 @@ class PrHistorySheet extends ConsumerWidget {
   Widget _historySection(
     BuildContext context,
     AsyncValue<List<ExercisePrPoint>> history,
+    WeightUnit unit,
   ) {
     final l10n = AppLocalizations.of(context);
     final points = history.value;
@@ -140,9 +144,9 @@ class PrHistorySheet extends ConsumerWidget {
       children: [
         Text(l10n.progressProgressionTitle, style: _eyebrow),
         const SizedBox(height: AppSpacing.md),
-        PrLineChart(points: points),
+        PrLineChart(points: points, unit: unit),
         const SizedBox(height: AppSpacing.lg),
-        for (final p in points.reversed) _HistoryRow(point: p),
+        for (final p in points.reversed) _HistoryRow(point: p, unit: unit),
       ],
     );
   }
@@ -168,9 +172,10 @@ class PrHistorySheet extends ConsumerWidget {
 }
 
 class _HistoryRow extends StatelessWidget {
-  const _HistoryRow({required this.point});
+  const _HistoryRow({required this.point, required this.unit});
 
   final ExercisePrPoint point;
+  final WeightUnit unit;
 
   @override
   Widget build(BuildContext context) {
@@ -187,7 +192,8 @@ class _HistoryRow extends StatelessWidget {
           const SizedBox(width: AppSpacing.sm),
           Expanded(
             child: Text(
-              '${_compact(point.weight)} kg × ${point.reps}',
+              '${formatWeight(unit.fromKg(point.weight))} ${unit.suffix}'
+              ' × ${point.reps}',
               style: AppTypography.mono(13),
             ),
           ),
@@ -207,9 +213,6 @@ const _eyebrow = TextStyle(
   fontWeight: FontWeight.w500,
   letterSpacing: 0.7,
 );
-
-String _compact(double v) =>
-    v == v.roundToDouble() ? v.toStringAsFixed(0) : v.toStringAsFixed(1);
 
 String _formatDate(DateTime d, String locale) =>
     DateFormat.yMMMd(locale).format(d.toLocal());

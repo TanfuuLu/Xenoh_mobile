@@ -54,17 +54,20 @@ void main() {
     expect(find.textContaining('5 g · 08:00'), findsOneWidget);
     expect(find.textContaining('08:00:00'), findsNothing);
 
-    await tester.tap(find.text('Mark taken'));
+    // The pending action is a bare checkbox; its name lives in the tooltip.
+    await tester.tap(find.byTooltip('Mark taken'));
     await tester.pumpAndSettle();
 
-    final recorded = verify(
-      () => repository.recordDose(
-        doseSlotId: 'slot-1',
-        date: captureAny(named: 'date'),
-        status: SupplementIntakeStatus.taken,
-        note: any(named: 'note'),
-      ),
-    ).captured.single as DateTime;
+    final recorded =
+        verify(
+              () => repository.recordDose(
+                doseSlotId: 'slot-1',
+                date: captureAny(named: 'date'),
+                status: SupplementIntakeStatus.taken,
+                note: any(named: 'note'),
+              ),
+            ).captured.single
+            as DateTime;
     final now = DateTime.now();
     expect(recorded, DateTime(now.year, now.month, now.day));
   });
@@ -96,7 +99,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Mark taken'), findsNothing);
+    expect(find.byTooltip('Mark taken'), findsNothing);
     expect(find.text('Taken'), findsOneWidget);
   });
 }

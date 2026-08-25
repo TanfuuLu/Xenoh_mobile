@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -8,12 +6,15 @@ import 'package:intl/intl.dart' as intl;
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_dimens.dart';
 import '../../../../app/theme/app_typography.dart';
+import '../../../../core/utils/date_labels.dart';
 import '../../../../core/utils/date_only.dart';
+import '../../../../core/utils/weight_units.dart';
 import '../../../../core/widgets/async_value_view.dart';
-import '../../../../core/widgets/xn_card.dart';
+import '../../../../core/widgets/synced_background_card.dart';
 import '../../../../core/widgets/xn_chip.dart';
 import '../../../../core/widgets/xn_progress.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../profile/presentation/providers/preferences_provider.dart';
 import '../../../profile/presentation/providers/profile_controller.dart';
 import '../../domain/entities/daily_workout.dart';
 import '../../domain/entities/exercise.dart';
@@ -22,6 +23,7 @@ import '../navigation/training_route_scope.dart';
 import '../providers/cycle_day_markers_provider.dart';
 import '../providers/days_controller.dart';
 import '../providers/exercises_controller.dart';
+import '../widgets/timeline_card_metrics.dart';
 
 enum _DayAction { normal, rest, missed, copy }
 
@@ -142,14 +144,13 @@ class WeekScreen extends ConsumerWidget {
                 ),
                 SliverLayoutBuilder(
                   builder: (context, constraints) {
-                    final cardHeight = math
-                        .max(
-                          440,
-                          constraints.viewportMainAxisExtent -
-                              constraints.precedingScrollExtent -
-                              AppSpacing.xxl,
-                        )
-                        .toDouble();
+                    final cardHeight = trainingTimelineCardHeight(
+                      context,
+                      crossAxisExtent: constraints.crossAxisExtent,
+                      extraLines:
+                          (items.any((day) => day.hasWarning) ? 1 : 0) +
+                          ((markers?.isNotEmpty ?? false) ? 1 : 0),
+                    );
                     return SliverToBoxAdapter(
                       child: SizedBox(
                         height: cardHeight,
@@ -443,7 +444,10 @@ class _DayCard extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          day.dayOfWeek,
+                          DateLabels.weekday(
+                            day.date,
+                            Localizations.localeOf(context).toString(),
+                          ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: AppTypography.display(
@@ -615,7 +619,10 @@ class _DayCard extends ConsumerWidget {
                 onPressed: () => Navigator.pop(ctx, target),
                 child: Text(
                   l10n.trainingTargetDayOption(
-                    target.dayOfWeek,
+                    DateLabels.weekday(
+                      target.date,
+                      Localizations.localeOf(ctx).toString(),
+                    ),
                     DateOnly.format(target.date),
                   ),
                 ),
@@ -640,6 +647,8 @@ class _DayAtGlance extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
+    final unit = ref.watch(weightUnitProvider);
+    final trackRpe = ref.watch(trackRpeProvider);
     final exercises = ref.watch(exercisesControllerProvider(dayId));
 
     return DecoratedBox(
@@ -660,10 +669,14 @@ class _DayAtGlance extends ConsumerWidget {
           error: (_, _) => _DayMetricList(
             metrics: const _DayWorkoutMetrics.empty(),
             l10n: l10n,
+            unit: unit,
+            trackRpe: trackRpe,
           ),
           data: (items) => _DayMetricList(
             metrics: _DayWorkoutMetrics.fromExercises(items),
             l10n: l10n,
+            unit: unit,
+            trackRpe: trackRpe,
           ),
         ),
       ),
@@ -675,10 +688,20 @@ class _DayMetricList extends StatelessWidget {
   const _DayMetricList({
     required this.metrics,
     required this.l10n,
+    required this.unit,
+    required this.trackRpe,
   });
 
   final _DayWorkoutMetrics metrics;
   final AppLocalizations l10n;
+
+  /// Mirrors the `trackRpe` preference: with RPE logging off there is no RPE
+  /// to average, so the row is dropped rather than showing a permanent "-".
+  final bool trackRpe;
+
+  /// Volume is accumulated in kg and converted here, so the tile follows the
+  /// kg/lb preference like every other weight on the screen.
+  final WeightUnit unit;
 
   @override
   Widget build(BuildContext context) {
@@ -709,14 +732,18 @@ class _DayMetricList extends StatelessWidget {
         _DayMetricRow(
           icon: Icons.trending_up_rounded,
           label: l10n.progressVolumeLabel,
-          value: '${_formatDayNumber(context, metrics.totalVolume)} kg-reps',
+          value:
+              '${_formatDayNumber(context, unit.fromKg(metrics.totalVolume))} '
+              '${l10n.trainingVolumeUnitLabel(unit.suffix)}',
         ),
-        const SizedBox(height: 8),
-        _DayMetricRow(
-          icon: Icons.speed_rounded,
-          label: l10n.progressAvgRpeLabel,
-          value: metrics.averageRpe?.toStringAsFixed(1) ?? '-',
-        ),
+        if (trackRpe) ...[
+          const SizedBox(height: 8),
+          _DayMetricRow(
+            icon: Icons.speed_rounded,
+            label: l10n.progressAvgRpeLabel,
+            value: metrics.averageRpe?.toStringAsFixed(1) ?? '-',
+          ),
+        ],
         const SizedBox(height: 8),
         _DayMetricRow(
           icon: Icons.timer_outlined,
@@ -934,12 +961,12 @@ class _WeekDaysSummary extends StatelessWidget {
     );
     final progress = exercises == 0 ? 0.0 : completedExercises / exercises;
 
-    return XnCard(
+    return SyncedBackgroundCard(
       key: const ValueKey('week-days-summary'),
-      color: AppColors.clay900,
-      border: Border.all(
-        color: AppColors.fgOnClay.withValues(alpha: 0.08),
-      ),
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      borderRadius: AppRadius.lg,
+      minHeight: 0,
+      fallbackColor: AppColors.clay900,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

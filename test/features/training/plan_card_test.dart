@@ -35,7 +35,6 @@ void main() {
                 isActive: false,
               ),
               onTap: () {},
-              onAnalytics: () {},
               onReview: () {},
               onActivate: () {},
               onDelete: () {},
@@ -48,7 +47,7 @@ void main() {
 
     expect(tester.takeException(), isNull);
     expect(
-      tester.getTopLeft(find.byTooltip('Analytics')).dy,
+      tester.getTopLeft(find.byTooltip('Review plan')).dy,
       greaterThan(tester.getBottomLeft(find.text('Activate')).dy),
     );
   });

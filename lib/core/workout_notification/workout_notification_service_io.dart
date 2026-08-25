@@ -22,6 +22,22 @@ abstract final class WorkoutNotificationService {
   static const _channelId = 'workout_progress_lockscreen_v3';
   static const _consentKey = 'workout_lock_screen_notifications_enabled';
   static bool _initialized = false;
+  static String _channelName = 'Workout progress';
+  static String _channelDescription =
+      'Shows your current exercise on the notification shade and lock screen.';
+
+  /// Supplies the localized Android channel labels (shown in the system
+  /// notification settings). Call once from the UI, before the service first
+  /// starts. Android freezes a channel's name at creation time, so on existing
+  /// installs the new copy only applies when [_channelId] is bumped.
+  static void configureChannelLabels({
+    required String name,
+    required String description,
+  }) {
+    if (_initialized) return;
+    _channelName = name;
+    _channelDescription = description;
+  }
 
   static void _init() {
     if (_initialized || !Platform.isAndroid) return;
@@ -33,9 +49,8 @@ abstract final class WorkoutNotificationService {
         // creation. Keep this ID versioned when visibility/importance changes
         // so existing installs receive the updated lock-screen behavior.
         channelId: _channelId,
-        channelName: 'Workout progress',
-        channelDescription:
-            'Shows your current exercise on the notification shade and lock screen.',
+        channelName: _channelName,
+        channelDescription: _channelDescription,
         channelImportance: NotificationChannelImportance.DEFAULT,
         priority: NotificationPriority.DEFAULT,
         visibility: NotificationVisibility.VISIBILITY_PUBLIC,

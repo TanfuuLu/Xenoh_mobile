@@ -5,12 +5,15 @@ import 'package:intl/intl.dart' as intl;
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_dimens.dart';
 import '../../../../app/theme/app_typography.dart';
+import '../../../../core/utils/date_labels.dart';
 import '../../../../core/utils/date_only.dart';
+import '../../../../core/utils/weight_units.dart';
 import '../../../../core/widgets/async_value_view.dart';
 import '../../../../core/widgets/xn_card.dart';
 import '../../../../core/widgets/xn_progress.dart';
 import '../../../../core/widgets/xn_section.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../profile/presentation/providers/preferences_provider.dart';
 import '../../../progress/presentation/widgets/grouped_bar_chart.dart';
 import '../providers/week_analysis_provider.dart';
 
@@ -32,11 +35,44 @@ class WeekAnalysisScreen extends ConsumerWidget {
         child: AsyncValueView(
           value: analysis,
           onRetry: () => ref.invalidate(weekAnalysisProvider(weekId)),
-          data: (data) => _WeekAnalysisBody(analysis: data),
+          data: (data) => _PrefsScope(
+            unit: ref.watch(weightUnitProvider),
+            trackRpe: ref.watch(trackRpeProvider),
+            child: _WeekAnalysisBody(analysis: data),
+          ),
         ),
       ),
     );
   }
+}
+
+/// Carries the user's training preferences down to this screen's private
+/// widgets, which are plain [StatelessWidget]s several levels below the `ref`.
+/// Volume arrives from the API in kg and is converted at render time, and the
+/// RPE rows disappear when the user does not track RPE — so flipping either
+/// preference updates the whole screen.
+class _PrefsScope extends InheritedWidget {
+  const _PrefsScope({
+    required this.unit,
+    required this.trackRpe,
+    required super.child,
+  });
+
+  final WeightUnit unit;
+  final bool trackRpe;
+
+  static _PrefsScope? _maybeOf(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<_PrefsScope>();
+
+  static WeightUnit unitOf(BuildContext context) =>
+      _maybeOf(context)?.unit ?? WeightUnit.kg;
+
+  static bool trackRpeOf(BuildContext context) =>
+      _maybeOf(context)?.trackRpe ?? true;
+
+  @override
+  bool updateShouldNotify(_PrefsScope oldWidget) =>
+      oldWidget.unit != unit || oldWidget.trackRpe != trackRpe;
 }
 
 class _WeekAnalysisBody extends StatelessWidget {
@@ -87,7 +123,7 @@ class _WeekAnalysisBody extends StatelessWidget {
                 iconBg: AppColors.successBg,
                 title: _t(context, 'Actual volume', 'Khối lượng thực'),
                 value: _formatVolume(context, analysis.actualVolume),
-                subtitle: _t(context, 'kg · reps', 'kg · lần'),
+                subtitle: _volumeUnitCaption(context, separator: ' · '),
               ),
               _MetricData(
                 icon: Icons.bolt_rounded,
@@ -114,13 +150,14 @@ class _WeekAnalysisBody extends StatelessWidget {
                 value: _formatDuration(context, analysis.totalDurationSeconds),
                 subtitle: _t(context, 'tracked exercise', 'bài tập tính giờ'),
               ),
-              _MetricData(
-                icon: Icons.monitor_heart_outlined,
-                iconBg: const Color(0xFFFFD8EA),
-                title: _t(context, 'Average RPE', 'RPE trung bình'),
-                value: analysis.averageRpe?.toStringAsFixed(1) ?? '—',
-                subtitle: _t(context, 'perceived effort', 'mức độ cảm nhận'),
-              ),
+              if (_PrefsScope.trackRpeOf(context))
+                _MetricData(
+                  icon: Icons.monitor_heart_outlined,
+                  iconBg: const Color(0xFFFFD8EA),
+                  title: _t(context, 'Average RPE', 'RPE trung bình'),
+                  value: analysis.averageRpe?.toStringAsFixed(1) ?? '—',
+                  subtitle: _t(context, 'perceived effort', 'mức độ cảm nhận'),
+                ),
               _MetricData(
                 icon: Icons.warning_amber_rounded,
                 iconBg: AppColors.warningBg,
@@ -254,7 +291,7 @@ class _MobileSummaryCard extends StatelessWidget {
                 child: _HeroNumber(
                   label: _t(context, 'Actual volume', 'Khối lượng thực'),
                   value: _formatVolume(context, analysis.actualVolume),
-                  suffix: _t(context, 'kg reps', 'kg lần'),
+                  suffix: _volumeUnitCaption(context, separator: ' '),
                 ),
               ),
             ],
@@ -468,13 +505,14 @@ class _CompactStatsCard extends StatelessWidget {
           value: _formatDuration(context, analysis.totalDurationSeconds),
           detail: _t(context, 'Tracked exercise time', 'Thời gian đã tính'),
         ),
-        _CompactStatRow(
-          icon: Icons.monitor_heart_outlined,
-          iconBg: const Color(0xFFFFD8EA),
-          label: _t(context, 'Average RPE', 'RPE trung bình'),
-          value: analysis.averageRpe?.toStringAsFixed(1) ?? '-',
-          detail: _t(context, 'Perceived effort', 'Mức cảm nhận'),
-        ),
+        if (_PrefsScope.trackRpeOf(context))
+          _CompactStatRow(
+            icon: Icons.monitor_heart_outlined,
+            iconBg: const Color(0xFFFFD8EA),
+            label: _t(context, 'Average RPE', 'RPE trung bình'),
+            value: analysis.averageRpe?.toStringAsFixed(1) ?? '-',
+            detail: _t(context, 'Perceived effort', 'Mức cảm nhận'),
+          ),
         _CompactStatRow(
           icon: Icons.local_fire_department_outlined,
           iconBg: const Color(0xFFFFE2D6),
@@ -1093,8 +1131,8 @@ class _VolumePerDayCard extends StatelessWidget {
                   icon: Icons.stacked_bar_chart_rounded,
                   title: _t(
                     context,
-                    'Volume per day (kg · reps)',
-                    'Khối lượng mỗi ngày (kg · lần)',
+                    'Volume per day (${_volumeUnitCaption(context, separator: ' · ')})',
+                    'Khối lượng mỗi ngày (${_volumeUnitCaption(context, separator: ' · ')})',
                   ),
                 ),
               ),
@@ -1482,6 +1520,7 @@ class _DailyVolumeTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final locale = Localizations.localeOf(context).toString();
     final rate = day.volumeRate.clamp(0.0, 1.0);
     final borderColor = day.day.hasWarning
         ? AppColors.warning.withValues(alpha: 0.45)
@@ -1500,7 +1539,8 @@ class _DailyVolumeTile extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  '${day.day.dayOfWeek} ${day.day.date.day}',
+                  '${DateLabels.weekday(day.day.date, locale)} '
+                  '${day.day.date.day}',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
@@ -1573,11 +1613,13 @@ class _DailyVolumeTile extends StatelessWidget {
                 label: _t(context, 'Done', 'Hoàn t.'),
                 value: '${(day.completionRate * 100).round()}%',
               ),
-              const SizedBox(width: AppSpacing.sm),
-              _MiniStat(
-                label: 'RPE',
-                value: day.averageRpe?.toStringAsFixed(1) ?? '—',
-              ),
+              if (_PrefsScope.trackRpeOf(context)) ...[
+                const SizedBox(width: AppSpacing.sm),
+                _MiniStat(
+                  label: 'RPE',
+                  value: day.averageRpe?.toStringAsFixed(1) ?? '—',
+                ),
+              ],
             ],
           ),
         ],
@@ -1668,9 +1710,9 @@ String _dateRange(WeekAnalysis analysis) {
 }
 
 String _dayChartLabel(BuildContext context, DayAnalysis day) {
-  final weekday = day.day.dayOfWeek.trim();
-  final short = weekday.length <= 3 ? weekday : weekday.substring(0, 3);
-  return '$short ${day.day.date.day}';
+  final locale = Localizations.localeOf(context).toString();
+  return '${DateLabels.weekdayShort(day.day.date, locale)} '
+      '${day.day.date.day}';
 }
 
 Color _muscleColor(int index) {
@@ -1689,8 +1731,15 @@ Color _muscleColor(int index) {
   return colors[index % colors.length];
 }
 
+/// "kg · reps" / "lb · lần" — volume is weight × reps, so the unit half
+/// follows the preference while the reps half follows the language.
+String _volumeUnitCaption(BuildContext context, {required String separator}) {
+  final unit = _PrefsScope.unitOf(context).suffix;
+  return '$unit$separator${_t(context, 'reps', 'lần')}';
+}
+
 String _formatVolume(BuildContext context, double value) =>
-    _number(context, value.round());
+    _number(context, _PrefsScope.unitOf(context).fromKg(value).round());
 
 String _number(BuildContext context, num value) {
   final locale = Localizations.localeOf(context).toLanguageTag();

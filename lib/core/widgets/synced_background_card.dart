@@ -1,36 +1,42 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app/theme/app_colors.dart';
 import '../../app/theme/app_dimens.dart';
+import '../../features/profile/data/repositories/profile_background_repository.dart';
 import 'hero_card_background.dart';
 
-class SyncedBackgroundCard extends StatelessWidget {
+/// Header card whose backdrop is the signed-in user's chosen background.
+/// It resolves that itself from [currentUserBackgroundProvider] rather than
+/// taking a path, so every header card on every screen shows the same image
+/// and swaps together when the account changes.
+class SyncedBackgroundCard extends ConsumerWidget {
   const SyncedBackgroundCard({
     required this.child,
-    this.backgroundImagePath,
     this.padding = const EdgeInsets.all(AppSpacing.xxl),
     this.fallbackColor = AppColors.bgInverse,
     this.borderRadius = AppRadius.xxl,
     this.minHeight = AppLayout.heroCardMinHeight,
-    this.backgroundAlignment = Alignment.center,
     super.key,
   });
 
   final Widget child;
-  final String? backgroundImagePath;
   final EdgeInsetsGeometry padding;
   final Color fallbackColor;
   final double borderRadius;
   final double minHeight;
-  final Alignment backgroundAlignment;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final background =
+        ref.watch(currentUserBackgroundProvider).value ??
+        const UserBackground.none();
+    final backgroundImagePath = background.path;
     final backgroundFile = backgroundImagePath == null
         ? null
-        : File(backgroundImagePath!);
+        : File(backgroundImagePath);
     final hasCustomBackground =
         backgroundFile != null && backgroundFile.existsSync();
 
@@ -61,7 +67,7 @@ class SyncedBackgroundCard extends StatelessWidget {
               child: Image.file(
                 backgroundFile,
                 fit: BoxFit.cover,
-                alignment: backgroundAlignment,
+                alignment: background.alignment,
                 filterQuality: FilterQuality.medium,
               ),
             ),

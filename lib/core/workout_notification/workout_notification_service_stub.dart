@@ -1,5 +1,10 @@
 /// Web/desktop stub — ongoing notifications are an Android-only concept here.
 abstract final class WorkoutNotificationService {
+  static void configureChannelLabels({
+    required String name,
+    required String description,
+  }) {}
+
   static Future<void> showOrUpdate({
     required String title,
     required String setInfo,

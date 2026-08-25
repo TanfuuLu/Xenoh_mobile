@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../app/theme/app_colors.dart';
 import '../../app/theme/app_dimens.dart';
 import '../../app/theme/app_typography.dart';
+import '../../l10n/app_localizations.dart';
 
 class XnDropdownOption<T> {
   const XnDropdownOption({
@@ -26,7 +27,7 @@ class XnDropdown<T> extends StatelessWidget {
     required this.value,
     required this.options,
     required this.onChanged,
-    this.hint = 'Select',
+    this.hint,
     this.validator,
     this.enabled = true,
     this.isExpanded = true,
@@ -37,7 +38,9 @@ class XnDropdown<T> extends StatelessWidget {
   final T? value;
   final List<XnDropdownOption<T>> options;
   final ValueChanged<T?>? onChanged;
-  final String hint;
+
+  /// Falls back to the localized "Select" placeholder when omitted.
+  final String? hint;
   final String? Function(T?)? validator;
   final bool enabled;
   final bool isExpanded;
@@ -79,7 +82,9 @@ class XnDropdown<T> extends StatelessWidget {
             fontSize: 15,
             fontWeight: FontWeight.w500,
           ),
-          decoration: InputDecoration(hintText: hint),
+          decoration: InputDecoration(
+            hintText: hint ?? AppLocalizations.of(context).commonSelect,
+          ),
           selectedItemBuilder: (_) => [
             for (final option in options)
               Align(

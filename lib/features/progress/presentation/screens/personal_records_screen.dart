@@ -7,9 +7,11 @@ import 'package:intl/intl.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_dimens.dart';
 import '../../../../app/theme/app_typography.dart';
+import '../../../../core/utils/weight_units.dart';
 import '../../../../core/widgets/async_value_view.dart';
 import '../../../../core/widgets/xn_section.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../profile/presentation/providers/preferences_provider.dart';
 import '../../domain/entities/exercise_pr.dart';
 import '../providers/progress_controllers.dart';
 import '../widgets/pr_history_sheet.dart';
@@ -23,6 +25,7 @@ class PersonalRecordsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final prs = ref.watch(exercisePrsProvider);
+    final unit = ref.watch(weightUnitProvider);
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.progressPersonalRecordsTitle)),
@@ -42,6 +45,7 @@ class PersonalRecordsScreen extends ConsumerWidget {
                     for (final item in items)
                       _PrCard(
                         pr: item,
+                        unit: unit,
                         onTap: () => _openHistory(context, item),
                       ),
                   ],
@@ -67,9 +71,14 @@ class PersonalRecordsScreen extends ConsumerWidget {
 }
 
 class _PrCard extends StatelessWidget {
-  const _PrCard({required this.pr, required this.onTap});
+  const _PrCard({
+    required this.pr,
+    required this.unit,
+    required this.onTap,
+  });
 
   final ExercisePr pr;
+  final WeightUnit unit;
   final VoidCallback onTap;
 
   @override
@@ -117,13 +126,13 @@ class _PrCard extends StatelessWidget {
             textBaseline: TextBaseline.alphabetic,
             children: [
               Text(
-                _compact(pr.currentWeight),
+                formatWeight(unit.fromKg(pr.currentWeight)),
                 style: AppTypography.display(22),
               ),
               const SizedBox(width: 3),
-              const Text(
-                'kg',
-                style: TextStyle(color: AppColors.fg3, fontSize: 12),
+              Text(
+                unit.suffix,
+                style: const TextStyle(color: AppColors.fg3, fontSize: 12),
               ),
             ],
           ),
@@ -179,9 +188,6 @@ class _EmptyPrs extends StatelessWidget {
     );
   }
 }
-
-String _compact(double v) =>
-    v == v.roundToDouble() ? v.toStringAsFixed(0) : v.toStringAsFixed(1);
 
 String _formatDate(DateTime d, String locale) =>
     DateFormat.yMMMd(locale).format(d.toLocal());

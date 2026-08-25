@@ -128,6 +128,12 @@ abstract class AppLocalizations {
   /// **'Refresh'**
   String get commonRefresh;
 
+  /// No description provided for @commonSelect.
+  ///
+  /// In en, this message translates to:
+  /// **'Select'**
+  String get commonSelect;
+
   /// Generic remove button label
   ///
   /// In en, this message translates to:
@@ -181,6 +187,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Something went wrong.'**
   String get commonSomethingWentWrong;
+
+  /// No description provided for @commonNetworkError.
+  ///
+  /// In en, this message translates to:
+  /// **'Network error. Check your connection.'**
+  String get commonNetworkError;
+
+  /// No description provided for @commonRequestCancelledError.
+  ///
+  /// In en, this message translates to:
+  /// **'The request was cancelled.'**
+  String get commonRequestCancelledError;
+
+  /// No description provided for @commonCertificateError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not verify a secure connection.'**
+  String get commonCertificateError;
+
+  /// No description provided for @commonSessionExpiredError.
+  ///
+  /// In en, this message translates to:
+  /// **'Your session has expired. Please sign in again.'**
+  String get commonSessionExpiredError;
+
+  /// No description provided for @commonValidationError.
+  ///
+  /// In en, this message translates to:
+  /// **'Please check your input.'**
+  String get commonValidationError;
+
+  /// No description provided for @commonNotFoundError.
+  ///
+  /// In en, this message translates to:
+  /// **'We could not find that.'**
+  String get commonNotFoundError;
+
+  /// No description provided for @commonServerError.
+  ///
+  /// In en, this message translates to:
+  /// **'Server error. Please try again later.'**
+  String get commonServerError;
 
   /// Error message for a 403 Forbidden API response
   ///
@@ -1226,6 +1274,12 @@ abstract class AppLocalizations {
   /// **'Volume'**
   String get progressVolumeLabel;
 
+  /// No description provided for @trainingVolumeUnitLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{unit}-reps'**
+  String trainingVolumeUnitLabel(String unit);
+
   /// Analytics completed sets metric label
   ///
   /// In en, this message translates to:
@@ -1292,12 +1346,6 @@ abstract class AppLocalizations {
   /// **'The current load may be too much. Reduce friction, repeat key sessions, and rebuild consistency.'**
   String get progressInsightRepeatWeekMessage;
 
-  /// No description provided for @progressInsightRepeatWeekMetric.
-  ///
-  /// In en, this message translates to:
-  /// **'Training stress'**
-  String get progressInsightRepeatWeekMetric;
-
   /// No description provided for @progressInsightConsistencyTitle.
   ///
   /// In en, this message translates to:
@@ -1309,12 +1357,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Some planned sessions are being missed. Keep the next week simple until adherence improves.'**
   String get progressInsightConsistencyMessage;
-
-  /// No description provided for @progressInsightConsistencyMetric.
-  ///
-  /// In en, this message translates to:
-  /// **'Completion'**
-  String get progressInsightConsistencyMetric;
 
   /// No description provided for @progressInsightVolumeTitle.
   ///
@@ -1328,12 +1370,6 @@ abstract class AppLocalizations {
   /// **'Training volume dropped more than 20%. Repeat the week or avoid adding load yet.'**
   String get progressInsightVolumeMessage;
 
-  /// No description provided for @progressInsightVolumeMetric.
-  ///
-  /// In en, this message translates to:
-  /// **'Volume change'**
-  String get progressInsightVolumeMetric;
-
   /// No description provided for @progressInsightMuscleBalanceTitle.
   ///
   /// In en, this message translates to:
@@ -1345,12 +1381,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No single muscle group is dominating weighted volume.'**
   String get progressInsightMuscleBalanceMessage;
-
-  /// No description provided for @progressInsightMuscleBalanceMetric.
-  ///
-  /// In en, this message translates to:
-  /// **'Top group'**
-  String get progressInsightMuscleBalanceMetric;
 
   /// No description provided for @progressInsightMissedTargetTitle.
   ///
@@ -1364,12 +1394,6 @@ abstract class AppLocalizations {
   /// **'A few sessions were below planned reps or weight. Monitor performance before adding load.'**
   String get progressInsightMissedTargetMessage;
 
-  /// No description provided for @progressInsightMissedTargetMetric.
-  ///
-  /// In en, this message translates to:
-  /// **'Warning days'**
-  String get progressInsightMissedTargetMetric;
-
   /// No description provided for @progressInsightBenchSquatTitle.
   ///
   /// In en, this message translates to:
@@ -1379,14 +1403,272 @@ abstract class AppLocalizations {
   /// No description provided for @progressInsightBenchSquatMessage.
   ///
   /// In en, this message translates to:
-  /// **'Your bench is 63% of your squat. A typical balance sits around 70%. Consider an extra bench session or upper-body accessory work.'**
-  String get progressInsightBenchSquatMessage;
+  /// **'Your bench is {ratio}% of your squat. A typical balance sits around 70%. Consider an extra bench session or upper-body accessory work.'**
+  String progressInsightBenchSquatMessage(String ratio);
 
-  /// No description provided for @progressInsightBenchSquatMetric.
+  /// No description provided for @progressInsightMetricPlannedDays.
   ///
   /// In en, this message translates to:
-  /// **'Bench / Squat'**
-  String get progressInsightBenchSquatMetric;
+  /// **'Planned days'**
+  String get progressInsightMetricPlannedDays;
+
+  /// No description provided for @progressInsightMetricCompletion.
+  ///
+  /// In en, this message translates to:
+  /// **'Completion'**
+  String get progressInsightMetricCompletion;
+
+  /// No description provided for @progressInsightMetricWeeksLogged.
+  ///
+  /// In en, this message translates to:
+  /// **'Weeks logged'**
+  String get progressInsightMetricWeeksLogged;
+
+  /// No description provided for @progressInsightMetricVolumeChange.
+  ///
+  /// In en, this message translates to:
+  /// **'Volume change'**
+  String get progressInsightMetricVolumeChange;
+
+  /// No description provided for @progressInsightMetricAvgRpe.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg RPE'**
+  String get progressInsightMetricAvgRpe;
+
+  /// No description provided for @progressInsightMetricWarningDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Warning days'**
+  String get progressInsightMetricWarningDays;
+
+  /// No description provided for @progressInsightMetricHighRpeSets.
+  ///
+  /// In en, this message translates to:
+  /// **'High-RPE sets'**
+  String get progressInsightMetricHighRpeSets;
+
+  /// No description provided for @progressInsightMetricTrainingScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Training score'**
+  String get progressInsightMetricTrainingScore;
+
+  /// No description provided for @progressInsightMetricCurrentE1Rm.
+  ///
+  /// In en, this message translates to:
+  /// **'Current e1RM'**
+  String get progressInsightMetricCurrentE1Rm;
+
+  /// No description provided for @progressInsightMetricHighRpeWeeks.
+  ///
+  /// In en, this message translates to:
+  /// **'High-RPE weeks'**
+  String get progressInsightMetricHighRpeWeeks;
+
+  /// No description provided for @progressInsightNoTrainingDaysTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No training days planned'**
+  String get progressInsightNoTrainingDaysTitle;
+
+  /// No description provided for @progressInsightNoTrainingDaysMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Add training days to the plan before judging consistency.'**
+  String get progressInsightNoTrainingDaysMessage;
+
+  /// No description provided for @progressInsightConsistencyCriticalTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Consistency needs attention'**
+  String get progressInsightConsistencyCriticalTitle;
+
+  /// No description provided for @progressInsightConsistencyCriticalMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Completion is below 50%. Repeat the week or reduce planned workload before progressing.'**
+  String get progressInsightConsistencyCriticalMessage;
+
+  /// No description provided for @progressInsightConsistencyStrongTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Strong consistency'**
+  String get progressInsightConsistencyStrongTitle;
+
+  /// No description provided for @progressInsightConsistencyStrongMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Adherence is high enough to support progressive overload.'**
+  String get progressInsightConsistencyStrongMessage;
+
+  /// No description provided for @progressInsightVolumeHistoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'More volume history needed'**
+  String get progressInsightVolumeHistoryTitle;
+
+  /// No description provided for @progressInsightVolumeHistoryMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Log at least two training weeks to compare volume trends.'**
+  String get progressInsightVolumeHistoryMessage;
+
+  /// No description provided for @progressInsightVolumeBaselineMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'The previous completed week has no usable volume baseline.'**
+  String get progressInsightVolumeBaselineMessage;
+
+  /// No description provided for @progressInsightPlannedReductionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Planned volume reduction'**
+  String get progressInsightPlannedReductionTitle;
+
+  /// No description provided for @progressInsightPlannedReductionMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Lower volume matches the programmed week and is not treated as lost training.'**
+  String get progressInsightPlannedReductionMessage;
+
+  /// No description provided for @progressInsightVolumeDropTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Volume dropped sharply'**
+  String get progressInsightVolumeDropTitle;
+
+  /// No description provided for @progressInsightVolumeDropMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Training volume fell more than 35% from the previous logged week. Check recovery and missed sessions.'**
+  String get progressInsightVolumeDropMessage;
+
+  /// No description provided for @progressInsightOverloadJumpTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Large overload jump'**
+  String get progressInsightOverloadJumpTitle;
+
+  /// No description provided for @progressInsightOverloadJumpMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Volume increased more than 30%. Watch fatigue and consider a smaller progression next week.'**
+  String get progressInsightOverloadJumpMessage;
+
+  /// No description provided for @progressInsightOverloadMovingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Progressive overload is moving'**
+  String get progressInsightOverloadMovingTitle;
+
+  /// No description provided for @progressInsightOverloadMovingMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Volume is increasing at a useful pace while staying within a manageable range.'**
+  String get progressInsightOverloadMovingMessage;
+
+  /// No description provided for @progressInsightVolumeStableTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Volume is stable'**
+  String get progressInsightVolumeStableTitle;
+
+  /// No description provided for @progressInsightVolumeStableMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Volume is close to the previous week. Progress with small load or rep increases when recovery is good.'**
+  String get progressInsightVolumeStableMessage;
+
+  /// No description provided for @progressInsightFatigueRiskTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Fatigue risk is elevated'**
+  String get progressInsightFatigueRiskTitle;
+
+  /// No description provided for @progressInsightFatigueRiskMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'High RPE work is showing up with warnings or missed training. Consider recovery or a lighter week.'**
+  String get progressInsightFatigueRiskMessage;
+
+  /// No description provided for @progressInsightPrioritizeRecoveryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Prioritize recovery'**
+  String get progressInsightPrioritizeRecoveryTitle;
+
+  /// No description provided for @progressInsightPrioritizeRecoveryMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep load stable or deload slightly until RPE and warnings settle.'**
+  String get progressInsightPrioritizeRecoveryMessage;
+
+  /// No description provided for @progressInsightProgressGraduallyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Progress gradually'**
+  String get progressInsightProgressGraduallyTitle;
+
+  /// No description provided for @progressInsightProgressGraduallyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a small load or rep progression to priority lifts next week.'**
+  String get progressInsightProgressGraduallyMessage;
+
+  /// No description provided for @progressInsightHoldSteadyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Hold the plan steady'**
+  String get progressInsightHoldSteadyTitle;
+
+  /// No description provided for @progressInsightHoldSteadyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Maintain current targets and aim for cleaner execution before progressing.'**
+  String get progressInsightHoldSteadyMessage;
+
+  /// No description provided for @progressInsightDeadliftSquatTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Deadlift is below your squat'**
+  String get progressInsightDeadliftSquatTitle;
+
+  /// No description provided for @progressInsightDeadliftSquatMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Deadlift is at {ratio}% of squat. Most lifters pull at least as much as they squat — check pulling volume or technique.'**
+  String progressInsightDeadliftSquatMessage(String ratio);
+
+  /// No description provided for @progressInsightHighRpeStreakTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Long stretch of high-RPE work'**
+  String get progressInsightHighRpeStreakTitle;
+
+  /// No description provided for @progressInsightHighRpeStreakMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'{weeks} weeks in a row averaged RPE 8.5+. Plan a deload before fatigue starts costing reps.'**
+  String progressInsightHighRpeStreakMessage(String weeks);
+
+  /// No description provided for @progressInsightPlateauTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{lift} is plateauing'**
+  String progressInsightPlateauTitle(String lift);
+
+  /// No description provided for @progressInsightPlateauMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'{lift} estimated 1RM has not moved in the last 4 weeks. Consider a deload or a small block of higher-rep work to break the stall.'**
+  String progressInsightPlateauMessage(String lift);
+
+  /// No description provided for @progressInsightHighRpeSetsValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} high-RPE sets'**
+  String progressInsightHighRpeSetsValue(String count);
 
   /// No description provided for @progressMuscleBack.
   ///
@@ -1787,14 +2069,206 @@ abstract class AppLocalizations {
   /// No description provided for @cycleLegendOvulation.
   ///
   /// In en, this message translates to:
-  /// **'Ovulation'**
+  /// **'Ovulation day'**
   String get cycleLegendOvulation;
 
   /// No description provided for @cycleLegendFertile.
   ///
   /// In en, this message translates to:
-  /// **'Fertile'**
-  String get cycleLegendFertile;
+  /// **'Fertile window ({count} days)'**
+  String cycleLegendFertile(int count);
+
+  /// No description provided for @cyclePhaseUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown'**
+  String get cyclePhaseUnknown;
+
+  /// No description provided for @cyclePhaseMenstrual.
+  ///
+  /// In en, this message translates to:
+  /// **'Menstrual'**
+  String get cyclePhaseMenstrual;
+
+  /// No description provided for @cyclePhaseFollicular.
+  ///
+  /// In en, this message translates to:
+  /// **'Follicular'**
+  String get cyclePhaseFollicular;
+
+  /// No description provided for @cyclePhaseOvulation.
+  ///
+  /// In en, this message translates to:
+  /// **'Ovulation'**
+  String get cyclePhaseOvulation;
+
+  /// No description provided for @cyclePhaseLuteal.
+  ///
+  /// In en, this message translates to:
+  /// **'Luteal'**
+  String get cyclePhaseLuteal;
+
+  /// No description provided for @cycleGuidanceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Phase guidance'**
+  String get cycleGuidanceTitle;
+
+  /// No description provided for @cycleGuidanceTrainingLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Training'**
+  String get cycleGuidanceTrainingLabel;
+
+  /// No description provided for @cycleGuidanceNutritionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Nutrition'**
+  String get cycleGuidanceNutritionLabel;
+
+  /// No description provided for @cycleGuidanceMenstrualTraining1.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep movement light — walks, mobility, easy cardio, or technique work.'**
+  String get cycleGuidanceMenstrualTraining1;
+
+  /// No description provided for @cycleGuidanceMenstrualTraining2.
+  ///
+  /// In en, this message translates to:
+  /// **'If you feel good, light-to-moderate lifting is fine; lower the volume.'**
+  String get cycleGuidanceMenstrualTraining2;
+
+  /// No description provided for @cycleGuidanceMenstrualTraining3.
+  ///
+  /// In en, this message translates to:
+  /// **'Prioritize rest and sleep; skip max-effort attempts on heavy-flow days.'**
+  String get cycleGuidanceMenstrualTraining3;
+
+  /// No description provided for @cycleGuidanceMenstrualNutrition1.
+  ///
+  /// In en, this message translates to:
+  /// **'Add iron-rich foods (red meat, lentils, spinach) to offset blood loss.'**
+  String get cycleGuidanceMenstrualNutrition1;
+
+  /// No description provided for @cycleGuidanceMenstrualNutrition2.
+  ///
+  /// In en, this message translates to:
+  /// **'Pair iron with vitamin C for better absorption.'**
+  String get cycleGuidanceMenstrualNutrition2;
+
+  /// No description provided for @cycleGuidanceMenstrualNutrition3.
+  ///
+  /// In en, this message translates to:
+  /// **'Stay hydrated and keep magnesium up to ease cramps.'**
+  String get cycleGuidanceMenstrualNutrition3;
+
+  /// No description provided for @cycleGuidanceFollicularTraining1.
+  ///
+  /// In en, this message translates to:
+  /// **'Energy and recovery are rising — push intensity and add volume.'**
+  String get cycleGuidanceFollicularTraining1;
+
+  /// No description provided for @cycleGuidanceFollicularTraining2.
+  ///
+  /// In en, this message translates to:
+  /// **'A great window for strength PRs and progressive overload.'**
+  String get cycleGuidanceFollicularTraining2;
+
+  /// No description provided for @cycleGuidanceFollicularTraining3.
+  ///
+  /// In en, this message translates to:
+  /// **'Schedule your hardest sessions into this phase.'**
+  String get cycleGuidanceFollicularTraining3;
+
+  /// No description provided for @cycleGuidanceFollicularNutrition1.
+  ///
+  /// In en, this message translates to:
+  /// **'Fuel harder training with enough carbs and protein.'**
+  String get cycleGuidanceFollicularNutrition1;
+
+  /// No description provided for @cycleGuidanceFollicularNutrition2.
+  ///
+  /// In en, this message translates to:
+  /// **'Eat around workouts to support recovery and performance.'**
+  String get cycleGuidanceFollicularNutrition2;
+
+  /// No description provided for @cycleGuidanceFollicularNutrition3.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep protein high to capitalize on better recovery.'**
+  String get cycleGuidanceFollicularNutrition3;
+
+  /// No description provided for @cycleGuidanceOvulationTraining1.
+  ///
+  /// In en, this message translates to:
+  /// **'Peak strength — a strong window for top sets and heavy lifts.'**
+  String get cycleGuidanceOvulationTraining1;
+
+  /// No description provided for @cycleGuidanceOvulationTraining2.
+  ///
+  /// In en, this message translates to:
+  /// **'Warm up thoroughly; joint laxity is slightly higher here.'**
+  String get cycleGuidanceOvulationTraining2;
+
+  /// No description provided for @cycleGuidanceOvulationTraining3.
+  ///
+  /// In en, this message translates to:
+  /// **'Use the energy peak but keep technique tight on max efforts.'**
+  String get cycleGuidanceOvulationTraining3;
+
+  /// No description provided for @cycleGuidanceOvulationNutrition1.
+  ///
+  /// In en, this message translates to:
+  /// **'Maintain protein and carbs to support high-output sessions.'**
+  String get cycleGuidanceOvulationNutrition1;
+
+  /// No description provided for @cycleGuidanceOvulationNutrition2.
+  ///
+  /// In en, this message translates to:
+  /// **'Add antioxidant-rich fruit and vegetables.'**
+  String get cycleGuidanceOvulationNutrition2;
+
+  /// No description provided for @cycleGuidanceOvulationNutrition3.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep hydration up during intense training.'**
+  String get cycleGuidanceOvulationNutrition3;
+
+  /// No description provided for @cycleGuidanceLutealTraining1.
+  ///
+  /// In en, this message translates to:
+  /// **'Energy may dip — moderate the load and focus on consistency.'**
+  String get cycleGuidanceLutealTraining1;
+
+  /// No description provided for @cycleGuidanceLutealTraining2.
+  ///
+  /// In en, this message translates to:
+  /// **'Swap some intensity for volume or steady-state work if fatigued.'**
+  String get cycleGuidanceLutealTraining2;
+
+  /// No description provided for @cycleGuidanceLutealTraining3.
+  ///
+  /// In en, this message translates to:
+  /// **'Listen to your body; deload sooner if recovery feels off.'**
+  String get cycleGuidanceLutealTraining3;
+
+  /// No description provided for @cycleGuidanceLutealNutrition1.
+  ///
+  /// In en, this message translates to:
+  /// **'Slightly higher calorie needs are normal — eat to satisfaction.'**
+  String get cycleGuidanceLutealNutrition1;
+
+  /// No description provided for @cycleGuidanceLutealNutrition2.
+  ///
+  /// In en, this message translates to:
+  /// **'Complex carbs and magnesium can ease PMS and cravings.'**
+  String get cycleGuidanceLutealNutrition2;
+
+  /// No description provided for @cycleGuidanceLutealNutrition3.
+  ///
+  /// In en, this message translates to:
+  /// **'Limit excess salt and caffeine to reduce bloating.'**
+  String get cycleGuidanceLutealNutrition3;
 
   /// No description provided for @cycleSymptomCountLabel.
   ///
@@ -2084,6 +2558,18 @@ abstract class AppLocalizations {
   /// **'Chat'**
   String get coachChatTitle;
 
+  /// No description provided for @coachChatEmailUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Email unavailable'**
+  String get coachChatEmailUnavailable;
+
+  /// No description provided for @coachChatAvatarSemanticLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} avatar'**
+  String coachChatAvatarSemanticLabel(String name);
+
   /// No description provided for @coachChatHeaderTitle.
   ///
   /// In en, this message translates to:
@@ -2174,11 +2660,11 @@ abstract class AppLocalizations {
   /// **'Connect'**
   String get coachConnectButton;
 
-  /// No description provided for @coachConnectionRequestSentSnackbar.
+  /// No description provided for @coachConnectedSnackbar.
   ///
   /// In en, this message translates to:
-  /// **'Coach connection request sent.'**
-  String get coachConnectionRequestSentSnackbar;
+  /// **'Connected to your coach.'**
+  String get coachConnectedSnackbar;
 
   /// No description provided for @coachKeyVaultTitle.
   ///
@@ -3371,14 +3857,18 @@ abstract class AppLocalizations {
   /// Shown when the target weight is at or below the bar's own weight
   ///
   /// In en, this message translates to:
-  /// **'Use the {bar} kg bar only.'**
-  String dashboardPlateUseBarOnlyMessage(String bar);
+  /// **'Use the {bar} {unit} bar only.'**
+  String dashboardPlateUseBarOnlyMessage(String bar, String unit);
 
   /// Shown when the target weight can't be loaded exactly
   ///
   /// In en, this message translates to:
-  /// **'{weight} kg is not exactly loadable with 2.5 kg plates.'**
-  String dashboardPlateNotExactMessage(String weight);
+  /// **'{weight} {unit} is not exactly loadable with {smallest} {unit} plates.'**
+  String dashboardPlateNotExactMessage(
+    String weight,
+    String unit,
+    String smallest,
+  );
 
   /// Separator shown before the alternative plate combination (e.g. '1 × 25  or  2 × 20')
   ///
@@ -3401,8 +3891,14 @@ abstract class AppLocalizations {
   /// Label for a selectable bar weight, and the bar sublabel on the barbell visual
   ///
   /// In en, this message translates to:
-  /// **'{weight} kg bar'**
-  String dashboardPlateBarWeightLabel(String weight);
+  /// **'{weight} {unit} bar'**
+  String dashboardPlateBarWeightLabel(String weight, String unit);
+
+  /// No description provided for @dashboardPlateApproxKgNote.
+  ///
+  /// In en, this message translates to:
+  /// **'≈ {weight} kg'**
+  String dashboardPlateApproxKgNote(String weight);
 
   /// No description provided for @trainingNewPlanTitle.
   ///
@@ -3770,6 +4266,18 @@ abstract class AppLocalizations {
   /// **'How hard was that set?'**
   String get trainingRpePickerSubtitle;
 
+  /// Low end of the RPE scale legend
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get trainingRpeScaleLightLabel;
+
+  /// High end of the RPE scale legend
+  ///
+  /// In en, this message translates to:
+  /// **'Max effort'**
+  String get trainingRpeScaleMaxLabel;
+
   /// No description provided for @trainingWeekRecommendationsTitle.
   ///
   /// In en, this message translates to:
@@ -4003,6 +4511,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'e.g. Full gym, dumbbells only, home'**
   String get trainingEquipmentHint;
+
+  /// No description provided for @trainingEquipmentDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'Full gym'**
+  String get trainingEquipmentDefault;
 
   /// No description provided for @trainingEquipmentError.
   ///
@@ -4268,6 +4782,36 @@ abstract class AppLocalizations {
   /// **'Design analysis'**
   String get trainingDesignAnalysisTitle;
 
+  /// No description provided for @trainingDesignNoRecoveryRisksChip.
+  ///
+  /// In en, this message translates to:
+  /// **'No recovery risks'**
+  String get trainingDesignNoRecoveryRisksChip;
+
+  /// No description provided for @trainingDesignRisksChip.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} risks'**
+  String trainingDesignRisksChip(int count);
+
+  /// No description provided for @trainingDesignBalancedCoverageChip.
+  ///
+  /// In en, this message translates to:
+  /// **'Balanced coverage'**
+  String get trainingDesignBalancedCoverageChip;
+
+  /// No description provided for @trainingDesignUndertrainedChip.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} undertrained'**
+  String trainingDesignUndertrainedChip(int count);
+
+  /// No description provided for @trainingDesignDominantChip.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} dominant'**
+  String trainingDesignDominantChip(int count);
+
   /// No description provided for @trainingPlanDesignAnalysisTitle.
   ///
   /// In en, this message translates to:
@@ -4321,6 +4865,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Longest training streak'**
   String get trainingLongestTrainingStreakLabel;
+
+  /// No description provided for @trainingResultTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Training result'**
+  String get trainingResultTitle;
+
+  /// No description provided for @trainingResultCongratsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Congratulations'**
+  String get trainingResultCongratsTitle;
+
+  /// No description provided for @trainingResultStreakMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Workout finished. {count}-day streak.'**
+  String trainingResultStreakMessage(int count);
+
+  /// No description provided for @trainingResultVolumeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Volume'**
+  String get trainingResultVolumeLabel;
+
+  /// No description provided for @trainingResultAvgRpeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg RPE'**
+  String get trainingResultAvgRpeLabel;
+
+  /// No description provided for @trainingResultTotalTimeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Total time'**
+  String get trainingResultTotalTimeLabel;
 
   /// No description provided for @trainingAvgExercisesPerDayLabel.
   ///
@@ -7193,6 +7773,18 @@ abstract class AppLocalizations {
   /// **'Pro Coach'**
   String get subscriptionTierProCoach;
 
+  /// No description provided for @subscriptionTierOrganizer.
+  ///
+  /// In en, this message translates to:
+  /// **'Organizer'**
+  String get subscriptionTierOrganizer;
+
+  /// No description provided for @subscriptionTierAnyPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Any paid'**
+  String get subscriptionTierAnyPaid;
+
   /// No description provided for @subscriptionTierFree.
   ///
   /// In en, this message translates to:
@@ -7792,6 +8384,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Status'**
   String get adminStatusLabel;
+
+  /// No description provided for @adminReportStatusPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get adminReportStatusPending;
+
+  /// No description provided for @adminReportStatusResolved.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolved'**
+  String get adminReportStatusResolved;
+
+  /// No description provided for @adminReportStatusDismissed.
+  ///
+  /// In en, this message translates to:
+  /// **'Dismissed'**
+  String get adminReportStatusDismissed;
+
+  /// No description provided for @adminPaymentStatusPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get adminPaymentStatusPending;
+
+  /// No description provided for @adminPaymentStatusCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get adminPaymentStatusCompleted;
+
+  /// No description provided for @adminPaymentStatusFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed'**
+  String get adminPaymentStatusFailed;
+
+  /// No description provided for @adminPaymentStatusExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get adminPaymentStatusExpired;
 
   /// No description provided for @adminNoBugReportsTitle.
   ///
@@ -9449,6 +10083,18 @@ abstract class AppLocalizations {
   /// **'Discount value'**
   String get adminDiscountValue;
 
+  /// No description provided for @adminPromotionTypePercent.
+  ///
+  /// In en, this message translates to:
+  /// **'Percent'**
+  String get adminPromotionTypePercent;
+
+  /// No description provided for @adminPromotionTypeFixed.
+  ///
+  /// In en, this message translates to:
+  /// **'Fixed'**
+  String get adminPromotionTypeFixed;
+
   /// No description provided for @adminAppliesToTier.
   ///
   /// In en, this message translates to:
@@ -9976,6 +10622,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Show workout on your lock screen?'**
   String get workoutLockScreenPermissionTitle;
+
+  /// No description provided for @workoutNotificationChannelName.
+  ///
+  /// In en, this message translates to:
+  /// **'Workout progress'**
+  String get workoutNotificationChannelName;
+
+  /// No description provided for @workoutNotificationChannelDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Shows your current exercise on the notification shade and lock screen.'**
+  String get workoutNotificationChannelDescription;
 
   /// No description provided for @workoutLockScreenPermissionMessage.
   ///

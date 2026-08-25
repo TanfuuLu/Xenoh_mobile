@@ -35,6 +35,23 @@ final adminPromotionCodesProvider = FutureProvider.autoDispose<List<JsonMap>>((
   return ref.watch(xenohApiProvider).getList('/admin/promotion-codes');
 });
 
+String _tierLabel(String value, AppLocalizations l10n) => switch (value) {
+  'Free' => l10n.subscriptionTierFree,
+  'ProIndividual' => l10n.subscriptionTierProIndividual,
+  'ProCoach' => l10n.subscriptionTierProCoach,
+  'Organizer' => l10n.subscriptionTierOrganizer,
+  _ => value,
+};
+
+String _paymentStatusLabel(String value, AppLocalizations l10n) =>
+    switch (value) {
+      'Pending' => l10n.adminPaymentStatusPending,
+      'Completed' => l10n.adminPaymentStatusCompleted,
+      'Failed' => l10n.adminPaymentStatusFailed,
+      'Expired' => l10n.adminPaymentStatusExpired,
+      _ => value,
+    };
+
 class AdminPaymentsScreen extends ConsumerWidget {
   const AdminPaymentsScreen({super.key});
 
@@ -106,9 +123,9 @@ class AdminPaymentsScreen extends ConsumerWidget {
                         'transferCode',
                       ]),
                       meta: [
-                        textOf(payment, ['requestedTier']),
+                        _tierLabel(textOf(payment, ['requestedTier']), l10n),
                         _money(payment['amount']),
-                        textOf(payment, ['status']),
+                        _paymentStatusLabel(textOf(payment, ['status']), l10n),
                       ],
                     ),
                     const SizedBox(height: AppSpacing.md),
@@ -209,19 +226,22 @@ class AdminPaymentsScreen extends ConsumerWidget {
             children: [
               DropdownButtonFormField<String>(
                 initialValue: tier,
-                items: const [
-                  DropdownMenuItem(value: 'Free', child: Text('Free')),
+                items: [
+                  DropdownMenuItem(
+                    value: 'Free',
+                    child: Text(l10n.subscriptionTierFree),
+                  ),
                   DropdownMenuItem(
                     value: 'ProIndividual',
-                    child: Text('ProIndividual'),
+                    child: Text(l10n.subscriptionTierProIndividual),
                   ),
                   DropdownMenuItem(
                     value: 'ProCoach',
-                    child: Text('ProCoach'),
+                    child: Text(l10n.subscriptionTierProCoach),
                   ),
                   DropdownMenuItem(
                     value: 'Organizer',
-                    child: Text('Organizer'),
+                    child: Text(l10n.subscriptionTierOrganizer),
                   ),
                 ],
                 onChanged: (value) =>
@@ -515,9 +535,15 @@ class _PromotionDialogState extends ConsumerState<_PromotionDialog> {
             ),
             DropdownButtonFormField<String>(
               initialValue: _type,
-              items: const [
-                DropdownMenuItem(value: 'Percent', child: Text('Percent')),
-                DropdownMenuItem(value: 'Fixed', child: Text('Fixed')),
+              items: [
+                DropdownMenuItem(
+                  value: 'Percent',
+                  child: Text(l10n.adminPromotionTypePercent),
+                ),
+                DropdownMenuItem(
+                  value: 'Fixed',
+                  child: Text(l10n.adminPromotionTypeFixed),
+                ),
               ],
               onChanged: (value) => setState(() => _type = value ?? _type),
             ),
@@ -533,14 +559,23 @@ class _PromotionDialogState extends ConsumerState<_PromotionDialog> {
             DropdownButtonFormField<String?>(
               initialValue: _tier,
               decoration: InputDecoration(labelText: l10n.adminAppliesToTier),
-              items: const [
-                DropdownMenuItem(value: null, child: Text('Any paid')),
+              items: [
+                DropdownMenuItem(
+                  value: null,
+                  child: Text(l10n.subscriptionTierAnyPaid),
+                ),
                 DropdownMenuItem(
                   value: 'ProIndividual',
-                  child: Text('ProIndividual'),
+                  child: Text(l10n.subscriptionTierProIndividual),
                 ),
-                DropdownMenuItem(value: 'ProCoach', child: Text('ProCoach')),
-                DropdownMenuItem(value: 'Organizer', child: Text('Organizer')),
+                DropdownMenuItem(
+                  value: 'ProCoach',
+                  child: Text(l10n.subscriptionTierProCoach),
+                ),
+                DropdownMenuItem(
+                  value: 'Organizer',
+                  child: Text(l10n.subscriptionTierOrganizer),
+                ),
               ],
               onChanged: (value) => setState(() => _tier = value),
             ),

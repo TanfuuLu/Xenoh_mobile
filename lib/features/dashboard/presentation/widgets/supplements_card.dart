@@ -244,27 +244,13 @@ class _DoseAction extends ConsumerWidget {
         final pending = ref
             .watch(supplementMutationControllerProvider)
             .isLoading;
-        // An empty circle plus an imperative label: a tick with a past-tense
-        // word reads as a status, which is what the recorded rows already use.
-        return OutlinedButton.icon(
-          onPressed: pending ? null : () => unawaited(_record(context, ref)),
-          icon: const Icon(Icons.radio_button_unchecked_rounded, size: 16),
-          label: Text(l10n.supplementsMarkTakenAction),
-          style: OutlinedButton.styleFrom(
-            foregroundColor: AppColors.accent,
-            side: const BorderSide(color: AppColors.accent),
-            visualDensity: VisualDensity.compact,
-            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.md,
-              vertical: 7,
-            ),
-            shape: const StadiumBorder(),
-            textStyle: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
+        // Just an empty box to tick: the row already names the dose, so a
+        // label would repeat it. The action name lives in the tooltip and
+        // semantics instead.
+        return _MarkTakenCheckbox(
+          label: l10n.supplementsMarkTakenAction,
+          pending: pending,
+          onTap: () => unawaited(_record(context, ref)),
         );
     }
   }
@@ -283,6 +269,66 @@ class _DoseAction extends ConsumerWidget {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(SnackBar(content: Text('$error')));
+  }
+}
+
+class _MarkTakenCheckbox extends StatelessWidget {
+  const _MarkTakenCheckbox({
+    required this.label,
+    required this.pending,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool pending;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final fg = pending
+        ? AppColors.accent.withValues(alpha: 0.45)
+        : AppColors.accent;
+    return Tooltip(
+      message: label,
+      child: Semantics(
+        button: true,
+        label: label,
+        child: Material(
+          color: Colors.transparent,
+          shape: const CircleBorder(),
+          clipBehavior: Clip.antiAlias,
+          child: InkWell(
+            onTap: pending ? null : onTap,
+            splashColor: AppColors.accent.withValues(alpha: 0.12),
+            highlightColor: AppColors.accent.withValues(alpha: 0.06),
+            child: SizedBox(
+              width: 36,
+              height: 36,
+              child: Center(
+                child: pending
+                    ? SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 1.8,
+                          color: fg,
+                        ),
+                      )
+                    : Container(
+                        width: 20,
+                        height: 20,
+                        decoration: BoxDecoration(
+                          color: AppColors.accentSoft,
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(color: fg, width: 1.4),
+                        ),
+                      ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
 

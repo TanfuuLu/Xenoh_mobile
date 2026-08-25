@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:xenoh_mobile/app/theme/app_theme.dart';
+import 'package:xenoh_mobile/core/utils/weight_units.dart';
 import 'package:xenoh_mobile/features/dashboard/presentation/widgets/plate_calculator_card.dart';
 import 'package:xenoh_mobile/l10n/app_localizations.dart';
 
@@ -87,6 +88,96 @@ void main() {
     }
 
     await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('lb preference swaps in lb bars, plates and suffixes', (
+    tester,
+  ) async {
+    await tester.binding.setSurfaceSize(const Size(430, 1000));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: AppTheme.light(),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: const Scaffold(
+          body: SingleChildScrollView(
+            child: PlateCalculatorCard(unit: WeightUnit.lb),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    // lb bars, not kg ones.
+    expect(find.text('45 lb bar'), findsWidgets);
+    expect(find.text('20 kg bar'), findsNothing);
+
+    // 135 lb default = 45 lb bar + 45 lb a side, noted in kg alongside.
+    expect(find.text('135 lb'), findsOneWidget);
+    expect(find.text('45 lb'), findsOneWidget);
+    expect(find.text('≈ 61.2 kg'), findsOneWidget);
+
+    await tester.tap(find.text('Sum plates'));
+    await tester.pumpAndSettle();
+
+    // The lb plate set includes 45s and 35s and drops the 20 kg plate. The
+    // bar-only headline also reads "45 lb", hence findsWidgets.
+    expect(find.text('45 lb'), findsWidgets);
+    expect(find.text('35 lb'), findsOneWidget);
+    expect(find.text('25 lb'), findsOneWidget);
+    expect(find.text('20 kg'), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('switching the unit resets the bar and target', (tester) async {
+    await tester.binding.setSurfaceSize(const Size(430, 1000));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    Widget card(WeightUnit unit) => MaterialApp(
+      theme: AppTheme.light(),
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      home: Scaffold(
+        body: SingleChildScrollView(child: PlateCalculatorCard(unit: unit)),
+      ),
+    );
+
+    await tester.pumpWidget(card(WeightUnit.kg));
+    await tester.pumpAndSettle();
+    expect(find.text('100 kg'), findsOneWidget);
+
+    // Same widget, new preference: kg numbers must not survive into lb.
+    await tester.pumpWidget(card(WeightUnit.lb));
+    await tester.pumpAndSettle();
+    expect(find.text('100 kg'), findsNothing);
+    expect(find.text('135 lb'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('the kg note does not overflow a narrow phone in lb', (
+    tester,
+  ) async {
+    await tester.binding.setSurfaceSize(const Size(320, 760));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: AppTheme.light(),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: const Scaffold(
+          body: SingleChildScrollView(
+            child: PlateCalculatorCard(unit: WeightUnit.lb),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('≈ 61.2 kg'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 }

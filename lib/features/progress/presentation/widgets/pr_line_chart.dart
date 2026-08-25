@@ -2,14 +2,21 @@ import 'package:flutter/material.dart';
 
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_typography.dart';
+import '../../../../core/utils/weight_units.dart';
 import '../../domain/entities/exercise_pr.dart';
 
 /// Line chart of PR weight over time (no external chart dep). [points] must be
-/// sorted oldest → newest.
+/// sorted oldest → newest, in kg; the axis labels are shown in [unit].
 class PrLineChart extends StatelessWidget {
-  const PrLineChart({required this.points, this.height = 160, super.key});
+  const PrLineChart({
+    required this.points,
+    required this.unit,
+    this.height = 160,
+    super.key,
+  });
 
   final List<ExercisePrPoint> points;
+  final WeightUnit unit;
   final double height;
 
   @override
@@ -17,15 +24,16 @@ class PrLineChart extends StatelessWidget {
     return SizedBox(
       height: height,
       width: double.infinity,
-      child: CustomPaint(painter: _PrChartPainter(points)),
+      child: CustomPaint(painter: _PrChartPainter(points, unit)),
     );
   }
 }
 
 class _PrChartPainter extends CustomPainter {
-  _PrChartPainter(this.points);
+  _PrChartPainter(this.points, this.unit);
 
   final List<ExercisePrPoint> points;
+  final WeightUnit unit;
 
   static const _leftPad = 40.0;
   static const _vPad = 12.0;
@@ -58,7 +66,7 @@ class _PrChartPainter extends CustomPainter {
     for (final w in [maxW, minW]) {
       final y = yAt(w);
       canvas.drawLine(Offset(chartLeft, y), Offset(size.width, y), gridPaint);
-      _label(canvas, w.toStringAsFixed(0), Offset(0, y - 6));
+      _label(canvas, formatWeight(unit.fromKg(w)), Offset(0, y - 6));
     }
 
     final dots = [

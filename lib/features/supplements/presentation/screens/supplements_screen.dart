@@ -10,6 +10,7 @@ import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_dimens.dart';
 import '../../../../app/theme/app_typography.dart';
 import '../../../../core/error/failure.dart';
+import '../../../../core/error/failure_l10n.dart';
 import '../../../../core/utils/date_only.dart';
 import '../../../../core/widgets/error_view.dart';
 import '../../../../core/widgets/pro_locked_view.dart';
@@ -1711,7 +1712,10 @@ Widget _errorPanel(
   child: error is ForbiddenFailure
       ? ProLockedView(
           title: AppLocalizations.of(context).supplementsProFeatureTitle,
-          message: error.message,
+          message: localizedFailureMessage(
+            error,
+            AppLocalizations.of(context),
+          ),
           onUpgrade: () => context.push('/subscription'),
         )
       : ErrorView.from(error, context, onRetry: onRetry),

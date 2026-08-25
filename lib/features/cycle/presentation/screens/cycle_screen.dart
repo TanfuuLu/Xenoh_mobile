@@ -24,6 +24,7 @@ import '../../../profile/presentation/providers/profile_controller.dart';
 import '../../domain/entities/cycle_models.dart';
 import '../providers/cycle_controllers.dart';
 import '../widgets/cycle_phase_card.dart';
+import '../widgets/cycle_phase_guidance_panel.dart';
 
 class CycleScreen extends ConsumerWidget {
   const CycleScreen({super.key});
@@ -110,7 +111,7 @@ class _OverviewContent extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CyclePhaseCard(
-          phase: overview.currentPhase,
+          phase: cyclePhaseLabel(overview.currentPhase, l10n),
           subtitle: overview.needsData
               ? l10n.cycleLogImprovePredictionsMessage
               : _phaseSubtitle(overview, l10n, locale),
@@ -170,6 +171,7 @@ class _OverviewContent extends ConsumerWidget {
                 logs: items,
                 initialMonth: today,
               ),
+              CyclePhaseGuidancePanel(currentPhase: overview.currentPhase),
               _CycleTrendsCard(logs: items, today: today),
               const _CycleInsightRow(),
               _RecentLogsSection(logs: items),
@@ -295,16 +297,34 @@ class _CycleCalendarCardState extends ConsumerState<_CycleCalendarCard> {
     final locale = Localizations.localeOf(context).toLanguageTag();
     final today = DateTime.now();
     final firstOfMonth = DateTime(_visibleMonth.year, _visibleMonth.month);
-    final startOffset = firstOfMonth.weekday - DateTime.monday;
-    final firstCell = firstOfMonth.subtract(Duration(days: startOffset));
-    final days = List.generate(35, (i) => firstCell.add(Duration(days: i)));
-    final loggedPeriodDays = {
+    final lastOfMonth = DateTime(_visibleMonth.year, _visibleMonth.month + 1, 0);
+    final firstCell = firstOfMonth.subtract(
+      Duration(days: firstOfMonth.weekday - DateTime.monday),
+    );
+    final lastCell = lastOfMonth.add(
+      Duration(days: DateTime.sunday - lastOfMonth.weekday),
+    );
+    // Whole weeks from the Monday on or before the 1st to the Sunday on or
+    // after the last day: 5 rows for most months, 6 when the month spills over
+    // (a hardcoded 35 used to drop the final day of months like August 2026).
+    final cellCount = lastCell.difference(firstCell).inDays + 1;
+    final days = List.generate(
+      cellCount,
+      (i) => firstCell.add(Duration(days: i)),
+    );
+    final flowByDate = {
       for (final log in widget.logs)
-        if (log.flow != null) _dateKey(log.date),
+        if (log.flow != null) _dateKey(log.date): log.flow!,
     };
     final loggedByDate = {
       for (final log in widget.logs) _dateKey(log.date): log,
     };
+    final fertileWindowDays = widget.overview.fertileWindows.isEmpty
+        ? 6
+        : widget.overview.fertileWindows.first.end
+                  .difference(widget.overview.fertileWindows.first.start)
+                  .inDays +
+              1;
 
     return XnSection(
       child: Column(
@@ -373,18 +393,20 @@ class _CycleCalendarCardState extends ConsumerState<_CycleCalendarCard> {
               final date = days[index];
               final dateKey = _dateKey(date);
               final inMonth = date.month == _visibleMonth.month;
-              final isPeriod = loggedPeriodDays.contains(dateKey);
-              final isPredicted = _isInPredictedPeriod(widget.overview, date);
+              final flow = flowByDate[dateKey];
+              final isPredicted =
+                  flow == null && _isInPredictedPeriod(widget.overview, date);
               final isFertile = _isInFertileWindow(widget.overview, date);
               final isOvulation = widget.overview.ovulationDates.any(
                 (d) => _sameDate(d, date),
               );
 
               return _CalendarDayCell(
+                key: ValueKey('cycle-day-$dateKey'),
                 date: date,
                 inMonth: inMonth,
                 isToday: _sameDate(today, date),
-                isPeriod: isPeriod,
+                flow: flow,
                 isPredicted: isPredicted,
                 isFertile: isFertile,
                 isOvulation: isOvulation,
@@ -399,21 +421,24 @@ class _CycleCalendarCardState extends ConsumerState<_CycleCalendarCard> {
             spacing: AppSpacing.md,
             runSpacing: AppSpacing.sm,
             children: [
-              _LegendDot(
+              _LegendSwatch(
                 label: l10n.cycleLegendPeriod,
-                color: _CycleCalendarColors.period,
+                color: _CycleCalendarColors.legendPeriod,
               ),
-              _LegendDot(
+              _LegendSwatch(
                 label: l10n.cycleLegendPredicted,
                 color: _CycleCalendarColors.predictedPeriod,
               ),
-              _LegendDot(
+              // Ovulation is a single day, marked by a dot on the cell rather
+              // than a fill — so its swatch is a dot too.
+              _LegendSwatch(
                 label: l10n.cycleLegendOvulation,
                 color: _CycleCalendarColors.ovulation,
+                dot: true,
               ),
-              _LegendDot(
-                label: l10n.cycleLegendFertile,
-                color: _CycleCalendarColors.fertile,
+              _LegendSwatch(
+                label: l10n.cycleLegendFertile(fertileWindowDays),
+                color: _CycleCalendarColors.legendFertile,
               ),
             ],
           ),
@@ -445,26 +470,45 @@ class _WeekdayLabel extends StatelessWidget {
   }
 }
 
+/// Calendar palette, kept in step with the web frontend's `cycleColors.ts`:
+/// rose for flow and predicted period, cyan for ovulation and the fertile
+/// window.
 abstract final class _CycleCalendarColors {
-  static const period = Color(0xFFC81E1E);
-  static const predictedPeriod = Color(0xFFFDE2E2);
-  static const predictedPeriodBorder = Color(0xFFF6B5B5);
-  static const fertile = Color(0xFFDDF7EC);
-  static const fertileBorder = Color(0xFF99E0C2);
-  static const ovulation = Color(0xFF047857);
-  static const todayBorder = Color(0xFF1F2937);
-  static const defaultDay = AppColors.buttonBg;
+  static const period = Color(0xFFF43F5E);
+  static const ovulation = Color(0xFF06B6D4);
+
+  static const predictedPeriod = Color(0x4DF43F5E); // rose @ 30%
+  static const fertile = Color(0x1F06B6D4); // cyan @ 12%
+
+  static const legendPeriod = Color(0xD9F43F5E); // rose @ 85%
+  static const legendFertile = Color(0x4006B6D4); // cyan @ 25%
+
+  static const todayBorder = period;
+  static const defaultDay = AppColors.bg2;
   static const defaultBorder = AppColors.surfaceBorderSoft;
-  static const outOfMonth = Color(0xFFF7F1E9);
   static const textOnPeriod = Colors.white;
+
+  /// Flow days deepen with intensity, mirroring the web's `FLOW_FILL` map.
+  static Color? flowFill(String? flow) => switch (flow) {
+    'Spotting' => const Color(0x59F43F5E), // 35%
+    'Light' => const Color(0x8CF43F5E), // 55%
+    'Medium' => const Color(0xC7F43F5E), // 78%
+    'Heavy' => period,
+    _ => null,
+  };
+
+  /// Only the two darkest fills need light text on top.
+  static bool needsLightText(String? flow) =>
+      flow == 'Heavy' || flow == 'Medium';
 }
 
 class _CalendarDayCell extends StatelessWidget {
   const _CalendarDayCell({
     required this.date,
+    required super.key,
     required this.inMonth,
     required this.isToday,
-    required this.isPeriod,
+    required this.flow,
     required this.isPredicted,
     required this.isFertile,
     required this.isOvulation,
@@ -474,7 +518,9 @@ class _CalendarDayCell extends StatelessWidget {
   final DateTime date;
   final bool inMonth;
   final bool isToday;
-  final bool isPeriod;
+
+  /// Logged flow intensity ("Spotting" … "Heavy"), or null for a non-flow day.
+  final String? flow;
   final bool isPredicted;
   final bool isFertile;
   final bool isOvulation;
@@ -482,64 +528,89 @@ class _CalendarDayCell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bg = isPeriod
-        ? _CycleCalendarColors.period
-        : isPredicted
-        ? _CycleCalendarColors.predictedPeriod
-        : isFertile
-        ? _CycleCalendarColors.fertile
-        : _CycleCalendarColors.defaultDay;
-    final borderColor = isToday
-        ? _CycleCalendarColors.todayBorder
-        : isPredicted
-        ? _CycleCalendarColors.predictedPeriodBorder
-        : isFertile
-        ? _CycleCalendarColors.fertileBorder
-        : _CycleCalendarColors.defaultBorder;
-    final fg = isPeriod ? _CycleCalendarColors.textOnPeriod : AppColors.fg1;
+    final radius = BorderRadius.circular(AppRadius.md);
+    final bg =
+        _CycleCalendarColors.flowFill(flow) ??
+        (isPredicted
+            ? _CycleCalendarColors.predictedPeriod
+            : isFertile
+            ? _CycleCalendarColors.fertile
+            : _CycleCalendarColors.defaultDay);
+    final fg = _CycleCalendarColors.needsLightText(flow)
+        ? _CycleCalendarColors.textOnPeriod
+        : AppColors.fg1;
+    // A fertile day that is also a flow/predicted day can only show one fill,
+    // so the fertile half is called out with a bar along the bottom edge.
+    final hasFertileOverlap = isFertile && (flow != null || isPredicted);
 
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(AppRadius.md),
-        onTap: onTap,
-        child: AnimatedContainer(
-          duration: AppMotion.fast,
-          decoration: BoxDecoration(
-            color: inMonth ? bg : _CycleCalendarColors.outOfMonth,
-            borderRadius: BorderRadius.circular(AppRadius.md),
-            border: Border.all(
-              color: borderColor,
-              width: isToday ? 1.6 : 1,
-            ),
-          ),
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              Text(
-                '${date.day}',
-                style: TextStyle(
-                  color: inMonth ? fg : AppColors.fg4,
-                  fontWeight: isPeriod || isToday
-                      ? FontWeight.w500
-                      : FontWeight.w500,
-                ),
+    return Opacity(
+      // Leading/trailing days of the neighbouring months keep their markers,
+      // just dimmed, so a window that straddles the month boundary still reads.
+      opacity: inMonth ? 1 : 0.4,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: radius,
+          onTap: onTap,
+          child: AnimatedContainer(
+            duration: AppMotion.fast,
+            decoration: BoxDecoration(
+              color: bg,
+              borderRadius: radius,
+              border: Border.all(
+                color: isToday
+                    ? _CycleCalendarColors.todayBorder
+                    : _CycleCalendarColors.defaultBorder,
+                width: isToday ? 2 : 1,
               ),
-              if (isOvulation)
-                const Positioned(
-                  bottom: 7,
-                  child: SizedBox(
-                    width: 7,
-                    height: 7,
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        color: _CycleCalendarColors.ovulation,
-                        shape: BoxShape.circle,
+            ),
+            child: ClipRRect(
+              borderRadius: radius,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  if (hasFertileOverlap)
+                    const Positioned(
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      child: SizedBox(
+                        height: 4,
+                        child: ColoredBox(
+                          color: _CycleCalendarColors.ovulation,
+                        ),
                       ),
                     ),
+                  Text(
+                    '${date.day}',
+                    style: TextStyle(
+                      color: fg,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
-                ),
-            ],
+                  if (isOvulation)
+                    Positioned(
+                      bottom: 6,
+                      child: Container(
+                        width: 8,
+                        height: 8,
+                        decoration: const BoxDecoration(
+                          color: _CycleCalendarColors.ovulation,
+                          shape: BoxShape.circle,
+                          // Ring in the card colour so the dot stays readable
+                          // on top of a dark flow fill.
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.bg2,
+                              spreadRadius: 2,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
           ),
         ),
       ),
@@ -547,11 +618,19 @@ class _CalendarDayCell extends StatelessWidget {
   }
 }
 
-class _LegendDot extends StatelessWidget {
-  const _LegendDot({required this.label, required this.color});
+class _LegendSwatch extends StatelessWidget {
+  const _LegendSwatch({
+    required this.label,
+    required this.color,
+    this.dot = false,
+  });
 
   final String label;
   final Color color;
+
+  /// Renders a small circle instead of a rounded square, for markers that are
+  /// drawn as a dot on the day rather than as a fill.
+  final bool dot;
 
   @override
   Widget build(BuildContext context) {
@@ -559,15 +638,20 @@ class _LegendDot extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          width: 13,
-          height: 13,
+          width: dot ? 8 : 13,
+          height: dot ? 8 : 13,
           decoration: BoxDecoration(
             color: color,
-            borderRadius: BorderRadius.circular(4),
+            shape: dot ? BoxShape.circle : BoxShape.rectangle,
+            borderRadius: dot ? null : BorderRadius.circular(4),
           ),
         ),
         const SizedBox(width: 6),
-        Text(label, style: const TextStyle(color: AppColors.fg1)),
+        // Flexible so a long label ("Fertile window (6 days)") wraps inside the
+        // legend's Wrap instead of overflowing its row.
+        Flexible(
+          child: Text(label, style: const TextStyle(color: AppColors.fg1)),
+        ),
       ],
     );
   }
@@ -596,9 +680,11 @@ class _CycleTrendsCard extends StatelessWidget {
             children: [
               const Icon(Icons.trending_up_rounded, color: AppColors.danger),
               const SizedBox(width: AppSpacing.sm),
-              Text(
-                l10n.cycleTrendsLast60DaysTitle,
-                style: AppTypography.display(20, letterSpacing: 0),
+              Expanded(
+                child: Text(
+                  l10n.cycleTrendsLast60DaysTitle,
+                  style: AppTypography.display(20, letterSpacing: 0),
+                ),
               ),
             ],
           ),
@@ -1372,9 +1458,25 @@ bool _dateInRange(DateTime value, DateTime start, DateTime end) {
 }
 
 bool _isInPredictedPeriod(CycleOverview overview, DateTime date) {
-  return overview.predictedPeriods.any(
+  final inFutureCycle = overview.predictedPeriods.any(
     (period) => _dateInRange(date, period.start, period.end),
   );
+  if (inFutureCycle) return true;
+
+  // The period in progress: fill from the logged start through the backend's
+  // predicted end, so logging day 1 already shades the remaining days. That end
+  // collapses back to the last logged flow day when the period finishes early,
+  // which re-predicts the freed days as follicular.
+  final start = overview.lastPeriodStart;
+  if (start == null) return false;
+  final fallbackLength = overview.effectivePeriodLengthDays < 1
+      ? 1
+      : overview.effectivePeriodLengthDays;
+  final end =
+      overview.currentPeriodPredictedEnd ??
+      start.add(Duration(days: fallbackLength - 1));
+  if (end.isBefore(start)) return false;
+  return _dateInRange(date, start, end);
 }
 
 bool _isInFertileWindow(CycleOverview overview, DateTime date) {

@@ -137,24 +137,15 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     if (alignment == null) return;
 
     try {
+      final userId = _backgroundUserId(profile);
       await ref
           .read(profileBackgroundRepositoryProvider)
           .saveFromPath(
-            userId: profile.id,
+            userId: userId,
             sourcePath: image.path,
             alignment: alignment,
           );
-      ref
-        ..invalidate(profileBackgroundPathProvider(profile.id))
-        ..invalidate(
-          profileBackgroundPathProvider(ProfileBackgroundRepository.deviceKey),
-        )
-        ..invalidate(profileBackgroundAlignmentProvider(profile.id))
-        ..invalidate(
-          profileBackgroundAlignmentProvider(
-            ProfileBackgroundRepository.deviceKey,
-          ),
-        );
+      _invalidateBackground(userId);
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -171,20 +162,24 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     }
   }
 
+  /// Backgrounds are stored per account, keyed on the auth session so every
+  /// header card reads the same entry. The profile id is only a fallback for
+  /// the (unreachable here) case of no session.
+  String _backgroundUserId(UserProfile profile) =>
+      ref.read(backgroundUserIdProvider) ?? profile.id;
+
+  void _invalidateBackground(String userId) {
+    ref
+      ..invalidate(profileBackgroundPathProvider(userId))
+      ..invalidate(profileBackgroundAlignmentProvider(userId))
+      ..invalidate(currentUserBackgroundProvider);
+  }
+
   Future<void> _removeBackground(UserProfile profile) async {
     try {
-      await ref.read(profileBackgroundRepositoryProvider).clear(profile.id);
-      ref
-        ..invalidate(profileBackgroundPathProvider(profile.id))
-        ..invalidate(
-          profileBackgroundPathProvider(ProfileBackgroundRepository.deviceKey),
-        )
-        ..invalidate(profileBackgroundAlignmentProvider(profile.id))
-        ..invalidate(
-          profileBackgroundAlignmentProvider(
-            ProfileBackgroundRepository.deviceKey,
-          ),
-        );
+      final userId = _backgroundUserId(profile);
+      await ref.read(profileBackgroundRepositoryProvider).clear(userId);
+      _invalidateBackground(userId);
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -212,15 +207,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       ),
     );
     final unit = ref.watch(weightUnitProvider);
-    final backgroundPath = profile.value == null
-        ? null
-        : ref.watch(profileBackgroundPathProvider(profile.value!.id)).value;
-    final backgroundAlignment = profile.value == null
-        ? Alignment.center
-        : ref
-                  .watch(profileBackgroundAlignmentProvider(profile.value!.id))
-                  .value ??
-              Alignment.center;
 
     return Scaffold(
       appBar: AppBar(
@@ -258,8 +244,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             children: [
               _ProfileHeader(
                 profile: data,
-                backgroundImagePath: backgroundPath,
-                backgroundAlignment: backgroundAlignment,
                 onChangeBackground: () => _showBackgroundActions(data),
                 onChangeAvatar: _uploadAvatar,
                 onEditProfile: () => context.push('/profile/edit', extra: data),
@@ -341,16 +325,12 @@ enum _BackgroundAction { change, remove }
 class _ProfileHeader extends StatelessWidget {
   const _ProfileHeader({
     required this.profile,
-    this.backgroundImagePath,
-    this.backgroundAlignment = Alignment.center,
     this.onChangeBackground,
     this.onChangeAvatar,
     this.onEditProfile,
   });
 
   final UserProfile profile;
-  final String? backgroundImagePath;
-  final Alignment backgroundAlignment;
   final VoidCallback? onChangeBackground;
   final VoidCallback? onChangeAvatar;
   final VoidCallback? onEditProfile;
@@ -363,8 +343,6 @@ class _ProfileHeader extends StatelessWidget {
     final socialLinks = _profileSocialLinks(profile);
 
     return SyncedBackgroundCard(
-      backgroundImagePath: backgroundImagePath,
-      backgroundAlignment: backgroundAlignment,
       padding: const EdgeInsets.all(AppSpacing.lg),
       child: ConstrainedBox(
         constraints: const BoxConstraints(

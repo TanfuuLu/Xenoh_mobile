@@ -24,6 +24,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonRefresh => 'Refresh';
 
   @override
+  String get commonSelect => 'Select';
+
+  @override
   String get commonRemove => 'Remove';
 
   @override
@@ -50,6 +53,28 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get commonSomethingWentWrong => 'Something went wrong.';
+
+  @override
+  String get commonNetworkError => 'Network error. Check your connection.';
+
+  @override
+  String get commonRequestCancelledError => 'The request was cancelled.';
+
+  @override
+  String get commonCertificateError => 'Could not verify a secure connection.';
+
+  @override
+  String get commonSessionExpiredError =>
+      'Your session has expired. Please sign in again.';
+
+  @override
+  String get commonValidationError => 'Please check your input.';
+
+  @override
+  String get commonNotFoundError => 'We could not find that.';
+
+  @override
+  String get commonServerError => 'Server error. Please try again later.';
 
   @override
   String get commonForbiddenError =>
@@ -602,6 +627,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get progressVolumeLabel => 'Volume';
 
   @override
+  String trainingVolumeUnitLabel(String unit) {
+    return '$unit-reps';
+  }
+
+  @override
   String get progressCompletedSetsLabel => 'Completed sets';
 
   @override
@@ -642,9 +672,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'The current load may be too much. Reduce friction, repeat key sessions, and rebuild consistency.';
 
   @override
-  String get progressInsightRepeatWeekMetric => 'Training stress';
-
-  @override
   String get progressInsightConsistencyTitle => 'Consistency is uneven';
 
   @override
@@ -652,17 +679,11 @@ class AppLocalizationsEn extends AppLocalizations {
       'Some planned sessions are being missed. Keep the next week simple until adherence improves.';
 
   @override
-  String get progressInsightConsistencyMetric => 'Completion';
-
-  @override
   String get progressInsightVolumeTitle => 'Volume is trending down';
 
   @override
   String get progressInsightVolumeMessage =>
       'Training volume dropped more than 20%. Repeat the week or avoid adding load yet.';
-
-  @override
-  String get progressInsightVolumeMetric => 'Volume change';
 
   @override
   String get progressInsightMuscleBalanceTitle =>
@@ -673,9 +694,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'No single muscle group is dominating weighted volume.';
 
   @override
-  String get progressInsightMuscleBalanceMetric => 'Top group';
-
-  @override
   String get progressInsightMissedTargetTitle => 'Some sets missed target';
 
   @override
@@ -683,17 +701,172 @@ class AppLocalizationsEn extends AppLocalizations {
       'A few sessions were below planned reps or weight. Monitor performance before adding load.';
 
   @override
-  String get progressInsightMissedTargetMetric => 'Warning days';
-
-  @override
   String get progressInsightBenchSquatTitle => 'Bench is lagging your squat';
 
   @override
-  String get progressInsightBenchSquatMessage =>
-      'Your bench is 63% of your squat. A typical balance sits around 70%. Consider an extra bench session or upper-body accessory work.';
+  String progressInsightBenchSquatMessage(String ratio) {
+    return 'Your bench is $ratio% of your squat. A typical balance sits around 70%. Consider an extra bench session or upper-body accessory work.';
+  }
 
   @override
-  String get progressInsightBenchSquatMetric => 'Bench / Squat';
+  String get progressInsightMetricPlannedDays => 'Planned days';
+
+  @override
+  String get progressInsightMetricCompletion => 'Completion';
+
+  @override
+  String get progressInsightMetricWeeksLogged => 'Weeks logged';
+
+  @override
+  String get progressInsightMetricVolumeChange => 'Volume change';
+
+  @override
+  String get progressInsightMetricAvgRpe => 'Avg RPE';
+
+  @override
+  String get progressInsightMetricWarningDays => 'Warning days';
+
+  @override
+  String get progressInsightMetricHighRpeSets => 'High-RPE sets';
+
+  @override
+  String get progressInsightMetricTrainingScore => 'Training score';
+
+  @override
+  String get progressInsightMetricCurrentE1Rm => 'Current e1RM';
+
+  @override
+  String get progressInsightMetricHighRpeWeeks => 'High-RPE weeks';
+
+  @override
+  String get progressInsightNoTrainingDaysTitle => 'No training days planned';
+
+  @override
+  String get progressInsightNoTrainingDaysMessage =>
+      'Add training days to the plan before judging consistency.';
+
+  @override
+  String get progressInsightConsistencyCriticalTitle =>
+      'Consistency needs attention';
+
+  @override
+  String get progressInsightConsistencyCriticalMessage =>
+      'Completion is below 50%. Repeat the week or reduce planned workload before progressing.';
+
+  @override
+  String get progressInsightConsistencyStrongTitle => 'Strong consistency';
+
+  @override
+  String get progressInsightConsistencyStrongMessage =>
+      'Adherence is high enough to support progressive overload.';
+
+  @override
+  String get progressInsightVolumeHistoryTitle => 'More volume history needed';
+
+  @override
+  String get progressInsightVolumeHistoryMessage =>
+      'Log at least two training weeks to compare volume trends.';
+
+  @override
+  String get progressInsightVolumeBaselineMessage =>
+      'The previous completed week has no usable volume baseline.';
+
+  @override
+  String get progressInsightPlannedReductionTitle => 'Planned volume reduction';
+
+  @override
+  String get progressInsightPlannedReductionMessage =>
+      'Lower volume matches the programmed week and is not treated as lost training.';
+
+  @override
+  String get progressInsightVolumeDropTitle => 'Volume dropped sharply';
+
+  @override
+  String get progressInsightVolumeDropMessage =>
+      'Training volume fell more than 35% from the previous logged week. Check recovery and missed sessions.';
+
+  @override
+  String get progressInsightOverloadJumpTitle => 'Large overload jump';
+
+  @override
+  String get progressInsightOverloadJumpMessage =>
+      'Volume increased more than 30%. Watch fatigue and consider a smaller progression next week.';
+
+  @override
+  String get progressInsightOverloadMovingTitle =>
+      'Progressive overload is moving';
+
+  @override
+  String get progressInsightOverloadMovingMessage =>
+      'Volume is increasing at a useful pace while staying within a manageable range.';
+
+  @override
+  String get progressInsightVolumeStableTitle => 'Volume is stable';
+
+  @override
+  String get progressInsightVolumeStableMessage =>
+      'Volume is close to the previous week. Progress with small load or rep increases when recovery is good.';
+
+  @override
+  String get progressInsightFatigueRiskTitle => 'Fatigue risk is elevated';
+
+  @override
+  String get progressInsightFatigueRiskMessage =>
+      'High RPE work is showing up with warnings or missed training. Consider recovery or a lighter week.';
+
+  @override
+  String get progressInsightPrioritizeRecoveryTitle => 'Prioritize recovery';
+
+  @override
+  String get progressInsightPrioritizeRecoveryMessage =>
+      'Keep load stable or deload slightly until RPE and warnings settle.';
+
+  @override
+  String get progressInsightProgressGraduallyTitle => 'Progress gradually';
+
+  @override
+  String get progressInsightProgressGraduallyMessage =>
+      'Add a small load or rep progression to priority lifts next week.';
+
+  @override
+  String get progressInsightHoldSteadyTitle => 'Hold the plan steady';
+
+  @override
+  String get progressInsightHoldSteadyMessage =>
+      'Maintain current targets and aim for cleaner execution before progressing.';
+
+  @override
+  String get progressInsightDeadliftSquatTitle =>
+      'Deadlift is below your squat';
+
+  @override
+  String progressInsightDeadliftSquatMessage(String ratio) {
+    return 'Deadlift is at $ratio% of squat. Most lifters pull at least as much as they squat — check pulling volume or technique.';
+  }
+
+  @override
+  String get progressInsightHighRpeStreakTitle =>
+      'Long stretch of high-RPE work';
+
+  @override
+  String progressInsightHighRpeStreakMessage(String weeks) {
+    return '$weeks weeks in a row averaged RPE 8.5+. Plan a deload before fatigue starts costing reps.';
+  }
+
+  @override
+  String progressInsightPlateauTitle(String lift) {
+    return '$lift is plateauing';
+  }
+
+  @override
+  String progressInsightPlateauMessage(String lift) {
+    return '$lift estimated 1RM has not moved in the last 4 weeks. Consider a deload or a small block of higher-rep work to break the stall.';
+  }
+
+  @override
+  String progressInsightHighRpeSetsValue(String count) {
+    return '$count high-RPE sets';
+  }
 
   @override
   String get progressMuscleBack => 'Back';
@@ -909,10 +1082,132 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cycleLegendPredicted => 'Predicted';
 
   @override
-  String get cycleLegendOvulation => 'Ovulation';
+  String get cycleLegendOvulation => 'Ovulation day';
 
   @override
-  String get cycleLegendFertile => 'Fertile';
+  String cycleLegendFertile(int count) {
+    return 'Fertile window ($count days)';
+  }
+
+  @override
+  String get cyclePhaseUnknown => 'Unknown';
+
+  @override
+  String get cyclePhaseMenstrual => 'Menstrual';
+
+  @override
+  String get cyclePhaseFollicular => 'Follicular';
+
+  @override
+  String get cyclePhaseOvulation => 'Ovulation';
+
+  @override
+  String get cyclePhaseLuteal => 'Luteal';
+
+  @override
+  String get cycleGuidanceTitle => 'Phase guidance';
+
+  @override
+  String get cycleGuidanceTrainingLabel => 'Training';
+
+  @override
+  String get cycleGuidanceNutritionLabel => 'Nutrition';
+
+  @override
+  String get cycleGuidanceMenstrualTraining1 =>
+      'Keep movement light — walks, mobility, easy cardio, or technique work.';
+
+  @override
+  String get cycleGuidanceMenstrualTraining2 =>
+      'If you feel good, light-to-moderate lifting is fine; lower the volume.';
+
+  @override
+  String get cycleGuidanceMenstrualTraining3 =>
+      'Prioritize rest and sleep; skip max-effort attempts on heavy-flow days.';
+
+  @override
+  String get cycleGuidanceMenstrualNutrition1 =>
+      'Add iron-rich foods (red meat, lentils, spinach) to offset blood loss.';
+
+  @override
+  String get cycleGuidanceMenstrualNutrition2 =>
+      'Pair iron with vitamin C for better absorption.';
+
+  @override
+  String get cycleGuidanceMenstrualNutrition3 =>
+      'Stay hydrated and keep magnesium up to ease cramps.';
+
+  @override
+  String get cycleGuidanceFollicularTraining1 =>
+      'Energy and recovery are rising — push intensity and add volume.';
+
+  @override
+  String get cycleGuidanceFollicularTraining2 =>
+      'A great window for strength PRs and progressive overload.';
+
+  @override
+  String get cycleGuidanceFollicularTraining3 =>
+      'Schedule your hardest sessions into this phase.';
+
+  @override
+  String get cycleGuidanceFollicularNutrition1 =>
+      'Fuel harder training with enough carbs and protein.';
+
+  @override
+  String get cycleGuidanceFollicularNutrition2 =>
+      'Eat around workouts to support recovery and performance.';
+
+  @override
+  String get cycleGuidanceFollicularNutrition3 =>
+      'Keep protein high to capitalize on better recovery.';
+
+  @override
+  String get cycleGuidanceOvulationTraining1 =>
+      'Peak strength — a strong window for top sets and heavy lifts.';
+
+  @override
+  String get cycleGuidanceOvulationTraining2 =>
+      'Warm up thoroughly; joint laxity is slightly higher here.';
+
+  @override
+  String get cycleGuidanceOvulationTraining3 =>
+      'Use the energy peak but keep technique tight on max efforts.';
+
+  @override
+  String get cycleGuidanceOvulationNutrition1 =>
+      'Maintain protein and carbs to support high-output sessions.';
+
+  @override
+  String get cycleGuidanceOvulationNutrition2 =>
+      'Add antioxidant-rich fruit and vegetables.';
+
+  @override
+  String get cycleGuidanceOvulationNutrition3 =>
+      'Keep hydration up during intense training.';
+
+  @override
+  String get cycleGuidanceLutealTraining1 =>
+      'Energy may dip — moderate the load and focus on consistency.';
+
+  @override
+  String get cycleGuidanceLutealTraining2 =>
+      'Swap some intensity for volume or steady-state work if fatigued.';
+
+  @override
+  String get cycleGuidanceLutealTraining3 =>
+      'Listen to your body; deload sooner if recovery feels off.';
+
+  @override
+  String get cycleGuidanceLutealNutrition1 =>
+      'Slightly higher calorie needs are normal — eat to satisfaction.';
+
+  @override
+  String get cycleGuidanceLutealNutrition2 =>
+      'Complex carbs and magnesium can ease PMS and cravings.';
+
+  @override
+  String get cycleGuidanceLutealNutrition3 =>
+      'Limit excess salt and caffeine to reduce bloating.';
 
   @override
   String cycleSymptomCountLabel(int count) {
@@ -1080,6 +1375,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get coachChatTitle => 'Chat';
 
   @override
+  String get coachChatEmailUnavailable => 'Email unavailable';
+
+  @override
+  String coachChatAvatarSemanticLabel(String name) {
+    return '$name avatar';
+  }
+
+  @override
   String get coachChatHeaderTitle => 'Relationship Chat';
 
   @override
@@ -1129,8 +1432,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get coachConnectButton => 'Connect';
 
   @override
-  String get coachConnectionRequestSentSnackbar =>
-      'Coach connection request sent.';
+  String get coachConnectedSnackbar => 'Connected to your coach.';
 
   @override
   String get coachKeyVaultTitle => 'Key vault';
@@ -1783,13 +2085,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dashboardPlateCurrentLabel => 'Current';
 
   @override
-  String dashboardPlateUseBarOnlyMessage(String bar) {
-    return 'Use the $bar kg bar only.';
+  String dashboardPlateUseBarOnlyMessage(String bar, String unit) {
+    return 'Use the $bar $unit bar only.';
   }
 
   @override
-  String dashboardPlateNotExactMessage(String weight) {
-    return '$weight kg is not exactly loadable with 2.5 kg plates.';
+  String dashboardPlateNotExactMessage(
+    String weight,
+    String unit,
+    String smallest,
+  ) {
+    return '$weight $unit is not exactly loadable with $smallest $unit plates.';
   }
 
   @override
@@ -1802,8 +2108,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dashboardPlateBarOnlyMessage => 'Bar only. Add plates per side.';
 
   @override
-  String dashboardPlateBarWeightLabel(String weight) {
-    return '$weight kg bar';
+  String dashboardPlateBarWeightLabel(String weight, String unit) {
+    return '$weight $unit bar';
+  }
+
+  @override
+  String dashboardPlateApproxKgNote(String weight) {
+    return '≈ $weight kg';
   }
 
   @override
@@ -2002,6 +2313,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get trainingRpePickerSubtitle => 'How hard was that set?';
 
   @override
+  String get trainingRpeScaleLightLabel => 'Light';
+
+  @override
+  String get trainingRpeScaleMaxLabel => 'Max effort';
+
+  @override
   String get trainingWeekRecommendationsTitle => 'Recommendations';
 
   @override
@@ -2131,6 +2448,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get trainingEquipmentHint => 'e.g. Full gym, dumbbells only, home';
+
+  @override
+  String get trainingEquipmentDefault => 'Full gym';
 
   @override
   String get trainingEquipmentError => 'Describe your equipment';
@@ -2282,6 +2602,27 @@ class AppLocalizationsEn extends AppLocalizations {
   String get trainingDesignAnalysisTitle => 'Design analysis';
 
   @override
+  String get trainingDesignNoRecoveryRisksChip => 'No recovery risks';
+
+  @override
+  String trainingDesignRisksChip(int count) {
+    return '$count risks';
+  }
+
+  @override
+  String get trainingDesignBalancedCoverageChip => 'Balanced coverage';
+
+  @override
+  String trainingDesignUndertrainedChip(int count) {
+    return '$count undertrained';
+  }
+
+  @override
+  String trainingDesignDominantChip(int count) {
+    return '$count dominant';
+  }
+
+  @override
   String get trainingPlanDesignAnalysisTitle => 'Plan design analysis';
 
   @override
@@ -2308,6 +2649,26 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get trainingLongestTrainingStreakLabel => 'Longest training streak';
+
+  @override
+  String get trainingResultTitle => 'Training result';
+
+  @override
+  String get trainingResultCongratsTitle => 'Congratulations';
+
+  @override
+  String trainingResultStreakMessage(int count) {
+    return 'Workout finished. $count-day streak.';
+  }
+
+  @override
+  String get trainingResultVolumeLabel => 'Volume';
+
+  @override
+  String get trainingResultAvgRpeLabel => 'Avg RPE';
+
+  @override
+  String get trainingResultTotalTimeLabel => 'Total time';
 
   @override
   String get trainingAvgExercisesPerDayLabel => 'Avg exercises/day';
@@ -3906,6 +4267,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get subscriptionTierProCoach => 'Pro Coach';
 
   @override
+  String get subscriptionTierOrganizer => 'Organizer';
+
+  @override
+  String get subscriptionTierAnyPaid => 'Any paid';
+
+  @override
   String get subscriptionTierFree => 'Free';
 
   @override
@@ -4234,6 +4601,27 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get adminStatusLabel => 'Status';
+
+  @override
+  String get adminReportStatusPending => 'Pending';
+
+  @override
+  String get adminReportStatusResolved => 'Resolved';
+
+  @override
+  String get adminReportStatusDismissed => 'Dismissed';
+
+  @override
+  String get adminPaymentStatusPending => 'Pending';
+
+  @override
+  String get adminPaymentStatusCompleted => 'Completed';
+
+  @override
+  String get adminPaymentStatusFailed => 'Failed';
+
+  @override
+  String get adminPaymentStatusExpired => 'Expired';
 
   @override
   String get adminNoBugReportsTitle => 'No bug reports';
@@ -5128,6 +5516,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get adminDiscountValue => 'Discount value';
 
   @override
+  String get adminPromotionTypePercent => 'Percent';
+
+  @override
+  String get adminPromotionTypeFixed => 'Fixed';
+
+  @override
   String get adminAppliesToTier => 'Applies to tier';
 
   @override
@@ -5398,6 +5792,13 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get workoutLockScreenPermissionTitle =>
       'Show workout on your lock screen?';
+
+  @override
+  String get workoutNotificationChannelName => 'Workout progress';
+
+  @override
+  String get workoutNotificationChannelDescription =>
+      'Shows your current exercise on the notification shade and lock screen.';
 
   @override
   String get workoutLockScreenPermissionMessage =>

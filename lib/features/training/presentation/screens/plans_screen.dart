@@ -133,8 +133,6 @@ class _PlansScreenState extends ConsumerState<PlansScreen> {
                 clientId: clientId,
               ),
             ),
-            onOpenAnalytics: (plan) =>
-                context.push('/plans/${plan.id}/analytics'),
             onOpenReview: (plan) =>
                 context.push('/plans/${plan.id}/design-analysis'),
             onActivate: _activate,
@@ -254,7 +252,6 @@ class _PlansBody extends StatelessWidget {
     required this.onCreatePlan,
     required this.onCreateAiPlan,
     required this.onOpenPlan,
-    required this.onOpenAnalytics,
     required this.onOpenReview,
     required this.onActivate,
     required this.onDelete,
@@ -271,7 +268,6 @@ class _PlansBody extends StatelessWidget {
   final VoidCallback onCreatePlan;
   final VoidCallback onCreateAiPlan;
   final void Function(Plan plan, String? clientId) onOpenPlan;
-  final ValueChanged<Plan> onOpenAnalytics;
   final ValueChanged<Plan> onOpenReview;
   final ValueChanged<Plan> onActivate;
   final ValueChanged<Plan> onDelete;
@@ -315,7 +311,6 @@ class _PlansBody extends StatelessWidget {
             PlanCard(
               plan: plan,
               onTap: () => onOpenPlan(plan, null),
-              onAnalytics: () => onOpenAnalytics(plan),
               onReview: () => onOpenReview(plan),
               onActivate: () => onActivate(plan),
               onDelete: () => onDelete(plan),
@@ -342,7 +337,6 @@ class _PlansBody extends StatelessWidget {
             PlanCard(
               plan: plan,
               onTap: () => onOpenPlan(plan, null),
-              onAnalytics: () => onOpenAnalytics(plan),
               onReview: () => onOpenReview(plan),
               onActivate: () => onActivate(plan),
               onDelete: () => onDelete(plan),
@@ -375,7 +369,6 @@ class _PlansBody extends StatelessWidget {
               plan: plan,
               manageAsCoach: true,
               onTap: () => onOpenPlan(plan, group.clientId),
-              onAnalytics: () => onOpenAnalytics(plan),
               onReview: () => onOpenReview(plan),
               onActivate: () => onActivateClientPlan(plan),
               onDelete: () => onDeleteClientPlan(plan),

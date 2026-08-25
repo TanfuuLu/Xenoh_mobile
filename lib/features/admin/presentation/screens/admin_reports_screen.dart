@@ -6,8 +6,17 @@ import '../../../../core/sync/data_revision.dart';
 import '../../../../core/sync/data_topic.dart';
 import '../../../../core/widgets/xn_section.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../blocks_reports/presentation/widgets/moderation_dialogs.dart';
 import '../../../shared_api/api_widgets.dart';
 import '../../../shared_api/xenoh_api.dart';
+
+String _reportStatusLabel(String value, AppLocalizations l10n) =>
+    switch (value) {
+      'Pending' => l10n.adminReportStatusPending,
+      'Resolved' => l10n.adminReportStatusResolved,
+      'Dismissed' => l10n.adminReportStatusDismissed,
+      _ => value,
+    };
 
 final adminReportsProvider = FutureProvider.autoDispose<List<JsonMap>>((ref) {
   ref.syncOn(const [DataTopic.admin]);
@@ -46,8 +55,8 @@ class AdminReportsScreen extends ConsumerWidget {
                   ]),
                   subtitle: optionalTextOf(item, ['details', 'adminNote']),
                   meta: [
-                    textOf(item, ['reason']),
-                    textOf(item, ['status']),
+                    moderationReasonLabel(textOf(item, ['reason']), l10n),
+                    _reportStatusLabel(textOf(item, ['status']), l10n),
                   ],
                   trailing: PopupMenuButton<String>(
                     tooltip: l10n.adminReviewTooltip,

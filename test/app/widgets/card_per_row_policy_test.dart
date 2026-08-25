@@ -49,7 +49,6 @@ void main() {
       'nutrition/presentation/widgets/add_food_sheet.dart',
       'nutrition/presentation/widgets/meal_plan_setup_sheet.dart',
       'profile/presentation/widgets/bodyweight_card.dart',
-      'training/presentation/widgets/exercise_template_picker_sheet.dart',
     };
     final violations = <String>[];
 

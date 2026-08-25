@@ -876,6 +876,7 @@ class _DesignSummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final riskTone = riskCount > 0 ? XnChipTone.warn : XnChipTone.sage;
     final balanceTone = undertrainedCount > 0
         ? XnChipTone.warn
@@ -931,21 +932,21 @@ class _DesignSummaryCard extends StatelessWidget {
             children: [
               XnChip(
                 label: riskCount == 0
-                    ? 'No recovery risks'
-                    : '$riskCount risks',
+                    ? l10n.trainingDesignNoRecoveryRisksChip
+                    : l10n.trainingDesignRisksChip(riskCount),
                 tone: riskTone,
                 compact: true,
               ),
               XnChip(
                 label: undertrainedCount == 0
-                    ? 'Balanced coverage'
-                    : '$undertrainedCount undertrained',
+                    ? l10n.trainingDesignBalancedCoverageChip
+                    : l10n.trainingDesignUndertrainedChip(undertrainedCount),
                 tone: balanceTone,
                 compact: true,
               ),
               if (dominantCount > 0)
                 XnChip(
-                  label: '$dominantCount dominant',
+                  label: l10n.trainingDesignDominantChip(dominantCount),
                   tone: XnChipTone.accent,
                   compact: true,
                 ),

@@ -40,13 +40,13 @@ class _CompetitionsScreenState extends ConsumerState<CompetitionsScreen> {
             child: SegmentedButton<String?>(
               segments: [
                 ButtonSegment(value: null, label: Text(l10n.commonAll)),
-                const ButtonSegment(
+                ButtonSegment(
                   value: 'Powerlifting',
-                  label: Text('Powerlifting'),
+                  label: Text(l10n.competitionDisciplinePowerlifting),
                 ),
-                const ButtonSegment(
+                ButtonSegment(
                   value: 'Bodybuilding',
-                  label: Text('Bodybuilding'),
+                  label: Text(l10n.competitionDisciplineBodybuilding),
                 ),
               ],
               selected: {_discipline},

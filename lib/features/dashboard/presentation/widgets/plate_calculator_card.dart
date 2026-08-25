@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_dimens.dart';
 import '../../../../app/theme/app_typography.dart';
-import '../../../../core/utils/weight_units.dart' show formatWeight;
+import '../../../../core/utils/weight_units.dart';
 import '../../../../core/widgets/xn_animated_number.dart';
 import '../../../../core/widgets/xn_card.dart';
 import '../../../../l10n/app_localizations.dart';
@@ -87,8 +87,61 @@ class PlateCalculatorButton extends StatelessWidget {
   }
 }
 
+/// The bars and plates a gym actually racks, per unit.
+///
+/// These are equipment, not converted numbers: a lb gym has 45/35/25 lb
+/// plates, not 20 kg plates relabelled, so each unit gets its own
+/// denominations and its own sensible defaults.
+enum _PlateEquipment {
+  kg(
+    bars: [20, 15, 25],
+    plates: [25, 20, 10, 5, 2.5],
+    alternativePlates: [20, 10, 5, 2.5],
+    defaultTarget: 100,
+    step: 2.5,
+  ),
+  lb(
+    bars: [45, 35, 55],
+    plates: [45, 35, 25, 10, 5, 2.5],
+    alternativePlates: [35, 25, 10, 5, 2.5],
+    defaultTarget: 135,
+    step: 5,
+  );
+
+  const _PlateEquipment({
+    required this.bars,
+    required this.plates,
+    required this.alternativePlates,
+    required this.defaultTarget,
+    required this.step,
+  });
+
+  /// Selectable bar weights; the first is the default.
+  final List<double> bars;
+
+  /// Plate denominations, heaviest first.
+  final List<double> plates;
+
+  /// The same set without its heaviest plate — the "or" combination offered
+  /// for gyms that don't stock the big plate.
+  final List<double> alternativePlates;
+
+  final double defaultTarget;
+
+  /// Increment of the target-weight stepper (one pair of the smallest plate).
+  final double step;
+
+  double get smallestPlate => plates.last;
+
+  static _PlateEquipment of(WeightUnit unit) => unit == WeightUnit.lb ? lb : kg;
+}
+
 class PlateCalculatorCard extends StatefulWidget {
-  const PlateCalculatorCard({super.key});
+  const PlateCalculatorCard({this.unit = WeightUnit.kg, super.key});
+
+  /// The user's weight-unit preference. Everything on the card — bar options,
+  /// plate denominations, suffixes — follows it.
+  final WeightUnit unit;
 
   static const barbellVisualKey = Key('plate-calculator-barbell-visual');
 
@@ -97,27 +150,34 @@ class PlateCalculatorCard extends StatefulWidget {
 }
 
 class _PlateCalculatorCardState extends State<PlateCalculatorCard> {
-  static const _plates = [25.0, 20.0, 10.0, 5.0, 2.5];
-  static const _barOptions = [20.0, 15.0, 25.0];
-
-  final _targetController = TextEditingController(text: '100');
+  late final TextEditingController _targetController;
   Map<double, TextEditingController>? _countControllers;
 
   var _mode = _PlateCalculatorMode.target;
-  var _target = 100.0;
-  var _barWeight = 20.0;
-  var _plateCounts = <double, int>{
-    25.0: 0,
-    20.0: 0,
-    10.0: 0,
-    5.0: 0,
-    2.5: 0,
-  };
+  late double _target;
+  late double _barWeight;
+  late Map<double, int> _plateCounts;
+
+  _PlateEquipment get _equipment => _PlateEquipment.of(widget.unit);
+  List<double> get _plates => _equipment.plates;
+  List<double> get _barOptions => _equipment.bars;
 
   @override
   void initState() {
     super.initState();
+    _target = _equipment.defaultTarget;
+    _barWeight = _equipment.bars.first;
+    _plateCounts = {for (final plate in _plates) plate: 0};
+    _targetController = TextEditingController(text: formatWeight(_target));
     _countControllers = _createCountControllers();
+  }
+
+  @override
+  void didUpdateWidget(PlateCalculatorCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // A different unit means different physical plates, so the loaded bar and
+    // the target start over rather than carrying kg numbers into a lb rack.
+    if (oldWidget.unit != widget.unit) _reset();
   }
 
   @override
@@ -140,10 +200,15 @@ class _PlateCalculatorCardState extends State<PlateCalculatorCard> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final result = _mode == _PlateCalculatorMode.target
-        ? _calculatePlates(target: _target, barWeight: _barWeight)
+        ? _calculatePlates(
+            target: _target,
+            barWeight: _barWeight,
+            plates: _plates,
+          )
         : _calculateFromCounts(
             counts: _plateCounts,
             barWeight: _barWeight,
+            plates: _plates,
           );
 
     return Container(
@@ -203,11 +268,16 @@ class _PlateCalculatorCardState extends State<PlateCalculatorCard> {
                 onChanged: (mode) => setState(() => _mode = mode),
               ),
               const SizedBox(height: AppSpacing.xs),
-              _BarbellVisual(platesPerSide: result.platesPerSide),
+              _BarbellVisual(
+                platesPerSide: result.platesPerSide,
+                unit: widget.unit,
+              ),
               const Divider(height: AppSpacing.sm),
               if (_mode == _PlateCalculatorMode.target)
                 _TargetModeInput(
                   controller: _targetController,
+                  unit: widget.unit,
+                  step: _equipment.step,
                   onChanged: _setTargetFromText,
                   onStep: _stepTarget,
                 )
@@ -216,6 +286,7 @@ class _PlateCalculatorCardState extends State<PlateCalculatorCard> {
                   plates: _plates,
                   counts: _plateCounts,
                   controllers: _resolvedCountControllers,
+                  unit: widget.unit,
                   onChanged: _setPlateCount,
                   onStep: _stepPlateCount,
                 ),
@@ -228,6 +299,7 @@ class _PlateCalculatorCardState extends State<PlateCalculatorCard> {
                     _BarOption(
                       label: l10n.dashboardPlateBarWeightLabel(
                         formatWeight(bar),
+                        widget.unit.suffix,
                       ),
                       selected: _barWeight == bar,
                       onTap: () => setState(() => _barWeight = bar),
@@ -240,6 +312,8 @@ class _PlateCalculatorCardState extends State<PlateCalculatorCard> {
                 target: _target,
                 barWeight: _barWeight,
                 result: result,
+                unit: widget.unit,
+                equipment: _equipment,
               ),
             ],
           ),
@@ -254,11 +328,11 @@ class _PlateCalculatorCardState extends State<PlateCalculatorCard> {
       setState(() => _target = 0);
       return;
     }
-    setState(() => _target = parsed.clamp(0, 999).toDouble());
+    setState(() => _target = parsed.clamp(0, 9999).toDouble());
   }
 
   void _stepTarget(double delta) {
-    final next = (_target + delta).clamp(0, 999).toDouble();
+    final next = (_target + delta).clamp(0, 9999).toDouble();
     setState(() {
       _target = next;
       _targetController.text = formatWeight(next);
@@ -291,18 +365,21 @@ class _PlateCalculatorCardState extends State<PlateCalculatorCard> {
   void _reset() {
     setState(() {
       _mode = _PlateCalculatorMode.target;
-      _target = 100;
-      _barWeight = 20;
+      _target = _equipment.defaultTarget;
+      _barWeight = _equipment.bars.first;
       _plateCounts = {
         for (final plate in _plates) plate: 0,
       };
-      _targetController.text = '100';
-      _targetController.selection = const TextSelection.collapsed(offset: 3);
+      _targetController.text = formatWeight(_target);
+      _targetController.selection = TextSelection.collapsed(
+        offset: _targetController.text.length,
+      );
+      // The plate set itself changes with the unit, so the count controllers
+      // are rebuilt rather than reused.
       for (final controller in _resolvedCountControllers.values) {
-        controller
-          ..text = '0'
-          ..selection = const TextSelection.collapsed(offset: 1);
+        controller.dispose();
       }
+      _countControllers = _createCountControllers();
     });
   }
 
@@ -318,6 +395,7 @@ class _PlateCalculatorCardState extends State<PlateCalculatorCard> {
   static _PlateCalculation _calculatePlates({
     required double target,
     required double barWeight,
+    required List<double> plates,
   }) {
     final availableLoad = target - barWeight;
     if (availableLoad <= 0) {
@@ -331,7 +409,7 @@ class _PlateCalculatorCardState extends State<PlateCalculatorCard> {
     var remainingPerSide = availableLoad / 2;
     final platesPerSide = <double>[];
 
-    for (final plate in _plates) {
+    for (final plate in plates) {
       while (remainingPerSide + 0.001 >= plate) {
         platesPerSide.add(plate);
         remainingPerSide -= plate;
@@ -353,9 +431,10 @@ class _PlateCalculatorCardState extends State<PlateCalculatorCard> {
   static _PlateCalculation _calculateFromCounts({
     required Map<double, int> counts,
     required double barWeight,
+    required List<double> plates,
   }) {
     final platesPerSide = <double>[];
-    for (final plate in _plates) {
+    for (final plate in plates) {
       final count = counts[plate] ?? 0;
       for (var i = 0; i < count; i++) {
         platesPerSide.add(plate);
@@ -506,11 +585,17 @@ class _BarOption extends StatelessWidget {
 class _TargetModeInput extends StatelessWidget {
   const _TargetModeInput({
     required this.controller,
+    required this.unit,
+    required this.step,
     required this.onChanged,
     required this.onStep,
   });
 
   final TextEditingController controller;
+  final WeightUnit unit;
+
+  /// One pair of the smallest plate in this unit's set.
+  final double step;
   final ValueChanged<String> onChanged;
   final ValueChanged<double> onStep;
 
@@ -522,18 +607,19 @@ class _TargetModeInput extends StatelessWidget {
         Expanded(
           child: _TargetWeightField(
             controller: controller,
+            unit: unit,
             onChanged: onChanged,
           ),
         ),
         const SizedBox(width: AppSpacing.sm),
         _StepButton(
           icon: Icons.remove_rounded,
-          onTap: () => onStep(-2.5),
+          onTap: () => onStep(-step),
         ),
         const SizedBox(width: AppSpacing.xs),
         _StepButton(
           icon: Icons.add_rounded,
-          onTap: () => onStep(2.5),
+          onTap: () => onStep(step),
         ),
       ],
     );
@@ -543,10 +629,12 @@ class _TargetModeInput extends StatelessWidget {
 class _TargetWeightField extends StatelessWidget {
   const _TargetWeightField({
     required this.controller,
+    required this.unit,
     required this.onChanged,
   });
 
   final TextEditingController controller;
+  final WeightUnit unit;
   final ValueChanged<String> onChanged;
 
   @override
@@ -569,9 +657,9 @@ class _TargetWeightField extends StatelessWidget {
           textInputAction: TextInputAction.done,
           onChanged: onChanged,
           style: AppTypography.mono(17),
-          decoration: const InputDecoration(
-            hintText: '100',
-            suffixText: 'kg',
+          decoration: InputDecoration(
+            hintText: formatWeight(_PlateEquipment.of(unit).defaultTarget),
+            suffixText: unit.suffix,
           ),
         ),
       ],
@@ -584,6 +672,7 @@ class _CountModeInput extends StatelessWidget {
     required this.plates,
     required this.counts,
     required this.controllers,
+    required this.unit,
     required this.onChanged,
     required this.onStep,
   });
@@ -591,6 +680,7 @@ class _CountModeInput extends StatelessWidget {
   final List<double> plates;
   final Map<double, int> counts;
   final Map<double, TextEditingController> controllers;
+  final WeightUnit unit;
   final void Function(double plate, String value) onChanged;
   final void Function(double plate, int delta) onStep;
 
@@ -616,6 +706,7 @@ class _CountModeInput extends StatelessWidget {
             plate: plate,
             count: counts[plate] ?? 0,
             controller: controllers[plate]!,
+            unit: unit,
             onChanged: (value) => onChanged(plate, value),
             onStep: (delta) => onStep(plate, delta),
           ),
@@ -631,6 +722,7 @@ class _PlateCountRow extends StatelessWidget {
     required this.plate,
     required this.count,
     required this.controller,
+    required this.unit,
     required this.onChanged,
     required this.onStep,
   });
@@ -638,6 +730,7 @@ class _PlateCountRow extends StatelessWidget {
   final double plate;
   final int count;
   final TextEditingController controller;
+  final WeightUnit unit;
   final ValueChanged<String> onChanged;
   final ValueChanged<int> onStep;
 
@@ -650,11 +743,11 @@ class _PlateCountRow extends StatelessWidget {
       ),
       child: Row(
         children: [
-          _PlateDot(weight: plate, count: count),
+          _PlateDot(weight: plate, count: count, unit: unit),
           const SizedBox(width: AppSpacing.sm),
           Expanded(
             child: Text(
-              '${formatWeight(plate)} kg',
+              '${formatWeight(plate)} ${unit.suffix}',
               style: const TextStyle(
                 color: AppColors.fg1,
                 fontSize: 14,
@@ -756,12 +849,16 @@ class _PlateResultView extends StatelessWidget {
     required this.target,
     required this.barWeight,
     required this.result,
+    required this.unit,
+    required this.equipment,
   });
 
   final _PlateCalculatorMode mode;
   final double target;
   final double barWeight;
   final _PlateCalculation result;
+  final WeightUnit unit;
+  final _PlateEquipment equipment;
 
   @override
   Widget build(BuildContext context) {
@@ -772,15 +869,16 @@ class _PlateResultView extends StatelessWidget {
 
     final loadedPerSide = (result.loadableTotal - barWeight) / 2;
     final primaryCounts = _plateCounts(result.platesPerSide);
-    final alternative20KgCounts = mode == _PlateCalculatorMode.target
+    // The same load without the heaviest plate, for racks that don't have it.
+    final alternativeCounts = mode == _PlateCalculatorMode.target
         ? _calculateCountsForPlates(
             loadedPerSide: loadedPerSide,
-            plates: const [20.0, 10.0, 5.0, 2.5],
+            plates: equipment.alternativePlates,
           )
         : null;
     final showAlternative =
-        alternative20KgCounts != null &&
-        !_samePlateCounts(primaryCounts, alternative20KgCounts);
+        alternativeCounts != null &&
+        !_samePlateCounts(primaryCounts, alternativeCounts);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -791,6 +889,7 @@ class _PlateResultView extends StatelessWidget {
               : l10n.dashboardPlateCurrentLabel,
           totalWeight: result.loadableTotal,
           barWeight: barWeight,
+          unit: unit,
         ),
         const SizedBox(height: AppSpacing.sm),
         Container(
@@ -805,7 +904,7 @@ class _PlateResultView extends StatelessWidget {
                 _LoadSummary(
                   label: l10n.dashboardPlatePerSideLabel,
                   value: loadedPerSide,
-                  formatter: (value) => '${formatWeight(value)} kg',
+                  formatter: (value) => '${formatWeight(value)} ${unit.suffix}',
                   emphasis: true,
                 ),
                 const VerticalDivider(width: 1),
@@ -823,12 +922,17 @@ class _PlateResultView extends StatelessWidget {
           _PlateEmptyState(
             message: l10n.dashboardPlateUseBarOnlyMessage(
               formatWeight(barWeight),
+              unit.suffix,
             ),
           ),
         ] else if (!result.exact) ...[
           const SizedBox(height: AppSpacing.sm),
           _PlateNotice(
-            message: l10n.dashboardPlateNotExactMessage(formatWeight(target)),
+            message: l10n.dashboardPlateNotExactMessage(
+              formatWeight(target),
+              unit.suffix,
+              formatWeight(equipment.smallestPlate),
+            ),
           ),
         ],
         const SizedBox(height: AppSpacing.sm),
@@ -845,7 +949,11 @@ class _PlateResultView extends StatelessWidget {
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
               for (final entry in primaryCounts.entries)
-                _PlateBreakdownChip(weight: entry.key, count: entry.value),
+                _PlateBreakdownChip(
+                  weight: entry.key,
+                  count: entry.value,
+                  unit: unit,
+                ),
               if (showAlternative) ...[
                 Text(
                   l10n.dashboardPlateAltSetLabel,
@@ -855,10 +963,11 @@ class _PlateResultView extends StatelessWidget {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                for (final entry in alternative20KgCounts.entries)
+                for (final entry in alternativeCounts.entries)
                   _PlateBreakdownChip(
                     weight: entry.key,
                     count: entry.value,
+                    unit: unit,
                     muted: true,
                   ),
               ],
@@ -871,7 +980,13 @@ class _PlateResultView extends StatelessWidget {
 
 /// Standard plate colors, shared by the barbell drawing, breakdown chips, and
 /// count-mode dots so the same weight always reads as the same color.
-Color _plateColor(double weight) => switch (weight) {
+///
+/// The denominations overlap between units (25 kg is red, 25 lb is green), so
+/// the unit decides which chart applies.
+Color _plateColor(double weight, WeightUnit unit) =>
+    unit == WeightUnit.lb ? _lbPlateColor(weight) : _kgPlateColor(weight);
+
+Color _kgPlateColor(double weight) => switch (weight) {
   25.0 || 2.5 => AppColors.plateRed,
   20.0 || 2.0 => AppColors.plateBlue,
   15.0 || 1.5 => AppColors.plateYellow,
@@ -880,10 +995,21 @@ Color _plateColor(double weight) => switch (weight) {
   _ => AppColors.ink300,
 };
 
+Color _lbPlateColor(double weight) => switch (weight) {
+  55.0 => AppColors.plateRed,
+  45.0 => AppColors.plateBlue,
+  35.0 => AppColors.plateYellow,
+  25.0 => AppColors.plateGreen,
+  10.0 => AppColors.plateWhite,
+  5.0 => AppColors.plateRed,
+  _ => AppColors.ink300,
+};
+
 class _BarbellVisual extends StatelessWidget {
-  const _BarbellVisual({required this.platesPerSide});
+  const _BarbellVisual({required this.platesPerSide, required this.unit});
 
   final List<double> platesPerSide;
+  final WeightUnit unit;
 
   @override
   Widget build(BuildContext context) {
@@ -893,7 +1019,10 @@ class _BarbellVisual extends StatelessWidget {
       height: 92,
       child: CustomPaint(
         size: Size.infinite,
-        painter: _BarbellPainter(platesPerSide: platesPerSide),
+        painter: _BarbellPainter(
+          platesPerSide: platesPerSide,
+          unit: unit,
+        ),
       ),
     );
   }
@@ -904,11 +1033,13 @@ class _ResultHeadline extends StatelessWidget {
     required this.totalLabel,
     required this.totalWeight,
     required this.barWeight,
+    required this.unit,
   });
 
   final String totalLabel;
   final double totalWeight;
   final double barWeight;
+  final WeightUnit unit;
 
   @override
   Widget build(BuildContext context) {
@@ -922,10 +1053,34 @@ class _ResultHeadline extends StatelessWidget {
             children: [
               Text(totalLabel.toUpperCase(), style: _eyebrow),
               const SizedBox(height: 2),
-              XnAnimatedNumber(
-                value: totalWeight,
-                formatter: (value) => '${formatWeight(value)} kg',
-                style: AppTypography.mono(27, weight: FontWeight.w500),
+              // A Wrap, not a Row: a Row hands its children unbounded width,
+              // which stops the big number from wrapping and overflows narrow
+              // phones. This lets the kg note drop to its own line instead.
+              Wrap(
+                spacing: AppSpacing.sm,
+                crossAxisAlignment: WrapCrossAlignment.end,
+                children: [
+                  XnAnimatedNumber(
+                    value: totalWeight,
+                    formatter: (value) =>
+                        '${formatWeight(value)} ${unit.suffix}',
+                    style: AppTypography.mono(27, weight: FontWeight.w500),
+                  ),
+                  // Plates are loaded in lb but training data is stored and
+                  // discussed in kg, so the metric equivalent rides along.
+                  if (unit == WeightUnit.lb)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 4),
+                      child: Text(
+                        l10n.dashboardPlateApproxKgNote(
+                          formatWeight(
+                            (WeightUnit.lb.toKg(totalWeight) * 10).round() / 10,
+                          ),
+                        ),
+                        style: AppTypography.mono(12, color: AppColors.fg3),
+                      ),
+                    ),
+                ],
               ),
             ],
           ),
@@ -933,7 +1088,10 @@ class _ResultHeadline extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(bottom: 4),
           child: Text(
-            l10n.dashboardPlateBarWeightLabel(formatWeight(barWeight)),
+            l10n.dashboardPlateBarWeightLabel(
+              formatWeight(barWeight),
+              unit.suffix,
+            ),
             style: const TextStyle(
               color: AppColors.fg3,
               fontSize: 11,
@@ -949,34 +1107,61 @@ class _ResultHeadline extends StatelessWidget {
 /// Flat side-view barbell illustration. Every plate sits directly on the
 /// sleeve, followed by a clamp, so the loading order is physically readable.
 class _BarbellPainter extends CustomPainter {
-  _BarbellPainter({required this.platesPerSide});
+  _BarbellPainter({required this.platesPerSide, required this.unit});
 
   /// Per-side plates in descending weight order (innermost first).
   final List<double> platesPerSide;
+  final WeightUnit unit;
 
-  static double _plateHeight(double weight) => switch (weight) {
-    25.0 => 78.0,
-    20.0 => 72.0,
-    15.0 => 66.0,
-    10.0 => 60.0,
-    5.0 => 50.0,
-    2.5 => 42.0,
-    2.0 => 39.0,
-    1.5 => 36.0,
-    _ => 33.0,
-  };
+  static double _plateHeight(double weight, WeightUnit unit) {
+    if (unit == WeightUnit.lb) {
+      return switch (weight) {
+        55.0 => 78.0,
+        45.0 => 74.0,
+        35.0 => 66.0,
+        25.0 => 58.0,
+        10.0 => 48.0,
+        5.0 => 40.0,
+        _ => 33.0,
+      };
+    }
+    return switch (weight) {
+      25.0 => 78.0,
+      20.0 => 72.0,
+      15.0 => 66.0,
+      10.0 => 60.0,
+      5.0 => 50.0,
+      2.5 => 42.0,
+      2.0 => 39.0,
+      1.5 => 36.0,
+      _ => 33.0,
+    };
+  }
 
-  static double _plateWidth(double weight) => switch (weight) {
-    25.0 => 10.0,
-    20.0 => 9.5,
-    15.0 => 9.0,
-    10.0 => 8.0,
-    5.0 => 7.0,
-    2.5 => 6.0,
-    2.0 => 5.5,
-    1.5 => 5.0,
-    _ => 4.5,
-  };
+  static double _plateWidth(double weight, WeightUnit unit) {
+    if (unit == WeightUnit.lb) {
+      return switch (weight) {
+        55.0 => 10.0,
+        45.0 => 9.5,
+        35.0 => 9.0,
+        25.0 => 8.0,
+        10.0 => 6.5,
+        5.0 => 5.5,
+        _ => 4.5,
+      };
+    }
+    return switch (weight) {
+      25.0 => 10.0,
+      20.0 => 9.5,
+      15.0 => 9.0,
+      10.0 => 8.0,
+      5.0 => 7.0,
+      2.5 => 6.0,
+      2.0 => 5.5,
+      1.5 => 5.0,
+      _ => 4.5,
+    };
+  }
 
   static const _shaftMinW = 90.0;
   static const _shaftH = 5.5;
@@ -995,7 +1180,10 @@ class _BarbellPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final stackW =
-        platesPerSide.fold<double>(0, (sum, p) => sum + _plateWidth(p)) +
+        platesPerSide.fold<double>(
+          0,
+          (sum, p) => sum + _plateWidth(p, unit),
+        ) +
         (platesPerSide.isEmpty ? 0 : _plateGap * (platesPerSide.length - 1));
     final sleeveLen =
         _collarInset +
@@ -1103,14 +1291,14 @@ class _BarbellPainter extends CustomPainter {
     // Plates sit flush on the sleeve, heaviest against the inner collar.
     var x = sleeveStart + sign * _collarInset;
     for (final plate in platesPerSide) {
-      final width = _plateWidth(plate);
+      final width = _plateWidth(plate, unit);
       final centerX = x + sign * width / 2;
       _paintPlate(
         canvas,
         center: Offset(centerX, 0),
         width: width,
-        height: _plateHeight(plate),
-        color: _plateColor(plate),
+        height: _plateHeight(plate, unit),
+        color: _plateColor(plate, unit),
       );
       x += sign * (width + _plateGap);
     }
@@ -1214,16 +1402,18 @@ class _PlateBreakdownChip extends StatelessWidget {
   const _PlateBreakdownChip({
     required this.weight,
     required this.count,
+    required this.unit,
     this.muted = false,
   });
 
   final double weight;
   final int count;
+  final WeightUnit unit;
   final bool muted;
 
   @override
   Widget build(BuildContext context) {
-    final color = _plateColor(weight);
+    final color = _plateColor(weight, unit);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
@@ -1264,20 +1454,34 @@ class _PlateBreakdownChip extends StatelessWidget {
 }
 
 class _PlateDot extends StatelessWidget {
-  const _PlateDot({required this.weight, required this.count});
+  const _PlateDot({
+    required this.weight,
+    required this.count,
+    required this.unit,
+  });
 
   final double weight;
   final int count;
+  final WeightUnit unit;
 
   @override
   Widget build(BuildContext context) {
-    final size = switch (weight) {
-      25.0 => 30.0,
-      20.0 => 28.0,
-      10.0 => 25.0,
-      5.0 => 21.0,
-      _ => 18.0,
-    };
+    final size = unit == WeightUnit.lb
+        ? switch (weight) {
+            55.0 => 30.0,
+            45.0 => 29.0,
+            35.0 => 27.0,
+            25.0 => 24.0,
+            10.0 => 21.0,
+            _ => 18.0,
+          }
+        : switch (weight) {
+            25.0 => 30.0,
+            20.0 => 28.0,
+            10.0 => 25.0,
+            5.0 => 21.0,
+            _ => 18.0,
+          };
 
     return SizedBox(
       width: 34,
@@ -1289,7 +1493,7 @@ class _PlateDot extends StatelessWidget {
             width: size,
             height: size,
             decoration: BoxDecoration(
-              color: count > 0 ? _plateColor(weight) : AppColors.bg3,
+              color: count > 0 ? _plateColor(weight, unit) : AppColors.bg3,
               shape: BoxShape.circle,
               border: Border.all(color: AppColors.surfaceBorderSoft),
             ),

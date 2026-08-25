@@ -47,7 +47,7 @@ class AiStarterPlanSheet extends ConsumerStatefulWidget {
 
 class _AiStarterPlanSheetState extends ConsumerState<AiStarterPlanSheet> {
   final _formKey = GlobalKey<FormState>();
-  final _equipment = TextEditingController(text: 'Full gym');
+  final _equipment = TextEditingController();
   final _name = TextEditingController();
 
   String _goal = 'Build muscle';
@@ -80,6 +80,16 @@ class _AiStarterPlanSheetState extends ConsumerState<AiStarterPlanSheet> {
     final now = DateTime.now();
     _start = now;
     _end = now.add(const Duration(days: 7 * 8)); // 8-week default block.
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Prefilled in the user's language; localizations are only available once
+    // dependencies are resolved, so this cannot live in initState.
+    if (_equipment.text.isEmpty) {
+      _equipment.text = AppLocalizations.of(context).trainingEquipmentDefault;
+    }
   }
 
   @override

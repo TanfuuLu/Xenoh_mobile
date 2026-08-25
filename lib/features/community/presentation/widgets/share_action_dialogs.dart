@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_dimens.dart';
+import '../../../../core/utils/date_labels.dart';
+import '../../../../core/utils/date_only.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../blocks_reports/presentation/widgets/moderation_dialogs.dart';
 import '../../../shared_api/xenoh_api.dart';
@@ -144,6 +146,7 @@ class _CopyWorkoutSheetState extends ConsumerState<_CopyWorkoutSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final locale = Localizations.localeOf(context).toString();
     final plans = ref.watch(plansControllerProvider);
     final weeks = _planId == null
         ? null
@@ -216,7 +219,8 @@ class _CopyWorkoutSheetState extends ConsumerState<_CopyWorkoutSheet> {
                   DropdownMenuItem(
                     value: day.id,
                     child: Text(
-                      '${day.dayOfWeek} · ${day.date.toIso8601String().split('T').first}',
+                      '${DateLabels.weekday(day.date, locale)} · '
+                      '${DateOnly.format(day.date)}',
                     ),
                   ),
               ],

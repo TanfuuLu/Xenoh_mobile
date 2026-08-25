@@ -6,6 +6,7 @@ import '../../../../app/theme/app_dimens.dart';
 import '../../../../core/realtime/realtime_service.dart';
 import '../../../../core/sync/data_revision.dart';
 import '../../../../core/sync/data_topic.dart';
+import '../../../../core/utils/date_labels.dart';
 import '../../../../core/widgets/chat_bubble.dart';
 import '../../../../core/widgets/chat_composer.dart';
 import '../../../../l10n/app_localizations.dart';
@@ -149,6 +150,7 @@ class _CommentsScreenState extends ConsumerState<CommentsScreen> {
                   : textOf(item, ['authorName', 'authorFullName']),
               timestamp: _formatTime(
                 textOf(item, ['createdAt', 'createdAtUtc'], fallback: ''),
+                Localizations.localeOf(context).toString(),
               ),
               onDelete: () => _delete(item['id']?.toString()),
             );
@@ -223,27 +225,9 @@ class _CommentsScreenState extends ConsumerState<CommentsScreen> {
 
   /// Formats an ISO timestamp as `MMM d, HH:mm` in local time; returns an empty
   /// string when it can't be parsed (so the bubble hides the caption).
-  static String _formatTime(String iso) {
+  static String _formatTime(String iso, String locale) {
     final parsed = DateTime.tryParse(iso);
     if (parsed == null) return '';
-    final d = parsed.toLocal();
-    final hh = d.hour.toString().padLeft(2, '0');
-    final mm = d.minute.toString().padLeft(2, '0');
-    return '${_monthAbbr[d.month - 1]} ${d.day}, $hh:$mm';
+    return DateLabels.monthDayTime(parsed.toLocal(), locale);
   }
 }
-
-const _monthAbbr = [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'May',
-  'Jun',
-  'Jul',
-  'Aug',
-  'Sep',
-  'Oct',
-  'Nov',
-  'Dec',
-];

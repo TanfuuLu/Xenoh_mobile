@@ -105,7 +105,12 @@ void main() {
         ),
       ).thenAnswer(
         (_) async => const Err(
-          ValidationFailure('Current password is incorrect.'),
+          // Mirrors a 400 whose body carried a message: `failureFromDio` marks
+          // those as server text, which the UI shows instead of generic copy.
+          ValidationFailure(
+            'Current password is incorrect.',
+            isServerMessage: true,
+          ),
         ),
       );
 

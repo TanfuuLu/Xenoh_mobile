@@ -14,7 +14,6 @@ import '../../../../core/widgets/xn_card.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../notifications/presentation/screens/notification_center_screen.dart';
 import '../../../nutrition/presentation/providers/nutrition_controller.dart';
-import '../../../profile/data/repositories/profile_background_repository.dart';
 import '../../../profile/data/repositories/profile_repository_provider.dart';
 import '../../../profile/domain/entities/bodyweight_log.dart';
 import '../../../profile/presentation/providers/preferences_provider.dart';
@@ -53,20 +52,6 @@ class DashboardScreen extends ConsumerWidget {
     });
 
     final dashboard = ref.watch(dashboardControllerProvider);
-    final backgroundPath = ref
-        .watch(
-          profileBackgroundPathProvider(ProfileBackgroundRepository.deviceKey),
-        )
-        .value;
-    final backgroundAlignment =
-        ref
-            .watch(
-              profileBackgroundAlignmentProvider(
-                ProfileBackgroundRepository.deviceKey,
-              ),
-            )
-            .value ??
-        Alignment.center;
     final unreadNotifications = ref
         .watch(notificationsProvider)
         .value
@@ -110,8 +95,6 @@ class DashboardScreen extends ConsumerWidget {
           data: (data) => _DashboardBody(
             data: data,
             unit: ref.watch(weightUnitProvider),
-            backgroundImagePath: backgroundPath,
-            backgroundAlignment: backgroundAlignment,
           ),
         ),
       ),
@@ -119,72 +102,117 @@ class DashboardScreen extends ConsumerWidget {
   }
 }
 
+/// Notification entry point in the dashboard app bar.
+///
+/// Reads as a soft chip button rather than a bare glyph so it holds its own
+/// against the paper background and the banner logo next to it. The unread
+/// badge sits just outside the chip with a paper-colored ring, so the count
+/// never collides with the bell itself.
 class _NotificationBell extends StatelessWidget {
   const _NotificationBell({required this.unreadCount, required this.onPressed});
 
   final int unreadCount;
   final VoidCallback onPressed;
 
+  static const double _size = 38;
+
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      clipBehavior: Clip.none,
-      children: [
-        IconButton(
-          tooltip: AppLocalizations.of(context).dashboardNotificationsTooltip,
-          icon: const Icon(Icons.notifications_none_rounded),
-          onPressed: onPressed,
-        ),
-        if (unreadCount > 0)
-          Positioned(
-            top: 6,
-            right: 6,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 4),
-              constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
-              alignment: Alignment.center,
-              decoration: const BoxDecoration(
-                color: AppColors.danger,
-                shape: BoxShape.circle,
-              ),
-              child: Text(
-                unreadCount > 9 ? '9+' : '$unreadCount',
-                style: const TextStyle(
-                  color: AppColors.fgOnClay,
-                  fontSize: 10,
-                  fontWeight: FontWeight.w500,
+    final l10n = AppLocalizations.of(context);
+    final hasUnread = unreadCount > 0;
+    final label = hasUnread
+        ? '${l10n.dashboardNotificationsTooltip} ($unreadCount)'
+        : l10n.dashboardNotificationsTooltip;
+
+    return Padding(
+      padding: const EdgeInsets.only(right: AppSpacing.md),
+      child: Tooltip(
+        message: label,
+        child: Semantics(
+          button: true,
+          label: label,
+          child: SizedBox(
+            width: _size,
+            height: _size,
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Material(
+                  color: hasUnread ? AppColors.accentSoft : AppColors.bg2,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(AppRadius.lg),
+                    side: BorderSide(
+                      color: hasUnread
+                          ? AppColors.accent.withValues(alpha: 0.28)
+                          : AppColors.surfaceBorderSoft,
+                    ),
+                  ),
+                  clipBehavior: Clip.antiAlias,
+                  child: InkWell(
+                    onTap: onPressed,
+                    child: Center(
+                      child: Icon(
+                        hasUnread
+                            ? Icons.notifications_rounded
+                            : Icons.notifications_none_rounded,
+                        size: 20,
+                        color: hasUnread ? AppColors.accent : AppColors.fg3,
+                      ),
+                    ),
+                  ),
                 ),
-              ),
+                Positioned(
+                  top: -5,
+                  right: -5,
+                  child: AnimatedScale(
+                    scale: hasUnread ? 1 : 0,
+                    duration: AppMotion.fast,
+                    curve: Curves.easeOutBack,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      constraints: const BoxConstraints(
+                        minWidth: 18,
+                        minHeight: 18,
+                      ),
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: AppColors.accent,
+                        borderRadius: BorderRadius.circular(AppRadius.pill),
+                        border: Border.all(color: AppColors.paper, width: 2),
+                      ),
+                      child: Text(
+                        unreadCount > 99 ? '99+' : '$unreadCount',
+                        style: const TextStyle(
+                          color: AppColors.fgOnClay,
+                          fontSize: 10,
+                          height: 1.1,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
-      ],
+        ),
+      ),
     );
   }
 }
 
 class _DashboardBody extends StatelessWidget {
-  const _DashboardBody({
-    required this.data,
-    required this.unit,
-    required this.backgroundAlignment,
-    this.backgroundImagePath,
-  });
+  const _DashboardBody({required this.data, required this.unit});
 
   final PersonalDashboard data;
   final WeightUnit unit;
-  final String? backgroundImagePath;
-  final Alignment backgroundAlignment;
 
   @override
   Widget build(BuildContext context) {
     return ListView(
       padding: const EdgeInsets.all(AppSpacing.lg),
       children: [
-        DashboardHero(
-          profile: data.profile,
-          backgroundImagePath: backgroundImagePath,
-          backgroundAlignment: backgroundAlignment,
-        ),
+        DashboardHero(profile: data.profile),
         const SizedBox(height: AppSpacing.md),
         _DashboardPanel(
           child: PlateCalculatorEntry(
@@ -236,7 +264,14 @@ class _DashboardBody extends StatelessWidget {
             AppSpacing.lg,
             AppSpacing.lg + bottomInset,
           ),
-          child: const SingleChildScrollView(child: PlateCalculatorCard()),
+          // The sheet is its own subtree, so the unit preference is watched
+          // here rather than inherited from the dashboard body.
+          child: SingleChildScrollView(
+            child: Consumer(
+              builder: (context, ref, _) =>
+                  PlateCalculatorCard(unit: ref.watch(weightUnitProvider)),
+            ),
+          ),
         );
       },
     );

@@ -270,6 +270,13 @@ class _WorkoutLockScreenConsentGateState
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    // The Android notification channel is created lazily on first use, so the
+    // localized labels have to be handed over before that happens.
+    WorkoutNotificationService.configureChannelLabels(
+      name: l10n.workoutNotificationChannelName,
+      description: l10n.workoutNotificationChannelDescription,
+    );
     final workout = ref.watch(dashboardControllerProvider).value?.todayWorkout;
     if (_enabled == false &&
         !_handlingPermission &&
@@ -355,47 +362,41 @@ class _XenohBottomMenuBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final destinations = _bottomDestinations(context, role: role);
     final selected = selectedIndex.clamp(0, destinations.length - 1);
-    return SafeArea(
-      top: false,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(
-          AppSpacing.lg,
-          2,
-          AppSpacing.lg,
-          AppSpacing.sm,
+    final bottomInset = MediaQuery.viewPaddingOf(context).bottom;
+    return Container(
+      padding: EdgeInsets.fromLTRB(
+        AppSpacing.sm,
+        6,
+        AppSpacing.sm,
+        6 + bottomInset,
+      ),
+      decoration: const BoxDecoration(
+        color: AppColors.bg2,
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(AppRadius.xl),
         ),
-        child: Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 5,
-            vertical: 5,
+        border: Border(
+          top: BorderSide(color: AppColors.surfaceBorderSoft),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.shadowDeep,
+            blurRadius: 28,
+            offset: Offset(0, -6),
           ),
-          decoration: BoxDecoration(
-            color: AppColors.bg2.withValues(alpha: 0.98),
-            borderRadius: BorderRadius.circular(AppRadius.xl),
-            border: Border.all(
-              color: AppColors.surfaceBorderSoft.withValues(alpha: 0.72),
-            ),
-            boxShadow: const [
-              BoxShadow(
-                color: AppColors.shadowDeep,
-                blurRadius: 28,
-                offset: Offset(0, 12),
+        ],
+      ),
+      child: Row(
+        children: [
+          for (var i = 0; i < destinations.length; i++)
+            Expanded(
+              child: _NavItem(
+                destination: destinations[i].destination,
+                selected: i == selected,
+                onTap: () => onDestinationSelected(i, destinations),
               ),
-            ],
-          ),
-          child: Row(
-            children: [
-              for (var i = 0; i < destinations.length; i++)
-                Expanded(
-                  child: _NavItem(
-                    destination: destinations[i].destination,
-                    selected: i == selected,
-                    onTap: () => onDestinationSelected(i, destinations),
-                  ),
-                ),
-            ],
-          ),
-        ),
+            ),
+        ],
       ),
     );
   }

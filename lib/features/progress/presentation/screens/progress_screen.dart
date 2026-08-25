@@ -6,6 +6,7 @@ import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_dimens.dart';
 import '../../../../app/theme/app_typography.dart';
 import '../../../../core/error/failure.dart';
+import '../../../../core/error/failure_l10n.dart';
 import '../../../../core/widgets/async_value_view.dart';
 import '../../../../core/widgets/pro_locked_view.dart';
 import '../../../../core/widgets/xn_section.dart';
@@ -127,7 +128,10 @@ class _PlanProgressState extends ConsumerState<_PlanProgress> {
           const SizedBox(height: AppSpacing.lg),
           ProLockedView(
             title: l10n.progressProFeatureTitle,
-            message: (analytics.error! as ForbiddenFailure).message,
+            message: localizedFailureMessage(
+              analytics.error! as ForbiddenFailure,
+              l10n,
+            ),
             onUpgrade: () => context.push('/subscription'),
           ),
         ],
@@ -177,6 +181,7 @@ class _PlanProgressState extends ConsumerState<_PlanProgress> {
               PlanAnalyticsView(
                 analytics: a,
                 unit: ref.watch(weightUnitProvider),
+                trackRpe: ref.watch(trackRpeProvider),
               ),
           ],
         );

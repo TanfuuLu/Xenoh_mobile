@@ -11,7 +11,6 @@ class PlanCard extends StatelessWidget {
   const PlanCard({
     required this.plan,
     required this.onTap,
-    required this.onAnalytics,
     required this.onReview,
     required this.onActivate,
     required this.onDelete,
@@ -21,7 +20,6 @@ class PlanCard extends StatelessWidget {
 
   final Plan plan;
   final VoidCallback onTap;
-  final VoidCallback onAnalytics;
   final VoidCallback onReview;
   final VoidCallback onActivate;
   final VoidCallback onDelete;
@@ -175,11 +173,9 @@ class PlanCard extends StatelessWidget {
                   isActive: plan.isActive,
                   activateLabel: l10n.commonActivate,
                   deactivateLabel: l10n.commonDeactivate,
-                  analyticsTooltip: l10n.commonAnalytics,
                   reviewTooltip: l10n.trainingReviewPlanTooltip,
                   deleteTooltip: l10n.trainingDeletePlanTooltip,
                   onActivate: onActivate,
-                  onAnalytics: onAnalytics,
                   onReview: onReview,
                   onDelete: onDelete,
                 ),
@@ -363,11 +359,9 @@ class _PlanActions extends StatelessWidget {
     required this.isActive,
     required this.activateLabel,
     required this.deactivateLabel,
-    required this.analyticsTooltip,
     required this.reviewTooltip,
     required this.deleteTooltip,
     required this.onActivate,
-    required this.onAnalytics,
     required this.onReview,
     required this.onDelete,
   });
@@ -375,11 +369,9 @@ class _PlanActions extends StatelessWidget {
   final bool isActive;
   final String activateLabel;
   final String deactivateLabel;
-  final String analyticsTooltip;
   final String reviewTooltip;
   final String deleteTooltip;
   final VoidCallback onActivate;
-  final VoidCallback onAnalytics;
   final VoidCallback onReview;
   final VoidCallback onDelete;
 
@@ -392,11 +384,9 @@ class _PlanActions extends StatelessWidget {
       onPressed: onActivate,
     );
     final toolbar = _PlanActionToolbar(
-      analyticsTooltip: analyticsTooltip,
       reviewTooltip: reviewTooltip,
       deleteTooltip: deleteTooltip,
       reviewIcon: Icons.auto_fix_high_outlined,
-      onAnalytics: onAnalytics,
       onReview: onReview,
       onDelete: onDelete,
     );
@@ -427,20 +417,16 @@ class _PlanActions extends StatelessWidget {
 
 class _PlanActionToolbar extends StatelessWidget {
   const _PlanActionToolbar({
-    required this.analyticsTooltip,
     required this.reviewTooltip,
     required this.deleteTooltip,
     required this.reviewIcon,
-    required this.onAnalytics,
     required this.onReview,
     required this.onDelete,
   });
 
-  final String analyticsTooltip;
   final String reviewTooltip;
   final String deleteTooltip;
   final IconData reviewIcon;
-  final VoidCallback onAnalytics;
   final VoidCallback onReview;
   final VoidCallback onDelete;
 
@@ -449,12 +435,6 @@ class _PlanActionToolbar extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        _PlanIconButton(
-          tooltip: analyticsTooltip,
-          icon: Icons.bar_chart_rounded,
-          onPressed: onAnalytics,
-        ),
-        const SizedBox(width: AppSpacing.sm),
         _PlanIconButton(
           tooltip: reviewTooltip,
           icon: reviewIcon,

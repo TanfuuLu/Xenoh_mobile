@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_dimens.dart';
 import '../../../../app/theme/app_typography.dart';
+import '../../../../core/utils/date_labels.dart';
 import '../../../../core/utils/text_bullets.dart';
 import '../../../../core/utils/weight_units.dart';
 import '../../../../core/widgets/bullet_list.dart';
@@ -675,7 +676,10 @@ class _GeneratedAtRow extends StatelessWidget {
               Text(l10n.insightsLastAnalyzedAtLabel, style: _eyebrow),
               const SizedBox(height: 2),
               Text(
-                _fmtDateTime(generatedAt),
+                _fmtDateTime(
+                  generatedAt,
+                  Localizations.localeOf(context).toString(),
+                ),
                 style: AppTypography.mono(13, color: AppColors.fg2),
               ),
             ],
@@ -1327,7 +1331,10 @@ class _PrTile extends StatelessWidget {
           if (achievedAt != null) ...[
             const SizedBox(height: 2),
             Text(
-              _fmtDate(achievedAt),
+              _fmtDate(
+                achievedAt,
+                Localizations.localeOf(context).toString(),
+              ),
               style: AppTypography.mono(11, color: AppColors.fg3),
             ),
           ],
@@ -1344,27 +1351,11 @@ const _eyebrow = TextStyle(
   letterSpacing: 0.7,
 );
 
-const _months = [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'May',
-  'Jun',
-  'Jul',
-  'Aug',
-  'Sep',
-  'Oct',
-  'Nov',
-  'Dec',
-];
+String _fmtDate(DateTime d, String locale) =>
+    DateLabels.monthDayYear(d, locale);
 
-String _fmtDate(DateTime d) => '${d.day} ${_months[d.month - 1]} ${d.year}';
-
-String _fmtDateTime(DateTime d) {
-  String two(int v) => v.toString().padLeft(2, '0');
-  return '${_fmtDate(d)}, ${two(d.hour)}:${two(d.minute)}';
-}
+String _fmtDateTime(DateTime d, String locale) =>
+    DateLabels.monthDayYearTime(d, locale);
 
 String _thousands(int v) {
   final s = v.toString();

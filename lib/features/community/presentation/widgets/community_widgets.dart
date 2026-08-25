@@ -2,11 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_dimens.dart';
 import '../../../../app/theme/app_typography.dart';
+import '../../../../core/utils/date_labels.dart';
 import '../../../../core/utils/weight_units.dart';
 import '../../../../core/widgets/xn_button.dart';
 import '../../../../core/widgets/xn_card.dart';
@@ -223,6 +223,7 @@ class TrainingDayShareCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
+    final locale = Localizations.localeOf(context).toString();
     final unit = ref.watch(weightUnitProvider);
     final prs = share.exercises.where((e) => e.isPersonalRecord).toList();
     final trainedExercises =
@@ -277,7 +278,9 @@ class TrainingDayShareCard extends ConsumerWidget {
                       ),
                       const SizedBox(height: 3),
                       Text(
-                        '${DateFormat('dd MMM yyyy').format(share.workoutDate)} - ${share.dayOfWeek}',
+                        '${DateLabels.monthDayYear(share.workoutDate, locale)}'
+                        ' - '
+                        '${DateLabels.weekday(share.workoutDate, locale)}',
                         style: const TextStyle(
                           color: AppColors.fg3,
                           fontSize: 12,

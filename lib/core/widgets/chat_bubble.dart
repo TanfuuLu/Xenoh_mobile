@@ -7,7 +7,7 @@ import '../../l10n/app_localizations.dart';
 import '../utils/inline_markdown.dart';
 import 'chat_attachment.dart';
 
-/// A single chat message bubble. [mine] right-aligns it with the clay accent
+/// A single chat message bubble. [mine] right-aligns it with the muted clay
 /// fill; otherwise it's a left-aligned light bubble. An optional [author] label
 /// and [timestamp] caption frame the text, and a long-press offers whichever of
 /// [onDelete] and [onReport] are provided. Optional [attachments] (the message
@@ -46,7 +46,7 @@ class ChatBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bg = mine ? AppColors.accent : AppColors.bg2;
+    final bg = mine ? AppColors.chatBubbleMine : AppColors.bg2;
     final fg = mine ? AppColors.fgOnClay : AppColors.fg1;
     const radius = Radius.circular(AppRadius.lg);
 

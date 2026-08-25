@@ -5,7 +5,10 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/utils/current_date_provider.dart';
+import '../features/auth/presentation/providers/auth_controller.dart';
+import '../features/auth/presentation/providers/auth_state.dart';
 import '../features/coach_client/presentation/providers/chat_unread_controller.dart';
+import '../features/profile/data/repositories/profile_background_repository.dart';
 import '../features/profile/presentation/providers/preferences_provider.dart';
 import '../features/subscription/presentation/providers/subscription_controllers.dart';
 import '../l10n/app_localizations.dart';
@@ -101,6 +104,21 @@ class _AppLifecycleLayerState extends ConsumerState<_AppLifecycleLayer>
     }
   }
 
+  void _syncBackgroundUser(AuthState auth) {
+    ref
+        .read(backgroundUserIdProvider.notifier)
+        .useAccount(auth.sessionOrNull?.user.id);
+  }
+
   @override
-  Widget build(BuildContext context) => widget.child ?? const SizedBox.shrink();
+  Widget build(BuildContext context) {
+    // Header-card backgrounds are stored per account. Pushing the session's
+    // user id here — rather than having each card read the session — keeps
+    // one source of truth and makes a logout/login swap re-resolve every
+    // header card at once instead of leaving the previous account's image up.
+    _syncBackgroundUser(ref.watch(authControllerProvider));
+    ref.listen(authControllerProvider, (_, next) => _syncBackgroundUser(next));
+
+    return widget.child ?? const SizedBox.shrink();
+  }
 }

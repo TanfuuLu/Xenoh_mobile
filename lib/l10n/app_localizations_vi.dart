@@ -24,6 +24,9 @@ class AppLocalizationsVi extends AppLocalizations {
   String get commonRefresh => 'Làm mới';
 
   @override
+  String get commonSelect => 'Chọn';
+
+  @override
   String get commonRemove => 'Gỡ bỏ';
 
   @override
@@ -50,6 +53,29 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get commonSomethingWentWrong => 'Đã xảy ra lỗi.';
+
+  @override
+  String get commonNetworkError => 'Lỗi kết nối. Hãy kiểm tra mạng của bạn.';
+
+  @override
+  String get commonRequestCancelledError => 'Yêu cầu đã bị hủy.';
+
+  @override
+  String get commonCertificateError => 'Không xác minh được kết nối bảo mật.';
+
+  @override
+  String get commonSessionExpiredError =>
+      'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.';
+
+  @override
+  String get commonValidationError =>
+      'Vui lòng kiểm tra lại thông tin đã nhập.';
+
+  @override
+  String get commonNotFoundError => 'Không tìm thấy nội dung này.';
+
+  @override
+  String get commonServerError => 'Lỗi máy chủ. Vui lòng thử lại sau.';
 
   @override
   String get commonForbiddenError =>
@@ -603,6 +629,11 @@ class AppLocalizationsVi extends AppLocalizations {
   String get progressVolumeLabel => 'Khối lượng';
 
   @override
+  String trainingVolumeUnitLabel(String unit) {
+    return '$unit-lần';
+  }
+
+  @override
   String get progressCompletedSetsLabel => 'Set đã hoàn thành';
 
   @override
@@ -644,9 +675,6 @@ class AppLocalizationsVi extends AppLocalizations {
       'Khối lượng hiện tại có thể quá nhiều. Hãy giảm độ khó, lặp lại các buổi quan trọng và xây dựng lại tính ổn định.';
 
   @override
-  String get progressInsightRepeatWeekMetric => 'Căng thẳng tập luyện';
-
-  @override
   String get progressInsightConsistencyTitle => 'Tính đều đặn chưa ổn định';
 
   @override
@@ -654,17 +682,11 @@ class AppLocalizationsVi extends AppLocalizations {
       'Một số buổi tập theo kế hoạch đang bị bỏ lỡ. Hãy giữ tuần tới đơn giản cho đến khi việc tuân thủ được cải thiện.';
 
   @override
-  String get progressInsightConsistencyMetric => 'Mức hoàn thành';
-
-  @override
   String get progressInsightVolumeTitle => 'Khối lượng tập đang giảm';
 
   @override
   String get progressInsightVolumeMessage =>
       'Khối lượng tập đã giảm hơn 20%. Hãy lặp lại tuần tập hoặc chưa tăng tải ngay lúc này.';
-
-  @override
-  String get progressInsightVolumeMetric => 'Thay đổi khối lượng';
 
   @override
   String get progressInsightMuscleBalanceTitle =>
@@ -675,9 +697,6 @@ class AppLocalizationsVi extends AppLocalizations {
       'Không có nhóm cơ nào chiếm ưu thế rõ rệt theo khối lượng tạ.';
 
   @override
-  String get progressInsightMuscleBalanceMetric => 'Nhóm cơ cao nhất';
-
-  @override
   String get progressInsightMissedTargetTitle =>
       'Một số set không đạt mục tiêu';
 
@@ -686,17 +705,172 @@ class AppLocalizationsVi extends AppLocalizations {
       'Một vài buổi tập không đạt số lần lặp hoặc mức tạ dự kiến. Theo dõi hiệu suất trước khi tăng tải.';
 
   @override
-  String get progressInsightMissedTargetMetric => 'Ngày cảnh báo';
-
-  @override
   String get progressInsightBenchSquatTitle => 'Bench đang chậm hơn squat';
 
   @override
-  String get progressInsightBenchSquatMessage =>
-      'Mức bench của bạn bằng 63% squat. Tỷ lệ cân bằng thường vào khoảng 70%. Hãy cân nhắc thêm một buổi bench hoặc bài bổ trợ thân trên.';
+  String progressInsightBenchSquatMessage(String ratio) {
+    return 'Mức bench của bạn bằng $ratio% squat. Tỷ lệ cân bằng thường vào khoảng 70%. Hãy cân nhắc thêm một buổi bench hoặc bài bổ trợ thân trên.';
+  }
 
   @override
-  String get progressInsightBenchSquatMetric => 'Bench / Squat';
+  String get progressInsightMetricPlannedDays => 'Ngày đã lên lịch';
+
+  @override
+  String get progressInsightMetricCompletion => 'Mức hoàn thành';
+
+  @override
+  String get progressInsightMetricWeeksLogged => 'Số tuần đã ghi nhận';
+
+  @override
+  String get progressInsightMetricVolumeChange => 'Thay đổi khối lượng';
+
+  @override
+  String get progressInsightMetricAvgRpe => 'RPE trung bình';
+
+  @override
+  String get progressInsightMetricWarningDays => 'Ngày cảnh báo';
+
+  @override
+  String get progressInsightMetricHighRpeSets => 'Set RPE cao';
+
+  @override
+  String get progressInsightMetricTrainingScore => 'Điểm tập luyện';
+
+  @override
+  String get progressInsightMetricCurrentE1Rm => 'e1RM hiện tại';
+
+  @override
+  String get progressInsightMetricHighRpeWeeks => 'Tuần RPE cao';
+
+  @override
+  String get progressInsightNoTrainingDaysTitle => 'Chưa có ngày tập nào';
+
+  @override
+  String get progressInsightNoTrainingDaysMessage =>
+      'Hãy thêm ngày tập vào kế hoạch trước khi đánh giá tính đều đặn.';
+
+  @override
+  String get progressInsightConsistencyCriticalTitle =>
+      'Tính đều đặn cần được chú ý';
+
+  @override
+  String get progressInsightConsistencyCriticalMessage =>
+      'Mức hoàn thành dưới 50%. Hãy lặp lại tuần này hoặc giảm khối lượng đã lên kế hoạch trước khi tăng tải.';
+
+  @override
+  String get progressInsightConsistencyStrongTitle => 'Tính đều đặn rất tốt';
+
+  @override
+  String get progressInsightConsistencyStrongMessage =>
+      'Mức tuân thủ đủ cao để tăng tải dần.';
+
+  @override
+  String get progressInsightVolumeHistoryTitle => 'Cần thêm dữ liệu khối lượng';
+
+  @override
+  String get progressInsightVolumeHistoryMessage =>
+      'Hãy ghi nhận ít nhất hai tuần tập để so sánh xu hướng khối lượng.';
+
+  @override
+  String get progressInsightVolumeBaselineMessage =>
+      'Tuần hoàn tất trước đó chưa có khối lượng nền để so sánh.';
+
+  @override
+  String get progressInsightPlannedReductionTitle =>
+      'Giảm khối lượng theo kế hoạch';
+
+  @override
+  String get progressInsightPlannedReductionMessage =>
+      'Khối lượng thấp hơn đúng như tuần đã lập trình, không tính là buổi tập bị mất.';
+
+  @override
+  String get progressInsightVolumeDropTitle => 'Khối lượng giảm mạnh';
+
+  @override
+  String get progressInsightVolumeDropMessage =>
+      'Khối lượng tập giảm hơn 35% so với tuần đã ghi nhận trước đó. Hãy kiểm tra khả năng hồi phục và các buổi bị bỏ lỡ.';
+
+  @override
+  String get progressInsightOverloadJumpTitle => 'Tăng tải quá nhanh';
+
+  @override
+  String get progressInsightOverloadJumpMessage =>
+      'Khối lượng tăng hơn 30%. Hãy theo dõi mệt mỏi và cân nhắc tăng ít hơn ở tuần sau.';
+
+  @override
+  String get progressInsightOverloadMovingTitle =>
+      'Tăng tải đang tiến triển tốt';
+
+  @override
+  String get progressInsightOverloadMovingMessage =>
+      'Khối lượng đang tăng với tốc độ hợp lý và vẫn trong ngưỡng kiểm soát được.';
+
+  @override
+  String get progressInsightVolumeStableTitle => 'Khối lượng ổn định';
+
+  @override
+  String get progressInsightVolumeStableMessage =>
+      'Khối lượng gần bằng tuần trước. Hãy tăng nhẹ mức tạ hoặc số rep khi hồi phục tốt.';
+
+  @override
+  String get progressInsightFatigueRiskTitle => 'Nguy cơ mệt mỏi tăng cao';
+
+  @override
+  String get progressInsightFatigueRiskMessage =>
+      'Các set RPE cao đang đi kèm cảnh báo hoặc buổi tập bị bỏ lỡ. Hãy cân nhắc hồi phục hoặc một tuần nhẹ hơn.';
+
+  @override
+  String get progressInsightPrioritizeRecoveryTitle => 'Ưu tiên hồi phục';
+
+  @override
+  String get progressInsightPrioritizeRecoveryMessage =>
+      'Giữ nguyên mức tạ hoặc giảm tải nhẹ cho đến khi RPE và cảnh báo ổn định lại.';
+
+  @override
+  String get progressInsightProgressGraduallyTitle => 'Tăng tiến từng bước';
+
+  @override
+  String get progressInsightProgressGraduallyMessage =>
+      'Hãy tăng nhẹ mức tạ hoặc số rep cho các bài chính trong tuần tới.';
+
+  @override
+  String get progressInsightHoldSteadyTitle => 'Giữ nguyên kế hoạch';
+
+  @override
+  String get progressInsightHoldSteadyMessage =>
+      'Hãy giữ nguyên mục tiêu hiện tại và tập trung thực hiện chuẩn hơn trước khi tăng tải.';
+
+  @override
+  String get progressInsightDeadliftSquatTitle =>
+      'Deadlift đang thấp hơn squat';
+
+  @override
+  String progressInsightDeadliftSquatMessage(String ratio) {
+    return 'Deadlift của bạn đang ở mức $ratio% squat. Phần lớn người tập kéo được ít nhất bằng mức squat — hãy xem lại khối lượng kéo hoặc kỹ thuật.';
+  }
+
+  @override
+  String get progressInsightHighRpeStreakTitle => 'Chuỗi tuần RPE cao kéo dài';
+
+  @override
+  String progressInsightHighRpeStreakMessage(String weeks) {
+    return '$weeks tuần liên tiếp có RPE trung bình từ 8.5 trở lên. Hãy lên lịch giảm tải trước khi mệt mỏi làm mất số rep.';
+  }
+
+  @override
+  String progressInsightPlateauTitle(String lift) {
+    return '$lift đang chững lại';
+  }
+
+  @override
+  String progressInsightPlateauMessage(String lift) {
+    return '1RM ước tính của $lift không thay đổi trong 4 tuần qua. Hãy cân nhắc giảm tải hoặc một khối tập rep cao để phá thế chững.';
+  }
+
+  @override
+  String progressInsightHighRpeSetsValue(String count) {
+    return '$count set RPE cao';
+  }
 
   @override
   String get progressMuscleBack => 'Lưng';
@@ -914,10 +1088,131 @@ class AppLocalizationsVi extends AppLocalizations {
   String get cycleLegendPredicted => 'Dự đoán';
 
   @override
-  String get cycleLegendOvulation => 'Rụng trứng';
+  String get cycleLegendOvulation => 'Ngày rụng trứng';
 
   @override
-  String get cycleLegendFertile => 'Dễ thụ thai';
+  String cycleLegendFertile(int count) {
+    return 'Cửa sổ thụ thai ($count ngày)';
+  }
+
+  @override
+  String get cyclePhaseUnknown => 'Chưa rõ';
+
+  @override
+  String get cyclePhaseMenstrual => 'Hành kinh';
+
+  @override
+  String get cyclePhaseFollicular => 'Nang trứng';
+
+  @override
+  String get cyclePhaseOvulation => 'Rụng trứng';
+
+  @override
+  String get cyclePhaseLuteal => 'Hoàng thể';
+
+  @override
+  String get cycleGuidanceTitle => 'Hướng dẫn theo giai đoạn';
+
+  @override
+  String get cycleGuidanceTrainingLabel => 'Tập luyện';
+
+  @override
+  String get cycleGuidanceNutritionLabel => 'Dinh dưỡng';
+
+  @override
+  String get cycleGuidanceMenstrualTraining1 =>
+      'Vận động nhẹ — đi bộ, giãn cơ, cardio nhẹ hoặc tập kỹ thuật.';
+
+  @override
+  String get cycleGuidanceMenstrualTraining2 =>
+      'Nếu thấy khỏe, tập tạ nhẹ-vừa vẫn ổn; giảm khối lượng.';
+
+  @override
+  String get cycleGuidanceMenstrualTraining3 =>
+      'Ưu tiên nghỉ và ngủ; tránh gắng sức tối đa vào ngày máu nhiều.';
+
+  @override
+  String get cycleGuidanceMenstrualNutrition1 =>
+      'Bổ sung thực phẩm giàu sắt (thịt đỏ, đậu, rau bina) để bù lượng máu mất.';
+
+  @override
+  String get cycleGuidanceMenstrualNutrition2 =>
+      'Kết hợp sắt với vitamin C để hấp thu tốt hơn.';
+
+  @override
+  String get cycleGuidanceMenstrualNutrition3 =>
+      'Uống đủ nước và bổ sung magie để giảm đau bụng.';
+
+  @override
+  String get cycleGuidanceFollicularTraining1 =>
+      'Năng lượng và hồi phục đang tăng — đẩy cường độ và tăng khối lượng.';
+
+  @override
+  String get cycleGuidanceFollicularTraining2 =>
+      'Thời điểm tốt để phá PR sức mạnh và tăng tải dần.';
+
+  @override
+  String get cycleGuidanceFollicularTraining3 =>
+      'Xếp những buổi nặng nhất vào giai đoạn này.';
+
+  @override
+  String get cycleGuidanceFollicularNutrition1 =>
+      'Nạp đủ carb và protein cho các buổi tập nặng hơn.';
+
+  @override
+  String get cycleGuidanceFollicularNutrition2 =>
+      'Ăn quanh buổi tập để hỗ trợ hồi phục và hiệu suất.';
+
+  @override
+  String get cycleGuidanceFollicularNutrition3 =>
+      'Giữ protein cao để tận dụng khả năng hồi phục tốt hơn.';
+
+  @override
+  String get cycleGuidanceOvulationTraining1 =>
+      'Sức mạnh đỉnh — thời điểm tốt cho set nặng và mức tạ lớn.';
+
+  @override
+  String get cycleGuidanceOvulationTraining2 =>
+      'Khởi động kỹ; dây chằng hơi lỏng hơn ở giai đoạn này.';
+
+  @override
+  String get cycleGuidanceOvulationTraining3 =>
+      'Tận dụng đỉnh năng lượng nhưng giữ kỹ thuật chuẩn khi gắng sức tối đa.';
+
+  @override
+  String get cycleGuidanceOvulationNutrition1 =>
+      'Duy trì protein và carb để hỗ trợ buổi tập cường độ cao.';
+
+  @override
+  String get cycleGuidanceOvulationNutrition2 =>
+      'Bổ sung trái cây và rau giàu chất chống oxy hóa.';
+
+  @override
+  String get cycleGuidanceOvulationNutrition3 => 'Uống đủ nước khi tập nặng.';
+
+  @override
+  String get cycleGuidanceLutealTraining1 =>
+      'Năng lượng có thể giảm — điều chỉnh tải và tập trung vào sự đều đặn.';
+
+  @override
+  String get cycleGuidanceLutealTraining2 =>
+      'Đổi bớt cường độ sang khối lượng hoặc cardio đều nếu mệt.';
+
+  @override
+  String get cycleGuidanceLutealTraining3 =>
+      'Lắng nghe cơ thể; deload sớm hơn nếu hồi phục kém.';
+
+  @override
+  String get cycleGuidanceLutealNutrition1 =>
+      'Nhu cầu calo cao hơn một chút là bình thường — ăn đủ no.';
+
+  @override
+  String get cycleGuidanceLutealNutrition2 =>
+      'Carb phức và magie có thể giảm PMS và cảm giác thèm ăn.';
+
+  @override
+  String get cycleGuidanceLutealNutrition3 =>
+      'Hạn chế muối và caffeine để giảm đầy hơi.';
 
   @override
   String cycleSymptomCountLabel(int count) {
@@ -1086,6 +1381,14 @@ class AppLocalizationsVi extends AppLocalizations {
   String get coachChatTitle => 'Trò chuyện';
 
   @override
+  String get coachChatEmailUnavailable => 'Không có email';
+
+  @override
+  String coachChatAvatarSemanticLabel(String name) {
+    return 'Ảnh đại diện của $name';
+  }
+
+  @override
   String get coachChatHeaderTitle => 'Trò chuyện theo quan hệ';
 
   @override
@@ -1135,8 +1438,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get coachConnectButton => 'Kết nối';
 
   @override
-  String get coachConnectionRequestSentSnackbar =>
-      'Đã gửi yêu cầu kết nối huấn luyện viên.';
+  String get coachConnectedSnackbar => 'Đã kết nối với huấn luyện viên.';
 
   @override
   String get coachKeyVaultTitle => 'Kho khóa';
@@ -1795,13 +2097,17 @@ class AppLocalizationsVi extends AppLocalizations {
   String get dashboardPlateCurrentLabel => 'Hiện tại';
 
   @override
-  String dashboardPlateUseBarOnlyMessage(String bar) {
-    return 'Chỉ dùng thanh tạ $bar kg.';
+  String dashboardPlateUseBarOnlyMessage(String bar, String unit) {
+    return 'Chỉ dùng thanh tạ $bar $unit.';
   }
 
   @override
-  String dashboardPlateNotExactMessage(String weight) {
-    return '$weight kg không thể lắp chính xác bằng đĩa 2.5 kg.';
+  String dashboardPlateNotExactMessage(
+    String weight,
+    String unit,
+    String smallest,
+  ) {
+    return '$weight $unit không thể lắp chính xác bằng đĩa $smallest $unit.';
   }
 
   @override
@@ -1815,8 +2121,13 @@ class AppLocalizationsVi extends AppLocalizations {
       'Chỉ có thanh tạ. Hãy thêm đĩa tạ mỗi bên.';
 
   @override
-  String dashboardPlateBarWeightLabel(String weight) {
-    return 'Thanh tạ $weight kg';
+  String dashboardPlateBarWeightLabel(String weight, String unit) {
+    return 'Thanh tạ $weight $unit';
+  }
+
+  @override
+  String dashboardPlateApproxKgNote(String weight) {
+    return '≈ $weight kg';
   }
 
   @override
@@ -2016,6 +2327,12 @@ class AppLocalizationsVi extends AppLocalizations {
   String get trainingRpePickerSubtitle => 'Hiệp này nặng đến mức nào?';
 
   @override
+  String get trainingRpeScaleLightLabel => 'Nhẹ';
+
+  @override
+  String get trainingRpeScaleMaxLabel => 'Tối đa';
+
+  @override
   String get trainingWeekRecommendationsTitle => 'Khuyến nghị';
 
   @override
@@ -2148,6 +2465,9 @@ class AppLocalizationsVi extends AppLocalizations {
   @override
   String get trainingEquipmentHint =>
       'vd. Phòng gym đầy đủ, chỉ tạ đơn, tại nhà';
+
+  @override
+  String get trainingEquipmentDefault => 'Phòng gym đầy đủ';
 
   @override
   String get trainingEquipmentError => 'Mô tả dụng cụ của bạn';
@@ -2300,6 +2620,27 @@ class AppLocalizationsVi extends AppLocalizations {
   String get trainingDesignAnalysisTitle => 'Phân tích thiết kế';
 
   @override
+  String get trainingDesignNoRecoveryRisksChip => 'Không có rủi ro hồi phục';
+
+  @override
+  String trainingDesignRisksChip(int count) {
+    return '$count rủi ro';
+  }
+
+  @override
+  String get trainingDesignBalancedCoverageChip => 'Phân bổ cân bằng';
+
+  @override
+  String trainingDesignUndertrainedChip(int count) {
+    return '$count nhóm tập thiếu';
+  }
+
+  @override
+  String trainingDesignDominantChip(int count) {
+    return '$count nhóm tập trội';
+  }
+
+  @override
   String get trainingPlanDesignAnalysisTitle => 'Phân tích thiết kế kế hoạch';
 
   @override
@@ -2327,6 +2668,26 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get trainingLongestTrainingStreakLabel => 'Chuỗi ngày tập dài nhất';
+
+  @override
+  String get trainingResultTitle => 'Kết quả buổi tập';
+
+  @override
+  String get trainingResultCongratsTitle => 'Chúc mừng';
+
+  @override
+  String trainingResultStreakMessage(int count) {
+    return 'Đã hoàn thành buổi tập. Chuỗi $count ngày.';
+  }
+
+  @override
+  String get trainingResultVolumeLabel => 'Khối lượng';
+
+  @override
+  String get trainingResultAvgRpeLabel => 'RPE trung bình';
+
+  @override
+  String get trainingResultTotalTimeLabel => 'Tổng thời gian';
 
   @override
   String get trainingAvgExercisesPerDayLabel => 'TB bài tập/ngày';
@@ -3914,6 +4275,12 @@ class AppLocalizationsVi extends AppLocalizations {
   String get subscriptionTierProCoach => 'Pro Coach';
 
   @override
+  String get subscriptionTierOrganizer => 'Đơn vị tổ chức';
+
+  @override
+  String get subscriptionTierAnyPaid => 'Mọi gói trả phí';
+
+  @override
   String get subscriptionTierFree => 'Miễn phí';
 
   @override
@@ -4243,6 +4610,27 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get adminStatusLabel => 'Trạng thái';
+
+  @override
+  String get adminReportStatusPending => 'Chờ xử lý';
+
+  @override
+  String get adminReportStatusResolved => 'Đã xử lý';
+
+  @override
+  String get adminReportStatusDismissed => 'Đã bỏ qua';
+
+  @override
+  String get adminPaymentStatusPending => 'Chờ thanh toán';
+
+  @override
+  String get adminPaymentStatusCompleted => 'Hoàn tất';
+
+  @override
+  String get adminPaymentStatusFailed => 'Thất bại';
+
+  @override
+  String get adminPaymentStatusExpired => 'Hết hạn';
 
   @override
   String get adminNoBugReportsTitle => 'Không có báo lỗi';
@@ -5139,6 +5527,12 @@ class AppLocalizationsVi extends AppLocalizations {
   String get adminDiscountValue => 'Giá trị giảm';
 
   @override
+  String get adminPromotionTypePercent => 'Phần trăm';
+
+  @override
+  String get adminPromotionTypeFixed => 'Cố định';
+
+  @override
   String get adminAppliesToTier => 'Áp dụng cho gói';
 
   @override
@@ -5408,6 +5802,13 @@ class AppLocalizationsVi extends AppLocalizations {
   @override
   String get workoutLockScreenPermissionTitle =>
       'Hiển thị buổi tập trên màn hình khóa?';
+
+  @override
+  String get workoutNotificationChannelName => 'Tiến trình buổi tập';
+
+  @override
+  String get workoutNotificationChannelDescription =>
+      'Hiển thị bài tập hiện tại trên thanh thông báo và màn hình khóa.';
 
   @override
   String get workoutLockScreenPermissionMessage =>

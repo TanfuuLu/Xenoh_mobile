@@ -6,6 +6,7 @@ import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_dimens.dart';
 import '../../../../app/theme/app_typography.dart';
 import '../../../../core/error/failure.dart';
+import '../../../../core/error/failure_l10n.dart';
 import '../../../../core/utils/weight_units.dart';
 import '../../../../core/widgets/async_value_view.dart';
 import '../../../../core/widgets/pro_locked_view.dart';
@@ -54,7 +55,10 @@ class PlanAnalyticsScreen extends ConsumerWidget {
             height: MediaQuery.sizeOf(context).height * 0.8,
             child: ProLockedView(
               title: l10n.progressAnalyticsProFeatureTitle,
-              message: (analytics.error! as ForbiddenFailure).message,
+              message: localizedFailureMessage(
+                analytics.error! as ForbiddenFailure,
+                l10n,
+              ),
               onUpgrade: () => context.push('/subscription'),
             ),
           ),
@@ -71,6 +75,7 @@ class PlanAnalyticsScreen extends ConsumerWidget {
           PlanAnalyticsView(
             analytics: a,
             unit: ref.watch(weightUnitProvider),
+            trackRpe: ref.watch(trackRpeProvider),
           ),
         ],
       ),
@@ -87,11 +92,16 @@ class PlanAnalyticsView extends StatelessWidget {
   const PlanAnalyticsView({
     required this.analytics,
     required this.unit,
+    this.trackRpe = true,
     super.key,
   });
 
   final PlanAnalytics analytics;
   final WeightUnit unit;
+
+  /// The user's `trackRpe` preference. With RPE logging off there is nothing
+  /// behind the average-RPE and high-RPE tiles, so they are left out.
+  final bool trackRpe;
 
   @override
   Widget build(BuildContext context) {
@@ -101,7 +111,7 @@ class PlanAnalyticsView extends StatelessWidget {
       children: [
         _ScoreHero(score: a.trainingScore, consistency: a.consistencyPercent),
         const SizedBox(height: AppSpacing.md),
-        _StatsSection(analytics: a, unit: unit),
+        _StatsSection(analytics: a, unit: unit, trackRpe: trackRpe),
         if (a.insights.isNotEmpty) ...[
           const SizedBox(height: AppSpacing.md),
           _InsightsSection(insights: a.insights),
@@ -215,10 +225,15 @@ class _ScoreHero extends StatelessWidget {
 /// The summary metrics as a two-column grid of plain label/value tiles inside
 /// a divided section — replaces the former grid of individual metric cards.
 class _StatsSection extends StatelessWidget {
-  const _StatsSection({required this.analytics, required this.unit});
+  const _StatsSection({
+    required this.analytics,
+    required this.unit,
+    required this.trackRpe,
+  });
 
   final PlanAnalytics analytics;
   final WeightUnit unit;
+  final bool trackRpe;
 
   @override
   Widget build(BuildContext context) {
@@ -235,11 +250,13 @@ class _StatsSection extends StatelessWidget {
         l10n.progressAvgSessionsPerWeekLabel,
         a.avgSessionsPerWeek.toStringAsFixed(1),
       ),
-      (
-        l10n.progressAvgRpeLabel,
-        a.avgRpe == null ? '-' : a.avgRpe!.toStringAsFixed(1),
-      ),
-      (l10n.progressHighRpeSetsLabel, '${a.highRpeSets}'),
+      if (trackRpe) ...[
+        (
+          l10n.progressAvgRpeLabel,
+          a.avgRpe == null ? '-' : a.avgRpe!.toStringAsFixed(1),
+        ),
+        (l10n.progressHighRpeSetsLabel, '${a.highRpeSets}'),
+      ],
       (l10n.progressWarningDaysLabel, '${a.warningDays}'),
       (
         l10n.progressTimeTrainedLabel,
@@ -569,6 +586,13 @@ class _MuscleRow extends StatelessWidget {
   }
 }
 
+/// Vietnamese copy for the insights the backend generates.
+///
+/// `TrainingInsightAnalyzer` and `PowerliftingInsightRules` on the server
+/// always emit English, so every card is matched here on its exact English
+/// title (plus the message where one title has two variants) and swapped for
+/// localized copy. Anything unmatched falls back to the server text rather
+/// than showing an empty card.
 ({String title, String message, String metricLabel, String metricValue})
 _localizedInsight(
   TrainingInsight insight,
@@ -583,57 +607,210 @@ _localizedInsight(
   );
   if (languageCode != 'vi') return original;
 
-  final identity = '${insight.type} ${insight.title}'.toLowerCase();
-  if (identity.contains('repeat') && identity.contains('week')) {
-    return (
-      title: l10n.progressInsightRepeatWeekTitle,
-      message: l10n.progressInsightRepeatWeekMessage,
-      metricLabel: l10n.progressInsightRepeatWeekMetric,
-      metricValue: insight.metricValue,
-    );
+  final title = insight.title.trim();
+  final message = insight.message.toLowerCase();
+  final metricLabel = _localizedMetricLabel(insight.metricLabel, l10n);
+  final metricValue = _localizedMetricValue(insight.metricValue, l10n);
+
+  ({String title, String message}) copy;
+  switch (title) {
+    // Consistency.
+    case 'No training days planned':
+      copy = (
+        title: l10n.progressInsightNoTrainingDaysTitle,
+        message: l10n.progressInsightNoTrainingDaysMessage,
+      );
+    case 'Consistency needs attention':
+      copy = (
+        title: l10n.progressInsightConsistencyCriticalTitle,
+        message: l10n.progressInsightConsistencyCriticalMessage,
+      );
+    case 'Consistency is uneven':
+      copy = (
+        title: l10n.progressInsightConsistencyTitle,
+        message: l10n.progressInsightConsistencyMessage,
+      );
+    case 'Strong consistency':
+      copy = (
+        title: l10n.progressInsightConsistencyStrongTitle,
+        message: l10n.progressInsightConsistencyStrongMessage,
+      );
+
+    // Volume trend and overload.
+    case 'More volume history needed':
+      copy = (
+        title: l10n.progressInsightVolumeHistoryTitle,
+        // Same title, two server messages: too few weeks vs. an unusable
+        // baseline in the previous week.
+        message: message.contains('baseline')
+            ? l10n.progressInsightVolumeBaselineMessage
+            : l10n.progressInsightVolumeHistoryMessage,
+      );
+    case 'Planned volume reduction':
+      copy = (
+        title: l10n.progressInsightPlannedReductionTitle,
+        message: l10n.progressInsightPlannedReductionMessage,
+      );
+    case 'Volume dropped sharply':
+      copy = (
+        title: l10n.progressInsightVolumeDropTitle,
+        message: l10n.progressInsightVolumeDropMessage,
+      );
+    case 'Volume is trending down':
+      copy = (
+        title: l10n.progressInsightVolumeTitle,
+        message: l10n.progressInsightVolumeMessage,
+      );
+    case 'Large overload jump':
+      copy = (
+        title: l10n.progressInsightOverloadJumpTitle,
+        message: l10n.progressInsightOverloadJumpMessage,
+      );
+    case 'Progressive overload is moving':
+      copy = (
+        title: l10n.progressInsightOverloadMovingTitle,
+        message: l10n.progressInsightOverloadMovingMessage,
+      );
+    case 'Volume is stable':
+      copy = (
+        title: l10n.progressInsightVolumeStableTitle,
+        message: l10n.progressInsightVolumeStableMessage,
+      );
+
+    // Fatigue.
+    case 'Fatigue risk is elevated':
+      copy = (
+        title: l10n.progressInsightFatigueRiskTitle,
+        message: l10n.progressInsightFatigueRiskMessage,
+      );
+    case 'Some sets missed target':
+      copy = (
+        title: l10n.progressInsightMissedTargetTitle,
+        message: l10n.progressInsightMissedTargetMessage,
+      );
+
+    // Recommendations.
+    case 'Prioritize recovery':
+      copy = (
+        title: l10n.progressInsightPrioritizeRecoveryTitle,
+        message: l10n.progressInsightPrioritizeRecoveryMessage,
+      );
+    case 'Repeat or simplify the week':
+      copy = (
+        title: l10n.progressInsightRepeatWeekTitle,
+        message: l10n.progressInsightRepeatWeekMessage,
+      );
+    case 'Progress gradually':
+      copy = (
+        title: l10n.progressInsightProgressGraduallyTitle,
+        message: l10n.progressInsightProgressGraduallyMessage,
+      );
+    case 'Hold the plan steady':
+      copy = (
+        title: l10n.progressInsightHoldSteadyTitle,
+        message: l10n.progressInsightHoldSteadyMessage,
+      );
+
+    // Powerlifting rules. The ratios are read back from the metric value so
+    // the localized sentence always quotes the same number as the card.
+    case 'Bench is lagging your squat':
+      copy = (
+        title: l10n.progressInsightBenchSquatTitle,
+        message: l10n.progressInsightBenchSquatMessage(
+          _percentOf(insight.metricValue),
+        ),
+      );
+    case 'Deadlift is below your squat':
+      copy = (
+        title: l10n.progressInsightDeadliftSquatTitle,
+        message: l10n.progressInsightDeadliftSquatMessage(
+          _percentOf(insight.metricValue),
+        ),
+      );
+    case 'Long stretch of high-RPE work':
+      copy = (
+        title: l10n.progressInsightHighRpeStreakTitle,
+        message: l10n.progressInsightHighRpeStreakMessage(insight.metricValue),
+      );
+
+    // Muscle balance, and the per-lift plateau titles ("Squat is
+    // plateauing"), which carry the lift name in the title itself.
+    default:
+      if (title.toLowerCase().contains('muscle') &&
+          title.toLowerCase().contains('balance')) {
+        copy = (
+          title: l10n.progressInsightMuscleBalanceTitle,
+          message: l10n.progressInsightMuscleBalanceMessage,
+        );
+        break;
+      }
+      final plateau = RegExp(r'^(.+) is plateauing$').firstMatch(title);
+      if (plateau != null) {
+        final lift = plateau.group(1)!;
+        copy = (
+          title: l10n.progressInsightPlateauTitle(lift),
+          message: l10n.progressInsightPlateauMessage(lift),
+        );
+        break;
+      }
+      return (
+        title: insight.title,
+        message: insight.message,
+        metricLabel: metricLabel,
+        metricValue: metricValue,
+      );
   }
-  if (identity.contains('consistency')) {
-    return (
-      title: l10n.progressInsightConsistencyTitle,
-      message: l10n.progressInsightConsistencyMessage,
-      metricLabel: l10n.progressInsightConsistencyMetric,
-      metricValue: insight.metricValue,
-    );
-  }
-  if (identity.contains('volume') && identity.contains('down')) {
-    return (
-      title: l10n.progressInsightVolumeTitle,
-      message: l10n.progressInsightVolumeMessage,
-      metricLabel: l10n.progressInsightVolumeMetric,
-      metricValue: insight.metricValue,
-    );
-  }
-  if (identity.contains('muscle') && identity.contains('balance')) {
-    return (
-      title: l10n.progressInsightMuscleBalanceTitle,
-      message: l10n.progressInsightMuscleBalanceMessage,
-      metricLabel: l10n.progressInsightMuscleBalanceMetric,
-      metricValue: insight.metricValue,
-    );
-  }
-  if (identity.contains('miss') && identity.contains('target')) {
-    return (
-      title: l10n.progressInsightMissedTargetTitle,
-      message: l10n.progressInsightMissedTargetMessage,
-      metricLabel: l10n.progressInsightMissedTargetMetric,
-      metricValue: insight.metricValue,
-    );
-  }
-  if (identity.contains('bench') && identity.contains('squat')) {
-    return (
-      title: l10n.progressInsightBenchSquatTitle,
-      message: l10n.progressInsightBenchSquatMessage,
-      metricLabel: l10n.progressInsightBenchSquatMetric,
-      metricValue: insight.metricValue,
-    );
-  }
-  return original;
+
+  return (
+    title: copy.title,
+    message: copy.message,
+    metricLabel: metricLabel,
+    metricValue: metricValue,
+  );
 }
+
+/// Metric labels are a small closed set shared across insights, so they are
+/// translated by label instead of being repeated per insight.
+String _localizedMetricLabel(String label, AppLocalizations l10n) {
+  switch (label.trim()) {
+    case 'Planned days':
+      return l10n.progressInsightMetricPlannedDays;
+    case 'Completion':
+      return l10n.progressInsightMetricCompletion;
+    case 'Weeks logged':
+      return l10n.progressInsightMetricWeeksLogged;
+    case 'Volume change':
+      return l10n.progressInsightMetricVolumeChange;
+    case 'Avg RPE':
+      return l10n.progressInsightMetricAvgRpe;
+    case 'Warning days':
+      return l10n.progressInsightMetricWarningDays;
+    case 'High-RPE sets':
+      return l10n.progressInsightMetricHighRpeSets;
+    case 'Training score':
+      return l10n.progressInsightMetricTrainingScore;
+    case 'Current e1RM':
+      return l10n.progressInsightMetricCurrentE1Rm;
+    case 'High-RPE weeks':
+      return l10n.progressInsightMetricHighRpeWeeks;
+    // 'Bench / Squat', 'Deadlift / Squat' and 'Top group' are lift names or
+    // already-translated values, so they pass through unchanged.
+    default:
+      return label;
+  }
+}
+
+/// Metric values are numeric except for the fatigue fallback, which the
+/// server writes as `"N high-RPE sets"`.
+String _localizedMetricValue(String value, AppLocalizations l10n) {
+  final sets = RegExp(r'^(\d+) high-RPE sets$').firstMatch(value.trim());
+  return sets == null
+      ? value
+      : l10n.progressInsightHighRpeSetsValue(sets.group(1)!);
+}
+
+/// `"63%"` -> `"63"`, so a localized sentence can place the unit itself.
+String _percentOf(String metricValue) => metricValue.replaceAll('%', '').trim();
 
 String _localizedMuscleGroup(
   String muscleGroup,

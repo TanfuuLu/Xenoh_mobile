@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_dimens.dart';
+import '../../../../core/error/failure_l10n.dart';
 import '../../../../core/widgets/xn_button.dart';
 import '../../../../core/widgets/xn_input.dart';
 import '../../../../l10n/app_localizations.dart';
@@ -93,7 +94,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
       if (!mounted) return;
       final l10n = AppLocalizations.of(context);
       if (failure != null) {
-        _toast(failure.message);
+        _toast(localizedFailureMessage(failure, l10n));
         return;
       }
       if (_codeSent) {

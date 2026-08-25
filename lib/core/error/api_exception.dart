@@ -15,9 +15,15 @@ Failure failureFromDio(DioException e) {
     case DioExceptionType.connectionError:
       return const NetworkFailure();
     case DioExceptionType.cancel:
-      return const NetworkFailure('Request cancelled.');
+      return const NetworkFailure(
+        'Request cancelled.',
+        NetworkFailureKind.cancelled,
+      );
     case DioExceptionType.badCertificate:
-      return const NetworkFailure('Certificate error.');
+      return const NetworkFailure(
+        'Certificate error.',
+        NetworkFailureKind.certificate,
+      );
     case DioExceptionType.unknown:
       return const NetworkFailure();
     case DioExceptionType.badResponse:
@@ -32,16 +38,27 @@ Failure failureFromDio(DioException e) {
     400 => ValidationFailure(
       message ?? 'Please check your input.',
       fieldErrors: fieldErrors,
+      isServerMessage: message != null,
     ),
     409 => ValidationFailure(
       message ?? 'This change conflicts with existing data.',
+      isServerMessage: message != null,
     ),
     401 => const AuthFailure(),
-    403 => ForbiddenFailure(message ?? "You don't have access to this."),
-    404 => NotFoundFailure(message ?? 'Not found.'),
+    403 =>
+      message == null
+          ? const ForbiddenFailure()
+          : ForbiddenFailure.fromServer(message),
+    404 =>
+      message == null
+          ? const NotFoundFailure()
+          : NotFoundFailure.fromServer(message),
     429 => const RateLimitFailure(),
     >= 500 => ServerFailure(message ?? 'Server error. Please try again later.'),
-    _ => UnknownFailure(message ?? 'Something went wrong.'),
+    _ =>
+      message == null
+          ? const UnknownFailure()
+          : UnknownFailure.fromServer(message),
   };
 }
 

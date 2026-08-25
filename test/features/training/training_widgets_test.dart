@@ -30,6 +30,7 @@ import 'package:xenoh_mobile/features/training/presentation/screens/plans_screen
 import 'package:xenoh_mobile/features/training/presentation/screens/week_screen.dart';
 import 'package:xenoh_mobile/features/training/presentation/widgets/create_plan_sheet.dart';
 import 'package:xenoh_mobile/features/training/presentation/widgets/exercise_template_form_sheet.dart';
+import 'package:xenoh_mobile/features/training/presentation/widgets/exercise_template_picker_sheet.dart';
 import 'package:xenoh_mobile/features/training/presentation/widgets/plan_card.dart';
 import 'package:xenoh_mobile/l10n/app_localizations.dart';
 
@@ -1052,6 +1053,76 @@ void main() {
     expect(unselectedChip.backgroundColor, AppColors.bg2);
   });
 
+  testWidgets('exercise picker renders every template as a card, no dividers', (
+    tester,
+  ) async {
+    final repo = MockTrainingRepository();
+    const templates = [
+      ExerciseTemplate(
+        id: 'squat',
+        name: 'Pause Squat',
+        primaryMuscleGroup: 'Quadriceps',
+        exerciseKind: 'Strength',
+        isCustom: true,
+      ),
+      ExerciseTemplate(
+        id: 'bench',
+        name: 'Bench Press',
+        primaryMuscleGroup: 'Chest',
+        exerciseKind: 'Strength',
+        isCustom: false,
+      ),
+    ];
+    when(
+      () => repo.getExerciseTemplates(muscleGroup: null, clientId: null),
+    ).thenAnswer((_) async => templates);
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          authControllerProvider.overrideWith(_NoNetworkAuthController.new),
+          trainingRepositoryProvider.overrideWithValue(repo),
+        ],
+        child: const MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: Scaffold(body: ExerciseTemplatePickerSheet()),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final squatCard = find.byKey(
+      const ValueKey('exercise-template-picker-card-squat'),
+    );
+    final benchCard = find.byKey(
+      const ValueKey('exercise-template-picker-card-bench'),
+    );
+    expect(squatCard, findsOneWidget);
+    expect(benchCard, findsOneWidget);
+    expect(tester.widget(squatCard), isA<XnCard>());
+    expect(tester.widget(benchCard), isA<XnCard>());
+    // Rows are separated by whitespace between cards, never by a hairline.
+    expect(find.byType(Divider), findsNothing);
+    // The custom template keeps its overflow menu; the stock one keeps the
+    // plain add affordance.
+    expect(
+      find.descendant(
+        of: squatCard,
+        matching: find.byIcon(Icons.more_vert_rounded),
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(
+        of: benchCard,
+        matching: find.byIcon(Icons.add_circle_outline_rounded),
+      ),
+      findsOneWidget,
+    );
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('Coach plan activation is separate from design analysis', (
     tester,
   ) async {
@@ -1064,7 +1135,6 @@ void main() {
         PlanCard(
           plan: coachPlan,
           onTap: () {},
-          onAnalytics: () {},
           onReview: () => reviewCount++,
           onActivate: () => activationCount++,
           onDelete: () {},
@@ -1115,10 +1185,12 @@ void main() {
     expect(find.byType(PageView), findsOneWidget);
     expect(find.byType(ChoiceChip), findsNothing);
     expect(find.text('Analytics'), findsNothing);
-    final summaryCard = tester.widget<XnCard>(
+    // The summary header shares the profile background card, falling back to
+    // the clay surface when no background is set.
+    final summaryCard = tester.widget<SyncedBackgroundCard>(
       find.byKey(const ValueKey('week-days-summary')),
     );
-    expect(summaryCard.color, AppColors.clay900);
+    expect(summaryCard.fallbackColor, AppColors.clay900);
     final dayPages = tester.widget<PageView>(find.byType(PageView));
     expect(dayPages.padEnds, isTrue);
     expect(dayPages.controller!.viewportFraction, 0.9);

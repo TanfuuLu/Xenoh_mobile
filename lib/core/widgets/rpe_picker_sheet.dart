@@ -16,41 +16,88 @@ class RpePickerSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return Padding(
-      padding: EdgeInsets.only(
-        left: AppSpacing.xl,
-        right: AppSpacing.xl,
-        top: AppSpacing.xl,
-        bottom: MediaQuery.viewInsetsOf(context).bottom + AppSpacing.xl,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(
-            l10n.trainingRpePickerTitle(setNumber),
-            style: AppTypography.display(18, letterSpacing: 0),
-          ),
-          const SizedBox(height: AppSpacing.xs),
-          Text(
-            l10n.trainingRpePickerSubtitle,
-            style: const TextStyle(color: AppColors.fg3, fontSize: 13),
-          ),
-          const SizedBox(height: AppSpacing.lg),
-          Wrap(
-            spacing: AppSpacing.sm,
-            runSpacing: AppSpacing.sm,
-            children: [
-              for (var rpe = 1; rpe <= 10; rpe++)
-                _RpeCell(
-                  value: rpe,
-                  selected: initial == rpe.toDouble(),
-                  onTap: () => Navigator.pop(context, rpe.toDouble()),
+    return SafeArea(
+      top: false,
+      child: Padding(
+        padding: EdgeInsets.only(
+          left: AppSpacing.xl,
+          right: AppSpacing.xl,
+          top: AppSpacing.xl,
+          bottom: MediaQuery.viewInsetsOf(context).bottom + AppSpacing.xl,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              l10n.trainingRpePickerTitle(setNumber),
+              style: AppTypography.display(18, letterSpacing: 0),
+            ),
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              l10n.trainingRpePickerSubtitle,
+              style: const TextStyle(color: AppColors.fg3, fontSize: 13),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            // Two rows of five flexible cells rather than a Wrap of fixed-width
+            // ones: the block stays a tidy 5x2 at every width instead of
+            // breaking ragged, and it cannot overflow a narrow screen.
+            _RpeRow(from: 1, to: 5, initial: initial),
+            const SizedBox(height: AppSpacing.sm),
+            _RpeRow(from: 6, to: 10, initial: initial),
+            const SizedBox(height: AppSpacing.md),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    l10n.trainingRpeScaleLightLabel,
+                    style: const TextStyle(
+                      color: AppColors.fg3,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
                 ),
-            ],
+                Text(
+                  l10n.trainingRpeScaleMaxLabel,
+                  textAlign: TextAlign.end,
+                  style: const TextStyle(
+                    color: AppColors.fg3,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _RpeRow extends StatelessWidget {
+  const _RpeRow({required this.from, required this.to, required this.initial});
+
+  final int from;
+  final int to;
+  final double? initial;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        for (var rpe = from; rpe <= to; rpe++) ...[
+          if (rpe > from) const SizedBox(width: AppSpacing.sm),
+          Expanded(
+            child: _RpeCell(
+              value: rpe,
+              selected: initial == rpe.toDouble(),
+              onTap: () => Navigator.pop(context, rpe.toDouble()),
+            ),
           ),
         ],
-      ),
+      ],
     );
   }
 }
@@ -68,18 +115,31 @@ class _RpeCell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Warm ramp across the scale so 1 reads as light and 10 as maximal.
+    final intensity = (value - 1) / 9;
+    final fill = Color.lerp(
+      AppColors.buttonBg,
+      AppColors.accentSoft,
+      intensity,
+    )!;
+    final border = Color.lerp(
+      AppColors.buttonBorder,
+      AppColors.accent.withValues(alpha: 0.45),
+      intensity,
+    )!;
+
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(AppRadius.md),
       child: Container(
-        width: 46,
-        height: 46,
+        height: 52,
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: selected ? AppColors.buttonPrimary : AppColors.buttonBg,
+          color: selected ? AppColors.accent : fill,
           borderRadius: BorderRadius.circular(AppRadius.md),
           border: Border.all(
-            color: selected ? AppColors.buttonPrimary : AppColors.buttonBorder,
+            color: selected ? AppColors.accent : border,
+            width: selected ? 2 : 1,
           ),
         ),
         child: Text(
