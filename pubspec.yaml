@@ -1,7 +1,7 @@
 name: xenoh_mobile
 description: "Xenoh — training & recovery companion (Flutter mobile client)."
 publish_to: "none"
-version: 0.1.0+2
+version: 1.0.0+1
 
 environment:
   sdk: ^3.12.0

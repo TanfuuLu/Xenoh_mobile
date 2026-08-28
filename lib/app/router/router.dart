@@ -124,8 +124,7 @@ GoRouter router(Ref ref) {
       ),
       GoRoute(
         path: '/privacy',
-        builder: (_, _) =>
-            _withMenu(const LegalScreen(kind: LegalPageKind.privacy)),
+        builder: (_, _) => const LegalScreen(kind: LegalPageKind.privacy),
       ),
       GoRoute(
         path: '/account-deletion',
@@ -141,8 +140,7 @@ GoRouter router(Ref ref) {
       ),
       GoRoute(
         path: '/terms',
-        builder: (_, _) =>
-            _withMenu(const LegalScreen(kind: LegalPageKind.terms)),
+        builder: (_, _) => const LegalScreen(kind: LegalPageKind.terms),
       ),
       GoRoute(
         path: '/subscription',

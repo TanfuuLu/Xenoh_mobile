@@ -23,6 +23,7 @@ import 'package:xenoh_mobile/features/training/domain/entities/plan.dart';
 import 'package:xenoh_mobile/features/training/domain/entities/weekly_workout.dart';
 import 'package:xenoh_mobile/features/training/domain/repositories/training_repository.dart';
 import 'package:xenoh_mobile/features/training/presentation/providers/cycle_day_markers_provider.dart';
+import 'package:xenoh_mobile/features/training/presentation/providers/exercises_controller.dart';
 import 'package:xenoh_mobile/features/training/presentation/screens/day_screen.dart';
 import 'package:xenoh_mobile/features/training/presentation/screens/exercise_library_screen.dart';
 import 'package:xenoh_mobile/features/training/presentation/screens/plan_detail_screen.dart';
@@ -32,6 +33,7 @@ import 'package:xenoh_mobile/features/training/presentation/widgets/create_plan_
 import 'package:xenoh_mobile/features/training/presentation/widgets/exercise_template_form_sheet.dart';
 import 'package:xenoh_mobile/features/training/presentation/widgets/exercise_template_picker_sheet.dart';
 import 'package:xenoh_mobile/features/training/presentation/widgets/plan_card.dart';
+import 'package:xenoh_mobile/features/training/presentation/widgets/workout_result_view.dart';
 import 'package:xenoh_mobile/l10n/app_localizations.dart';
 
 class MockTrainingRepository extends Mock implements TrainingRepository {}
@@ -268,10 +270,119 @@ void main() {
     await tester.pumpWidget(_app(const DayScreen(dayId: 'day-1'), repo: repo));
     await tester.pumpAndSettle();
 
+    expect(find.byType(WorkoutResultDialog), findsNothing);
     expect(find.text('40m'), findsWidgets);
     expect(find.text('~240 kcal'), findsOneWidget);
     expect(find.text('No est.'), findsNothing);
   });
+
+  testWidgets(
+    'training result stays hidden until every exercise is completed',
+    (tester) async {
+      final repo = MockTrainingRepository();
+      const firstSet = ExerciseSet(
+        id: 'set-1',
+        setNumber: 1,
+        plannedReps: 5,
+        isCompleted: false,
+      );
+      const secondSet = ExerciseSet(
+        id: 'set-2',
+        setNumber: 1,
+        plannedReps: 5,
+        isCompleted: false,
+      );
+      const firstExercise = Exercise(
+        id: 'exercise-1',
+        exerciseTemplateId: 'template-1',
+        name: 'Squat',
+        primaryMuscleGroup: 'Quadriceps',
+        exerciseKind: 'Strength',
+        plannedSets: 1,
+        plannedReps: 5,
+        completedSetsCount: 0,
+        isCompleted: false,
+        isSkipped: false,
+        dailyWorkoutId: 'day-1',
+        sortOrder: 0,
+        sets: [firstSet],
+      );
+      const skippedExercise = Exercise(
+        id: 'exercise-2',
+        exerciseTemplateId: 'template-2',
+        name: 'Bench Press',
+        primaryMuscleGroup: 'Chest',
+        exerciseKind: 'Strength',
+        plannedSets: 1,
+        plannedReps: 5,
+        completedSetsCount: 0,
+        isCompleted: false,
+        isSkipped: true,
+        dailyWorkoutId: 'day-1',
+        sortOrder: 1,
+        sets: [secondSet],
+      );
+      final completedFirstExercise = firstExercise.copyWith(
+        completedSetsCount: 1,
+        isCompleted: true,
+        sets: [firstSet.copyWith(isCompleted: true)],
+      );
+      final unskippedExercise = skippedExercise.copyWith(isSkipped: false);
+      final completedSecondExercise = unskippedExercise.copyWith(
+        completedSetsCount: 1,
+        isCompleted: true,
+        sets: [secondSet.copyWith(isCompleted: true)],
+      );
+
+      when(
+        () => repo.getExercisesByDay('day-1'),
+      ).thenAnswer((_) async => [firstExercise, skippedExercise]);
+      when(
+        () => repo.markSetComplete(
+          'set-1',
+          actualReps: 5,
+          actualWeight: null,
+          rpe: null,
+        ),
+      ).thenAnswer((_) async => completedFirstExercise);
+      when(
+        () => repo.skipExercise('exercise-2', isSkipped: false),
+      ).thenAnswer((_) async => unskippedExercise);
+      when(
+        () => repo.markSetComplete(
+          'set-2',
+          actualReps: 5,
+          actualWeight: null,
+          rpe: null,
+        ),
+      ).thenAnswer((_) async => completedSecondExercise);
+
+      await tester.pumpWidget(
+        _app(const DayScreen(dayId: 'day-1'), repo: repo),
+      );
+      await tester.pumpAndSettle();
+
+      final container = ProviderScope.containerOf(
+        tester.element(find.byType(DayScreen)),
+      );
+      await container
+          .read(exercisesControllerProvider('day-1').notifier)
+          .markSetComplete('set-1', actualReps: 5);
+      await tester.pumpAndSettle();
+
+      expect(find.byType(WorkoutResultDialog), findsNothing);
+
+      await container
+          .read(exercisesControllerProvider('day-1').notifier)
+          .skipExercise('exercise-2', isSkipped: false);
+      await container
+          .read(exercisesControllerProvider('day-1').notifier)
+          .markSetComplete('set-2', actualReps: 5);
+      await tester.pumpAndSettle();
+
+      expect(find.byType(WorkoutResultDialog), findsOneWidget);
+    },
+  );
 
   testWidgets('disabled RPE tracking completes a set without RPE input', (
     tester,

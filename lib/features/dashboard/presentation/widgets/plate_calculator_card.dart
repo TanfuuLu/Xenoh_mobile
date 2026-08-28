@@ -102,8 +102,8 @@ enum _PlateEquipment {
   ),
   lb(
     bars: [45, 35, 55],
-    plates: [45, 35, 25, 10, 5, 2.5],
-    alternativePlates: [35, 25, 10, 5, 2.5],
+    plates: [55, 45, 35, 25, 10, 5, 2.5],
+    alternativePlates: [45, 35, 25, 10, 5, 2.5],
     defaultTarget: 135,
     step: 5,
   );
@@ -218,106 +218,104 @@ class _PlateCalculatorCardState extends State<PlateCalculatorCard> {
         borderRadius: BorderRadius.circular(AppRadius.xxl),
         border: Border.all(color: AppColors.surfaceBorderSoft),
       ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.lg,
-          vertical: AppSpacing.sm,
-        ),
-        child: AnimatedSize(
-          duration: AppMotion.med,
-          curve: Curves.easeOutCubic,
-          alignment: Alignment.topCenter,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Container(
-                  width: 44,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: AppColors.bg4,
-                    borderRadius: BorderRadius.circular(AppRadius.pill),
-                  ),
-                ),
-              ),
-              const SizedBox(height: AppSpacing.xs),
-              Row(
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final compact = constraints.maxWidth < 360;
+          final horizontalPadding = compact ? AppSpacing.md : AppSpacing.lg;
+          return Padding(
+            padding: EdgeInsets.fromLTRB(
+              horizontalPadding,
+              AppSpacing.sm,
+              horizontalPadding,
+              AppSpacing.lg,
+            ),
+            child: AnimatedSize(
+              duration: AppMotion.med,
+              curve: Curves.easeOutCubic,
+              alignment: Alignment.topCenter,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                    child: Text(
-                      l10n.dashboardPlateCalculatorEyebrow,
-                      style: _eyebrow,
-                    ),
-                  ),
-                  IconButton(
-                    tooltip: l10n.commonReset,
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints.tightFor(
-                      width: 36,
-                      height: 36,
-                    ),
-                    visualDensity: VisualDensity.compact,
-                    onPressed: _reset,
-                    icon: const Icon(Icons.restart_alt_rounded),
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppSpacing.xs),
-              _ModeSwitch(
-                mode: _mode,
-                onChanged: (mode) => setState(() => _mode = mode),
-              ),
-              const SizedBox(height: AppSpacing.xs),
-              _BarbellVisual(
-                platesPerSide: result.platesPerSide,
-                unit: widget.unit,
-              ),
-              const Divider(height: AppSpacing.sm),
-              if (_mode == _PlateCalculatorMode.target)
-                _TargetModeInput(
-                  controller: _targetController,
-                  unit: widget.unit,
-                  step: _equipment.step,
-                  onChanged: _setTargetFromText,
-                  onStep: _stepTarget,
-                )
-              else
-                _CountModeInput(
-                  plates: _plates,
-                  counts: _plateCounts,
-                  controllers: _resolvedCountControllers,
-                  unit: widget.unit,
-                  onChanged: _setPlateCount,
-                  onStep: _stepPlateCount,
-                ),
-              const SizedBox(height: AppSpacing.sm),
-              Wrap(
-                spacing: AppSpacing.sm,
-                runSpacing: AppSpacing.xs,
-                children: [
-                  for (final bar in _barOptions)
-                    _BarOption(
-                      label: l10n.dashboardPlateBarWeightLabel(
-                        formatWeight(bar),
-                        widget.unit.suffix,
+                  Center(
+                    child: Container(
+                      width: 44,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: AppColors.bg4,
+                        borderRadius: BorderRadius.circular(AppRadius.pill),
                       ),
-                      selected: _barWeight == bar,
-                      onTap: () => setState(() => _barWeight = bar),
                     ),
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
+                  _CalculatorHeader(onReset: _reset),
+                  const SizedBox(height: AppSpacing.md),
+                  _ModeSwitch(
+                    mode: _mode,
+                    onChanged: (mode) => setState(() => _mode = mode),
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  _BarbellStage(
+                    platesPerSide: result.platesPerSide,
+                    unit: widget.unit,
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  _CalculatorPanel(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (_mode == _PlateCalculatorMode.target)
+                          _TargetModeInput(
+                            controller: _targetController,
+                            unit: widget.unit,
+                            step: _equipment.step,
+                            onChanged: _setTargetFromText,
+                            onStep: _stepTarget,
+                          )
+                        else
+                          _CountModeInput(
+                            plates: _plates,
+                            counts: _plateCounts,
+                            controllers: _resolvedCountControllers,
+                            unit: widget.unit,
+                            onChanged: _setPlateCount,
+                            onStep: _stepPlateCount,
+                          ),
+                        const SizedBox(height: AppSpacing.md),
+                        Wrap(
+                          spacing: AppSpacing.sm,
+                          runSpacing: AppSpacing.xs,
+                          children: [
+                            for (final bar in _barOptions)
+                              _BarOption(
+                                label: l10n.dashboardPlateBarWeightLabel(
+                                  formatWeight(bar),
+                                  widget.unit.suffix,
+                                ),
+                                selected: _barWeight == bar,
+                                onTap: () => setState(() => _barWeight = bar),
+                              ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  _CalculatorPanel(
+                    emphasized: true,
+                    child: _PlateResultView(
+                      mode: _mode,
+                      target: _target,
+                      barWeight: _barWeight,
+                      result: result,
+                      unit: widget.unit,
+                      equipment: _equipment,
+                    ),
+                  ),
                 ],
               ),
-              const SizedBox(height: AppSpacing.sm),
-              _PlateResultView(
-                mode: _mode,
-                target: _target,
-                barWeight: _barWeight,
-                result: result,
-                unit: widget.unit,
-                equipment: _equipment,
-              ),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -454,6 +452,147 @@ class _PlateCalculatorCardState extends State<PlateCalculatorCard> {
   }
 }
 
+class _CalculatorHeader extends StatelessWidget {
+  const _CalculatorHeader({required this.onReset});
+
+  final VoidCallback onReset;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return Row(
+      children: [
+        Container(
+          width: 40,
+          height: 40,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: AppColors.clay100,
+            borderRadius: BorderRadius.circular(AppRadius.md),
+          ),
+          child: const Icon(
+            Icons.fitness_center_rounded,
+            color: AppColors.clay900,
+            size: 20,
+          ),
+        ),
+        const SizedBox(width: AppSpacing.md),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                l10n.dashboardPlateCalculatorTitle,
+                style: AppTypography.display(
+                  18,
+                  weight: FontWeight.w600,
+                  letterSpacing: -0.15,
+                ),
+              ),
+              const SizedBox(height: 1),
+              Text(
+                l10n.dashboardPlateCalculatorSubtitle,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  color: AppColors.fg3,
+                  fontSize: 11,
+                  height: 1.3,
+                ),
+              ),
+            ],
+          ),
+        ),
+        IconButton(
+          tooltip: l10n.commonReset,
+          onPressed: onReset,
+          style: IconButton.styleFrom(
+            foregroundColor: AppColors.fg2,
+            backgroundColor: AppColors.bg3,
+            minimumSize: const Size.square(40),
+            maximumSize: const Size.square(40),
+          ),
+          icon: const Icon(Icons.restart_alt_rounded, size: 20),
+        ),
+      ],
+    );
+  }
+}
+
+class _BarbellStage extends StatelessWidget {
+  const _BarbellStage({required this.platesPerSide, required this.unit});
+
+  final List<double> platesPerSide;
+  final WeightUnit unit;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.sm,
+        AppSpacing.sm,
+        AppSpacing.sm,
+        AppSpacing.xs,
+      ),
+      decoration: BoxDecoration(
+        color: AppColors.clay050,
+        borderRadius: BorderRadius.circular(AppRadius.lg),
+        border: Border.all(color: AppColors.surfaceBorderSoft),
+      ),
+      child: Stack(
+        children: [
+          _BarbellVisual(platesPerSide: platesPerSide, unit: unit),
+          Positioned(
+            right: AppSpacing.xs,
+            top: AppSpacing.xs,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+              decoration: BoxDecoration(
+                color: AppColors.bg2.withValues(alpha: 0.88),
+                borderRadius: BorderRadius.circular(AppRadius.pill),
+                border: Border.all(color: AppColors.surfaceBorderSoft),
+              ),
+              child: Text(
+                unit.suffix,
+                style: AppTypography.mono(
+                  10,
+                  weight: FontWeight.w600,
+                  color: AppColors.fg3,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _CalculatorPanel extends StatelessWidget {
+  const _CalculatorPanel({required this.child, this.emphasized = false});
+
+  final Widget child;
+  final bool emphasized;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(AppSpacing.md),
+      decoration: BoxDecoration(
+        color: emphasized ? AppColors.clay050 : AppColors.bg2,
+        borderRadius: BorderRadius.circular(AppRadius.lg),
+        border: Border.all(
+          color: emphasized
+              ? AppColors.buttonBorder
+              : AppColors.surfaceBorderSoft,
+        ),
+      ),
+      child: child,
+    );
+  }
+}
+
 enum _PlateCalculatorMode { target, count }
 
 class _ModeSwitch extends StatelessWidget {
@@ -466,10 +605,11 @@ class _ModeSwitch extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return Container(
-      decoration: const BoxDecoration(
-        border: Border(
-          bottom: BorderSide(color: AppColors.surfaceBorderSoft),
-        ),
+      padding: const EdgeInsets.all(AppSpacing.xs),
+      decoration: BoxDecoration(
+        color: AppColors.bg3,
+        borderRadius: BorderRadius.circular(AppRadius.lg),
+        border: Border.all(color: AppColors.surfaceBorderSoft),
       ),
       child: Row(
         children: [
@@ -514,21 +654,20 @@ class _ModeOption extends StatelessWidget {
           duration: AppMotion.fast,
           curve: Curves.easeOutCubic,
           alignment: Alignment.center,
-          padding: const EdgeInsets.fromLTRB(8, 6, 8, 5),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 9),
           decoration: BoxDecoration(
-            border: Border(
-              bottom: BorderSide(
-                color: selected ? AppColors.accent : Colors.transparent,
-                width: 2,
-              ),
+            color: selected ? AppColors.bg2 : Colors.transparent,
+            borderRadius: BorderRadius.circular(AppRadius.md),
+            border: Border.all(
+              color: selected ? AppColors.buttonBorder : Colors.transparent,
             ),
           ),
           child: Text(
             label,
             style: TextStyle(
-              color: selected ? AppColors.fg1 : AppColors.fg3,
+              color: selected ? AppColors.clay900 : AppColors.fg3,
               fontSize: 13,
-              fontWeight: FontWeight.w500,
+              fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
             ),
           ),
         ),
@@ -736,14 +875,19 @@ class _PlateCountRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return AnimatedContainer(
+      duration: AppMotion.fast,
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.xs,
-        vertical: 2,
+        vertical: AppSpacing.xs,
+      ),
+      decoration: BoxDecoration(
+        color: count > 0 ? AppColors.accentSoft : Colors.transparent,
+        borderRadius: BorderRadius.circular(AppRadius.md),
       ),
       child: Row(
         children: [
-          _PlateDot(weight: plate, count: count, unit: unit),
+          _PlateDot(weight: plate, unit: unit),
           const SizedBox(width: AppSpacing.sm),
           Expanded(
             child: Text(
@@ -811,6 +955,10 @@ class _StepButton extends StatelessWidget {
       height: 48,
       child: IconButton.filledTonal(
         visualDensity: VisualDensity.compact,
+        style: IconButton.styleFrom(
+          foregroundColor: AppColors.sage700,
+          backgroundColor: AppColors.sage100,
+        ),
         onPressed: onTap,
         icon: Icon(icon, size: 20),
       ),
@@ -1002,6 +1150,7 @@ Color _lbPlateColor(double weight) => switch (weight) {
   25.0 => AppColors.plateGreen,
   10.0 => AppColors.plateWhite,
   5.0 => AppColors.plateRed,
+  2.5 => AppColors.plateGreen,
   _ => AppColors.ink300,
 };
 
@@ -1456,12 +1605,10 @@ class _PlateBreakdownChip extends StatelessWidget {
 class _PlateDot extends StatelessWidget {
   const _PlateDot({
     required this.weight,
-    required this.count,
     required this.unit,
   });
 
   final double weight;
-  final int count;
   final WeightUnit unit;
 
   @override
@@ -1490,12 +1637,19 @@ class _PlateDot extends StatelessWidget {
         alignment: Alignment.center,
         children: [
           Container(
+            key: Key('plate-dot-${formatWeight(weight)}-${unit.suffix}'),
             width: size,
             height: size,
             decoration: BoxDecoration(
-              color: count > 0 ? _plateColor(weight, unit) : AppColors.bg3,
+              color: _plateColor(weight, unit),
               shape: BoxShape.circle,
-              border: Border.all(color: AppColors.surfaceBorderSoft),
+              border: Border.all(
+                color: Color.lerp(
+                  _plateColor(weight, unit),
+                  AppColors.ink900,
+                  0.35,
+                )!.withValues(alpha: 0.52),
+              ),
             ),
           ),
           Container(

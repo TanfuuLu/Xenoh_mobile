@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:xenoh_mobile/app/theme/app_colors.dart';
 import 'package:xenoh_mobile/app/theme/app_theme.dart';
 import 'package:xenoh_mobile/core/utils/weight_units.dart';
 import 'package:xenoh_mobile/features/dashboard/presentation/widgets/plate_calculator_card.dart';
@@ -126,9 +127,54 @@ void main() {
     // The lb plate set includes 45s and 35s and drops the 20 kg plate. The
     // bar-only headline also reads "45 lb", hence findsWidgets.
     expect(find.text('45 lb'), findsWidgets);
+    expect(find.text('55 lb'), findsOneWidget);
     expect(find.text('35 lb'), findsOneWidget);
     expect(find.text('25 lb'), findsOneWidget);
     expect(find.text('20 kg'), findsNothing);
+    expect(find.textContaining('lbs'), findsNothing);
+
+    const expectedPlateColors = <String, Color>{
+      '55': AppColors.plateRed,
+      '45': AppColors.plateBlue,
+      '35': AppColors.plateYellow,
+      '25': AppColors.plateGreen,
+      '10': AppColors.plateWhite,
+    };
+    for (final entry in expectedPlateColors.entries) {
+      final plate = tester.widget<Container>(
+        find.byKey(Key('plate-dot-${entry.key}-lb')),
+      );
+      expect(
+        (plate.decoration! as BoxDecoration).color,
+        entry.value,
+        reason: '${entry.key} lb plate uses the standard color',
+      );
+    }
+
+    final plate55Row = find
+        .ancestor(of: find.text('55 lb'), matching: find.byType(Row))
+        .first;
+    await tester.tap(
+      find.descendant(
+        of: plate55Row,
+        matching: find.byIcon(Icons.add_rounded),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('155 lb'), findsOneWidget);
+    expect(
+      find.descendant(
+        of: plate55Row,
+        matching: find.byWidgetPredicate(
+          (widget) =>
+              widget is Container &&
+              widget.decoration is BoxDecoration &&
+              (widget.decoration! as BoxDecoration).color == AppColors.plateRed,
+        ),
+      ),
+      findsOneWidget,
+    );
     expect(tester.takeException(), isNull);
   });
 
@@ -178,6 +224,39 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('≈ 61.2 kg'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('both calculator modes fit Vietnamese on a narrow phone', (
+    tester,
+  ) async {
+    await tester.binding.setSurfaceSize(const Size(320, 760));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    await tester.pumpWidget(
+      MaterialApp(
+        locale: const Locale('vi'),
+        theme: AppTheme.light(),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: const Scaffold(
+          body: SingleChildScrollView(
+            child: PlateCalculatorCard(unit: WeightUnit.lb),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Máy tính đĩa tạ'), findsOneWidget);
+    expect(find.text('Tính toán'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+
+    await tester.tap(find.text('Tính tổng đĩa tạ'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('55 lb'), findsOneWidget);
+    expect(find.textContaining('lbs'), findsNothing);
     expect(tester.takeException(), isNull);
   });
 }

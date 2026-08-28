@@ -120,12 +120,18 @@ class _DayScreenState extends ConsumerState<DayScreen> {
         previous,
         next,
       ) {
+        final previousItems = previous?.value;
         final nextItems = next.value;
         if (nextItems == null || nextItems.isEmpty) {
           return;
         }
-        if (!_dayResolved(nextItems)) {
+        if (!_allExercisesCompleted(nextItems)) {
           _resultDialogShown = false;
+          return;
+        }
+        // Loading an already-completed day is not a new completion. Only show
+        // the result when this mounted screen observes every exercise complete.
+        if (previousItems == null || _allExercisesCompleted(previousItems)) {
           return;
         }
         if (_resultDialogShown) return;
@@ -321,6 +327,9 @@ class _DayScreenState extends ConsumerState<DayScreen> {
 
 bool _dayResolved(List<Exercise> items) =>
     items.isNotEmpty && items.every((e) => e.isCompleted || e.isSkipped);
+
+bool _allExercisesCompleted(List<Exercise> items) =>
+    items.isNotEmpty && items.every((exercise) => exercise.isCompleted);
 
 class _AddExerciseListButton extends StatelessWidget {
   const _AddExerciseListButton({required this.onPressed});

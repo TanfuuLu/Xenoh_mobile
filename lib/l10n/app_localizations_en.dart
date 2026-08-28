@@ -4702,64 +4702,166 @@ class AppLocalizationsEn extends AppLocalizations {
   String get legalPrivacyTitle => 'Privacy Policy';
 
   @override
-  String get legalPrivacySubtitle =>
-      'How Xenoh handles account, training, nutrition, and coaching data.';
+  String get legalLastUpdated => 'Last updated 2 August 2026';
 
   @override
-  String get legalPrivacyDataWeUseTitle => 'Data We Use';
+  String get legalPrivacyIntro =>
+      'This policy explains what Xenoh collects, why, and the control you have over your data. It is a plain-language summary written for athletes and coaches, not a contract drafted to be unreadable.';
 
   @override
-  String get legalPrivacyDataWeUseBody =>
-      'Xenoh stores profile details, workout plans, exercise logs, bodyweight entries, nutrition logs, coach-client relationships, messages, reports, and subscription state needed to run the product.';
+  String get legalPrivacyWhatWeCollectTitle => 'What we collect';
 
   @override
-  String get legalPrivacyCoachingVisibilityTitle => 'Coaching Visibility';
+  String get legalPrivacyWhatWeCollectBody =>
+      'Account details you give us: email, name, and password (stored only as a secure hash).\n\nProfile data you choose to add: height, gender, date of birth, and bodyweight logs — used to calculate BMI, DOTS, and nutrition targets.\n\nTraining data you create: plans, exercises, sets, reps, weights, and session history.\n\nCoach-client data, such as invitations, roster status, assigned plans, client progress summaries, comments, and messages exchanged through Xenoh.\n\nPayment and subscription records needed to activate paid features, calculate coach billing, issue receipts, and handle refund requests. Card or bank details are handled by payment providers and are not stored in full by Xenoh.\n\nBasic technical data needed to run the service, such as your authentication session.';
 
   @override
-  String get legalPrivacyCoachingVisibilityBody =>
-      'When you connect with a coach, authorized coach views can access the client information required for coaching workflows, including plans, workout progress, nutrition data, and shared cycle data when enabled.';
+  String get legalPrivacyHowWeUseTitle => 'How we use it';
+
+  @override
+  String get legalPrivacyHowWeUseBody =>
+      'To run the core product: store your plans, log your sets, and show your progress.\n\nTo calculate the metrics you asked for — streaks, BMI, DOTS, and macro targets.\n\nTo keep your account secure and to fix problems when something breaks.\n\nTo manage subscriptions, trials, invoices, refunds, account limits, and support requests.\n\nTo improve product reliability by reviewing aggregated usage patterns, crash details, and performance data. We do not use this to sell advertising profiles.\n\nWe do not sell your data, and we do not run third-party advertising trackers.';
+
+  @override
+  String get legalPrivacyCoachSharingTitle => 'Coach and client sharing';
+
+  @override
+  String get legalPrivacyCoachSharingBody =>
+      'If you connect with a coach, the plans they write appear in your account and the sets you log become visible to that coach. This is the point of the feature.\n\nCoaches can see client profile details, training logs, progress charts, compliance data, nutrition analysis, and messages that are needed to provide coaching through Xenoh.\n\nClients can see plans, notes, feedback, and messages their coach creates for them.\n\nEither side can end the relationship at any time. When a relationship ends, coach-authored plans tied to it are removed.';
+
+  @override
+  String get legalPrivacyAiAnalysisTitle => 'AI and analysis features';
+
+  @override
+  String get legalPrivacyAiAnalysisBody =>
+      'When you use AI insights, Xenoh may process your training, nutrition, bodyweight, and profile data to generate summaries, recommendations, or progress observations.\n\nAI output is informational and may be incomplete or wrong. Do not treat it as medical, injury, nutrition, or competition advice without professional review.';
+
+  @override
+  String get legalPrivacyProvidersTitle => 'Service providers';
+
+  @override
+  String get legalPrivacyProvidersBody =>
+      'We use trusted providers for hosting, database storage, authentication delivery, analytics, payments, email, and support. They may process limited data only as needed to provide those services to Xenoh.\n\nWe require providers to protect data appropriately and not use it for their own advertising purposes.';
+
+  @override
+  String get legalPrivacyRetentionDeletionTitle =>
+      'Keeping and deleting your data';
+
+  @override
+  String get legalPrivacyRetentionDeletionBody =>
+      'Your training history belongs to you. You can export every plan and log to CSV at any time.\n\nYou can delete your account from the app while signed in, or request deletion from the website by entering your email address and confirming the verification link we send to that address.\n\nAfter verification, Xenoh deletes product data and stored documents, including competition payment evidence. Competition entries needed to preserve published results or transaction history are detached from your account and stripped of your name, contact details, birth date, declared measurements, and uploaded receipts.\n\nA locked, anonymized account shell and limited payment, subscription, legal-acceptance, competition-result, and deletion-audit records may be retained for up to 7 years where needed for accounting, dispute handling, fraud prevention, and legal compliance.\n\nBackups and security logs may remain for a limited period under operational retention policies before automatic deletion. These records are used only for recovery, security, fraud prevention, or legal compliance.';
+
+  @override
+  String get legalPrivacyCookiesTitle => 'Cookies';
+
+  @override
+  String get legalPrivacyCookiesBody =>
+      'We use essential cookies and local storage to keep you signed in and remember preferences like language. We do not use advertising or cross-site tracking cookies.';
 
   @override
   String get legalPrivacySecurityTitle => 'Security';
 
   @override
   String get legalPrivacySecurityBody =>
-      'Authenticated app requests use JWT authorization. Tokens are stored in secure device storage and backend authorization remains the source of truth for access.';
+      'Data is encrypted in transit. Access to your account is protected by token-based authentication. No system is perfectly secure, but we treat your training history as something worth protecting.\n\nYou are responsible for keeping your password and devices secure. If you believe your account was accessed without permission, contact support as soon as possible.';
 
   @override
-  String get legalTermsTitle => 'Terms';
+  String get legalPrivacyMinorsTitle => 'Children and minors';
 
   @override
-  String get legalTermsSubtitle =>
-      'Rules for using Xenoh training, nutrition, AI, and coaching tools.';
+  String get legalPrivacyMinorsBody =>
+      'Xenoh is intended for users who can legally create an account and agree to these policies. If a minor uses Xenoh, a parent, guardian, coach, or responsible adult should supervise their training and account use.';
 
   @override
-  String get legalTermsTrainingResponsibilityTitle => 'Training Responsibility';
+  String get legalPrivacyRightsContactTitle => 'Your rights and contact';
 
   @override
-  String get legalTermsTrainingResponsibilityBody =>
-      'Workout, nutrition, and AI outputs are support tools. Users remain responsible for training safely and consulting qualified professionals where appropriate.';
+  String get legalPrivacyRightsContactBody =>
+      'You can access, correct, export, or delete your data from within the app or by contacting us.\n\nQuestions about privacy? Email privacy@xenoh.app and a person will reply.';
 
   @override
-  String get legalTermsAccountAccessTitle => 'Account Access';
+  String get legalTermsTitle => 'Terms of Service';
 
   @override
-  String get legalTermsAccountAccessBody =>
-      'Users must keep account credentials secure. Role and subscription access may be changed or revoked when required by backend policy.';
+  String get legalTermsIntro =>
+      'These terms cover how you can use Xenoh. By creating an account or using the service, you agree to them.';
 
   @override
-  String get legalTermsAiLimitsTitle => 'AI And Subscription Limits';
+  String get legalTermsAccountTitle => 'Your account';
 
   @override
-  String get legalTermsAiLimitsBody =>
-      'AI features may be gated by subscription tier, quota, and backend availability. The mobile app displays upgrade, quota, and failure states when returned by the API.';
+  String get legalTermsAccountBody =>
+      'Give accurate information when you sign up and keep your login credentials private. You are responsible for activity under your account.\n\nOne account is for one person. Do not share a single account across a team.\n\nYou must be legally able to create an account in your location. If you use Xenoh for a team, gym, or coaching business, you are responsible for making sure each user has the right permissions and consent.';
+
+  @override
+  String get legalTermsPlansBillingTitle => 'Plans and billing';
+
+  @override
+  String get legalTermsPlansBillingBody =>
+      'The Solo plan is free. Pro Individual and Pro Coach are fixed-term prepaid plans offered for 1, 3, 6, or 12 months. The total VND price and term are shown before a payment order is created.\n\nPro Coach is a flat-price plan with unlimited client capacity. Xenoh does not charge per active client and does not prorate charges based on client activity.\n\nPaid plans do not renew automatically. Access remains active until the recorded expiration date; continuing afterward requires a new payment.\n\nChanging to a different paid tier starts a new term when the new payment is confirmed and may replace unused time on the previous tier. The checkout warning shows this before payment.\n\nPromotions, taxes, feature limits, and payment instructions shown at checkout form part of the offer. Refund requests are handled under the Refund Policy and applicable law.';
+
+  @override
+  String get legalTermsAcceptableUseTitle => 'Acceptable use';
+
+  @override
+  String get legalTermsAcceptableUseBody =>
+      'Do not abuse the service: no attempts to break authentication, scrape data in bulk, reverse-engineer the app, or disrupt other users.\n\nDo not upload content you do not have the right to share.\n\nDo not use Xenoh to harass, threaten, exploit, or spam other users.\n\nDo not submit false payment information, misuse trials, bypass subscription limits, or resell access without written permission.';
 
   @override
   String get legalTermsCommunityContentTitle => 'Community Content';
 
   @override
   String get legalTermsCommunityContentBody =>
-      'Posts, comments, photos, and messages you share stay your content, and you are responsible for them. Do not post anything unlawful, hateful, harassing, sexually explicit, or that infringes someone else\'s rights, and do not present medical advice as coming from Xenoh. Reported content may be reviewed, hidden, or removed, and repeat violations may cost you access to community features.';
+      'Posts, comments, photos, and messages you share stay your content, and you are responsible for them.\n\nDo not post anything unlawful, hateful, harassing, sexually explicit, or that infringes someone else\'s rights, and do not present medical advice as coming from Xenoh.\n\nAnyone can report content or block another user from inside the app. Reported content may be reviewed, hidden, or removed, and repeat violations may cost you access to community features.';
+
+  @override
+  String get legalTermsHealthDisclaimerTitle => 'Health disclaimer';
+
+  @override
+  String get legalTermsHealthDisclaimerBody =>
+      'Xenoh is a training journal, not medical advice. Strength training carries inherent risk.\n\nConsult a qualified professional before starting a program, and train within your own limits. You are responsible for your own safety.\n\nMetrics, AI insights, nutrition targets, and coach notes are informational tools. They do not replace a doctor, physical therapist, dietitian, or qualified in-person assessment.';
+
+  @override
+  String get legalTermsCoachClientTitle => 'Coach and client relationships';
+
+  @override
+  String get legalTermsCoachClientBody =>
+      'Xenoh provides the tools that let a coach and a client work together. We are not a party to the coaching agreement between them and are not responsible for the programming a coach provides.\n\nCoaches are responsible for their own credentials, client communication, pricing, tax obligations, safety practices, and professional duties outside Xenoh.\n\nClients are responsible for deciding whether a coach, plan, or instruction is suitable for them.';
+
+  @override
+  String get legalTermsOwnershipTitle => 'Ownership';
+
+  @override
+  String get legalTermsOwnershipBody =>
+      'Your data is yours. The Xenoh app, brand, and software are ours and are protected by intellectual property law.\n\nYou give Xenoh permission to store, process, display, and transmit your content only as needed to run the service, provide support, protect the platform, and improve the product.';
+
+  @override
+  String get legalTermsAvailabilityTitle => 'Availability and changes';
+
+  @override
+  String get legalTermsAvailabilityBody =>
+      'We work to keep Xenoh reliable, but the service may be unavailable during maintenance, provider outages, network failures, security work, or product updates.\n\nFeatures may change over time. We try to avoid removing important functionality without notice, but we may modify or retire features when needed for security, reliability, legal, or product reasons.';
+
+  @override
+  String get legalTermsLiabilityTitle => 'Limits of liability';
+
+  @override
+  String get legalTermsLiabilityBody =>
+      'To the maximum extent allowed by law, Xenoh is provided as-is and we are not liable for indirect, incidental, special, or consequential damages, lost profits, lost training opportunities, injury, or decisions made from app data.\n\nWhere liability cannot be excluded, our total liability is limited to the amount you paid to Xenoh in the three months before the claim.';
+
+  @override
+  String get legalTermsTerminationTitle => 'Termination and changes';
+
+  @override
+  String get legalTermsTerminationBody =>
+      'You can close your account at any time. We may suspend accounts that violate these terms. Data is handled as described in the Privacy Policy.\n\nWe may update these terms as the product changes. If we make a material change, we will note it here. Continuing to use Xenoh means you accept the current terms.';
+
+  @override
+  String get legalTermsContactTitle => 'Contact';
+
+  @override
+  String get legalTermsContactBody =>
+      'Questions about these terms? Email support@xenoh.app.';
 
   @override
   String get legalRefundTitle => 'Refund Policy';
