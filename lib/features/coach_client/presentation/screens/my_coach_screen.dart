@@ -10,7 +10,6 @@ import '../../../../app/theme/app_typography.dart';
 import '../../../../core/utils/app_routes.dart';
 import '../../../../core/utils/safe_external_url.dart';
 import '../../../../core/widgets/xn_card.dart';
-import '../../../../core/widgets/xn_chip.dart';
 import '../../../../core/widgets/xn_section.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../shared_api/api_widgets.dart';
@@ -29,12 +28,6 @@ class MyCoachScreen extends ConsumerWidget {
       title: l10n.coachMyCoachTitle,
       onRefresh: () => ref.refresh(myCoachProvider.future),
       children: [
-        FeatureHeader(
-          title: l10n.coachProfileTitle,
-          subtitle: l10n.coachProfileSubtitle,
-          icon: Icons.person_outline_rounded,
-        ),
-        const SizedBox(height: AppSpacing.lg),
         switch (coach) {
           AsyncData(:final value) when value == null => EmptyFeatureState(
             title: l10n.coachNoCoachConnectedTitle,
@@ -198,142 +191,271 @@ class _CoachCard extends StatelessWidget {
     final endDate = _parseDate(relationship['endDate']);
 
     return XnCard(
+      key: const ValueKey('coach-profile-hero'),
+      padding: EdgeInsets.zero,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CircleAvatar(
-                radius: 32,
-                backgroundColor: AppColors.accentSoft,
-                backgroundImage: avatarUrl != null && avatarUrl.isNotEmpty
-                    ? NetworkImage(avatarUrl)
-                    : null,
-                child: avatarUrl != null && avatarUrl.isNotEmpty
-                    ? null
-                    : Text(
-                        _initials(coachName),
-                        style: const TextStyle(
-                          color: AppColors.clay900,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 20,
-                        ),
-                      ),
+          Container(
+            padding: const EdgeInsets.fromLTRB(
+              AppSpacing.xl,
+              AppSpacing.xl,
+              AppSpacing.xl,
+              AppSpacing.lg,
+            ),
+            decoration: const BoxDecoration(
+              color: AppColors.clay050,
+              borderRadius: BorderRadius.vertical(
+                top: Radius.circular(AppRadius.lg),
               ),
-              const SizedBox(width: AppSpacing.md),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      coachName,
-                      style: AppTypography.display(20, letterSpacing: 0),
-                    ),
-                    const SizedBox(height: 8),
-                    Wrap(
-                      spacing: AppSpacing.sm,
-                      runSpacing: AppSpacing.sm,
-                      children: [
-                        if (email != null && email.isNotEmpty)
-                          XnChip(
-                            label: email,
-                            tone: XnChipTone.neutral,
-                            icon: Icons.mail_outline_rounded,
-                            compact: true,
-                          ),
-                        XnChip(
-                          label: status,
-                          tone: _statusTone(status),
-                          compact: true,
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.lg),
-          Row(
-            children: [
-              const Icon(
-                Icons.calendar_month_outlined,
-                size: 18,
-                color: AppColors.fg3,
-              ),
-              const SizedBox(width: AppSpacing.sm),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '${startDate == null ? '-' : _fmtDate(startDate, locale)} - '
-                      '${endDate == null ? l10n.coachOpenEndedDate : _fmtDate(endDate, locale)}',
-                      style: const TextStyle(
-                        color: AppColors.fg1,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    Text(
-                      l10n.coachCoachingPeriodLabel,
-                      style: const TextStyle(
-                        color: AppColors.fg3,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.md),
-          if (socialLinks.isNotEmpty) ...[
-            Wrap(
-              spacing: AppSpacing.xs,
-              runSpacing: AppSpacing.xs,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                for (final link in socialLinks)
-                  OutlinedButton.icon(
-                    onPressed: () => launchUrl(
-                      link.uri,
-                      mode: LaunchMode.externalApplication,
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    _CoachAvatar(name: coachName, avatarUrl: avatarUrl),
+                    const SizedBox(width: AppSpacing.lg),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            coachName,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: AppTypography.display(
+                              25,
+                              weight: FontWeight.w700,
+                              letterSpacing: -0.35,
+                              height: 1.08,
+                            ),
+                          ),
+                          const SizedBox(height: AppSpacing.sm),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                width: 7,
+                                height: 7,
+                                decoration: BoxDecoration(
+                                  color: _statusColor(status),
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                              const SizedBox(width: AppSpacing.sm),
+                              Flexible(
+                                child: Text(
+                                  status,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    color: AppColors.fg2,
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                    icon: Icon(link.icon, size: 16),
-                    label: Text(link.label),
+                  ],
+                ),
+                if (email != null && email.isNotEmpty) ...[
+                  const SizedBox(height: AppSpacing.lg),
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.mail_outline_rounded,
+                        size: 17,
+                        color: AppColors.fg3,
+                      ),
+                      const SizedBox(width: AppSpacing.sm),
+                      Expanded(
+                        child: Text(
+                          email,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            color: AppColors.fg2,
+                            fontSize: 13,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
+                ],
+                const SizedBox(height: AppSpacing.lg),
+                SizedBox(
+                  width: double.infinity,
+                  child: FilledButton.icon(
+                    onPressed: onMessage,
+                    icon: Badge(
+                      isLabelVisible: unreadCount > 0,
+                      label: Text(unreadCount.toString()),
+                      child: const Icon(
+                        Icons.chat_bubble_outline_rounded,
+                        size: 18,
+                      ),
+                    ),
+                    label: Text(l10n.coachMessageCoachButton),
+                  ),
+                ),
               ],
             ),
-            const SizedBox(height: AppSpacing.md),
-          ],
-          SizedBox(
-            width: double.infinity,
-            child: FilledButton.icon(
-              onPressed: onMessage,
-              icon: Badge(
-                isLabelVisible: unreadCount > 0,
-                label: Text(unreadCount.toString()),
-                child: const Icon(Icons.chat_bubble_outline_rounded, size: 18),
-              ),
-              label: Text(l10n.coachMessageCoachButton),
+          ),
+          Padding(
+            key: const ValueKey('coach-relationship-period'),
+            padding: const EdgeInsets.fromLTRB(
+              AppSpacing.xl,
+              AppSpacing.lg,
+              AppSpacing.xl,
+              AppSpacing.md,
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: 38,
+                  height: 38,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: AppColors.bg3,
+                    borderRadius: BorderRadius.circular(AppRadius.md),
+                  ),
+                  child: const Icon(
+                    Icons.calendar_month_outlined,
+                    size: 19,
+                    color: AppColors.clay900,
+                  ),
+                ),
+                const SizedBox(width: AppSpacing.md),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        l10n.coachCoachingPeriodLabel,
+                        style: const TextStyle(
+                          color: AppColors.fg3,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 0.3,
+                        ),
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        '${startDate == null ? '-' : _fmtDate(startDate, locale)} – '
+                        '${endDate == null ? l10n.coachOpenEndedDate : _fmtDate(endDate, locale)}',
+                        style: const TextStyle(
+                          color: AppColors.fg1,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          height: 1.35,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: AppSpacing.sm),
+          if (socialLinks.isNotEmpty) ...[
+            const SizedBox(height: AppSpacing.sm),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+              child: Wrap(
+                spacing: AppSpacing.sm,
+                runSpacing: AppSpacing.sm,
+                children: [
+                  for (final link in socialLinks)
+                    OutlinedButton.icon(
+                      onPressed: () => launchUrl(
+                        link.uri,
+                        mode: LaunchMode.externalApplication,
+                      ),
+                      icon: Icon(link.icon, size: 16),
+                      label: Text(link.label),
+                    ),
+                ],
+              ),
+            ),
+          ],
           if (status == 'Active')
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton.icon(
-                onPressed: onEndRelationship,
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: AppColors.danger,
-                  side: const BorderSide(color: AppColors.danger),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.md,
+                  AppSpacing.sm,
+                  AppSpacing.md,
+                  AppSpacing.md,
                 ),
-                icon: const Icon(Icons.person_off_outlined, size: 18),
-                label: Text(l10n.coachEndRelationshipAction),
+                child: TextButton.icon(
+                  onPressed: onEndRelationship,
+                  style: TextButton.styleFrom(
+                    foregroundColor: AppColors.danger,
+                  ),
+                  icon: const Icon(Icons.person_off_outlined, size: 18),
+                  label: Text(l10n.coachEndRelationshipAction),
+                ),
               ),
             ),
         ],
       ),
+    );
+  }
+}
+
+class _CoachAvatar extends StatelessWidget {
+  const _CoachAvatar({required this.name, this.avatarUrl});
+
+  final String name;
+  final String? avatarUrl;
+
+  @override
+  Widget build(BuildContext context) {
+    final hasAvatar = avatarUrl != null && avatarUrl!.isNotEmpty;
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(AppRadius.xl),
+          child: Container(
+            width: 72,
+            height: 72,
+            color: AppColors.clay200,
+            child: hasAvatar
+                ? Image.network(avatarUrl!, fit: BoxFit.cover)
+                : Center(
+                    child: Text(
+                      _initials(name),
+                      style: AppTypography.display(
+                        24,
+                        weight: FontWeight.w700,
+                        color: AppColors.clay900,
+                      ),
+                    ),
+                  ),
+          ),
+        ),
+        Positioned(
+          right: -2,
+          bottom: -2,
+          child: Container(
+            width: 18,
+            height: 18,
+            decoration: BoxDecoration(
+              color: AppColors.sage700,
+              shape: BoxShape.circle,
+              border: Border.all(color: AppColors.clay050, width: 3),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -448,16 +570,16 @@ class _ConnectedSinceNote extends StatelessWidget {
   }
 }
 
-XnChipTone _statusTone(String status) {
+Color _statusColor(String status) {
   switch (status) {
     case 'Active':
-      return XnChipTone.sage;
+      return AppColors.sage700;
     case 'Pending':
-      return XnChipTone.info;
+      return AppColors.info;
     case 'Expired':
-      return XnChipTone.danger;
+      return AppColors.danger;
     default:
-      return XnChipTone.neutral;
+      return AppColors.fg4;
   }
 }
 

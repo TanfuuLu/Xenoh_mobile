@@ -114,11 +114,15 @@ class _PrChartPainter extends CustomPainter {
           style: AppTypography.mono(10, color: AppColors.fg3),
         ),
         textDirection: TextDirection.ltr,
+        textAlign: TextAlign.right,
+        maxLines: 1,
+        ellipsis: '…',
       )
-      ..layout(maxWidth: _leftPad - 4)
+      ..layout(minWidth: _leftPad - 6, maxWidth: _leftPad - 6)
       ..paint(canvas, offset);
   }
 
   @override
-  bool shouldRepaint(_PrChartPainter old) => old.points != points;
+  bool shouldRepaint(_PrChartPainter old) =>
+      old.points != points || old.unit != unit;
 }

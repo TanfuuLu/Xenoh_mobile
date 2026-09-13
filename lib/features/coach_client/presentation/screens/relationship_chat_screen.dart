@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_dimens.dart';
+import '../../../../app/theme/app_typography.dart';
 import '../../../../core/widgets/chat_bubble.dart';
 import '../../../../core/widgets/chat_composer.dart';
 import '../../../../l10n/app_localizations.dart';
@@ -80,8 +81,11 @@ class _RelationshipChatScreenState
     final peerId = _peerId(messages.value, myId);
 
     return Scaffold(
+      backgroundColor: AppColors.bgPage,
       appBar: AppBar(
-        title: Text(peerName),
+        toolbarHeight: 68,
+        titleSpacing: 4,
+        title: _RelationshipChatHeader(peerName: peerName),
         actions: [
           if (peerId != null)
             PopupMenuButton<String>(
@@ -133,15 +137,23 @@ class _RelationshipChatScreenState
       body: Column(
         children: [
           Expanded(child: _body(messages, myId, l10n)),
-          ChatComposer(
-            controller: _message,
-            hint: l10n.coachRelationshipChatMessageHint(peerName),
-            sending: _sending,
-            onSend: () => unawaited(_send()),
-            onAttach: () => unawaited(_pickAttachment(l10n)),
-            pendingAttachments: _pendingAttachments,
-            onRemoveAttachment: (a) =>
-                setState(() => _pendingAttachments.remove(a)),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(
+                maxWidth: AppLayout.contentMaxWidth,
+              ),
+              child: ChatComposer(
+                controller: _message,
+                hint: l10n.coachRelationshipChatMessageHint(peerName),
+                sending: _sending,
+                onSend: () => unawaited(_send()),
+                onAttach: () => unawaited(_pickAttachment(l10n)),
+                pendingAttachments: _pendingAttachments,
+                onRemoveAttachment: (a) =>
+                    setState(() => _pendingAttachments.remove(a)),
+              ),
+            ),
           ),
         ],
       ),
@@ -167,31 +179,59 @@ class _RelationshipChatScreenState
   ) {
     return switch (messages) {
       AsyncData(:final value) when value.isEmpty => Center(
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(AppSpacing.xl),
-          child: EmptyFeatureState(
+          child: _RelationshipChatEmptyState(
+            peerName: widget.peerName,
             title: l10n.coachRelationshipChatEmptyTitle,
             message: l10n.coachRelationshipChatEmptyMessage,
-            icon: Icons.forum_outlined,
           ),
         ),
       ),
-      AsyncData(:final value) => ListView.builder(
-        reverse: true,
-        padding: const EdgeInsets.all(AppSpacing.lg),
-        itemCount: value.length,
-        itemBuilder: (_, i) {
-          final msg = value[value.length - 1 - i];
-          final senderId = textOf(msg, ['senderId']);
-          final mine = senderId.isNotEmpty && senderId == myId;
-          final attachments = msg['attachments'];
-          return ChatBubble(
-            text: textOf(msg, ['content']),
-            mine: mine,
-            timestamp: _fmtTime(msg['createdAt']),
-            attachments: attachments is List
-                ? attachments.whereType<Map<String, dynamic>>().toList()
-                : null,
+      AsyncData(:final value) => LayoutBuilder(
+        builder: (context, constraints) {
+          final horizontalPadding = constraints.maxWidth > 788
+              ? (constraints.maxWidth - AppLayout.contentMaxWidth) / 2 +
+                    AppSpacing.lg
+              : AppSpacing.lg;
+          return ListView.builder(
+            reverse: true,
+            padding: EdgeInsets.fromLTRB(
+              horizontalPadding,
+              AppSpacing.xl,
+              horizontalPadding,
+              AppSpacing.lg,
+            ),
+            itemCount: value.length,
+            itemBuilder: (_, i) {
+              final messageIndex = value.length - 1 - i;
+              final msg = value[messageIndex];
+              final senderId = textOf(msg, ['senderId']);
+              final mine = senderId.isNotEmpty && senderId == myId;
+              final attachments = msg['attachments'];
+              final sentAt = _parseMessageDate(msg['createdAt']);
+              final previousSentAt = messageIndex == 0
+                  ? null
+                  : _parseMessageDate(value[messageIndex - 1]['createdAt']);
+              final startsDay =
+                  sentAt != null &&
+                  (previousSentAt == null ||
+                      !_isSameCalendarDay(sentAt, previousSentAt));
+
+              return Column(
+                children: [
+                  if (startsDay) _ChatDateDivider(date: sentAt),
+                  ChatBubble(
+                    text: textOf(msg, ['content']),
+                    mine: mine,
+                    timestamp: _fmtTime(msg['createdAt']),
+                    attachments: attachments is List
+                        ? attachments.whereType<Map<String, dynamic>>().toList()
+                        : null,
+                  ),
+                ],
+              );
+            },
           );
         },
       ),
@@ -300,6 +340,162 @@ class _RelationshipChatScreenState
       if (mounted) setState(() => _sending = false);
     }
   }
+}
+
+class _RelationshipChatHeader extends StatelessWidget {
+  const _RelationshipChatHeader({required this.peerName});
+
+  final String peerName;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      key: const ValueKey('relationship-chat-header'),
+      children: [
+        _ChatAvatar(name: peerName, size: 40),
+        const SizedBox(width: AppSpacing.md),
+        Expanded(
+          child: Text(
+            peerName,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              color: AppColors.fg1,
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _RelationshipChatEmptyState extends StatelessWidget {
+  const _RelationshipChatEmptyState({
+    required this.peerName,
+    required this.title,
+    required this.message,
+  });
+
+  final String peerName;
+  final String title;
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    return ConstrainedBox(
+      key: const ValueKey('relationship-chat-empty-state'),
+      constraints: const BoxConstraints(maxWidth: 330),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _ChatAvatar(name: peerName, size: 72),
+          const SizedBox(height: AppSpacing.xl),
+          Text(
+            title,
+            textAlign: TextAlign.center,
+            style: AppTypography.display(
+              22,
+              weight: FontWeight.w700,
+              letterSpacing: -0.2,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          Text(
+            message,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              color: AppColors.fg3,
+              fontSize: 14,
+              height: 1.45,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ChatAvatar extends StatelessWidget {
+  const _ChatAvatar({required this.name, required this.size});
+
+  final String name;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: size,
+      height: size,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: AppColors.clay200,
+        borderRadius: BorderRadius.circular(size > 48 ? AppRadius.xl : 12),
+        border: Border.all(color: AppColors.buttonBorder),
+      ),
+      child: Text(
+        _chatInitials(name),
+        style: AppTypography.display(
+          size > 48 ? 23 : 13,
+          weight: FontWeight.w700,
+          color: AppColors.clay900,
+        ),
+      ),
+    );
+  }
+}
+
+class _ChatDateDivider extends StatelessWidget {
+  const _ChatDateDivider({required this.date});
+
+  final DateTime date;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(
+        top: AppSpacing.sm,
+        bottom: AppSpacing.lg,
+      ),
+      child: Row(
+        children: [
+          const Expanded(
+            child: SizedBox(
+              height: 1,
+              child: ColoredBox(color: AppColors.surfaceBorderSoft),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+            child: Text(
+              MaterialLocalizations.of(context).formatMediumDate(date),
+              style: AppTypography.mono(10, color: AppColors.fg4),
+            ),
+          ),
+          const Expanded(
+            child: SizedBox(
+              height: 1,
+              child: ColoredBox(color: AppColors.surfaceBorderSoft),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+DateTime? _parseMessageDate(Object? value) =>
+    value is String ? DateTime.tryParse(value)?.toLocal() : null;
+
+bool _isSameCalendarDay(DateTime a, DateTime b) =>
+    a.year == b.year && a.month == b.month && a.day == b.day;
+
+String _chatInitials(String name) {
+  final parts = name.trim().split(RegExp(r'\s+'));
+  if (parts.isEmpty || parts.first.isEmpty) return '?';
+  if (parts.length == 1) return parts.first[0].toUpperCase();
+  return '${parts.first[0]}${parts.last[0]}'.toUpperCase();
 }
 
 String? _fmtTime(Object? value) {

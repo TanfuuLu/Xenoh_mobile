@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_dimens.dart';
 import '../../../../app/theme/app_typography.dart';
+import '../../../../core/utils/chart_axis_layout.dart';
 import '../../../../core/utils/weight_units.dart';
 import '../../../../core/widgets/xn_section.dart';
 import '../../../../l10n/app_localizations.dart';
@@ -77,53 +78,72 @@ class VolumeHistoryCard extends StatelessWidget {
         else
           SizedBox(
             height: 190,
-            child: BarChart(
-              BarChartData(
-                maxY: maxValue * 1.15,
-                minY: 0,
-                borderData: FlBorderData(show: false),
-                gridData: const FlGridData(show: false),
-                titlesData: FlTitlesData(
-                  leftTitles: const AxisTitles(),
-                  topTitles: const AxisTitles(),
-                  rightTitles: const AxisTitles(),
-                  bottomTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      getTitlesWidget: (value, meta) {
-                        final index = value.toInt();
-                        if (index < 0 || index >= points.length) {
-                          return const SizedBox.shrink();
-                        }
-                        final point = points[index];
-                        return Padding(
-                          padding: const EdgeInsets.only(top: 6),
-                          child: Text(
-                            '${point.month}/${point.year % 100}',
-                            style: AppTypography.mono(9, color: AppColors.fg3),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ),
-                barGroups: [
-                  for (var i = 0; i < values.length; i++)
-                    BarChartGroupData(
-                      x: i,
-                      barRods: [
-                        BarChartRodData(
-                          toY: values[i],
-                          width: values.length > 12 ? 6 : 12,
-                          color: AppColors.danger,
-                          borderRadius: const BorderRadius.vertical(
-                            top: Radius.circular(4),
-                          ),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final visibleLabels = visibleChartTickIndexes(
+                  itemCount: points.length,
+                  availableWidth: constraints.maxWidth,
+                  minLabelSpacing: 48,
+                ).toSet();
+                return BarChart(
+                  BarChartData(
+                    maxY: maxValue * 1.15,
+                    minY: 0,
+                    borderData: FlBorderData(show: false),
+                    gridData: const FlGridData(show: false),
+                    titlesData: FlTitlesData(
+                      leftTitles: const AxisTitles(),
+                      topTitles: const AxisTitles(),
+                      rightTitles: const AxisTitles(),
+                      bottomTitles: AxisTitles(
+                        sideTitles: SideTitles(
+                          showTitles: true,
+                          getTitlesWidget: (value, meta) {
+                            final index = value.toInt();
+                            if (index < 0 ||
+                                index >= points.length ||
+                                !visibleLabels.contains(index)) {
+                              return const SizedBox.shrink();
+                            }
+                            final point = points[index];
+                            return SideTitleWidget(
+                              meta: meta,
+                              space: 6,
+                              fitInside: SideTitleFitInsideData.fromTitleMeta(
+                                meta,
+                                distanceFromEdge: 2,
+                              ),
+                              child: Text(
+                                '${point.month}/${point.year % 100}',
+                                style: AppTypography.mono(
+                                  9,
+                                  color: AppColors.fg3,
+                                ),
+                              ),
+                            );
+                          },
                         ),
-                      ],
+                      ),
                     ),
-                ],
-              ),
+                    barGroups: [
+                      for (var i = 0; i < values.length; i++)
+                        BarChartGroupData(
+                          x: i,
+                          barRods: [
+                            BarChartRodData(
+                              toY: values[i],
+                              width: values.length > 12 ? 6 : 12,
+                              color: AppColors.danger,
+                              borderRadius: const BorderRadius.vertical(
+                                top: Radius.circular(4),
+                              ),
+                            ),
+                          ],
+                        ),
+                    ],
+                  ),
+                );
+              },
             ),
           ),
       ],

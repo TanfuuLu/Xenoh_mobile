@@ -14,6 +14,41 @@ import 'package:xenoh_mobile/features/shared_api/xenoh_api.dart';
 import 'package:xenoh_mobile/l10n/app_localizations.dart';
 
 void main() {
+  testWidgets('coach profile prioritizes identity, message, and relationship', (
+    tester,
+  ) async {
+    final api = _RelationshipApi(
+      myCoach: const {
+        'id': 'relationship-1',
+        'coachId': 'coach-1',
+        'coachName': 'Demo Coach',
+        'status': 'Active',
+        'startDate': '2026-08-20T00:00:00Z',
+        'endDate': '2026-09-30T00:00:00Z',
+        'createdAt': '2026-08-20T00:00:00Z',
+      },
+      coachProfile: const {
+        'email': 'democoach@xenoh.app',
+        'bio': 'Strength coach. Powerlifting and general programming.',
+      },
+    );
+
+    await _pumpMyCoach(tester, api, width: 320);
+
+    final hero = find.byKey(const ValueKey('coach-profile-hero'));
+    expect(hero, findsOneWidget);
+    expect(
+      find.descendant(of: hero, matching: find.text('Message coach')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('coach-relationship-period')),
+      findsOneWidget,
+    );
+    expect(find.text('Coach Profile'), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('client card gives plan progress its own readable section', (
     tester,
   ) async {
@@ -252,8 +287,12 @@ Future<void> _pumpCoachClients(
   await tester.pumpAndSettle();
 }
 
-Future<void> _pumpMyCoach(WidgetTester tester, _RelationshipApi api) async {
-  tester.view.physicalSize = const Size(390, 1000);
+Future<void> _pumpMyCoach(
+  WidgetTester tester,
+  _RelationshipApi api, {
+  double width = 390,
+}) async {
+  tester.view.physicalSize = Size(width, 1000);
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.resetPhysicalSize);
   addTearDown(tester.view.resetDevicePixelRatio);
@@ -289,13 +328,15 @@ class _TestApp extends StatelessWidget {
 }
 
 class _RelationshipApi extends XenohApi {
-  _RelationshipApi({this.myCoach}) : super(Dio());
+  _RelationshipApi({this.myCoach, this.coachProfile}) : super(Dio());
 
   final JsonMap? myCoach;
+  final JsonMap? coachProfile;
   final postedPaths = <String>[];
 
   @override
-  Future<JsonMap> getObject(String path) async => <String, dynamic>{};
+  Future<JsonMap> getObject(String path) async =>
+      coachProfile ?? <String, dynamic>{};
 
   @override
   Future<void> postVoid(String path, [JsonMap? data]) async {

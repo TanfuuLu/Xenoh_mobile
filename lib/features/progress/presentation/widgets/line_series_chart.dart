@@ -90,7 +90,8 @@ class _LineSeriesPainter extends CustomPainter {
   final List<LineSeries> series;
   final String Function(double) yLabel;
 
-  static const _leftPad = 44.0;
+  static const _minLeftPad = 40.0;
+  static const _maxLeftPad = 72.0;
   static const _vPad = 12.0;
   static const _bottomPad = 18.0;
 
@@ -112,8 +113,14 @@ class _LineSeriesPainter extends CustomPainter {
     }
     final range = maxY - minY;
 
-    const chartLeft = _leftPad;
-    final chartW = size.width - _leftPad;
+    final maxLabel = yLabel(maxY);
+    final minLabel = yLabel(minY);
+    final labelWidth = [
+      maxLabel,
+      minLabel,
+    ].map(_measureLabelWidth).reduce((a, b) => a > b ? a : b);
+    final chartLeft = (labelWidth + 8).clamp(_minLeftPad, _maxLeftPad);
+    final chartW = size.width - chartLeft;
     final chartH = size.height - _vPad - _bottomPad;
 
     double xAt(int i) => xs.length == 1
@@ -125,10 +132,16 @@ class _LineSeriesPainter extends CustomPainter {
     final gridPaint = Paint()
       ..color = AppColors.surfaceBorderSoft
       ..strokeWidth = 1;
-    for (final v in [maxY, minY]) {
-      final y = yAt(v);
+    for (final (value, label) in [(maxY, maxLabel), (minY, minLabel)]) {
+      final y = yAt(value);
       canvas.drawLine(Offset(chartLeft, y), Offset(size.width, y), gridPaint);
-      _text(canvas, yLabel(v), Offset(0, y - 6), _leftPad - 6, right: true);
+      _text(
+        canvas,
+        label,
+        Offset(0, y - 6),
+        chartLeft - 6,
+        right: true,
+      );
     }
 
     // X labels: first + last only, to avoid clutter.
@@ -191,13 +204,28 @@ class _LineSeriesPainter extends CustomPainter {
       ),
       textDirection: TextDirection.ltr,
       textAlign: right ? TextAlign.right : TextAlign.left,
+      maxLines: 1,
+      ellipsis: '…',
     )..layout(maxWidth: maxWidth);
-    final dx = right ? offset.dx - (maxWidth - tp.width) : offset.dx;
+    final dx = right ? offset.dx + maxWidth - tp.width : offset.dx;
     tp.paint(canvas, Offset(dx, offset.dy));
   }
 
+  double _measureLabelWidth(String text) {
+    final painter = TextPainter(
+      text: TextSpan(
+        text: text,
+        style: AppTypography.mono(10, color: AppColors.fg3),
+      ),
+      textDirection: TextDirection.ltr,
+      maxLines: 1,
+    )..layout();
+    return painter.width;
+  }
+
   @override
-  bool shouldRepaint(_LineSeriesPainter old) => old.series != series;
+  bool shouldRepaint(_LineSeriesPainter old) =>
+      old.series != series || old.yLabel != yLabel;
 }
 
 /// Formats an ISO date string (`yyyy-MM-dd`) as `M/d`; falls back to the raw

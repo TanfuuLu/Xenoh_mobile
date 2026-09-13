@@ -58,6 +58,11 @@ void main() {
   testWidgets('active relationship opens the client coach conversation', (
     tester,
   ) async {
+    tester.view.physicalSize = const Size(320, 760);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
     await tester.pumpWidget(
       _app(
         _ClientChatApi(const {
@@ -73,6 +78,15 @@ void main() {
     );
     expect(screen.relationshipId, 'relationship-1');
     expect(screen.peerName, 'Demo Coach');
+    expect(
+      find.byKey(const ValueKey('relationship-chat-header')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('relationship-chat-empty-state')),
+      findsOneWidget,
+    );
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('missing relationship shows the connect-coach empty state', (

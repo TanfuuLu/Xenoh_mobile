@@ -11,6 +11,7 @@ import '../../../../app/home_shell.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_dimens.dart';
 import '../../../../app/theme/app_typography.dart';
+import '../../../../core/utils/chart_axis_layout.dart';
 import '../../../../core/widgets/async_value_view.dart';
 import '../../../../core/widgets/xn_button.dart';
 import '../../../../core/widgets/xn_card.dart';
@@ -751,77 +752,99 @@ class _TrendLineChart extends StatelessWidget {
       symptomSpots.add(FlSpot(x, log.symptoms.length.clamp(0, 5).toDouble()));
     }
 
-    return LineChart(
-      LineChartData(
-        minX: 0,
-        maxX: 60,
-        minY: 0,
-        maxY: 5,
-        gridData: FlGridData(
-          drawVerticalLine: false,
-          getDrawingHorizontalLine: (_) => const FlLine(
-            color: AppColors.surfaceBorderSoft,
-            strokeWidth: 1,
-            dashArray: [4, 4],
-          ),
-        ),
-        borderData: FlBorderData(show: false),
-        titlesData: FlTitlesData(
-          topTitles: const AxisTitles(),
-          rightTitles: const AxisTitles(),
-          leftTitles: AxisTitles(
-            sideTitles: SideTitles(
-              showTitles: true,
-              reservedSize: 28,
-              interval: 1,
-              getTitlesWidget: (value, _) => Text(
-                value.toInt().toString(),
-                style: const TextStyle(color: AppColors.fg3, fontSize: 11),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        const tickInterval = 14.0;
+        const tickCount = 5;
+        final visibleTicks = visibleChartTickIndexes(
+          itemCount: tickCount,
+          availableWidth: constraints.maxWidth,
+          minLabelSpacing: 56,
+        ).toSet();
+        return LineChart(
+          LineChartData(
+            minX: 0,
+            maxX: 60,
+            minY: 0,
+            maxY: 5,
+            gridData: FlGridData(
+              drawVerticalLine: false,
+              getDrawingHorizontalLine: (_) => const FlLine(
+                color: AppColors.surfaceBorderSoft,
+                strokeWidth: 1,
+                dashArray: [4, 4],
               ),
             ),
-          ),
-          bottomTitles: AxisTitles(
-            sideTitles: SideTitles(
-              showTitles: true,
-              reservedSize: 32,
-              interval: 14,
-              getTitlesWidget: (value, _) {
-                final date = from.add(Duration(days: value.toInt()));
-                return Padding(
-                  padding: const EdgeInsets.only(top: 8),
-                  child: Text(
-                    DateFormat.MMMd(locale).format(date),
-                    style: const TextStyle(
-                      color: AppColors.fg3,
-                      fontSize: 10,
-                    ),
+            borderData: FlBorderData(show: false),
+            titlesData: FlTitlesData(
+              topTitles: const AxisTitles(),
+              rightTitles: const AxisTitles(),
+              leftTitles: AxisTitles(
+                sideTitles: SideTitles(
+                  showTitles: true,
+                  reservedSize: 28,
+                  interval: 1,
+                  getTitlesWidget: (value, _) => Text(
+                    value.toInt().toString(),
+                    style: const TextStyle(color: AppColors.fg3, fontSize: 11),
                   ),
-                );
-              },
+                ),
+              ),
+              bottomTitles: AxisTitles(
+                sideTitles: SideTitles(
+                  showTitles: true,
+                  reservedSize: 32,
+                  interval: tickInterval,
+                  getTitlesWidget: (value, meta) {
+                    final tickIndex = (value / tickInterval).round();
+                    if (tickIndex < 0 ||
+                        tickIndex >= tickCount ||
+                        !visibleTicks.contains(tickIndex)) {
+                      return const SizedBox.shrink();
+                    }
+                    final date = from.add(Duration(days: value.toInt()));
+                    return SideTitleWidget(
+                      meta: meta,
+                      space: 8,
+                      fitInside: SideTitleFitInsideData.fromTitleMeta(
+                        meta,
+                        distanceFromEdge: 2,
+                      ),
+                      child: Text(
+                        DateFormat.MMMd(locale).format(date),
+                        style: const TextStyle(
+                          color: AppColors.fg3,
+                          fontSize: 10,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
             ),
+            lineBarsData: [
+              if (symptomSpots.length >= 2)
+                LineChartBarData(
+                  spots: symptomSpots,
+                  isCurved: true,
+                  color: AppColors.success,
+                  barWidth: 3,
+                  dotData: const FlDotData(show: true),
+                  belowBarData: BarAreaData(),
+                ),
+              if (energySpots.length >= 2)
+                LineChartBarData(
+                  spots: energySpots,
+                  isCurved: true,
+                  color: AppColors.info,
+                  barWidth: 3,
+                  dotData: const FlDotData(show: true),
+                  belowBarData: BarAreaData(),
+                ),
+            ],
           ),
-        ),
-        lineBarsData: [
-          if (symptomSpots.length >= 2)
-            LineChartBarData(
-              spots: symptomSpots,
-              isCurved: true,
-              color: AppColors.success,
-              barWidth: 3,
-              dotData: const FlDotData(show: true),
-              belowBarData: BarAreaData(),
-            ),
-          if (energySpots.length >= 2)
-            LineChartBarData(
-              spots: energySpots,
-              isCurved: true,
-              color: AppColors.info,
-              barWidth: 3,
-              dotData: const FlDotData(show: true),
-              belowBarData: BarAreaData(),
-            ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
