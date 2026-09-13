@@ -1726,11 +1726,11 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get authRegisterSubtitleStep0 =>
-      'Bắt đầu với thông tin đăng nhập bạn sẽ dùng để truy cập Xenoh.';
+      'Bắt đầu với thông tin đăng nhập bạn sẽ dùng để truy cập Ascend.';
 
   @override
   String get authRegisterSubtitleStep1 =>
-      'Thêm thông tin hồ sơ để Xenoh sử dụng cho tập luyện, dinh dưỡng và hỗ trợ huấn luyện.';
+      'Thêm thông tin hồ sơ để Ascend sử dụng cho tập luyện, dinh dưỡng và hỗ trợ huấn luyện.';
 
   @override
   String get authRegisterHaveAccountPrompt => 'Đã có tài khoản?';
@@ -1788,7 +1788,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get authConsentText =>
-      'Tôi đồng ý với [[terms]] và [[privacy]], bao gồm quy định về nội dung cộng đồng áp dụng cho mọi nội dung tôi đăng trên Xenoh.';
+      'Tôi đồng ý với [[terms]] và [[privacy]], bao gồm quy định về nội dung cộng đồng áp dụng cho mọi nội dung tôi đăng trên Ascend.';
 
   @override
   String get authConsentTermsLink => 'Điều khoản';
@@ -4110,7 +4110,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get communityRejectTooltip => 'Từ chối';
 
   @override
-  String get communityXenohAthleteFallback => 'Vận động viên Xenoh';
+  String get communityXenohAthleteFallback => 'Vận động viên Ascend';
 
   @override
   String get communityAddButton => 'Thêm';
@@ -4715,14 +4715,14 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get legalPrivacyIntro =>
-      'Chính sách này giải thích Xenoh thu thập những gì, vì sao, và bạn kiểm soát dữ liệu của mình ra sao. Đây là bản tóm tắt bằng ngôn ngữ dễ hiểu cho người tập và coach, không phải một văn bản cố tình khó đọc.';
+      'Chính sách này giải thích Ascend thu thập những gì, vì sao, và bạn kiểm soát dữ liệu của mình ra sao. Đây là bản tóm tắt bằng ngôn ngữ dễ hiểu cho người tập và coach, không phải một văn bản cố tình khó đọc.';
 
   @override
   String get legalPrivacyWhatWeCollectTitle => 'Chúng tôi thu thập gì';
 
   @override
   String get legalPrivacyWhatWeCollectBody =>
-      'Thông tin tài khoản bạn cung cấp: email, tên và mật khẩu (chỉ lưu dưới dạng mã hóa an toàn).\n\nDữ liệu hồ sơ bạn chọn thêm: chiều cao, giới tính, ngày sinh và lịch sử cân nặng — dùng để tính BMI, DOTS và mục tiêu dinh dưỡng.\n\nDữ liệu tập luyện bạn tạo: kế hoạch, bài tập, hiệp, reps, mức tạ và lịch sử buổi tập.\n\nDữ liệu coach-học viên như lời mời kết nối, trạng thái roster, giáo án được giao, tóm tắt tiến độ, bình luận và tin nhắn trao đổi qua Xenoh.\n\nDữ liệu thanh toán và gói dịch vụ cần để kích hoạt tính năng trả phí, tính phí coach, xuất biên nhận và xử lý yêu cầu hoàn tiền. Thông tin thẻ hoặc ngân hàng đầy đủ do nhà cung cấp thanh toán xử lý và Xenoh không lưu toàn bộ.\n\nDữ liệu kỹ thuật cơ bản cần thiết để vận hành dịch vụ, ví dụ như phiên đăng nhập.';
+      'Thông tin tài khoản bạn cung cấp: email, tên và mật khẩu (chỉ lưu dưới dạng mã hóa an toàn).\n\nDữ liệu hồ sơ bạn chọn thêm: chiều cao, giới tính, ngày sinh và lịch sử cân nặng — dùng để tính BMI, DOTS và mục tiêu dinh dưỡng.\n\nDữ liệu tập luyện bạn tạo: kế hoạch, bài tập, hiệp, reps, mức tạ và lịch sử buổi tập.\n\nDữ liệu coach-học viên như lời mời kết nối, trạng thái roster, giáo án được giao, tóm tắt tiến độ, bình luận và tin nhắn trao đổi qua Ascend.\n\nDữ liệu thanh toán và gói dịch vụ cần để kích hoạt tính năng trả phí, tính phí coach, xuất biên nhận và xử lý yêu cầu hoàn tiền. Thông tin thẻ hoặc ngân hàng đầy đủ do nhà cung cấp thanh toán xử lý và Ascend không lưu toàn bộ.\n\nDữ liệu kỹ thuật cơ bản cần thiết để vận hành dịch vụ, ví dụ như phiên đăng nhập.';
 
   @override
   String get legalPrivacyHowWeUseTitle => 'Chúng tôi dùng dữ liệu thế nào';
@@ -4736,28 +4736,28 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get legalPrivacyCoachSharingBody =>
-      'Khi bạn kết nối với coach, kế hoạch họ viết sẽ xuất hiện trong tài khoản của bạn, và các hiệp bạn ghi sẽ hiển thị cho coach đó. Đây chính là mục đích của tính năng.\n\nCoach có thể thấy thông tin hồ sơ, log tập, biểu đồ tiến độ, dữ liệu hoàn thành, phân tích dinh dưỡng và tin nhắn cần thiết để huấn luyện qua Xenoh.\n\nHọc viên có thể thấy giáo án, ghi chú, phản hồi và tin nhắn mà coach tạo cho mình.\n\nHai bên đều có thể kết thúc quan hệ bất cứ lúc nào. Khi kết thúc, các kế hoạch do coach viết gắn với quan hệ đó sẽ bị xóa.';
+      'Khi bạn kết nối với coach, kế hoạch họ viết sẽ xuất hiện trong tài khoản của bạn, và các hiệp bạn ghi sẽ hiển thị cho coach đó. Đây chính là mục đích của tính năng.\n\nCoach có thể thấy thông tin hồ sơ, log tập, biểu đồ tiến độ, dữ liệu hoàn thành, phân tích dinh dưỡng và tin nhắn cần thiết để huấn luyện qua Ascend.\n\nHọc viên có thể thấy giáo án, ghi chú, phản hồi và tin nhắn mà coach tạo cho mình.\n\nHai bên đều có thể kết thúc quan hệ bất cứ lúc nào. Khi kết thúc, các kế hoạch do coach viết gắn với quan hệ đó sẽ bị xóa.';
 
   @override
   String get legalPrivacyAiAnalysisTitle => 'Tính năng AI và phân tích';
 
   @override
   String get legalPrivacyAiAnalysisBody =>
-      'Khi bạn dùng AI insights, Xenoh có thể xử lý dữ liệu tập luyện, dinh dưỡng, cân nặng và hồ sơ để tạo tóm tắt, gợi ý hoặc nhận xét về tiến độ.\n\nKết quả từ AI chỉ mang tính tham khảo và có thể thiếu hoặc sai. Không xem đó là lời khuyên y tế, chấn thương, dinh dưỡng hoặc thi đấu nếu chưa có chuyên gia phù hợp xem xét.';
+      'Khi bạn dùng AI insights, Ascend có thể xử lý dữ liệu tập luyện, dinh dưỡng, cân nặng và hồ sơ để tạo tóm tắt, gợi ý hoặc nhận xét về tiến độ.\n\nKết quả từ AI chỉ mang tính tham khảo và có thể thiếu hoặc sai. Không xem đó là lời khuyên y tế, chấn thương, dinh dưỡng hoặc thi đấu nếu chưa có chuyên gia phù hợp xem xét.';
 
   @override
   String get legalPrivacyProvidersTitle => 'Nhà cung cấp dịch vụ';
 
   @override
   String get legalPrivacyProvidersBody =>
-      'Chúng tôi dùng các nhà cung cấp đáng tin cậy cho hosting, cơ sở dữ liệu, xác thực, phân tích, thanh toán, email và hỗ trợ. Họ chỉ xử lý dữ liệu giới hạn khi cần để cung cấp dịch vụ cho Xenoh.\n\nChúng tôi yêu cầu nhà cung cấp bảo vệ dữ liệu phù hợp và không dùng dữ liệu đó cho mục đích quảng cáo riêng của họ.';
+      'Chúng tôi dùng các nhà cung cấp đáng tin cậy cho hosting, cơ sở dữ liệu, xác thực, phân tích, thanh toán, email và hỗ trợ. Họ chỉ xử lý dữ liệu giới hạn khi cần để cung cấp dịch vụ cho Ascend.\n\nChúng tôi yêu cầu nhà cung cấp bảo vệ dữ liệu phù hợp và không dùng dữ liệu đó cho mục đích quảng cáo riêng của họ.';
 
   @override
   String get legalPrivacyRetentionDeletionTitle => 'Lưu trữ và xóa dữ liệu';
 
   @override
   String get legalPrivacyRetentionDeletionBody =>
-      'Lịch sử tập luyện thuộc về bạn. Bạn có thể xuất mọi kế hoạch và log ra CSV bất cứ lúc nào.\n\nBạn có thể xóa tài khoản trong ứng dụng khi đang đăng nhập, hoặc yêu cầu xóa trên website bằng cách nhập email và xác nhận liên kết chúng tôi gửi tới địa chỉ đó.\n\nSau khi xác minh, Xenoh xóa dữ liệu sản phẩm và tài liệu đã lưu, bao gồm hoạt động thử thách thể lực và chứng từ thanh toán cuộc thi. Đăng ký cuộc thi cần giữ để bảo toàn kết quả đã công bố hoặc lịch sử giao dịch sẽ được tách khỏi tài khoản và xóa tên, thông tin liên hệ, ngày sinh, số đo khai báo và chứng từ đã tải lên.\n\nMột hồ sơ tài khoản đã ẩn danh và khóa cùng một số bản ghi thanh toán, gói dịch vụ, chấp thuận pháp lý, kết quả cuộc thi và audit xóa tài khoản có thể được lưu tối đa 7 năm khi cần cho kế toán, xử lý tranh chấp, phòng chống gian lận và tuân thủ pháp luật.\n\nBản sao lưu và log bảo mật có thể được giữ trong một thời gian giới hạn theo chính sách vận hành trước khi tự động xóa. Các bản ghi này chỉ dùng cho khôi phục, bảo mật, phòng chống gian lận hoặc tuân thủ pháp luật.';
+      'Lịch sử tập luyện thuộc về bạn. Bạn có thể xuất mọi kế hoạch và log ra CSV bất cứ lúc nào.\n\nBạn có thể xóa tài khoản trong ứng dụng khi đang đăng nhập, hoặc yêu cầu xóa trên website bằng cách nhập email và xác nhận liên kết chúng tôi gửi tới địa chỉ đó.\n\nSau khi xác minh, Ascend xóa dữ liệu sản phẩm và tài liệu đã lưu, bao gồm hoạt động thử thách thể lực và chứng từ thanh toán cuộc thi. Đăng ký cuộc thi cần giữ để bảo toàn kết quả đã công bố hoặc lịch sử giao dịch sẽ được tách khỏi tài khoản và xóa tên, thông tin liên hệ, ngày sinh, số đo khai báo và chứng từ đã tải lên.\n\nMột hồ sơ tài khoản đã ẩn danh và khóa cùng một số bản ghi thanh toán, gói dịch vụ, chấp thuận pháp lý, kết quả cuộc thi và audit xóa tài khoản có thể được lưu tối đa 7 năm khi cần cho kế toán, xử lý tranh chấp, phòng chống gian lận và tuân thủ pháp luật.\n\nBản sao lưu và log bảo mật có thể được giữ trong một thời gian giới hạn theo chính sách vận hành trước khi tự động xóa. Các bản ghi này chỉ dùng cho khôi phục, bảo mật, phòng chống gian lận hoặc tuân thủ pháp luật.';
 
   @override
   String get legalPrivacyCookiesTitle => 'Cookie';
@@ -4778,7 +4778,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get legalPrivacyMinorsBody =>
-      'Xenoh dành cho người dùng có thể tạo tài khoản hợp pháp và đồng ý với các chính sách này. Nếu trẻ vị thành niên dùng Xenoh, phụ huynh, người giám hộ, coach hoặc người lớn có trách nhiệm nên giám sát việc tập luyện và sử dụng tài khoản.';
+      'Ascend dành cho người dùng có thể tạo tài khoản hợp pháp và đồng ý với các chính sách này. Nếu trẻ vị thành niên dùng Ascend, phụ huynh, người giám hộ, coach hoặc người lớn có trách nhiệm nên giám sát việc tập luyện và sử dụng tài khoản.';
 
   @override
   String get legalPrivacyRightsContactTitle => 'Quyền của bạn và liên hệ';
@@ -4792,77 +4792,77 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get legalTermsIntro =>
-      'Các điều khoản này quy định cách bạn sử dụng Xenoh. Khi tạo tài khoản hoặc sử dụng dịch vụ, bạn đồng ý với chúng.';
+      'Các điều khoản này quy định cách bạn sử dụng Ascend. Khi tạo tài khoản hoặc sử dụng dịch vụ, bạn đồng ý với chúng.';
 
   @override
   String get legalTermsAccountTitle => 'Tài khoản của bạn';
 
   @override
   String get legalTermsAccountBody =>
-      'Cung cấp thông tin chính xác khi đăng ký và giữ kín thông tin đăng nhập. Bạn chịu trách nhiệm cho mọi hoạt động dưới tài khoản của mình.\n\nMột tài khoản dành cho một người. Đừng dùng chung một tài khoản cho cả nhóm.\n\nBạn phải có quyền hợp pháp để tạo tài khoản tại nơi mình sinh sống. Nếu dùng Xenoh cho đội nhóm, phòng gym hoặc hoạt động huấn luyện, bạn chịu trách nhiệm bảo đảm mỗi người dùng có quyền và sự đồng ý phù hợp.';
+      'Cung cấp thông tin chính xác khi đăng ký và giữ kín thông tin đăng nhập. Bạn chịu trách nhiệm cho mọi hoạt động dưới tài khoản của mình.\n\nMột tài khoản dành cho một người. Đừng dùng chung một tài khoản cho cả nhóm.\n\nBạn phải có quyền hợp pháp để tạo tài khoản tại nơi mình sinh sống. Nếu dùng Ascend cho đội nhóm, phòng gym hoặc hoạt động huấn luyện, bạn chịu trách nhiệm bảo đảm mỗi người dùng có quyền và sự đồng ý phù hợp.';
 
   @override
   String get legalTermsPlansBillingTitle => 'Gói dịch vụ và thanh toán';
 
   @override
   String get legalTermsPlansBillingBody =>
-      'Gói Solo miễn phí. Pro Individual và Pro Coach là các gói trả trước có kỳ hạn cố định 1, 3, 6 hoặc 12 tháng. Tổng giá bằng VND và kỳ hạn được hiển thị trước khi tạo lệnh thanh toán.\n\nPro Coach có giá cố định và không giới hạn số lượng học viên. Xenoh không tính phí theo học viên hoạt động và không chia phí theo hoạt động của học viên.\n\nCác gói trả phí không tự động gia hạn. Quyền truy cập duy trì đến ngày hết hạn đã ghi nhận; để tiếp tục sau đó, bạn cần thực hiện thanh toán mới.\n\nĐổi sang gói trả phí khác sẽ bắt đầu kỳ hạn mới khi thanh toán mới được xác nhận và có thể thay thế thời gian chưa sử dụng của gói trước. Cảnh báo tại bước thanh toán sẽ hiển thị điều này.\n\nKhuyến mãi, thuế, giới hạn tính năng và hướng dẫn thanh toán hiển thị tại bước thanh toán là một phần của đề nghị. Yêu cầu hoàn tiền được xử lý theo Chính sách hoàn tiền và pháp luật áp dụng.';
+      'Gói Solo miễn phí. Pro Individual và Pro Coach là các gói trả trước có kỳ hạn cố định 1, 3, 6 hoặc 12 tháng. Tổng giá bằng VND và kỳ hạn được hiển thị trước khi tạo lệnh thanh toán.\n\nPro Coach có giá cố định và không giới hạn số lượng học viên. Ascend không tính phí theo học viên hoạt động và không chia phí theo hoạt động của học viên.\n\nCác gói trả phí không tự động gia hạn. Quyền truy cập duy trì đến ngày hết hạn đã ghi nhận; để tiếp tục sau đó, bạn cần thực hiện thanh toán mới.\n\nĐổi sang gói trả phí khác sẽ bắt đầu kỳ hạn mới khi thanh toán mới được xác nhận và có thể thay thế thời gian chưa sử dụng của gói trước. Cảnh báo tại bước thanh toán sẽ hiển thị điều này.\n\nKhuyến mãi, thuế, giới hạn tính năng và hướng dẫn thanh toán hiển thị tại bước thanh toán là một phần của đề nghị. Yêu cầu hoàn tiền được xử lý theo Chính sách hoàn tiền và pháp luật áp dụng.';
 
   @override
   String get legalTermsAcceptableUseTitle => 'Sử dụng hợp lệ';
 
   @override
   String get legalTermsAcceptableUseBody =>
-      'Không lạm dụng dịch vụ: không tìm cách phá xác thực, thu thập dữ liệu hàng loạt, dịch ngược ứng dụng, hay gây gián đoạn cho người dùng khác.\n\nKhông tải lên nội dung bạn không có quyền chia sẻ.\n\nKhông dùng Xenoh để quấy rối, đe dọa, lợi dụng hoặc spam người dùng khác.\n\nKhông gửi thông tin thanh toán sai, lạm dụng dùng thử, vượt giới hạn gói hoặc bán lại quyền truy cập khi chưa có chấp thuận bằng văn bản.';
+      'Không lạm dụng dịch vụ: không tìm cách phá xác thực, thu thập dữ liệu hàng loạt, dịch ngược ứng dụng, hay gây gián đoạn cho người dùng khác.\n\nKhông tải lên nội dung bạn không có quyền chia sẻ.\n\nKhông dùng Ascend để quấy rối, đe dọa, lợi dụng hoặc spam người dùng khác.\n\nKhông gửi thông tin thanh toán sai, lạm dụng dùng thử, vượt giới hạn gói hoặc bán lại quyền truy cập khi chưa có chấp thuận bằng văn bản.';
 
   @override
   String get legalTermsCommunityContentTitle => 'Nội dung cộng đồng';
 
   @override
   String get legalTermsCommunityContentBody =>
-      'Bài đăng, bình luận, hình ảnh và tin nhắn bạn chia sẻ vẫn thuộc về bạn, và bạn chịu trách nhiệm về chúng.\n\nKhông đăng nội dung vi phạm pháp luật, thù ghét, quấy rối, khiêu dâm hoặc xâm phạm quyền của người khác, và không trình bày lời khuyên y tế như thể đến từ Xenoh.\n\nBất kỳ ai cũng có thể báo cáo nội dung hoặc chặn người dùng khác ngay trong ứng dụng. Nội dung bị báo cáo có thể được xem xét, ẩn hoặc gỡ bỏ; vi phạm nhiều lần có thể khiến bạn mất quyền dùng tính năng cộng đồng.';
+      'Bài đăng, bình luận, hình ảnh và tin nhắn bạn chia sẻ vẫn thuộc về bạn, và bạn chịu trách nhiệm về chúng.\n\nKhông đăng nội dung vi phạm pháp luật, thù ghét, quấy rối, khiêu dâm hoặc xâm phạm quyền của người khác, và không trình bày lời khuyên y tế như thể đến từ Ascend.\n\nBất kỳ ai cũng có thể báo cáo nội dung hoặc chặn người dùng khác ngay trong ứng dụng. Nội dung bị báo cáo có thể được xem xét, ẩn hoặc gỡ bỏ; vi phạm nhiều lần có thể khiến bạn mất quyền dùng tính năng cộng đồng.';
 
   @override
   String get legalTermsHealthDisclaimerTitle => 'Miễn trừ về sức khỏe';
 
   @override
   String get legalTermsHealthDisclaimerBody =>
-      'Xenoh là một nhật ký tập luyện, không phải lời khuyên y tế. Tập tạ luôn tiềm ẩn rủi ro.\n\nHãy tham khảo chuyên gia có chuyên môn trước khi bắt đầu một chương trình và tập trong giới hạn của bản thân. Bạn chịu trách nhiệm về sự an toàn của chính mình.\n\nCác chỉ số, AI insights, mục tiêu dinh dưỡng và ghi chú từ coach là công cụ tham khảo. Chúng không thay thế bác sĩ, chuyên gia vật lý trị liệu, chuyên gia dinh dưỡng hoặc đánh giá trực tiếp có chuyên môn.';
+      'Ascend là một nhật ký tập luyện, không phải lời khuyên y tế. Tập tạ luôn tiềm ẩn rủi ro.\n\nHãy tham khảo chuyên gia có chuyên môn trước khi bắt đầu một chương trình và tập trong giới hạn của bản thân. Bạn chịu trách nhiệm về sự an toàn của chính mình.\n\nCác chỉ số, AI insights, mục tiêu dinh dưỡng và ghi chú từ coach là công cụ tham khảo. Chúng không thay thế bác sĩ, chuyên gia vật lý trị liệu, chuyên gia dinh dưỡng hoặc đánh giá trực tiếp có chuyên môn.';
 
   @override
   String get legalTermsCoachClientTitle => 'Quan hệ coach và học viên';
 
   @override
   String get legalTermsCoachClientBody =>
-      'Xenoh cung cấp công cụ để coach và học viên làm việc cùng nhau. Chúng tôi không phải một bên trong thỏa thuận huấn luyện giữa họ và không chịu trách nhiệm về giáo án mà coach cung cấp.\n\nCoach chịu trách nhiệm về chứng chỉ, giao tiếp với học viên, giá dịch vụ, nghĩa vụ thuế, thực hành an toàn và trách nhiệm nghề nghiệp bên ngoài Xenoh.\n\nHọc viên chịu trách nhiệm quyết định coach, giáo án hoặc hướng dẫn có phù hợp với mình hay không.';
+      'Ascend cung cấp công cụ để coach và học viên làm việc cùng nhau. Chúng tôi không phải một bên trong thỏa thuận huấn luyện giữa họ và không chịu trách nhiệm về giáo án mà coach cung cấp.\n\nCoach chịu trách nhiệm về chứng chỉ, giao tiếp với học viên, giá dịch vụ, nghĩa vụ thuế, thực hành an toàn và trách nhiệm nghề nghiệp bên ngoài Ascend.\n\nHọc viên chịu trách nhiệm quyết định coach, giáo án hoặc hướng dẫn có phù hợp với mình hay không.';
 
   @override
   String get legalTermsOwnershipTitle => 'Quyền sở hữu';
 
   @override
   String get legalTermsOwnershipBody =>
-      'Dữ liệu của bạn thuộc về bạn. Ứng dụng, thương hiệu và phần mềm Xenoh thuộc về chúng tôi và được bảo vệ bởi luật sở hữu trí tuệ.\n\nBạn cho Xenoh quyền lưu trữ, xử lý, hiển thị và truyền tải nội dung của bạn chỉ khi cần để vận hành dịch vụ, hỗ trợ, bảo vệ nền tảng và cải thiện sản phẩm.';
+      'Dữ liệu của bạn thuộc về bạn. Ứng dụng, thương hiệu và phần mềm Ascend thuộc về chúng tôi và được bảo vệ bởi luật sở hữu trí tuệ.\n\nBạn cho Ascend quyền lưu trữ, xử lý, hiển thị và truyền tải nội dung của bạn chỉ khi cần để vận hành dịch vụ, hỗ trợ, bảo vệ nền tảng và cải thiện sản phẩm.';
 
   @override
   String get legalTermsAvailabilityTitle => 'Tính khả dụng và thay đổi';
 
   @override
   String get legalTermsAvailabilityBody =>
-      'Chúng tôi cố gắng giữ Xenoh ổn định, nhưng dịch vụ có thể không khả dụng trong thời gian bảo trì, sự cố nhà cung cấp, lỗi mạng, công việc bảo mật hoặc cập nhật sản phẩm.\n\nTính năng có thể thay đổi theo thời gian. Chúng tôi cố gắng tránh gỡ bỏ tính năng quan trọng mà không thông báo, nhưng có thể chỉnh sửa hoặc ngừng tính năng khi cần vì bảo mật, độ ổn định, pháp lý hoặc định hướng sản phẩm.';
+      'Chúng tôi cố gắng giữ Ascend ổn định, nhưng dịch vụ có thể không khả dụng trong thời gian bảo trì, sự cố nhà cung cấp, lỗi mạng, công việc bảo mật hoặc cập nhật sản phẩm.\n\nTính năng có thể thay đổi theo thời gian. Chúng tôi cố gắng tránh gỡ bỏ tính năng quan trọng mà không thông báo, nhưng có thể chỉnh sửa hoặc ngừng tính năng khi cần vì bảo mật, độ ổn định, pháp lý hoặc định hướng sản phẩm.';
 
   @override
   String get legalTermsLiabilityTitle => 'Giới hạn trách nhiệm';
 
   @override
   String get legalTermsLiabilityBody =>
-      'Trong phạm vi pháp luật cho phép, Xenoh được cung cấp theo hiện trạng và chúng tôi không chịu trách nhiệm cho thiệt hại gián tiếp, ngẫu nhiên, đặc biệt, hệ quả, mất lợi nhuận, mất cơ hội tập luyện, chấn thương hoặc quyết định dựa trên dữ liệu trong app.\n\nKhi trách nhiệm không thể được loại trừ, tổng trách nhiệm của chúng tôi được giới hạn ở số tiền bạn đã trả cho Xenoh trong ba tháng trước khi phát sinh khiếu nại.';
+      'Trong phạm vi pháp luật cho phép, Ascend được cung cấp theo hiện trạng và chúng tôi không chịu trách nhiệm cho thiệt hại gián tiếp, ngẫu nhiên, đặc biệt, hệ quả, mất lợi nhuận, mất cơ hội tập luyện, chấn thương hoặc quyết định dựa trên dữ liệu trong app.\n\nKhi trách nhiệm không thể được loại trừ, tổng trách nhiệm của chúng tôi được giới hạn ở số tiền bạn đã trả cho Ascend trong ba tháng trước khi phát sinh khiếu nại.';
 
   @override
   String get legalTermsTerminationTitle => 'Chấm dứt và thay đổi';
 
   @override
   String get legalTermsTerminationBody =>
-      'Bạn có thể đóng tài khoản bất cứ lúc nào. Chúng tôi có thể tạm khóa tài khoản vi phạm các điều khoản này. Dữ liệu được xử lý theo Chính sách quyền riêng tư.\n\nChúng tôi có thể cập nhật các điều khoản này khi sản phẩm thay đổi. Nếu có thay đổi quan trọng, chúng tôi sẽ ghi chú tại đây. Tiếp tục dùng Xenoh nghĩa là bạn chấp nhận các điều khoản hiện hành.';
+      'Bạn có thể đóng tài khoản bất cứ lúc nào. Chúng tôi có thể tạm khóa tài khoản vi phạm các điều khoản này. Dữ liệu được xử lý theo Chính sách quyền riêng tư.\n\nChúng tôi có thể cập nhật các điều khoản này khi sản phẩm thay đổi. Nếu có thay đổi quan trọng, chúng tôi sẽ ghi chú tại đây. Tiếp tục dùng Ascend nghĩa là bạn chấp nhận các điều khoản hiện hành.';
 
   @override
   String get legalTermsContactTitle => 'Liên hệ';
@@ -4883,7 +4883,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get legalRefundSubscriptionAccessBody =>
-      'Ứng dụng di động phản ánh quyền truy cập gói đăng ký gắn với tài khoản Xenoh của bạn sau khi trạng thái tài khoản được cập nhật.';
+      'Ứng dụng di động phản ánh quyền truy cập gói đăng ký gắn với tài khoản Ascend của bạn sau khi trạng thái tài khoản được cập nhật.';
 
   @override
   String get legalRefundReviewProcessTitle => 'Quy trình xem xét';
@@ -4901,17 +4901,17 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get legalDisclaimerMessage =>
-      'Bản tóm tắt này trên di động phản ánh hành vi sản phẩm Xenoh hiện tại và sẽ được thay thế bằng nội dung pháp lý chính thức trước khi ra mắt chính thức.';
+      'Bản tóm tắt này trên di động phản ánh hành vi sản phẩm Ascend hiện tại và sẽ được thay thế bằng nội dung pháp lý chính thức trước khi ra mắt chính thức.';
 
   @override
-  String get marketingAboutTitle => 'Về Xenoh';
+  String get marketingAboutTitle => 'Về Ascend';
 
   @override
   String get marketingBuiltForTitle => 'Xây dựng cho người tập và HLV';
 
   @override
   String get marketingBuiltForSubtitle =>
-      'Xenoh giữ backend là nguồn dữ liệu chính trong khi ứng dụng di động tập trung vào thực thi hằng ngày nhanh chóng.';
+      'Ascend giữ backend là nguồn dữ liệu chính trong khi ứng dụng di động tập trung vào thực thi hằng ngày nhanh chóng.';
 
   @override
   String get marketingIndividualsTitle => 'Cá nhân';
@@ -4995,14 +4995,14 @@ class AppLocalizationsVi extends AppLocalizations {
   String get coachClientDefaultName => 'Học viên';
 
   @override
-  String get accountDeletionAppBarTitle => 'Xóa tài khoản Xenoh';
+  String get accountDeletionAppBarTitle => 'Xóa tài khoản Ascend';
 
   @override
   String get accountDeletionTitle => 'Xóa tài khoản';
 
   @override
   String get accountDeletionDescription =>
-      'Yêu cầu xóa vĩnh viễn tài khoản Xenoh và dữ liệu liên quan. Chúng tôi sẽ xác minh bạn sở hữu địa chỉ email trước khi xử lý yêu cầu.';
+      'Yêu cầu xóa vĩnh viễn tài khoản Ascend và dữ liệu liên quan. Chúng tôi sẽ xác minh bạn sở hữu địa chỉ email trước khi xử lý yêu cầu.';
 
   @override
   String get accountDeletionSuccessMessage =>
@@ -5025,7 +5025,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get accountDeletionConfirmationMessage =>
-      'Thao tác này xóa vĩnh viễn tài khoản Xenoh và dữ liệu liên quan. Không thể hoàn tác.';
+      'Thao tác này xóa vĩnh viễn tài khoản Ascend và dữ liệu liên quan. Không thể hoàn tác.';
 
   @override
   String get accountDeletionConfirmLabel => 'Xóa tài khoản';
@@ -5042,7 +5042,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get accountDeletionCompleteBody =>
-      'Tài khoản Xenoh của bạn đã được xóa vĩnh viễn và bạn đã được đăng xuất.';
+      'Tài khoản Ascend của bạn đã được xóa vĩnh viễn và bạn đã được đăng xuất.';
 
   @override
   String get accountDeletionFailedTitle =>
@@ -5521,10 +5521,10 @@ class AppLocalizationsVi extends AppLocalizations {
   String get organizerReceiptReviewed => 'Đã lưu xét duyệt biên lai.';
 
   @override
-  String get organizerLinkGuest => 'Liên kết tài khoản Xenoh';
+  String get organizerLinkGuest => 'Liên kết tài khoản Ascend';
 
   @override
-  String get organizerUserId => 'Mã người dùng Xenoh';
+  String get organizerUserId => 'Mã người dùng Ascend';
 
   @override
   String get organizerGuestLinked => 'Đã liên kết đăng ký khách.';
@@ -5913,7 +5913,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get workoutLockScreenPermissionMessage =>
-      'Xenoh có thể hiển thị bài tập hôm nay, hiệp, số lần lặp, mức tạ và bộ đếm giờ trên màn hình khóa khi buổi tập đang diễn ra. Android sẽ mở cài đặt thông báo Tiến trình tập luyện để bạn cho phép hiển thị trên màn hình khóa.';
+      'Ascend có thể hiển thị bài tập hôm nay, hiệp, số lần lặp, mức tạ và bộ đếm giờ trên màn hình khóa khi buổi tập đang diễn ra. Android sẽ mở cài đặt thông báo Tiến trình tập luyện để bạn cho phép hiển thị trên màn hình khóa.';
 
   @override
   String get workoutNotificationPermissionDenied =>

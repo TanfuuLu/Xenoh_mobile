@@ -12,6 +12,7 @@ import '../features/profile/data/repositories/profile_background_repository.dart
 import '../features/profile/presentation/providers/preferences_provider.dart';
 import '../features/subscription/presentation/providers/subscription_controllers.dart';
 import '../l10n/app_localizations.dart';
+import 'branding/app_brand.dart';
 import 'router/router.dart';
 import 'theme/app_density.dart';
 import 'theme/app_theme.dart';
@@ -23,7 +24,7 @@ class XenohApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return MaterialApp.router(
-      title: 'Xenoh',
+      title: AppBrand.name,
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light(),
       // Localization delegates + locales so the IME (incl. Vietnamese Telex/VNI)

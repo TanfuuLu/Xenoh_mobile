@@ -3185,13 +3185,13 @@ abstract class AppLocalizations {
   /// Register screen hero subtitle, account step
   ///
   /// In en, this message translates to:
-  /// **'Start with the sign-in details you will use to access Xenoh.'**
+  /// **'Start with the sign-in details you will use to access Ascend.'**
   String get authRegisterSubtitleStep0;
 
   /// Register screen hero subtitle, profile step
   ///
   /// In en, this message translates to:
-  /// **'Add the profile details Xenoh uses for training, nutrition, and coaching context.'**
+  /// **'Add the profile details Ascend uses for training, nutrition, and coaching context.'**
   String get authRegisterSubtitleStep1;
 
   /// Prompt shown before the sign-in link on the register screen
@@ -3305,7 +3305,7 @@ abstract class AppLocalizations {
   /// Registration consent checkbox label. [[terms]] and [[privacy]] are replaced by tappable links and must be kept verbatim in translations.
   ///
   /// In en, this message translates to:
-  /// **'I agree to the [[terms]] and the [[privacy]], including the community content rules that apply to anything I post on Xenoh.'**
+  /// **'I agree to the [[terms]] and the [[privacy]], including the community content rules that apply to anything I post on Ascend.'**
   String get authConsentText;
 
   /// Link text for the Terms page inside the registration consent label
@@ -7488,7 +7488,7 @@ abstract class AppLocalizations {
   /// No description provided for @communityXenohAthleteFallback.
   ///
   /// In en, this message translates to:
-  /// **'Xenoh athlete'**
+  /// **'Ascend athlete'**
   String get communityXenohAthleteFallback;
 
   /// No description provided for @communityAddButton.
@@ -8586,7 +8586,7 @@ abstract class AppLocalizations {
   /// No description provided for @legalPrivacyIntro.
   ///
   /// In en, this message translates to:
-  /// **'This policy explains what Xenoh collects, why, and the control you have over your data. It is a plain-language summary written for athletes and coaches, not a contract drafted to be unreadable.'**
+  /// **'This policy explains what Ascend collects, why, and the control you have over your data. It is a plain-language summary written for athletes and coaches, not a contract drafted to be unreadable.'**
   String get legalPrivacyIntro;
 
   /// No description provided for @legalPrivacyWhatWeCollectTitle.
@@ -8598,7 +8598,7 @@ abstract class AppLocalizations {
   /// No description provided for @legalPrivacyWhatWeCollectBody.
   ///
   /// In en, this message translates to:
-  /// **'Account details you give us: email, name, and password (stored only as a secure hash).\n\nProfile data you choose to add: height, gender, date of birth, and bodyweight logs — used to calculate BMI, DOTS, and nutrition targets.\n\nTraining data you create: plans, exercises, sets, reps, weights, and session history.\n\nCoach-client data, such as invitations, roster status, assigned plans, client progress summaries, comments, and messages exchanged through Xenoh.\n\nPayment and subscription records needed to activate paid features, calculate coach billing, issue receipts, and handle refund requests. Card or bank details are handled by payment providers and are not stored in full by Xenoh.\n\nBasic technical data needed to run the service, such as your authentication session.'**
+  /// **'Account details you give us: email, name, and password (stored only as a secure hash).\n\nProfile data you choose to add: height, gender, date of birth, and bodyweight logs — used to calculate BMI, DOTS, and nutrition targets.\n\nTraining data you create: plans, exercises, sets, reps, weights, and session history.\n\nCoach-client data, such as invitations, roster status, assigned plans, client progress summaries, comments, and messages exchanged through Ascend.\n\nPayment and subscription records needed to activate paid features, calculate coach billing, issue receipts, and handle refund requests. Card or bank details are handled by payment providers and are not stored in full by Ascend.\n\nBasic technical data needed to run the service, such as your authentication session.'**
   String get legalPrivacyWhatWeCollectBody;
 
   /// No description provided for @legalPrivacyHowWeUseTitle.
@@ -8622,7 +8622,7 @@ abstract class AppLocalizations {
   /// No description provided for @legalPrivacyCoachSharingBody.
   ///
   /// In en, this message translates to:
-  /// **'If you connect with a coach, the plans they write appear in your account and the sets you log become visible to that coach. This is the point of the feature.\n\nCoaches can see client profile details, training logs, progress charts, compliance data, nutrition analysis, and messages that are needed to provide coaching through Xenoh.\n\nClients can see plans, notes, feedback, and messages their coach creates for them.\n\nEither side can end the relationship at any time. When a relationship ends, coach-authored plans tied to it are removed.'**
+  /// **'If you connect with a coach, the plans they write appear in your account and the sets you log become visible to that coach. This is the point of the feature.\n\nCoaches can see client profile details, training logs, progress charts, compliance data, nutrition analysis, and messages that are needed to provide coaching through Ascend.\n\nClients can see plans, notes, feedback, and messages their coach creates for them.\n\nEither side can end the relationship at any time. When a relationship ends, coach-authored plans tied to it are removed.'**
   String get legalPrivacyCoachSharingBody;
 
   /// No description provided for @legalPrivacyAiAnalysisTitle.
@@ -8634,7 +8634,7 @@ abstract class AppLocalizations {
   /// No description provided for @legalPrivacyAiAnalysisBody.
   ///
   /// In en, this message translates to:
-  /// **'When you use AI insights, Xenoh may process your training, nutrition, bodyweight, and profile data to generate summaries, recommendations, or progress observations.\n\nAI output is informational and may be incomplete or wrong. Do not treat it as medical, injury, nutrition, or competition advice without professional review.'**
+  /// **'When you use AI insights, Ascend may process your training, nutrition, bodyweight, and profile data to generate summaries, recommendations, or progress observations.\n\nAI output is informational and may be incomplete or wrong. Do not treat it as medical, injury, nutrition, or competition advice without professional review.'**
   String get legalPrivacyAiAnalysisBody;
 
   /// No description provided for @legalPrivacyProvidersTitle.
@@ -8646,7 +8646,7 @@ abstract class AppLocalizations {
   /// No description provided for @legalPrivacyProvidersBody.
   ///
   /// In en, this message translates to:
-  /// **'We use trusted providers for hosting, database storage, authentication delivery, analytics, payments, email, and support. They may process limited data only as needed to provide those services to Xenoh.\n\nWe require providers to protect data appropriately and not use it for their own advertising purposes.'**
+  /// **'We use trusted providers for hosting, database storage, authentication delivery, analytics, payments, email, and support. They may process limited data only as needed to provide those services to Ascend.\n\nWe require providers to protect data appropriately and not use it for their own advertising purposes.'**
   String get legalPrivacyProvidersBody;
 
   /// No description provided for @legalPrivacyRetentionDeletionTitle.
@@ -8658,7 +8658,7 @@ abstract class AppLocalizations {
   /// No description provided for @legalPrivacyRetentionDeletionBody.
   ///
   /// In en, this message translates to:
-  /// **'Your training history belongs to you. You can export every plan and log to CSV at any time.\n\nYou can delete your account from the app while signed in, or request deletion from the website by entering your email address and confirming the verification link we send to that address.\n\nAfter verification, Xenoh deletes product data and stored documents, including competition payment evidence. Competition entries needed to preserve published results or transaction history are detached from your account and stripped of your name, contact details, birth date, declared measurements, and uploaded receipts.\n\nA locked, anonymized account shell and limited payment, subscription, legal-acceptance, competition-result, and deletion-audit records may be retained for up to 7 years where needed for accounting, dispute handling, fraud prevention, and legal compliance.\n\nBackups and security logs may remain for a limited period under operational retention policies before automatic deletion. These records are used only for recovery, security, fraud prevention, or legal compliance.'**
+  /// **'Your training history belongs to you. You can export every plan and log to CSV at any time.\n\nYou can delete your account from the app while signed in, or request deletion from the website by entering your email address and confirming the verification link we send to that address.\n\nAfter verification, Ascend deletes product data and stored documents, including competition payment evidence. Competition entries needed to preserve published results or transaction history are detached from your account and stripped of your name, contact details, birth date, declared measurements, and uploaded receipts.\n\nA locked, anonymized account shell and limited payment, subscription, legal-acceptance, competition-result, and deletion-audit records may be retained for up to 7 years where needed for accounting, dispute handling, fraud prevention, and legal compliance.\n\nBackups and security logs may remain for a limited period under operational retention policies before automatic deletion. These records are used only for recovery, security, fraud prevention, or legal compliance.'**
   String get legalPrivacyRetentionDeletionBody;
 
   /// No description provided for @legalPrivacyCookiesTitle.
@@ -8694,7 +8694,7 @@ abstract class AppLocalizations {
   /// No description provided for @legalPrivacyMinorsBody.
   ///
   /// In en, this message translates to:
-  /// **'Xenoh is intended for users who can legally create an account and agree to these policies. If a minor uses Xenoh, a parent, guardian, coach, or responsible adult should supervise their training and account use.'**
+  /// **'Ascend is intended for users who can legally create an account and agree to these policies. If a minor uses Ascend, a parent, guardian, coach, or responsible adult should supervise their training and account use.'**
   String get legalPrivacyMinorsBody;
 
   /// No description provided for @legalPrivacyRightsContactTitle.
@@ -8718,7 +8718,7 @@ abstract class AppLocalizations {
   /// No description provided for @legalTermsIntro.
   ///
   /// In en, this message translates to:
-  /// **'These terms cover how you can use Xenoh. By creating an account or using the service, you agree to them.'**
+  /// **'These terms cover how you can use Ascend. By creating an account or using the service, you agree to them.'**
   String get legalTermsIntro;
 
   /// No description provided for @legalTermsAccountTitle.
@@ -8730,7 +8730,7 @@ abstract class AppLocalizations {
   /// No description provided for @legalTermsAccountBody.
   ///
   /// In en, this message translates to:
-  /// **'Give accurate information when you sign up and keep your login credentials private. You are responsible for activity under your account.\n\nOne account is for one person. Do not share a single account across a team.\n\nYou must be legally able to create an account in your location. If you use Xenoh for a team, gym, or coaching business, you are responsible for making sure each user has the right permissions and consent.'**
+  /// **'Give accurate information when you sign up and keep your login credentials private. You are responsible for activity under your account.\n\nOne account is for one person. Do not share a single account across a team.\n\nYou must be legally able to create an account in your location. If you use Ascend for a team, gym, or coaching business, you are responsible for making sure each user has the right permissions and consent.'**
   String get legalTermsAccountBody;
 
   /// No description provided for @legalTermsPlansBillingTitle.
@@ -8742,7 +8742,7 @@ abstract class AppLocalizations {
   /// No description provided for @legalTermsPlansBillingBody.
   ///
   /// In en, this message translates to:
-  /// **'The Solo plan is free. Pro Individual and Pro Coach are fixed-term prepaid plans offered for 1, 3, 6, or 12 months. The total VND price and term are shown before a payment order is created.\n\nPro Coach is a flat-price plan with unlimited client capacity. Xenoh does not charge per active client and does not prorate charges based on client activity.\n\nPaid plans do not renew automatically. Access remains active until the recorded expiration date; continuing afterward requires a new payment.\n\nChanging to a different paid tier starts a new term when the new payment is confirmed and may replace unused time on the previous tier. The checkout warning shows this before payment.\n\nPromotions, taxes, feature limits, and payment instructions shown at checkout form part of the offer. Refund requests are handled under the Refund Policy and applicable law.'**
+  /// **'The Solo plan is free. Pro Individual and Pro Coach are fixed-term prepaid plans offered for 1, 3, 6, or 12 months. The total VND price and term are shown before a payment order is created.\n\nPro Coach is a flat-price plan with unlimited client capacity. Ascend does not charge per active client and does not prorate charges based on client activity.\n\nPaid plans do not renew automatically. Access remains active until the recorded expiration date; continuing afterward requires a new payment.\n\nChanging to a different paid tier starts a new term when the new payment is confirmed and may replace unused time on the previous tier. The checkout warning shows this before payment.\n\nPromotions, taxes, feature limits, and payment instructions shown at checkout form part of the offer. Refund requests are handled under the Refund Policy and applicable law.'**
   String get legalTermsPlansBillingBody;
 
   /// No description provided for @legalTermsAcceptableUseTitle.
@@ -8754,7 +8754,7 @@ abstract class AppLocalizations {
   /// No description provided for @legalTermsAcceptableUseBody.
   ///
   /// In en, this message translates to:
-  /// **'Do not abuse the service: no attempts to break authentication, scrape data in bulk, reverse-engineer the app, or disrupt other users.\n\nDo not upload content you do not have the right to share.\n\nDo not use Xenoh to harass, threaten, exploit, or spam other users.\n\nDo not submit false payment information, misuse trials, bypass subscription limits, or resell access without written permission.'**
+  /// **'Do not abuse the service: no attempts to break authentication, scrape data in bulk, reverse-engineer the app, or disrupt other users.\n\nDo not upload content you do not have the right to share.\n\nDo not use Ascend to harass, threaten, exploit, or spam other users.\n\nDo not submit false payment information, misuse trials, bypass subscription limits, or resell access without written permission.'**
   String get legalTermsAcceptableUseBody;
 
   /// No description provided for @legalTermsCommunityContentTitle.
@@ -8766,7 +8766,7 @@ abstract class AppLocalizations {
   /// No description provided for @legalTermsCommunityContentBody.
   ///
   /// In en, this message translates to:
-  /// **'Posts, comments, photos, and messages you share stay your content, and you are responsible for them.\n\nDo not post anything unlawful, hateful, harassing, sexually explicit, or that infringes someone else\'s rights, and do not present medical advice as coming from Xenoh.\n\nAnyone can report content or block another user from inside the app. Reported content may be reviewed, hidden, or removed, and repeat violations may cost you access to community features.'**
+  /// **'Posts, comments, photos, and messages you share stay your content, and you are responsible for them.\n\nDo not post anything unlawful, hateful, harassing, sexually explicit, or that infringes someone else\'s rights, and do not present medical advice as coming from Ascend.\n\nAnyone can report content or block another user from inside the app. Reported content may be reviewed, hidden, or removed, and repeat violations may cost you access to community features.'**
   String get legalTermsCommunityContentBody;
 
   /// No description provided for @legalTermsHealthDisclaimerTitle.
@@ -8778,7 +8778,7 @@ abstract class AppLocalizations {
   /// No description provided for @legalTermsHealthDisclaimerBody.
   ///
   /// In en, this message translates to:
-  /// **'Xenoh is a training journal, not medical advice. Strength training carries inherent risk.\n\nConsult a qualified professional before starting a program, and train within your own limits. You are responsible for your own safety.\n\nMetrics, AI insights, nutrition targets, and coach notes are informational tools. They do not replace a doctor, physical therapist, dietitian, or qualified in-person assessment.'**
+  /// **'Ascend is a training journal, not medical advice. Strength training carries inherent risk.\n\nConsult a qualified professional before starting a program, and train within your own limits. You are responsible for your own safety.\n\nMetrics, AI insights, nutrition targets, and coach notes are informational tools. They do not replace a doctor, physical therapist, dietitian, or qualified in-person assessment.'**
   String get legalTermsHealthDisclaimerBody;
 
   /// No description provided for @legalTermsCoachClientTitle.
@@ -8790,7 +8790,7 @@ abstract class AppLocalizations {
   /// No description provided for @legalTermsCoachClientBody.
   ///
   /// In en, this message translates to:
-  /// **'Xenoh provides the tools that let a coach and a client work together. We are not a party to the coaching agreement between them and are not responsible for the programming a coach provides.\n\nCoaches are responsible for their own credentials, client communication, pricing, tax obligations, safety practices, and professional duties outside Xenoh.\n\nClients are responsible for deciding whether a coach, plan, or instruction is suitable for them.'**
+  /// **'Ascend provides the tools that let a coach and a client work together. We are not a party to the coaching agreement between them and are not responsible for the programming a coach provides.\n\nCoaches are responsible for their own credentials, client communication, pricing, tax obligations, safety practices, and professional duties outside Ascend.\n\nClients are responsible for deciding whether a coach, plan, or instruction is suitable for them.'**
   String get legalTermsCoachClientBody;
 
   /// No description provided for @legalTermsOwnershipTitle.
@@ -8802,7 +8802,7 @@ abstract class AppLocalizations {
   /// No description provided for @legalTermsOwnershipBody.
   ///
   /// In en, this message translates to:
-  /// **'Your data is yours. The Xenoh app, brand, and software are ours and are protected by intellectual property law.\n\nYou give Xenoh permission to store, process, display, and transmit your content only as needed to run the service, provide support, protect the platform, and improve the product.'**
+  /// **'Your data is yours. The Ascend app, brand, and software are ours and are protected by intellectual property law.\n\nYou give Ascend permission to store, process, display, and transmit your content only as needed to run the service, provide support, protect the platform, and improve the product.'**
   String get legalTermsOwnershipBody;
 
   /// No description provided for @legalTermsAvailabilityTitle.
@@ -8814,7 +8814,7 @@ abstract class AppLocalizations {
   /// No description provided for @legalTermsAvailabilityBody.
   ///
   /// In en, this message translates to:
-  /// **'We work to keep Xenoh reliable, but the service may be unavailable during maintenance, provider outages, network failures, security work, or product updates.\n\nFeatures may change over time. We try to avoid removing important functionality without notice, but we may modify or retire features when needed for security, reliability, legal, or product reasons.'**
+  /// **'We work to keep Ascend reliable, but the service may be unavailable during maintenance, provider outages, network failures, security work, or product updates.\n\nFeatures may change over time. We try to avoid removing important functionality without notice, but we may modify or retire features when needed for security, reliability, legal, or product reasons.'**
   String get legalTermsAvailabilityBody;
 
   /// No description provided for @legalTermsLiabilityTitle.
@@ -8826,7 +8826,7 @@ abstract class AppLocalizations {
   /// No description provided for @legalTermsLiabilityBody.
   ///
   /// In en, this message translates to:
-  /// **'To the maximum extent allowed by law, Xenoh is provided as-is and we are not liable for indirect, incidental, special, or consequential damages, lost profits, lost training opportunities, injury, or decisions made from app data.\n\nWhere liability cannot be excluded, our total liability is limited to the amount you paid to Xenoh in the three months before the claim.'**
+  /// **'To the maximum extent allowed by law, Ascend is provided as-is and we are not liable for indirect, incidental, special, or consequential damages, lost profits, lost training opportunities, injury, or decisions made from app data.\n\nWhere liability cannot be excluded, our total liability is limited to the amount you paid to Ascend in the three months before the claim.'**
   String get legalTermsLiabilityBody;
 
   /// No description provided for @legalTermsTerminationTitle.
@@ -8838,7 +8838,7 @@ abstract class AppLocalizations {
   /// No description provided for @legalTermsTerminationBody.
   ///
   /// In en, this message translates to:
-  /// **'You can close your account at any time. We may suspend accounts that violate these terms. Data is handled as described in the Privacy Policy.\n\nWe may update these terms as the product changes. If we make a material change, we will note it here. Continuing to use Xenoh means you accept the current terms.'**
+  /// **'You can close your account at any time. We may suspend accounts that violate these terms. Data is handled as described in the Privacy Policy.\n\nWe may update these terms as the product changes. If we make a material change, we will note it here. Continuing to use Ascend means you accept the current terms.'**
   String get legalTermsTerminationBody;
 
   /// No description provided for @legalTermsContactTitle.
@@ -8874,7 +8874,7 @@ abstract class AppLocalizations {
   /// No description provided for @legalRefundSubscriptionAccessBody.
   ///
   /// In en, this message translates to:
-  /// **'The mobile app reflects the subscription access associated with your Xenoh account after account status updates.'**
+  /// **'The mobile app reflects the subscription access associated with your Ascend account after account status updates.'**
   String get legalRefundSubscriptionAccessBody;
 
   /// No description provided for @legalRefundReviewProcessTitle.
@@ -8904,13 +8904,13 @@ abstract class AppLocalizations {
   /// No description provided for @legalDisclaimerMessage.
   ///
   /// In en, this message translates to:
-  /// **'This mobile summary mirrors the current Xenoh product behavior and should be replaced with finalized legal copy before production launch.'**
+  /// **'This mobile summary mirrors the current Ascend product behavior and should be replaced with finalized legal copy before production launch.'**
   String get legalDisclaimerMessage;
 
   /// No description provided for @marketingAboutTitle.
   ///
   /// In en, this message translates to:
-  /// **'About Xenoh'**
+  /// **'About Ascend'**
   String get marketingAboutTitle;
 
   /// No description provided for @marketingBuiltForTitle.
@@ -8922,7 +8922,7 @@ abstract class AppLocalizations {
   /// No description provided for @marketingBuiltForSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Xenoh keeps the backend as the source of truth while the mobile app focuses on fast daily execution.'**
+  /// **'Ascend keeps the backend as the source of truth while the mobile app focuses on fast daily execution.'**
   String get marketingBuiltForSubtitle;
 
   /// No description provided for @marketingIndividualsTitle.
@@ -9072,7 +9072,7 @@ abstract class AppLocalizations {
   /// No description provided for @accountDeletionAppBarTitle.
   ///
   /// In en, this message translates to:
-  /// **'Delete Xenoh account'**
+  /// **'Delete Ascend account'**
   String get accountDeletionAppBarTitle;
 
   /// No description provided for @accountDeletionTitle.
@@ -9084,7 +9084,7 @@ abstract class AppLocalizations {
   /// No description provided for @accountDeletionDescription.
   ///
   /// In en, this message translates to:
-  /// **'Request permanent deletion of your Xenoh account and associated data. We will verify that you own the email address before processing the request.'**
+  /// **'Request permanent deletion of your Ascend account and associated data. We will verify that you own the email address before processing the request.'**
   String get accountDeletionDescription;
 
   /// No description provided for @accountDeletionSuccessMessage.
@@ -9126,7 +9126,7 @@ abstract class AppLocalizations {
   /// No description provided for @accountDeletionConfirmationMessage.
   ///
   /// In en, this message translates to:
-  /// **'This permanently deletes your Xenoh account and its associated data. This action cannot be undone.'**
+  /// **'This permanently deletes your Ascend account and its associated data. This action cannot be undone.'**
   String get accountDeletionConfirmationMessage;
 
   /// No description provided for @accountDeletionConfirmLabel.
@@ -9156,7 +9156,7 @@ abstract class AppLocalizations {
   /// No description provided for @accountDeletionCompleteBody.
   ///
   /// In en, this message translates to:
-  /// **'Your Xenoh account has been permanently deleted and you have been signed out.'**
+  /// **'Your Ascend account has been permanently deleted and you have been signed out.'**
   String get accountDeletionCompleteBody;
 
   /// No description provided for @accountDeletionFailedTitle.
@@ -10062,13 +10062,13 @@ abstract class AppLocalizations {
   /// No description provided for @organizerLinkGuest.
   ///
   /// In en, this message translates to:
-  /// **'Link Xenoh account'**
+  /// **'Link Ascend account'**
   String get organizerLinkGuest;
 
   /// No description provided for @organizerUserId.
   ///
   /// In en, this message translates to:
-  /// **'Xenoh user ID'**
+  /// **'Ascend user ID'**
   String get organizerUserId;
 
   /// No description provided for @organizerGuestLinked.
@@ -10812,7 +10812,7 @@ abstract class AppLocalizations {
   /// No description provided for @workoutLockScreenPermissionMessage.
   ///
   /// In en, this message translates to:
-  /// **'Xenoh can show today\'s exercise, set, reps, weight, and timer on your lock screen while a workout is active. Android will open the Workout progress notification settings so you can allow lock-screen display.'**
+  /// **'Ascend can show today\'s exercise, set, reps, weight, and timer on your lock screen while a workout is active. Android will open the Workout progress notification settings so you can allow lock-screen display.'**
   String get workoutLockScreenPermissionMessage;
 
   /// No description provided for @workoutNotificationPermissionDenied.

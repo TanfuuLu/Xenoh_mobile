@@ -1,5 +1,5 @@
 name: xenoh_mobile
-description: "Xenoh — training & recovery companion (Flutter mobile client)."
+description: "Ascend — training and recovery companion."
 publish_to: "none"
 version: 1.0.0+1
 
@@ -107,13 +107,14 @@ flutter:
           weight: 800
 
 flutter_launcher_icons:
-  image_path: "assets/icon/logo_xenoh_transparent.png"
+  image_path: "assets/icon/ascend_emblem.png"
   # Android: adaptive icon (foreground + background) plus legacy fallback.
   android: true
   min_sdk_android: 21
-  adaptive_icon_background: "#FEFBF4"
-  adaptive_icon_foreground: "assets/icon/logo_xenoh_transparent.png"
+  adaptive_icon_background: "#FFFDF8"
+  adaptive_icon_foreground: "assets/icon/ascend_emblem.png"
   adaptive_icon_foreground_inset: 24
+  adaptive_icon_monochrome: "assets/icon/ascend_monochrome.png"
   # iOS: strips alpha and fills the required sizes.
   ios: true
   remove_alpha_ios: true

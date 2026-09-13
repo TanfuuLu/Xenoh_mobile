@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 
 import 'theme/app_colors.dart';
+import 'branding/app_brand.dart';
 
 /// Shown while the app resolves the initial auth state (silent refresh).
 ///
 /// Deliberately mirrors `flutter_native_splash.yaml`'s native splash (same
-/// `xenoh_splash.png` icon mark, same `#EFE4D5`/[AppColors.bgPage]
+/// Ascend emblem, same [AppColors.bgPage]
 /// background) so there's no visible logo swap or background flash the
 /// instant the Flutter engine takes over from the native splash. Uses an
 /// explicit background color rather than the app's usual transparent
@@ -23,7 +24,7 @@ class SplashScreen extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Image.asset(
-              'assets/icon/xenoh_splash.png',
+              AppBrand.emblemAsset,
               width: 180,
               fit: BoxFit.contain,
               filterQuality: FilterQuality.medium,

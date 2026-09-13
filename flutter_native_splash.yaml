@@ -1,13 +1,13 @@
-# Xenoh splash screen — dark-brown brand background with the centered X mark.
+# Ascend splash screen — warm page background with the centered mountain emblem.
 # Regenerate after edits:  dart run flutter_native_splash:create
 flutter_native_splash:
-  color: "#EFE4D5"
-  image: assets/icon/xenoh_splash.png
+  color: "#F7F4EF"
+  image: assets/icon/ascend_emblem.png
 
   # Android 12+ uses a separate splash API (centered icon on a solid color).
   android_12:
-    color: "#EFE4D5"
-    image: assets/icon/xenoh_splash_android12.png
+    color: "#F7F4EF"
+    image: assets/icon/ascend_emblem.png
 
   # Match the system bars to the brand background while the splash shows.
   android: true

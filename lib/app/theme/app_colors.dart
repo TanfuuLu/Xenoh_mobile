@@ -23,13 +23,16 @@ abstract final class AppColors {
   static const ink500 = Color(0xFF62584F);
   static const ink900 = Color(0xFF211B17);
 
-  // Website paper canvas.
-  static const paper = Color(0xFFF7F4EF);
+  // Ascend interface canvas.
+  static const paper = Color(0xFFFFFDF8);
+  static const warmPage = Color(0xFFF7F4EF);
   static const paperAlt = Color(0xFFE7E0D9);
+  static const gold = Color(0xFFD99A1D);
+  static const sage = Color(0xFF83917B);
 
   // Semantic surfaces.
-  static const bgPage = paper;
-  static const bg2 = Color(0xFFFFFDFA);
+  static const bgPage = warmPage;
+  static const bg2 = paper;
   static const bg3 = Color(0xFFF0ECE7);
   static const bg4 = Color(0xFFE7E0D9);
   static const bgInverse = ink900;
