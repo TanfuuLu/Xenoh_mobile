@@ -73,6 +73,25 @@ void main() {
     );
   });
 
+  test('opening animation holds protected routes on the splash screen', () {
+    expect(
+      routeAccessRedirect(
+        const AuthState.unauthenticated(),
+        '/dashboard',
+        openingAnimationCompleted: false,
+      ),
+      '/splash',
+    );
+    expect(
+      routeAccessRedirect(
+        const AuthState.unauthenticated(),
+        '/splash',
+        openingAnimationCompleted: false,
+      ),
+      isNull,
+    );
+  });
+
   test(
     'social callbacks are public until exchange and ignored after login',
     () {

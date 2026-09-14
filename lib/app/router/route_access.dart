@@ -19,9 +19,13 @@ bool isPublicLocation(String location) =>
 /// Returns the canonical redirect for the current authentication state.
 ///
 /// Backend authorization remains authoritative; this only controls client UX.
-String? routeAccessRedirect(AuthState auth, String location) {
+String? routeAccessRedirect(
+  AuthState auth,
+  String location, {
+  bool openingAnimationCompleted = true,
+}) {
   final publicRoute = isPublicLocation(location);
-  if (!auth.isResolved) {
+  if (!auth.isResolved || !openingAnimationCompleted) {
     return location == '/splash' || publicRoute ? null : '/splash';
   }
 

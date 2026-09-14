@@ -78,6 +78,7 @@ import '../../features/training/presentation/screens/week_screen.dart';
 import '../home_shell.dart';
 import '../not_found_screen.dart';
 import '../splash_screen.dart';
+import '../startup/opening_animation_gate.dart';
 import 'route_access.dart';
 
 part 'router.g.dart';
@@ -105,7 +106,10 @@ GoRouter router(Ref ref) {
     navigatorKey: _rootNavigatorKey,
     initialLocation: '/dashboard',
     debugLogDiagnostics: kDebugMode,
-    refreshListenable: refresh,
+    refreshListenable: Listenable.merge([
+      refresh,
+      openingAnimationCompletedNotifier,
+    ]),
     errorBuilder: (_, state) => routerErrorScreenFor(
       state.uri,
       isAuthenticated: ref.read(authControllerProvider).isAuthed,
@@ -114,7 +118,11 @@ GoRouter router(Ref ref) {
       final auth = ref.read(authControllerProvider);
       final loc = state.matchedLocation;
 
-      return routeAccessRedirect(auth, loc);
+      return routeAccessRedirect(
+        auth,
+        loc,
+        openingAnimationCompleted: openingAnimationCompletedNotifier.value,
+      );
     },
     routes: [
       GoRoute(path: '/', builder: (_, _) => _withMenu(const LandingScreen())),

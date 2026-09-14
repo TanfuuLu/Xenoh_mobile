@@ -6,6 +6,8 @@ abstract final class AppBrand {
   static const emblemAsset = 'assets/icon/ascend_emblem.png';
   static const openingEmblemWhiteCircleAsset =
       'assets/icon/ascend_emblem_circle_white.png';
+  static const openingEmblemGoldCircleAsset =
+      'assets/icon/ascend_emblem_circle_gold.png';
 
   /// Double-sized visual marks keep the wordmark readable on phone screens.
   static const toolbarLogoWidth = 180.0;

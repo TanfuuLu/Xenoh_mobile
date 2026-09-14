@@ -17,6 +17,10 @@ void main() {
       AppBrand.openingEmblemWhiteCircleAsset,
       'assets/icon/ascend_emblem_circle_white.png',
     );
+    expect(
+      AppBrand.openingEmblemGoldCircleAsset,
+      'assets/icon/ascend_emblem_circle_gold.png',
+    );
   });
 
   test('uses double-sized Ascend marks on branded surfaces', () {

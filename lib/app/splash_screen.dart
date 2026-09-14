@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
 import 'branding/app_brand.dart';
+import 'startup/opening_animation_gate.dart';
 import 'theme/app_colors.dart';
 
 /// Shown while the app resolves the initial auth state (silent refresh).
@@ -23,10 +25,24 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
-  late final AnimationController _openingLightController = AnimationController(
-    duration: const Duration(milliseconds: 1200),
-    vsync: this,
-  )..forward();
+  late final AnimationController _openingLightController;
+
+  @override
+  void initState() {
+    super.initState();
+    _openingLightController = AnimationController(
+      duration: const Duration(milliseconds: 1200),
+      vsync: this,
+    )..addStatusListener(_onOpeningAnimationStatus);
+    unawaited(_openingLightController.forward());
+  }
+
+  void _onOpeningAnimationStatus(AnimationStatus status) {
+    if (status != AnimationStatus.completed) return;
+
+    completeOpeningAnimation();
+    setState(() {});
+  }
 
   @override
   void dispose() {
@@ -66,18 +82,31 @@ class _SplashScreenState extends State<SplashScreen>
                         AnimatedBuilder(
                           animation: _openingLightController,
                           child: Image.asset(
-                            AppBrand.emblemAsset,
+                            AppBrand.openingEmblemGoldCircleAsset,
+                            key: const Key('splash-gold-circle'),
                             fit: BoxFit.contain,
                             filterQuality: FilterQuality.medium,
                             excludeFromSemantics: true,
                           ),
-                          builder: (context, originalEmblem) => ClipPath(
-                            key: const Key('splash-circle-reveal'),
-                            clipper: _CircleStrokeRevealClipper(
-                              progress: _openingLightController.value,
-                            ),
-                            child: originalEmblem,
-                          ),
+                          builder: (context, originalEmblem) {
+                            if (_openingLightController.isCompleted) {
+                              return Image.asset(
+                                AppBrand.emblemAsset,
+                                key: const Key('splash-original-emblem'),
+                                fit: BoxFit.contain,
+                                filterQuality: FilterQuality.medium,
+                                excludeFromSemantics: true,
+                              );
+                            }
+
+                            return ClipPath(
+                              key: const Key('splash-circle-reveal'),
+                              clipper: _CircleStrokeRevealClipper(
+                                progress: _openingLightController.value,
+                              ),
+                              child: originalEmblem,
+                            );
+                          },
                         ),
                       ],
                     ),
