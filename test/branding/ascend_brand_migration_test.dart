@@ -13,6 +13,10 @@ void main() {
     expect(AppBrand.libraryName, 'Ascend Library');
     expect(AppBrand.horizontalLogoAsset, 'assets/icon/ascend_logo.png');
     expect(AppBrand.emblemAsset, 'assets/icon/ascend_emblem.png');
+    expect(
+      AppBrand.openingEmblemWhiteCircleAsset,
+      'assets/icon/ascend_emblem_circle_white.png',
+    );
   });
 
   test('uses double-sized Ascend marks on branded surfaces', () {
