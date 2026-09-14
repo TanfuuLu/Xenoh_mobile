@@ -64,8 +64,6 @@ class ClientsScreen extends ConsumerWidget {
           onOpenVault: () => unawaited(context.push('/coach/key-vault')),
         ),
         const SizedBox(height: AppSpacing.lg),
-        _SchedulePanel(dashboard: dashboard),
-        const SizedBox(height: AppSpacing.xl),
         _PendingRequestsSection(
           pending: pending,
           onAction: (item, action) => _runAction(context, ref, item, action),
@@ -77,6 +75,8 @@ class ClientsScreen extends ConsumerWidget {
           onAction: (item, action) => _runAction(context, ref, item, action),
           onOpenClient: (item) => _openClient(context, item),
         ),
+        const SizedBox(height: AppSpacing.xl),
+        _SchedulePanel(dashboard: dashboard),
       ],
     );
   }
@@ -243,11 +243,6 @@ class _ManageClientsPanel extends StatelessWidget {
                     ],
                   ),
                 ),
-                const _RoundIconBadge(
-                  icon: Icons.lightbulb_outline_rounded,
-                  color: AppColors.warningBg,
-                  fg: AppColors.warning,
-                ),
               ],
             ),
             const SizedBox(height: AppSpacing.md),
@@ -276,13 +271,23 @@ class _DashboardMetricList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        for (final item in items) ...[
-          if (item != items.first) const SizedBox(height: AppSpacing.md),
-          _BoardMetricTile(item: item),
-        ],
-      ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final columns = constraints.maxWidth >= 640 ? 4 : 2;
+        final width =
+            (constraints.maxWidth - AppSpacing.sm * (columns - 1)) / columns;
+        return Wrap(
+          spacing: AppSpacing.sm,
+          runSpacing: AppSpacing.sm,
+          children: [
+            for (final item in items)
+              SizedBox(
+                width: width,
+                child: _BoardMetricTile(item: item),
+              ),
+          ],
+        );
+      },
     );
   }
 }
@@ -294,35 +299,39 @@ class _BoardMetricTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
-      child: Row(
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.md),
+      decoration: BoxDecoration(
+        color: item.bg.withValues(alpha: 0.45),
+        borderRadius: BorderRadius.circular(AppRadius.md),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  item.label,
-                  style: const TextStyle(
-                    color: AppColors.fg1,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
+          Row(
+            children: [
+              Expanded(
+                child: Text(
                   item.value,
                   style: AppTypography.mono(
-                    22,
-                    weight: FontWeight.w500,
+                    26,
+                    weight: FontWeight.w600,
                     color: AppColors.fg1,
                   ),
                 ),
-              ],
+              ),
+              Icon(item.icon, size: 20, color: item.fg),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            item.label,
+            style: const TextStyle(
+              color: AppColors.fg2,
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
             ),
           ),
-          _RoundIconBadge(icon: item.icon, color: item.bg, fg: item.fg),
         ],
       ),
     );
@@ -749,9 +758,6 @@ class _RelationshipCard extends ConsumerWidget {
               decoration: BoxDecoration(
                 color: AppColors.bg3.withValues(alpha: 0.42),
                 borderRadius: BorderRadius.circular(AppRadius.md),
-                border: Border.all(
-                  color: AppColors.surfaceBorderSoft.withValues(alpha: 0.75),
-                ),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
