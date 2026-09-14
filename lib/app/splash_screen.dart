@@ -31,17 +31,44 @@ class _SplashScreenState extends State<SplashScreen>
   void initState() {
     super.initState();
     _openingLightController = AnimationController(
-      duration: const Duration(milliseconds: 1200),
+      duration: const Duration(milliseconds: 1800),
       vsync: this,
     )..addStatusListener(_onOpeningAnimationStatus);
-    unawaited(_openingLightController.forward());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      unawaited(_startOpeningAnimation());
+    });
+  }
+
+  Future<void> _startOpeningAnimation() async {
+    try {
+      await Future.wait([
+        precacheImage(
+          const AssetImage(AppBrand.openingEmblemWhiteCircleAsset),
+          context,
+        ),
+        precacheImage(
+          const AssetImage(AppBrand.openingEmblemGoldCircleAsset),
+          context,
+        ),
+        precacheImage(const AssetImage(AppBrand.emblemAsset), context),
+      ]);
+    } catch (_) {
+      // The base screen remains visible if an asset cannot be cached. Continue
+      // instead of keeping the user on the startup route indefinitely.
+    }
+
+    if (mounted) {
+      await _openingLightController.forward();
+    }
   }
 
   void _onOpeningAnimationStatus(AnimationStatus status) {
     if (status != AnimationStatus.completed) return;
 
-    completeOpeningAnimation();
-    setState(() {});
+    if (mounted) {
+      completeOpeningAnimation();
+      setState(() {});
+    }
   }
 
   @override

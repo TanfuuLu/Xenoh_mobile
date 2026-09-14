@@ -3,20 +3,24 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:xenoh_mobile/app/splash_screen.dart';
 
 void main() {
-  testWidgets('paints the original gold circle over the white Ascend emblem', (
+  testWidgets('keeps the Ascend circle reveal visible before its final frame', (
     tester,
   ) async {
     await tester.pumpWidget(const MaterialApp(home: SplashScreen()));
+    await tester.runAsync(() async {
+      await Future<void>.delayed(Duration.zero);
+    });
+    await tester.pump();
 
     expect(find.byKey(const Key('splash-circle-base')), findsOneWidget);
     expect(find.byKey(const Key('splash-circle-reveal')), findsOneWidget);
     expect(find.byKey(const Key('splash-gold-circle')), findsOneWidget);
 
     await tester.pump(const Duration(milliseconds: 1500));
-    await tester.pump();
 
-    expect(find.byKey(const Key('splash-circle-reveal')), findsNothing);
-    expect(find.byKey(const Key('splash-original-emblem')), findsOneWidget);
+    expect(find.byKey(const Key('splash-circle-reveal')), findsOneWidget);
+    expect(find.byKey(const Key('splash-original-emblem')), findsNothing);
+
     expect(tester.takeException(), isNull);
   });
 }

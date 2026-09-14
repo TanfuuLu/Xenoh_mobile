@@ -2,12 +2,18 @@
 # Regenerate after edits:  dart run flutter_native_splash:create
 flutter_native_splash:
   color: "#F7F4EF"
-  image: assets/icon/ascend_emblem.png
+  # A transparent placeholder keeps the native splash visually blank. The
+  # Flutter splash is therefore the first visible Ascend logo.
+  image: assets/icon/ascend_native_splash_placeholder.png
 
-  # Android 12+ uses a separate splash API (centered icon on a solid color).
+  # Native startup remains a clean background. Android 12 masks native images
+  # into an icon shape, so the first visible Ascend logo is rendered by Flutter
+  # where its white-to-gold brushstroke animation is displayed correctly.
   android_12:
     color: "#F7F4EF"
-    image: assets/icon/ascend_emblem.png
+    # Android 12 masks this required icon into a circle; this transparent
+    # placeholder ensures no masked or square logo is ever shown.
+    image: assets/icon/ascend_native_splash_placeholder.png
 
   # Match the system bars to the brand background while the splash shows.
   android: true
