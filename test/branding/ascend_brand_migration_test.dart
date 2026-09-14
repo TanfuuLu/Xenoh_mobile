@@ -15,6 +15,16 @@ void main() {
     expect(AppBrand.emblemAsset, 'assets/icon/ascend_emblem.png');
   });
 
+  test('uses double-sized Ascend marks on branded surfaces', () {
+    expect(AppBrand.toolbarLogoWidth, 180);
+    expect(AppBrand.toolbarLogoHeight, 60);
+    expect(AppBrand.authLogoWidth, 222);
+    expect(AppBrand.authLogoHeight, 74);
+    expect(AppBrand.marketingLogoWidth, 228);
+    expect(AppBrand.marketingLogoHeight, 76);
+    expect(AppBrand.splashEmblemSize, 360);
+  });
+
   test('uses the approved Ascend neutral and action colors', () {
     expect(AppColors.paper.toARGB32(), 0xFFFFFDF8);
     expect(AppColors.bgPage.toARGB32(), 0xFFF7F4EF);

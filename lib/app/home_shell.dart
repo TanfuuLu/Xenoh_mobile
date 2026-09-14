@@ -775,7 +775,8 @@ class _AppDrawer extends StatelessWidget {
                       alignment: Alignment.centerLeft,
                       child: Image.asset(
                         AppBrand.horizontalLogoAsset,
-                        height: 30,
+                        width: AppBrand.toolbarLogoWidth,
+                        height: AppBrand.toolbarLogoHeight,
                         fit: BoxFit.contain,
                         filterQuality: FilterQuality.medium,
                       ),

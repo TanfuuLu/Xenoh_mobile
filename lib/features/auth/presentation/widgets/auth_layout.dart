@@ -394,8 +394,8 @@ class _AuthBrand extends StatelessWidget {
       child: Image.asset(
         AppBrand.horizontalLogoAsset,
         semanticLabel: AppBrand.name,
-        height: 37,
-        width: 136,
+        height: AppBrand.authLogoHeight,
+        width: AppBrand.authLogoWidth,
         fit: BoxFit.contain,
         alignment: Alignment.centerLeft,
         filterQuality: FilterQuality.medium,

@@ -61,11 +61,14 @@ class DashboardScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
+        toolbarHeight: 76,
+        leadingWidth: 52,
+        titleSpacing: 0,
         leading: const HomeShellMenuButton(),
         title: Image.asset(
           AppBrand.horizontalLogoAsset,
-          height: 30,
-          width: 168,
+          height: AppBrand.toolbarLogoHeight,
+          width: AppBrand.toolbarLogoWidth,
           fit: BoxFit.contain,
           alignment: Alignment.centerLeft,
           filterQuality: FilterQuality.medium,

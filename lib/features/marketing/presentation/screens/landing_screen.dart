@@ -23,14 +23,15 @@ class LandingScreen extends StatelessWidget {
           children: [
             Row(
               children: [
-                Image.asset(
-                  AppBrand.horizontalLogoAsset,
-                  width: 164,
-                  height: 38,
-                  fit: BoxFit.contain,
-                  alignment: Alignment.centerLeft,
+                Expanded(
+                  child: Image.asset(
+                    AppBrand.horizontalLogoAsset,
+                    width: AppBrand.marketingLogoWidth,
+                    height: AppBrand.marketingLogoHeight,
+                    fit: BoxFit.contain,
+                    alignment: Alignment.centerLeft,
+                  ),
                 ),
-                const Spacer(),
                 TextButton(
                   onPressed: () => unawaited(context.push('/about')),
                   child: Text(l10n.marketingAboutNavLabel),

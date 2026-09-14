@@ -25,7 +25,7 @@ class SplashScreen extends StatelessWidget {
           children: [
             Image.asset(
               AppBrand.emblemAsset,
-              width: 180,
+              width: AppBrand.splashEmblemSize,
               fit: BoxFit.contain,
               filterQuality: FilterQuality.medium,
             ),
