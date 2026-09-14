@@ -113,6 +113,60 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('shows schedule before the active client roster', (tester) async {
+    tester.view.physicalSize = const Size(390, 1200);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          coachClientsProvider.overrideWith(
+            (ref) async => const [
+              {
+                'clientId': 'client-1',
+                'clientName': 'Demo Athlete',
+                'status': 'Active',
+              },
+            ],
+          ),
+          coachPendingRequestsProvider.overrideWith((ref) async => const []),
+          coachDashboardProvider.overrideWith(
+            (ref) async => const [
+              {
+                'clientId': 'client-1',
+                'fullName': 'Demo Athlete',
+                'activePlanName': 'Coach Plan',
+                'activePlanProgressPercent': 42,
+              },
+            ],
+          ),
+          preferencesProvider.overrideWith(
+            (ref) async => const {'weightUnit': 'kg'},
+          ),
+        ],
+        child: const MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: ClientsScreen(),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final schedule = find.text('Schedule');
+    final activeClientCard = find.byKey(
+      const ValueKey('client-relationship-client-1'),
+    );
+    expect(schedule, findsOneWidget);
+    expect(activeClientCard, findsOneWidget);
+    expect(
+      tester.getTopLeft(schedule).dy,
+      lessThan(tester.getTopLeft(activeClientCard).dy),
+    );
+  });
+
   testWidgets('coach ends a relationship without the client approving', (
     tester,
   ) async {

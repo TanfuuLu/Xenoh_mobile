@@ -64,6 +64,8 @@ class ClientsScreen extends ConsumerWidget {
           onOpenVault: () => unawaited(context.push('/coach/key-vault')),
         ),
         const SizedBox(height: AppSpacing.lg),
+        _SchedulePanel(dashboard: dashboard),
+        const SizedBox(height: AppSpacing.xl),
         _PendingRequestsSection(
           pending: pending,
           onAction: (item, action) => _runAction(context, ref, item, action),
@@ -75,8 +77,6 @@ class ClientsScreen extends ConsumerWidget {
           onAction: (item, action) => _runAction(context, ref, item, action),
           onOpenClient: (item) => _openClient(context, item),
         ),
-        const SizedBox(height: AppSpacing.xl),
-        _SchedulePanel(dashboard: dashboard),
       ],
     );
   }
@@ -666,10 +666,7 @@ class _RelationshipCard extends ConsumerWidget {
     return XnSection(
       key: ValueKey('client-relationship-$relationshipKey'),
       onTap: onTap,
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.md,
-        vertical: AppSpacing.lg,
-      ),
+      padding: const EdgeInsets.all(AppSpacing.md),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -709,10 +706,23 @@ class _RelationshipCard extends ConsumerWidget {
                         ),
                       ),
                     ],
-                    const SizedBox(height: AppSpacing.sm),
-                    _ClientStatusLabel(
-                      label: status,
-                      active: statusActive,
+                    const SizedBox(height: AppSpacing.xs),
+                    Wrap(
+                      spacing: AppSpacing.sm,
+                      runSpacing: AppSpacing.xs,
+                      children: [
+                        _ClientStatusLabel(
+                          label: status,
+                          active: statusActive,
+                        ),
+                        if (attention)
+                          _ClientStatePill(
+                            icon: Icons.error_outline_rounded,
+                            label: l10n.coachNeedsAttentionLabel,
+                            color: AppColors.warning,
+                            backgroundColor: AppColors.warningBg,
+                          ),
+                      ],
                     ),
                   ],
                 ),
@@ -756,8 +766,11 @@ class _RelationshipCard extends ConsumerWidget {
             Container(
               padding: const EdgeInsets.all(AppSpacing.md),
               decoration: BoxDecoration(
-                color: AppColors.bg3.withValues(alpha: 0.42),
+                color: AppColors.accentSoft.withValues(alpha: 0.45),
                 borderRadius: BorderRadius.circular(AppRadius.md),
+                border: Border.all(
+                  color: AppColors.clay800.withValues(alpha: 0.10),
+                ),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -765,40 +778,43 @@ class _RelationshipCard extends ConsumerWidget {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Icon(
-                        Icons.assignment_outlined,
-                        size: 17,
-                        color: AppColors.clay800,
-                      ),
+                      const _PlanIcon(),
                       const SizedBox(width: AppSpacing.sm),
                       Expanded(
-                        child: Text(
-                          plan ?? l10n.coachMetricNoActivePlan,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            color: AppColors.fg1,
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                            height: 1.25,
-                          ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              l10n.coachTrainingPlanTitle,
+                              style: const TextStyle(
+                                color: AppColors.fg3,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              plan ?? l10n.coachMetricNoActivePlan,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                color: AppColors.fg1,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                height: 1.25,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                       if (progress != null) ...[
                         const SizedBox(width: AppSpacing.sm),
-                        Text(
-                          '$progress%',
-                          style: AppTypography.mono(
-                            13,
-                            weight: FontWeight.w600,
-                            color: AppColors.clay800,
-                          ),
-                        ),
+                        _ProgressBadge(progress: progress),
                       ],
                     ],
                   ),
                   if (progress != null) ...[
-                    const SizedBox(height: AppSpacing.sm),
+                    const SizedBox(height: AppSpacing.md),
                     ClipRRect(
                       borderRadius: BorderRadius.circular(AppRadius.pill),
                       child: LinearProgressIndicator(
@@ -815,10 +831,10 @@ class _RelationshipCard extends ConsumerWidget {
               ),
             ),
           ],
-          if (completedToday || weightKg != null || attention) ...[
+          if (completedToday || weightKg != null) ...[
             const SizedBox(height: AppSpacing.md),
             Wrap(
-              spacing: AppSpacing.md,
+              spacing: AppSpacing.sm,
               runSpacing: AppSpacing.sm,
               children: [
                 if (weightKg != null)
@@ -833,15 +849,105 @@ class _RelationshipCard extends ConsumerWidget {
                     label: l10n.commonDone,
                     color: AppColors.success,
                   ),
-                if (attention)
-                  _ClientMetaLabel(
-                    icon: Icons.error_outline_rounded,
-                    label: l10n.coachNeedsAttentionLabel,
-                    color: AppColors.warning,
-                  ),
               ],
             ),
           ],
+        ],
+      ),
+    );
+  }
+}
+
+class _PlanIcon extends StatelessWidget {
+  const _PlanIcon();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 32,
+      height: 32,
+      decoration: BoxDecoration(
+        color: AppColors.bg2,
+        borderRadius: BorderRadius.circular(AppRadius.sm),
+      ),
+      child: const Icon(
+        Icons.assignment_outlined,
+        size: 17,
+        color: AppColors.clay800,
+      ),
+    );
+  }
+}
+
+class _ProgressBadge extends StatelessWidget {
+  const _ProgressBadge({required this.progress});
+
+  final int progress;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.sm,
+        vertical: AppSpacing.xs,
+      ),
+      decoration: BoxDecoration(
+        color: AppColors.bg2,
+        borderRadius: BorderRadius.circular(AppRadius.pill),
+      ),
+      child: Text(
+        '$progress%',
+        style: AppTypography.mono(
+          12,
+          weight: FontWeight.w600,
+          color: AppColors.clay800,
+        ),
+      ),
+    );
+  }
+}
+
+class _ClientStatePill extends StatelessWidget {
+  const _ClientStatePill({
+    required this.icon,
+    required this.label,
+    required this.color,
+    required this.backgroundColor,
+  });
+
+  final IconData icon;
+  final String label;
+  final Color color;
+  final Color backgroundColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.sm,
+        vertical: AppSpacing.xs,
+      ),
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(AppRadius.pill),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 13, color: color),
+          const SizedBox(width: 4),
+          Flexible(
+            child: Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: color,
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
         ],
       ),
     );
