@@ -1,4 +1,4 @@
-# Xenoh Google Play Implementation Plan
+# Ascend Google Play Implementation Plan
 
 > **Status note (2026-08-16):** parts of the "Completed" claims below were
 > stale — the bank-transfer checkout was still live in the app until it was
@@ -9,7 +9,7 @@
 
 ## Goal
 
-Publish Xenoh on Google Play without an in-app customer payment flow. Website
+Publish Ascend on Google Play without an in-app customer payment flow. Website
 subscriptions grant access in the mobile app; the mobile app only reads and
 enforces the resulting subscription state.
 
@@ -153,7 +153,7 @@ Deploy these public HTTPS pages before Play Console submission:
 
 Privacy policy must state:
 
-- Xenoh legal entity name, effective date, contact email, and jurisdiction.
+- Ascend legal entity name, effective date, contact email, and jurisdiction.
 - Data collected: account/profile data, date of birth/gender, fitness and
   nutrition data, photos, messages/community content, and subscription data.
 - Purposes, processors/subprocessors, sharing, security, and retention.
@@ -164,12 +164,12 @@ Privacy policy must state:
 Acceptance criteria:
 
 - Each URL is publicly accessible without app installation or account login.
-- The deletion page clearly references Xenoh and submits a working request.
+- The deletion page clearly references Ascend and submits a working request.
 - Privacy policy content exactly matches the Play Data Safety answers.
 
 ## Phase 4: Android Release
 
-1. Create a Xenoh-owned upload keystore and store a backup outside source
+1. Create an Ascend-owned upload keystore and store a backup outside source
    control.
 2. Copy `android/key.properties.example` to `android/key.properties` and set
    the real keystore values.
@@ -185,7 +185,7 @@ flutter build appbundle --release --dart-define=API_BASE_URL=https://api.xenoh.o
 
 Acceptance criteria:
 
-- Release AAB is signed by the Xenoh upload key, never `Android Debug`.
+- Release AAB is signed by the Ascend upload key, never `Android Debug`.
 - AAB target SDK remains at or above the current Play minimum.
 - All tests pass; only accepted analyzer information remains.
 
@@ -216,7 +216,7 @@ Do not submit for production until every item is true:
 - [ ] Public privacy and account deletion pages are live.
 - [ ] Android payment and payment-steering content is absent.
 - [ ] Data Safety declarations match actual behavior.
-- [ ] Release AAB is signed with the Xenoh upload key.
+- [ ] Release AAB is signed with the Ascend upload key.
 - [ ] Reviewer account and instructions work.
 - [ ] Internal/closed test passes on physical Android devices.
 - [ ] Play Console has no blocking policy or pre-launch findings.

@@ -42,6 +42,16 @@ void main() {
     expect(ios, contains('<string>xenoh</string>'));
   });
 
+  test('uses Ascend in installable web metadata', () {
+    final manifest = File('web/manifest.json').readAsStringSync();
+    final index = File('web/index.html').readAsStringSync();
+
+    expect(manifest, contains('"name": "Ascend"'));
+    expect(manifest, contains('"background_color": "#F7F4EF"'));
+    expect(index, contains('<title>Ascend</title>'));
+    expect(index, contains('content="Ascend training and recovery companion."'));
+  });
+
   test('contains no visible Xenoh wording in app localizations', () {
     for (final path in ['lib/l10n/app_en.arb', 'lib/l10n/app_vi.arb']) {
       final messages = jsonDecode(File(path).readAsStringSync())

@@ -2,7 +2,7 @@
 
 ## 1. Production signing
 
-1. Generate and back up a private Android upload keystore owned by Xenoh.
+1. Generate and back up a private Android upload keystore owned by Ascend.
 2. Copy `android/key.properties.example` to `android/key.properties` and set
    the keystore values.
 3. Enrol `online.xenoh.xenoh_mobile` in Play App Signing before its first
@@ -41,7 +41,7 @@ deleting data. Deploy a public web page at
 
 The Flutter app no longer creates payment orders, displays VietQR details, or
 calls payment endpoints. It only reads `GET /api/subscriptions/me`, so accounts
-subscribed on the Xenoh website retain Pro access in mobile.
+subscribed on the Ascend website retain Pro access in mobile.
 
 Do not add a website checkout link or payment instructions to the Play Android
 app without first confirming that the relevant Google Play regional program

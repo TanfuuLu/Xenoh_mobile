@@ -1,6 +1,6 @@
-# Xenoh Mobile
+# Ascend Mobile
 
-Flutter client for Xenoh.
+Flutter client for Ascend.
 
 ## Social sign-in
 
@@ -22,7 +22,7 @@ default to `https://api.xenoh.online/api` if `API_BASE_URL` is omitted.
 The backend must expose `GET /api/auth/external/{provider}?client=mobile` and
 set `Authentication:MobileCallbackUrl` to
 `xenoh://auth/social-callback`. Android and iOS are configured to return that
-URI to GoRouter, which exchanges the one-time ticket for the normal Xenoh
+URI to GoRouter, which exchanges the one-time ticket for the normal Ascend
 session.
 
 ## Getting Started

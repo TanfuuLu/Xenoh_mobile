@@ -1,11 +1,11 @@
 {
-    "name": "Xenoh",
-    "short_name": "Xenoh",
+    "name": "Ascend",
+    "short_name": "Ascend",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "Xenoh training and recovery companion.",
+    "background_color": "#F7F4EF",
+    "theme_color": "#211B17",
+    "description": "Ascend training and recovery companion.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

@@ -1,4 +1,4 @@
-# Google Play Readiness Audit — Xenoh Mobile
+# Google Play Readiness Audit — Ascend Mobile
 
 Audited on branch `codex/mobile-social-login`, Flutter 3.44.8 / Dart 3.12.2.
 Verified by reading configuration and source, and by producing a real signed
@@ -11,7 +11,7 @@ The Android build is in good shape. The payment blocker **has now been fixed**
 in this repo (see §2 B1). What remains is off-repo: the Play Console track and
 verification of the public web pages.
 
-**Monetisation model (decided):** subscriptions are sold on the Xenoh website
+**Monetisation model (decided):** subscriptions are sold on the Ascend website
 only. The mobile client observes entitlement state and never sells, activates,
 or links to a purchase.
 
@@ -244,7 +244,7 @@ Ship to production only when every one of these is true:
 - [ ] Privacy policy and account-deletion pages live and matching Data Safety
 - [ ] Deletion endpoints smoke-tested in production
 - [ ] A website purchase confirmed to grant Pro in the mobile app
-- [ ] AAB signed by the Xenoh upload key, enrolled in Play App Signing, key backed up off-machine
+- [ ] AAB signed by the Ascend upload key, enrolled in Play App Signing, key backed up off-machine
 - [ ] Foreground-service declaration accepted
 - [ ] Reviewer account works for every gated flow
 - [ ] Report and block walked end-to-end on device: community post, athlete
