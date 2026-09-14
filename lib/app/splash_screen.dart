@@ -10,7 +10,7 @@ import 'theme/app_colors.dart';
 /// Shown while the app resolves the initial auth state (silent refresh).
 ///
 /// Matches the native splash background. Flutter owns the full, unmasked logo
-/// and waits for its images before painting the circle from left to right.
+/// and waits for its images before painting along the circle's brushstroke.
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -120,7 +120,7 @@ class _SplashScreenState extends State<SplashScreen>
                               );
                             }
 
-                            return ClipRect(
+                            return ClipPath(
                               key: const Key('splash-circle-reveal'),
                               clipper: CircleStrokeRevealClipper(
                                 progress: _openingLightController.value,
@@ -148,19 +148,36 @@ class _SplashScreenState extends State<SplashScreen>
   }
 }
 
-/// Reveals the original image horizontally without imposing a circular crop.
-class CircleStrokeRevealClipper extends CustomClipper<Rect> {
+/// Follows the open brushstroke from the lower-left tip, over the top, to the
+/// lower-right tip. Only the gold overlay is clipped; the complete white-circle
+/// emblem underneath keeps the mountain visible throughout the animation.
+class CircleStrokeRevealClipper extends CustomClipper<Path> {
   const CircleStrokeRevealClipper({required this.progress});
 
   final double progress;
 
   @override
-  Rect getClip(Size size) => Rect.fromLTWH(
-    0,
-    0,
-    size.width * progress.clamp(0.0, 1.0),
-    size.height,
-  );
+  Path getClip(Size size) {
+    final amount = progress.clamp(0.0, 1.0);
+    if (amount == 0) return Path();
+    if (amount == 1) return Path()..addRect(Offset.zero & size);
+
+    final center = Offset(size.width * 0.5, size.height * 0.49);
+    // Extend beyond every image corner. The moving radial edge reveals the
+    // artwork; the outer arc must never cut off its brush texture or tips.
+    final radius = math.sqrt(
+      size.width * size.width + size.height * size.height,
+    );
+    return Path()
+      ..moveTo(center.dx, center.dy)
+      ..arcTo(
+        Rect.fromCircle(center: center, radius: radius),
+        math.pi * 0.75,
+        math.pi * 1.5 * amount,
+        false,
+      )
+      ..close();
+  }
 
   @override
   bool shouldReclip(covariant CircleStrokeRevealClipper oldClipper) =>

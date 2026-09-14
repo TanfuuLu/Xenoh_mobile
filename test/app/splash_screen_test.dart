@@ -5,20 +5,25 @@ import 'package:xenoh_mobile/app/splash_screen.dart';
 import 'package:xenoh_mobile/app/startup/opening_animation_gate.dart';
 
 void main() {
-  test('reveal moves left to right and includes the full logo height', () {
+  test('paint follows the arc from lower left over the top to lower right', () {
     const size = Size(300, 300);
-    expect(
-      const CircleStrokeRevealClipper(progress: 0).getClip(size),
-      const Rect.fromLTWH(0, 0, 0, 300),
-    );
-    expect(
-      const CircleStrokeRevealClipper(progress: 0.5).getClip(size),
-      const Rect.fromLTWH(0, 0, 150, 300),
-    );
-    expect(
-      const CircleStrokeRevealClipper(progress: 1).getClip(size),
-      Offset.zero & size,
-    );
+    const leftTip = Offset(35, 225);
+    const top = Offset(150, 30);
+    const rightTip = Offset(265, 225);
+    final empty = const CircleStrokeRevealClipper(progress: 0).getClip(size);
+    final early = const CircleStrokeRevealClipper(progress: 0.2).getClip(size);
+    final late = const CircleStrokeRevealClipper(progress: 0.8).getClip(size);
+    final full = const CircleStrokeRevealClipper(progress: 1).getClip(size);
+    expect(empty.contains(leftTip), isFalse);
+    expect(early.contains(leftTip), isTrue);
+    expect(early.contains(top), isFalse);
+    expect(early.contains(rightTip), isFalse);
+    expect(late.contains(leftTip), isTrue);
+    expect(late.contains(top), isTrue);
+    expect(late.contains(rightTip), isFalse);
+    expect(full.contains(rightTip), isTrue);
+    expect(full.contains(const Offset(10, 290)), isTrue);
+    expect(full.contains(const Offset(290, 290)), isTrue);
   });
   testWidgets('keeps the Ascend circle reveal visible before its final frame', (
     tester,
