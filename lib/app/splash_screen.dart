@@ -9,13 +9,8 @@ import 'theme/app_colors.dart';
 
 /// Shown while the app resolves the initial auth state (silent refresh).
 ///
-/// Deliberately mirrors `flutter_native_splash.yaml`'s native splash (same
-/// Ascend emblem, same [AppColors.bgPage]
-/// background) so there's no visible logo swap or background flash the
-/// instant the Flutter engine takes over from the native splash. Uses an
-/// explicit background color rather than the app's usual transparent
-/// Scaffold, so it never shows the user's custom background photo before
-/// preferences have even loaded.
+/// Matches the native splash background. Flutter owns the full, unmasked logo
+/// and waits for its images before painting the circle from left to right.
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -40,14 +35,11 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   Future<void> _startOpeningAnimation() async {
+    if (!mounted) return;
     try {
       await Future.wait([
         precacheImage(
           const AssetImage(AppBrand.openingEmblemWhiteCircleAsset),
-          context,
-        ),
-        precacheImage(
-          const AssetImage(AppBrand.openingEmblemGoldCircleAsset),
           context,
         ),
         precacheImage(const AssetImage(AppBrand.emblemAsset), context),
@@ -101,7 +93,9 @@ class _SplashScreenState extends State<SplashScreen>
                       fit: StackFit.expand,
                       children: [
                         Image.asset(
-                          AppBrand.openingEmblemWhiteCircleAsset,
+                          _openingLightController.isCompleted
+                              ? AppBrand.emblemAsset
+                              : AppBrand.openingEmblemWhiteCircleAsset,
                           key: const Key('splash-circle-base'),
                           fit: BoxFit.contain,
                           filterQuality: FilterQuality.medium,
@@ -109,7 +103,7 @@ class _SplashScreenState extends State<SplashScreen>
                         AnimatedBuilder(
                           animation: _openingLightController,
                           child: Image.asset(
-                            AppBrand.openingEmblemGoldCircleAsset,
+                            AppBrand.emblemAsset,
                             key: const Key('splash-gold-circle'),
                             fit: BoxFit.contain,
                             filterQuality: FilterQuality.medium,
@@ -126,9 +120,9 @@ class _SplashScreenState extends State<SplashScreen>
                               );
                             }
 
-                            return ClipPath(
+                            return ClipRect(
                               key: const Key('splash-circle-reveal'),
-                              clipper: _CircleStrokeRevealClipper(
+                              clipper: CircleStrokeRevealClipper(
                                 progress: _openingLightController.value,
                               ),
                               child: originalEmblem,
@@ -154,32 +148,21 @@ class _SplashScreenState extends State<SplashScreen>
   }
 }
 
-/// Reveals the original brushstroke from its left edge, across the top, and
-/// then clockwise until the white starter circle is fully painted gold.
-class _CircleStrokeRevealClipper extends CustomClipper<Path> {
-  const _CircleStrokeRevealClipper({required this.progress});
+/// Reveals the original image horizontally without imposing a circular crop.
+class CircleStrokeRevealClipper extends CustomClipper<Rect> {
+  const CircleStrokeRevealClipper({required this.progress});
 
   final double progress;
 
   @override
-  Path getClip(Size size) {
-    if (progress >= 1) return Path()..addRect(Offset.zero & size);
-
-    final center = Offset(size.width / 2, size.height * 0.49);
-    final radius = size.width * 0.51;
-    final sweep = math.pi * 2 * progress;
-    return Path()
-      ..moveTo(center.dx, center.dy)
-      ..arcTo(
-        Rect.fromCircle(center: center, radius: radius),
-        math.pi,
-        sweep,
-        false,
-      )
-      ..close();
-  }
+  Rect getClip(Size size) => Rect.fromLTWH(
+    0,
+    0,
+    size.width * progress.clamp(0.0, 1.0),
+    size.height,
+  );
 
   @override
-  bool shouldReclip(covariant _CircleStrokeRevealClipper oldClipper) =>
+  bool shouldReclip(covariant CircleStrokeRevealClipper oldClipper) =>
       oldClipper.progress != progress;
 }
