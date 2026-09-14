@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../../app/branding/app_brand.dart';
 import '../../../../app/home_shell.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_dimens.dart';
@@ -401,7 +402,7 @@ class _ProfileHeader extends StatelessWidget {
                               Flexible(
                                 child: Text(
                                   profile.fullName.isEmpty
-                                      ? 'Xenoh'
+                                      ? AppBrand.name
                                       : profile.fullName,
                                   style: AppTypography.display(
                                     23,

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../app/branding/app_brand.dart';
 import '../../../../app/home_shell.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_dimens.dart';
@@ -62,7 +63,7 @@ class DashboardScreen extends ConsumerWidget {
       appBar: AppBar(
         leading: const HomeShellMenuButton(),
         title: Image.asset(
-          'assets/icon/banner_logo_xenoh.png',
+          AppBrand.horizontalLogoAsset,
           height: 30,
           width: 168,
           fit: BoxFit.contain,

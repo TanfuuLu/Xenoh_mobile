@@ -18,6 +18,7 @@ import '../features/profile/presentation/providers/profile_controller.dart';
 import '../features/subscription/presentation/providers/subscription_controllers.dart';
 import '../features/training/presentation/providers/exercise_image_cache_warmup_provider.dart';
 import '../l10n/app_localizations.dart';
+import 'branding/app_brand.dart';
 import 'navigation/home_navigation.dart';
 import 'theme/app_colors.dart';
 import 'theme/app_dimens.dart';
@@ -773,7 +774,7 @@ class _AppDrawer extends StatelessWidget {
                     child: Align(
                       alignment: Alignment.centerLeft,
                       child: Image.asset(
-                        'assets/icon/banner_logo_xenoh.png',
+                        AppBrand.horizontalLogoAsset,
                         height: 30,
                         fit: BoxFit.contain,
                         filterQuality: FilterQuality.medium,

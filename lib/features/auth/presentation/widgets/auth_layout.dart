@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../app/branding/app_brand.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_dimens.dart';
 import '../../../../app/theme/app_typography.dart';
@@ -391,8 +392,8 @@ class _AuthBrand extends StatelessWidget {
     return Align(
       alignment: Alignment.centerLeft,
       child: Image.asset(
-        'assets/icon/banner_logo_xenoh.png',
-        semanticLabel: 'Xenoh',
+        AppBrand.horizontalLogoAsset,
+        semanticLabel: AppBrand.name,
         height: 37,
         width: 136,
         fit: BoxFit.contain,

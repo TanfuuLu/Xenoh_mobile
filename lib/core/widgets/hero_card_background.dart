@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../app/branding/app_brand.dart';
 import '../../app/theme/app_colors.dart';
 
 /// The default backdrop painted inside hero cards (dashboard, cycle, plans,
@@ -7,7 +8,7 @@ import '../../app/theme/app_colors.dart';
 ///
 /// A lit, dimensional clay surface — a warm diagonal base, a soft highlight in
 /// the top-left corner (as if lit from above) and a deep espresso pool in the
-/// bottom-right — finished with a faint embossed Xenoh owl mark bleeding off
+/// bottom-right — finished with a faint embossed Ascend emblem bleeding off
 /// the bottom-right corner. Resolution-independent, so it stays crisp at any
 /// card size, and dark enough throughout to keep white hero text legible.
 class HeroCardBackground extends StatelessWidget {
@@ -60,7 +61,7 @@ class HeroCardBackground extends StatelessWidget {
           right: -34,
           bottom: -40,
           child: Image.asset(
-            'assets/icon/logo_xenoh_transparent.png',
+            AppBrand.emblemAsset,
             width: 208,
             height: 208,
             color: AppColors.fgOnClay.withValues(alpha: 0.07),

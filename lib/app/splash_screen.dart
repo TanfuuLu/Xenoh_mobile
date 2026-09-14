@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'theme/app_colors.dart';
 import 'branding/app_brand.dart';
+import 'theme/app_colors.dart';
 
 /// Shown while the app resolves the initial auth state (silent refresh).
 ///

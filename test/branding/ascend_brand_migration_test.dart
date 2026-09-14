@@ -16,12 +16,12 @@ void main() {
   });
 
   test('uses the approved Ascend neutral and action colors', () {
-    expect(AppColors.paper.value, 0xFFFFFDF8);
-    expect(AppColors.bgPage.value, 0xFFF7F4EF);
-    expect(AppColors.accent.value, 0xFFB6532F);
-    expect(AppColors.accentPress.value, 0xFF84371F);
-    expect(AppColors.gold.value, 0xFFD99A1D);
-    expect(AppColors.sage.value, 0xFF83917B);
+    expect(AppColors.paper.toARGB32(), 0xFFFFFDF8);
+    expect(AppColors.bgPage.toARGB32(), 0xFFF7F4EF);
+    expect(AppColors.accent.toARGB32(), 0xFFB6532F);
+    expect(AppColors.accentPress.toARGB32(), 0xFF84371F);
+    expect(AppColors.gold.toARGB32(), 0xFFD99A1D);
+    expect(AppColors.sage.toARGB32(), 0xFF83917B);
   });
 
   test('keeps the deployed Xenoh API endpoint for compatibility', () {
@@ -51,6 +51,24 @@ void main() {
           .map((entry) => entry.value as String);
 
       expect(visibleValues, everyElement(isNot(contains('Xenoh'))));
+    }
+  });
+
+  test('uses Ascend artwork throughout branded Flutter surfaces', () {
+    final files = [
+      'lib/app/home_shell.dart',
+      'lib/app/splash_screen.dart',
+      'lib/core/widgets/hero_card_background.dart',
+      'lib/features/auth/presentation/widgets/auth_layout.dart',
+      'lib/features/dashboard/presentation/screens/dashboard_screen.dart',
+      'lib/features/marketing/presentation/screens/landing_screen.dart',
+    ];
+
+    for (final path in files) {
+      final source = File(path).readAsStringSync();
+      expect(source, isNot(contains('banner_logo_xenoh.png')));
+      expect(source, isNot(contains('logo_xenoh_transparent.png')));
+      expect(source, isNot(contains('xenoh_splash.png')));
     }
   });
 }

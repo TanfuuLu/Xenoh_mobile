@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../app/branding/app_brand.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_dimens.dart';
 import '../../../../app/theme/app_typography.dart';
@@ -23,7 +24,7 @@ class LandingScreen extends StatelessWidget {
             Row(
               children: [
                 Image.asset(
-                  'assets/icon/banner_logo_xenoh.png',
+                  AppBrand.horizontalLogoAsset,
                   width: 164,
                   height: 38,
                   fit: BoxFit.contain,
@@ -64,7 +65,7 @@ class LandingScreen extends StatelessWidget {
                     child: Opacity(
                       opacity: 0.07,
                       child: Image.asset(
-                        'assets/icon/logo_xenoh_transparent.png',
+                        AppBrand.emblemAsset,
                         width: 250,
                         height: 250,
                       ),
