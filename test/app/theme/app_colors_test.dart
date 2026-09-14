@@ -4,9 +4,9 @@ import 'package:xenoh_mobile/app/theme/app_colors.dart';
 import 'package:xenoh_mobile/app/theme/app_theme.dart';
 
 void main() {
-  test('uses the approved calm website-aligned brand surfaces', () {
+  test('uses the approved Ascend brand surfaces', () {
     expect(AppColors.bgPage, const Color(0xFFF7F4EF));
-    expect(AppColors.bg2, const Color(0xFFFFFDFA));
+    expect(AppColors.bg2, const Color(0xFFFFFDF8));
     expect(AppColors.bg3, const Color(0xFFF0ECE7));
     expect(AppColors.bg4, const Color(0xFFE7E0D9));
     expect(AppColors.accent, const Color(0xFFB6532F));
