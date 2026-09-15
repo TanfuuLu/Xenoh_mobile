@@ -1,0 +1,639 @@
+{
+  "path": "E:\\Xenoh_mobile\\Ascend_Backend_API_Rebrand_Change_Description.docx",
+  "blocks": [
+    {
+      "type": "paragraph",
+      "style": "Title",
+      "text": "Ascend Backend API Rebrand Change Description"
+    },
+    {
+      "type": "paragraph",
+      "style": "Normal",
+      "text": "Mobile integration impact and compatibility reference"
+    },
+    {
+      "type": "paragraph",
+      "style": "Normal",
+      "text": "Version 1.0  |  13 September 2026"
+    },
+    {
+      "type": "paragraph",
+      "style": "Heading 2",
+      "text": "Conclusion"
+    },
+    {
+      "type": "paragraph",
+      "style": "Normal",
+      "text": "The backend changes are customer-facing brand updates from Xenoh to Ascend. They do not add, remove, or rename API endpoints, HTTP methods, request fields, response schemas, authentication contracts, server URLs, or the API version. Mobile clients can keep their existing networking layer and models. They should update visible copy and expect Ascend wording in selected messages, emails, AI content, and generated share images."
+    },
+    {
+      "type": "paragraph",
+      "style": "Heading 2",
+      "text": "Comparison basis"
+    },
+    {
+      "type": "paragraph",
+      "style": "Normal",
+      "text": "This document compares the current Xenoh backend working tree with its current Git HEAD. It describes the tracked rebrand changes in API, Application, and Infrastructure code plus the checked-in OpenAPI document. Unrelated untracked test files are excluded."
+    },
+    {
+      "type": "paragraph",
+      "style": "Heading 1",
+      "text": "1 Change classification"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Area",
+          "Result",
+          "Mobile impact"
+        ],
+        [
+          "Routes and HTTP methods",
+          "Unchanged",
+          "No client routing changes"
+        ],
+        [
+          "Request DTOs",
+          "Unchanged",
+          "No request-model changes"
+        ],
+        [
+          "Response schemas",
+          "Unchanged",
+          "No response-model regeneration"
+        ],
+        [
+          "Authentication and authorization",
+          "Unchanged",
+          "Keep existing JWT and policy handling"
+        ],
+        [
+          "API title",
+          "Xenoh API to Ascend API",
+          "Documentation display only"
+        ],
+        [
+          "Selected message text",
+          "Xenoh to Ascend",
+          "Update snapshots and exact string checks"
+        ],
+        [
+          "AI response context",
+          "Ascend branding",
+          "Visible generated language may change"
+        ],
+        [
+          "Transactional emails",
+          "Ascend branding",
+          "No mobile payload change"
+        ],
+        [
+          "PR share images",
+          "Ascend lettering",
+          "Refresh image previews or snapshots"
+        ]
+      ]
+    },
+    {
+      "type": "paragraph",
+      "style": "Heading 1",
+      "text": "2 OpenAPI contract verification"
+    },
+    {
+      "type": "paragraph",
+      "style": "Normal",
+      "text": "The checked-in OpenAPI document changed only its information title. The version remains v1."
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "OpenAPI element",
+          "Before",
+          "After",
+          "Assessment"
+        ],
+        [
+          "info.title",
+          "Xenoh API",
+          "Ascend API",
+          "Changed"
+        ],
+        [
+          "info.version",
+          "v1",
+          "v1",
+          "Unchanged"
+        ],
+        [
+          "Path count",
+          "19",
+          "19",
+          "Unchanged"
+        ],
+        [
+          "Path names",
+          "Existing set",
+          "Same set",
+          "Unchanged"
+        ],
+        [
+          "HTTP methods",
+          "Existing set",
+          "Same set",
+          "Unchanged"
+        ],
+        [
+          "Schemas",
+          "Existing definitions",
+          "Same definitions",
+          "Unchanged"
+        ],
+        [
+          "Servers",
+          "Existing definitions",
+          "Same definitions",
+          "Unchanged"
+        ],
+        [
+          "Security",
+          "Existing definitions",
+          "Same definitions",
+          "Unchanged"
+        ]
+      ]
+    },
+    {
+      "type": "paragraph",
+      "style": "Normal",
+      "text": "Mobile action: keep the current API base URL, generated client models, serialization rules, and authentication interceptors. Regenerating a client from this OpenAPI file is optional because the only difference is the displayed API title."
+    },
+    {
+      "type": "paragraph",
+      "style": "Heading 1",
+      "text": "3 Observable API behavior changes"
+    },
+    {
+      "type": "paragraph",
+      "style": "Normal",
+      "text": "The following endpoints can expose new Ascend wording or visuals. Status codes and payload shapes remain unchanged."
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Endpoint or flow",
+          "Changed behavior",
+          "Mobile handling"
+        ],
+        [
+          "POST /api/auth/external/complete-registration",
+          "When the provider supplies no first name, a newly created user now receives the fallback first name Ascend instead of Xenoh.",
+          "No model change. Do not assume the fallback value is a person's real name."
+        ],
+        [
+          "GET /api/competition-management/events/{eventId}/staff/lookup",
+          "The not-found message now says that no Ascend account uses the email address.",
+          "Display the server message or use localized client copy. Update exact-message tests."
+        ],
+        [
+          "POST /api/subscriptions/payment-orders",
+          "An Organizer-tier rejection now directs the user to Ascend support.",
+          "Keep existing error handling. Update exact-message tests and visible fallback copy."
+        ],
+        [
+          "GET /api/insights/me/coach-tip",
+          "The fallback insight now names Ascend Coach.",
+          "No response-shape change. Refresh content snapshots."
+        ],
+        [
+          "POST /api/insights/me/coach-chat/conversations/{conversationId}/messages",
+          "The off-topic response now refers to progress inside Ascend in English and Vietnamese.",
+          "Treat generated and policy responses as content, not stable identifiers."
+        ],
+        [
+          "GET /api/share/pr/{userId}/{exerciseTemplateId}/image.png",
+          "The generated PNG now draws A S C E N D in the header and footer instead of the legacy name.",
+          "No URL or MIME-type change. Invalidate cached previews if needed."
+        ]
+      ]
+    },
+    {
+      "type": "paragraph",
+      "style": "Heading 2",
+      "text": "External registration note"
+    },
+    {
+      "type": "paragraph",
+      "style": "Normal",
+      "text": "The fallback-name change affects only new external-login users whose provider data has an empty first name. Existing profiles are not renamed. The API continues to return the existing authentication response contract."
+    },
+    {
+      "type": "paragraph",
+      "style": "Heading 1",
+      "text": "4 AI powered endpoint changes"
+    },
+    {
+      "type": "paragraph",
+      "style": "Normal",
+      "text": "Ascend's shared coaching prompt now identifies the product and coach as Ascend and Ascend Coach. The data contracts remain the same, but generated wording can reflect the new brand. Cached AI content created before deployment may still contain Xenoh until it expires or is regenerated."
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Endpoint",
+          "Potential content effect"
+        ],
+        [
+          "GET /api/insights/me",
+          "Account-wide analysis is framed as an Ascend insight experience."
+        ],
+        [
+          "GET /api/insights/plan/{planId}/progress",
+          "Plan-progress recommendations inherit the Ascend coaching identity."
+        ],
+        [
+          "GET /api/insights/me/coach-tip",
+          "Generated tips and the fallback insight use Ascend Coach language."
+        ],
+        [
+          "POST /api/insights/me/coach-chat/conversations/{conversationId}/messages",
+          "Coach replies, topic boundaries, and future conversation summaries use Ascend branding."
+        ],
+        [
+          "GET /api/cycle/insight",
+          "Cycle-aware recommendations inherit the shared Ascend coaching identity."
+        ],
+        [
+          "POST /api/plans/starter-ai",
+          "Generated starter plans inherit the shared Ascend coaching identity."
+        ],
+        [
+          "POST /api/plans/{planId}/balance-check",
+          "AI balance-review language inherits the shared Ascend coaching identity."
+        ],
+        [
+          "GET /api/coach-client/clients/{clientId}/ai-brief",
+          "Coach-facing AI briefs inherit the shared Ascend coaching identity."
+        ]
+      ]
+    },
+    {
+      "type": "paragraph",
+      "style": "Heading 2",
+      "text": "Mobile action"
+    },
+    {
+      "type": "paragraph",
+      "style": "List Bullet",
+      "text": "Do not parse AI prose for the Xenoh or Ascend brand name."
+    },
+    {
+      "type": "paragraph",
+      "style": "List Bullet",
+      "text": "Keep rendering the existing typed response fields."
+    },
+    {
+      "type": "paragraph",
+      "style": "List Bullet",
+      "text": "Update golden tests and screenshots that contain legacy generated copy."
+    },
+    {
+      "type": "paragraph",
+      "style": "List Bullet",
+      "text": "If the mobile app caches AI text locally, allow legacy text to age out or clear only the relevant content cache during migration."
+    },
+    {
+      "type": "paragraph",
+      "style": "Heading 1",
+      "text": "5 Email and generated media changes"
+    },
+    {
+      "type": "paragraph",
+      "style": "Heading 2",
+      "text": "Password reset"
+    },
+    {
+      "type": "paragraph",
+      "style": "Normal",
+      "text": "POST /api/auth/forgot-password/send-code keeps the same request and response behavior. Its side-effect email now uses Ascend in the subject, plain-text body, HTML header, and reset instructions."
+    },
+    {
+      "type": "paragraph",
+      "style": "Heading 2",
+      "text": "Account deletion"
+    },
+    {
+      "type": "paragraph",
+      "style": "Normal",
+      "text": "POST /api/auth/account-deletion-requests keeps the same request and response behavior. Its verification email now uses Ascend in the subject and HTML confirmation text."
+    },
+    {
+      "type": "paragraph",
+      "style": "Heading 2",
+      "text": "Sender name"
+    },
+    {
+      "type": "paragraph",
+      "style": "Normal",
+      "text": "The default SMTP sender display name changed from Xenoh to Ascend in application settings and SmtpOptions. The configured sender email address is unchanged."
+    },
+    {
+      "type": "paragraph",
+      "style": "Heading 2",
+      "text": "Personal record share image"
+    },
+    {
+      "type": "paragraph",
+      "style": "Normal",
+      "text": "The public PR image endpoint keeps its route, parameters, PNG result, caching behavior, and storage flow. Only the drawn brand lettering changed. Mobile clients that cache the image by URL may continue showing an old stored image until the cache is refreshed or the server generates a new object."
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Flow",
+          "Before",
+          "After"
+        ],
+        [
+          "Password reset subject",
+          "Your Xenoh password reset code",
+          "Your Ascend password reset code"
+        ],
+        [
+          "Deletion subject",
+          "Confirm Xenoh account deletion",
+          "Confirm Ascend account deletion"
+        ],
+        [
+          "SMTP display name",
+          "Xenoh",
+          "Ascend"
+        ],
+        [
+          "PR image lettering",
+          "X E N O H",
+          "A S C E N D"
+        ]
+      ]
+    },
+    {
+      "type": "paragraph",
+      "style": "Heading 1",
+      "text": "6 Contracts intentionally unchanged"
+    },
+    {
+      "type": "paragraph",
+      "style": "Normal",
+      "text": "The following legacy technical identifiers remain active. The mobile app must keep using them until the backend and deployed infrastructure support a coordinated migration."
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Contract",
+          "Current value or family",
+          "Required mobile behavior"
+        ],
+        [
+          "API and asset hosts",
+          "xenoh.online and xenoh.app domains",
+          "Keep current base URLs and trusted-host rules."
+        ],
+        [
+          "Mobile callback scheme",
+          "xenoh://auth/social-callback",
+          "Keep registered scheme and external-auth callback handling."
+        ],
+        [
+          "Analytics headers",
+          "X-Xenoh-*",
+          "Continue sending the existing header names."
+        ],
+        [
+          "JWT contract",
+          "Issuer XenohAPI and audience XenohClient",
+          "Keep existing token validation assumptions."
+        ],
+        [
+          "Auth cookies",
+          "xenoh.refresh and xenoh.external",
+          "No mobile change; backend cookie names remain stable."
+        ],
+        [
+          "Payment references",
+          "XENOH plus identifier data",
+          "Do not rewrite or normalize server payment codes."
+        ],
+        [
+          "Internal namespaces",
+          "Xenoh.API, Xenoh.Application, Xenoh.Domain, Xenoh.Infrastructure",
+          "No mobile dependency; internal names remain unchanged."
+        ],
+        [
+          "Redis, storage, and database identifiers",
+          "Existing xenoh-prefixed identifiers",
+          "No mobile change."
+        ]
+      ]
+    },
+    {
+      "type": "paragraph",
+      "style": "Heading 2",
+      "text": "Why this matters"
+    },
+    {
+      "type": "paragraph",
+      "style": "Normal",
+      "text": "Changing these values as part of a visual rebrand could break social login, analytics attribution, token validation, payment reconciliation, cache separation, or connectivity. Their continued Xenoh naming is intentional compatibility behavior, not incomplete visible branding."
+    },
+    {
+      "type": "paragraph",
+      "style": "Heading 1",
+      "text": "7 Mobile implementation checklist"
+    },
+    {
+      "type": "paragraph",
+      "style": "List Bullet",
+      "text": "[ ] Keep all current API routes, methods, base URLs, DTOs, and serializers."
+    },
+    {
+      "type": "paragraph",
+      "style": "List Bullet",
+      "text": "[ ] Keep the xenoh mobile callback scheme for social authentication."
+    },
+    {
+      "type": "paragraph",
+      "style": "List Bullet",
+      "text": "[ ] Keep sending X-Xenoh analytics headers exactly as implemented."
+    },
+    {
+      "type": "paragraph",
+      "style": "List Bullet",
+      "text": "[ ] Update client-owned error fallbacks and snapshots from Xenoh to Ascend."
+    },
+    {
+      "type": "paragraph",
+      "style": "List Bullet",
+      "text": "[ ] Do not compare complete AI responses as stable strings."
+    },
+    {
+      "type": "paragraph",
+      "style": "List Bullet",
+      "text": "[ ] Refresh cached PR share images or append an existing cache-busting mechanism after deployment."
+    },
+    {
+      "type": "paragraph",
+      "style": "List Bullet",
+      "text": "[ ] Verify password-reset and account-deletion flows from the mobile app through the received email link or code."
+    },
+    {
+      "type": "paragraph",
+      "style": "List Bullet",
+      "text": "[ ] Test external registration when the provider omits a first name."
+    },
+    {
+      "type": "paragraph",
+      "style": "List Bullet",
+      "text": "[ ] Test Organizer payment-order rejection and competition staff lookup not-found handling."
+    },
+    {
+      "type": "paragraph",
+      "style": "List Bullet",
+      "text": "[ ] Review English and Vietnamese Ascend Coach responses."
+    },
+    {
+      "type": "paragraph",
+      "style": "List Bullet",
+      "text": "[ ] Run a final case-insensitive UI search for Xenoh while allowing documented technical identifiers."
+    },
+    {
+      "type": "paragraph",
+      "style": "Heading 1",
+      "text": "8 Verification evidence"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Check",
+          "Result"
+        ],
+        [
+          "OpenAPI path comparison",
+          "19 before and 19 after; identical path set"
+        ],
+        [
+          "OpenAPI method comparison",
+          "Identical"
+        ],
+        [
+          "OpenAPI schema comparison",
+          "Identical"
+        ],
+        [
+          "OpenAPI servers and security comparison",
+          "Identical"
+        ],
+        [
+          "Backend test suite",
+          "537 passed, 3 skipped, 0 failed"
+        ],
+        [
+          "Git whitespace validation",
+          "Passed; line-ending notices only"
+        ]
+      ]
+    },
+    {
+      "type": "paragraph",
+      "style": "Normal",
+      "text": "The automated checks establish contract stability within the current tracked diff. Mobile release testing should still cover the changed observable flows because email delivery, generated AI text, and image caching depend on runtime services."
+    },
+    {
+      "type": "paragraph",
+      "style": "Heading 1",
+      "text": "9 Backend source change index"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "File",
+          "Purpose of change"
+        ],
+        [
+          "src/Xenoh.API/Program.cs",
+          "Ascend title in generated OpenAPI and Scalar UI"
+        ],
+        [
+          "src/Xenoh.API/appsettings.json",
+          "Ascend default SMTP display name"
+        ],
+        [
+          "openapi.json",
+          "Ascend API information title"
+        ],
+        [
+          "ExternalLoginHandler.cs",
+          "Ascend fallback first name for new social users"
+        ],
+        [
+          "EventFeature.cs",
+          "Ascend competition staff lookup error text"
+        ],
+        [
+          "CoachChatSupport.cs",
+          "Ascend off-topic coach-chat response"
+        ],
+        [
+          "GetTrainingCoachTipHandler.cs",
+          "Ascend Coach fallback insight"
+        ],
+        [
+          "CreatePaymentOrderHandler.cs",
+          "Ascend support error text"
+        ],
+        [
+          "OpenAiUserAnalysisAi.cs and OpenAiCycleInsightAi.cs",
+          "Ascend prompt context and service description"
+        ],
+        [
+          "XenohCoachPrompt.cs",
+          "Shared Ascend Coach identity"
+        ],
+        [
+          "SmtpEmailService.cs and SmtpOptions.cs",
+          "Ascend transactional email branding"
+        ],
+        [
+          "PrShareImageService.cs",
+          "Ascend lettering in generated PR images"
+        ]
+      ]
+    }
+  ],
+  "headers": [
+    {
+      "section": 1,
+      "text": ""
+    }
+  ],
+  "footers": [
+    {
+      "section": 1,
+      "text": "Ascend Backend API Rebrand Change Description   |   "
+    }
+  ],
+  "media": [
+    "word/media/image1.png"
+  ],
+  "has_comments": false,
+  "has_footnotes": false,
+  "has_endnotes": false,
+  "has_tracked_changes": true
+}

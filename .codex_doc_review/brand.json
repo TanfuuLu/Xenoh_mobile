@@ -1,0 +1,848 @@
+{
+  "path": "E:\\Xenoh_mobile\\Ascend_Mobile_App_Brand_Migration_Guide.docx",
+  "blocks": [
+    {
+      "type": "paragraph",
+      "style": "Title",
+      "text": "Ascend Mobile App Brand Migration Guide"
+    },
+    {
+      "type": "paragraph",
+      "style": "Normal",
+      "text": "Brand identity, asset use, product copy, technical migration, and release acceptance"
+    },
+    {
+      "type": "paragraph",
+      "style": "Normal",
+      "text": "Version 1.0  |  13 September 2026"
+    },
+    {
+      "type": "paragraph",
+      "style": "Normal",
+      "text": "Decision"
+    },
+    {
+      "type": "paragraph",
+      "style": "Normal",
+      "text": "The customer-facing brand is Ascend. The mobile app must use Ascend for the app name, visible product language, logo, launcher icon, splash screen, notifications, email references, support screens, and store metadata. Existing Xenoh technical identifiers remain compatible until a coordinated infrastructure migration is approved."
+    },
+    {
+      "type": "paragraph",
+      "style": "Heading 1",
+      "text": "1 Brand change overview"
+    },
+    {
+      "type": "paragraph",
+      "style": "Normal",
+      "text": "This guide gives the mobile team one implementation reference for the rebrand from Xenoh to Ascend. It defines what users should see, which supplied artwork to use, how to translate the identity into a small mobile icon, and which legacy identifiers must remain stable for compatibility."
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Area",
+          "Previous",
+          "Required mobile result"
+        ],
+        [
+          "Product name",
+          "Xenoh",
+          "Ascend"
+        ],
+        [
+          "Primary identity",
+          "Legacy Xenoh wordmark and symbols",
+          "Ascend mountain emblem and Ascend wordmark"
+        ],
+        [
+          "Primary tagline",
+          "Legacy messaging",
+          "Higher Each Rep"
+        ],
+        [
+          "AI coaching feature",
+          "Xenoh Coach",
+          "Ascend Coach"
+        ],
+        [
+          "Exercise catalog",
+          "Xenoh Library",
+          "Ascend Library"
+        ],
+        [
+          "Customer-facing copy",
+          "Xenoh references",
+          "Ascend references in every supported language"
+        ],
+        [
+          "Technical contracts",
+          "Xenoh namespaces, endpoints, keys, and schemes",
+          "Keep stable until separately migrated"
+        ]
+      ]
+    },
+    {
+      "type": "paragraph",
+      "style": "Heading 1",
+      "text": "2 Brand idea and personality"
+    },
+    {
+      "type": "paragraph",
+      "style": "Normal",
+      "text": "Ascend represents measurable progress over time. The mountain and upward A communicate direction, effort, and earned improvement. The circular brush form adds momentum and continuity, reflecting how training records connect one session to the next."
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Principle",
+          "How it should feel in the app"
+        ],
+        [
+          "Progressive",
+          "Show the next useful action and make progress easy to understand."
+        ],
+        [
+          "Evidence led",
+          "Use recorded training data, clear metrics, and specific recommendations."
+        ],
+        [
+          "Confident",
+          "Use direct language and strong hierarchy without sounding aggressive."
+        ],
+        [
+          "Human",
+          "Keep coaching and recovery language supportive, practical, and respectful."
+        ],
+        [
+          "Focused",
+          "Reduce visual noise during active workouts and other high-attention tasks."
+        ]
+      ]
+    },
+    {
+      "type": "paragraph",
+      "style": "Heading 1",
+      "text": "3 Logo system"
+    },
+    {
+      "type": "paragraph",
+      "style": "Heading 2",
+      "text": "Primary horizontal lockup"
+    },
+    {
+      "type": "paragraph",
+      "style": "Normal",
+      "text": "Use 01 ascend mountain emblem logo for sign-in, registration, account recovery, navigation headers, About screens, and wide marketing placements. It includes the emblem, Ascend wordmark, and the Higher Each Rep tagline."
+    },
+    {
+      "type": "paragraph",
+      "style": "Heading 2",
+      "text": "Primary emblem"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "",
+          ""
+        ],
+        [
+          "Full-color emblem",
+          "Monochrome fallback"
+        ]
+      ]
+    },
+    {
+      "type": "paragraph",
+      "style": "Normal",
+      "text": "Use 03 golden mountain brush emblem for compact in-app brand marks and as the source concept for the launcher icon. Use 06 monochrome ascend mountain emblem when color is unavailable, including Android themed icon work and single-color production constraints."
+    },
+    {
+      "type": "paragraph",
+      "style": "Heading 2",
+      "text": "Logo rules"
+    },
+    {
+      "type": "paragraph",
+      "style": "List Bullet",
+      "text": "Keep the logo proportions unchanged. Never stretch, skew, rotate, or redraw the supplied files."
+    },
+    {
+      "type": "paragraph",
+      "style": "List Bullet",
+      "text": "Leave clear space around the mark equal to at least one quarter of the emblem width."
+    },
+    {
+      "type": "paragraph",
+      "style": "List Bullet",
+      "text": "Use the full lockup only when the wordmark and tagline remain readable. Use the emblem at small sizes."
+    },
+    {
+      "type": "paragraph",
+      "style": "List Bullet",
+      "text": "Do not place the detailed emblem over busy photography or low-contrast backgrounds."
+    },
+    {
+      "type": "paragraph",
+      "style": "List Bullet",
+      "text": "Do not add a second shadow, outline, badge shape, or competing gradient around the artwork."
+    },
+    {
+      "type": "paragraph",
+      "style": "Heading 1",
+      "text": "4 Mobile launcher icon and splash screen"
+    },
+    {
+      "type": "paragraph",
+      "style": "Heading 2",
+      "text": "Launcher icon direction"
+    },
+    {
+      "type": "paragraph",
+      "style": "Normal",
+      "text": "The launcher icon should use the Ascend mountain A as the focal symbol. Start from the full-color emblem, simplify fine brush and ring details where necessary, and place it on a solid Ink or warm cream background. Do not include the Ascend wordmark or tagline inside the launcher icon because they will be unreadable at notification and home-screen sizes."
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Platform asset",
+          "Required treatment"
+        ],
+        [
+          "iOS and iPadOS",
+          "Create a 1024 x 1024 square master. Keep the artwork inside generous optical margins and let the system apply the final icon mask."
+        ],
+        [
+          "Android adaptive icon",
+          "Provide separate foreground and background layers at 108 x 108 dp. Keep essential detail inside the centered 66 x 66 dp safe zone."
+        ],
+        [
+          "Android monochrome layer",
+          "Use a clean single-color mountain A derived from the monochrome emblem for themed icons."
+        ],
+        [
+          "Google Play listing",
+          "Export a dedicated 512 x 512 store icon from the approved launcher artwork."
+        ],
+        [
+          "Notifications",
+          "Use a simplified solid silhouette. Avoid the wordmark, ring ornament, gradients, and fine brush texture."
+        ]
+      ]
+    },
+    {
+      "type": "paragraph",
+      "style": "Heading 2",
+      "text": "Splash screen"
+    },
+    {
+      "type": "paragraph",
+      "style": "Normal",
+      "text": "Center the primary emblem on a solid warm page background. Keep the first screen quiet and fast: one emblem, no tagline animation, and no extra onboarding copy. Match the first rendered application screen background so the transition feels continuous."
+    },
+    {
+      "type": "paragraph",
+      "style": "Heading 2",
+      "text": "Small-size checks"
+    },
+    {
+      "type": "paragraph",
+      "style": "List Bullet",
+      "text": "Verify the icon at 16, 24, 32, 48, and 60 logical pixels."
+    },
+    {
+      "type": "paragraph",
+      "style": "List Bullet",
+      "text": "Confirm the central A remains recognizable under circle, squircle, rounded-square, and OEM masks."
+    },
+    {
+      "type": "paragraph",
+      "style": "List Bullet",
+      "text": "Confirm the black mountain does not disappear against dark system surfaces."
+    },
+    {
+      "type": "paragraph",
+      "style": "List Bullet",
+      "text": "Review light, dark, tinted, and themed variants on real devices where supported."
+    },
+    {
+      "type": "paragraph",
+      "style": "Heading 1",
+      "text": "5 Color and typography"
+    },
+    {
+      "type": "paragraph",
+      "style": "Normal",
+      "text": "The product interface uses warm neutral surfaces with terracotta actions. Gold belongs to the identity and decorative brand moments; it should not replace accessible semantic colors for success, warning, danger, or information."
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Color",
+          "Hex",
+          "Mobile use"
+        ],
+        [
+          "Ink",
+          "#211B17",
+          "Primary text, dark icon background"
+        ],
+        [
+          "Paper",
+          "#FFFDF8",
+          "Light surfaces and reverse-logo background"
+        ],
+        [
+          "Warm page",
+          "#F7F4EF",
+          "Primary mobile screen background"
+        ],
+        [
+          "Terracotta",
+          "#B6532F",
+          "Primary action and selected state"
+        ],
+        [
+          "Terracotta press",
+          "#84371F",
+          "Pressed action state"
+        ],
+        [
+          "Gold",
+          "#D99A1D",
+          "Logo detail and limited brand accent"
+        ],
+        [
+          "Sage",
+          "#83917B",
+          "Secondary accent and calm status context"
+        ]
+      ]
+    },
+    {
+      "type": "paragraph",
+      "style": "Heading 2",
+      "text": "Typography"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Role",
+          "Web reference",
+          "Mobile implementation"
+        ],
+        [
+          "Product interface",
+          "Geist",
+          "Use Geist when bundled; otherwise use the platform system sans serif for native controls and dense UI."
+        ],
+        [
+          "Editorial display",
+          "Lora",
+          "Use sparingly for marketing, About, and narrative headings. Do not use for workout data entry."
+        ],
+        [
+          "Numbers and codes",
+          "JetBrains Mono",
+          "Use for fixed-width values only when alignment materially improves scanning."
+        ]
+      ]
+    },
+    {
+      "type": "paragraph",
+      "style": "Heading 2",
+      "text": "Accessibility"
+    },
+    {
+      "type": "paragraph",
+      "style": "List Bullet",
+      "text": "Meet WCAG AA contrast for text and interactive controls."
+    },
+    {
+      "type": "paragraph",
+      "style": "List Bullet",
+      "text": "Never rely on color alone to communicate state; pair it with a label, icon, or shape change."
+    },
+    {
+      "type": "paragraph",
+      "style": "List Bullet",
+      "text": "Support dynamic type and text scaling without clipping the word Ascend or essential actions."
+    },
+    {
+      "type": "paragraph",
+      "style": "List Bullet",
+      "text": "Provide meaningful accessibility labels for brand images used as navigation links; use decorative semantics when the same nearby text already names the brand."
+    },
+    {
+      "type": "paragraph",
+      "style": "Heading 1",
+      "text": "6 Product information and approved copy"
+    },
+    {
+      "type": "paragraph",
+      "style": "Heading 2",
+      "text": "Product description"
+    },
+    {
+      "type": "paragraph",
+      "style": "Normal",
+      "text": "Ascend is a fitness coaching platform for athletes and coaches. It brings training plans, workout logging, progress tracking, nutrition, coach-client collaboration, competitions, and evidence-led insights into one connected training record."
+    },
+    {
+      "type": "paragraph",
+      "style": "Heading 2",
+      "text": "Store short description"
+    },
+    {
+      "type": "paragraph",
+      "style": "Normal",
+      "text": "Plan training, log every set, track progress, and work with a coach in Ascend."
+    },
+    {
+      "type": "paragraph",
+      "style": "Heading 2",
+      "text": "Vietnamese product description"
+    },
+    {
+      "type": "paragraph",
+      "style": "Normal",
+      "text": "Ascend là nền tảng huấn luyện thể chất dành cho người tập và huấn luyện viên. Ứng dụng kết nối kế hoạch tập, nhật ký từng set, theo dõi tiến độ, dinh dưỡng, cộng tác giữa huấn luyện viên và học viên, giải đấu và các phân tích dựa trên dữ liệu trong cùng một hồ sơ tập luyện."
+    },
+    {
+      "type": "paragraph",
+      "style": "Heading 2",
+      "text": "Approved naming"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Context",
+          "English",
+          "Vietnamese"
+        ],
+        [
+          "Product",
+          "Ascend",
+          "Ascend"
+        ],
+        [
+          "AI coaching",
+          "Ascend Coach",
+          "Ascend Coach"
+        ],
+        [
+          "Shared exercise catalog",
+          "Ascend Library",
+          "Thư viện Ascend"
+        ],
+        [
+          "Community member",
+          "Ascend athlete",
+          "Vận động viên Ascend"
+        ],
+        [
+          "Support action",
+          "Contact Ascend",
+          "Liên hệ Ascend"
+        ],
+        [
+          "Navigation action",
+          "Back to Ascend",
+          "Quay lại Ascend"
+        ],
+        [
+          "Tagline",
+          "Higher Each Rep",
+          "Keep in English inside supplied artwork"
+        ]
+      ]
+    },
+    {
+      "type": "paragraph",
+      "style": "Heading 2",
+      "text": "Voice"
+    },
+    {
+      "type": "paragraph",
+      "style": "Normal",
+      "text": "Use direct, practical language. Explain what happened, what the athlete can do next, and why it matters. Avoid exaggerated promises, generic motivation, or language that implies medical diagnosis. Ascend Coach should sound like a perceptive training partner grounded in the athlete's available data."
+    },
+    {
+      "type": "paragraph",
+      "style": "Heading 1",
+      "text": "7 Mobile rename inventory"
+    },
+    {
+      "type": "paragraph",
+      "style": "Normal",
+      "text": "Replace Xenoh anywhere it is visible to a user. Search case-insensitively across source code, localization files, bundled content, screenshots, tests, and release metadata."
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Surface",
+          "Required change"
+        ],
+        [
+          "App display name",
+          "Set the installed app name and store title to Ascend."
+        ],
+        [
+          "Launcher and store icons",
+          "Replace legacy artwork with the approved Ascend icon family."
+        ],
+        [
+          "Splash and authentication",
+          "Use the Ascend emblem or horizontal lockup and Ascend accessibility labels."
+        ],
+        [
+          "Navigation and headers",
+          "Replace visible Xenoh wordmarks and labels with Ascend."
+        ],
+        [
+          "Onboarding",
+          "Update welcome copy, value proposition, permissions rationale, and illustrations."
+        ],
+        [
+          "Settings and account",
+          "Update About, legal, privacy, delete-account, support, and sign-out context."
+        ],
+        [
+          "Workout and coaching",
+          "Use Ascend Library, Ascend Coach, and Ascend athlete consistently."
+        ],
+        [
+          "Push notifications",
+          "Update notification titles, categories, channel descriptions, and default icons."
+        ],
+        [
+          "Email and deep-link screens",
+          "Show Ascend in password reset, verification, deletion, and social sign-in flows."
+        ],
+        [
+          "Widgets and shortcuts",
+          "Update labels, icons, empty states, and accessibility descriptions."
+        ],
+        [
+          "Store listing",
+          "Update title, descriptions, screenshots, preview media, promotional text, and release notes."
+        ],
+        [
+          "Support and legal copy",
+          "Replace the brand name while keeping currently valid support addresses and URLs."
+        ],
+        [
+          "Analytics dashboards",
+          "Update human-readable event and property labels without breaking event contracts."
+        ]
+      ]
+    },
+    {
+      "type": "paragraph",
+      "style": "Heading 2",
+      "text": "Required search terms"
+    },
+    {
+      "type": "paragraph",
+      "style": "Normal",
+      "text": "Search for Xenoh, xenoh, XENOH, spaced lettering such as X E N O H, legacy image filenames, accessibility labels, notification text, email subjects, test fixtures, and screenshots containing the old mark."
+    },
+    {
+      "type": "paragraph",
+      "style": "Heading 1",
+      "text": "8 Technical compatibility boundary"
+    },
+    {
+      "type": "paragraph",
+      "style": "Normal",
+      "text": "The brand migration and the technical-identifier migration are separate releases. The mobile rebrand must not break authentication, persisted sessions, analytics, deep links, networking, or backend contracts."
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Keep stable now",
+          "Reason"
+        ],
+        [
+          "API and asset domains using xenoh.online or xenoh.app",
+          "They are live network locations and contact addresses."
+        ],
+        [
+          "Custom URL schemes such as xenoh://",
+          "External authentication callbacks and existing links may depend on them."
+        ],
+        [
+          "HTTP headers beginning X-Xenoh",
+          "The backend analytics contract currently expects these names."
+        ],
+        [
+          "Local storage, secure storage, and preference keys containing xenoh",
+          "Renaming without migration can sign users out or discard preferences."
+        ],
+        [
+          "JWT issuer, audience, cookie, Redis, database, bucket, and cache identifiers",
+          "Changing them requires coordinated backend and infrastructure deployment."
+        ],
+        [
+          ".NET namespaces and repository/project names",
+          "They are internal implementation identifiers and do not appear in the mobile UI."
+        ],
+        [
+          "Payment reference formats beginning XENOH",
+          "Payment matching logic may depend on the exact format."
+        ]
+      ]
+    },
+    {
+      "type": "paragraph",
+      "style": "Heading 2",
+      "text": "If technical identifiers are renamed later"
+    },
+    {
+      "type": "paragraph",
+      "style": "List Number",
+      "text": "Define old-to-new compatibility behavior for every key, scheme, header, and endpoint."
+    },
+    {
+      "type": "paragraph",
+      "style": "List Number",
+      "text": "Release backend support for both identifiers before the mobile client switches."
+    },
+    {
+      "type": "paragraph",
+      "style": "List Number",
+      "text": "Migrate persisted mobile data without losing sessions, preferences, or queued work."
+    },
+    {
+      "type": "paragraph",
+      "style": "List Number",
+      "text": "Keep legacy deep links and authentication callbacks operational during the support window."
+    },
+    {
+      "type": "paragraph",
+      "style": "List Number",
+      "text": "Monitor failures by app version and remove compatibility only after active legacy clients fall below the approved threshold."
+    },
+    {
+      "type": "paragraph",
+      "style": "Heading 1",
+      "text": "9 Supplied asset catalog"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "File",
+          "Dimensions",
+          "Recommended use"
+        ],
+        [
+          "01_ascend_mountain_emblem_logo.png",
+          "2172 x 724",
+          "Primary horizontal lockup used by the current web application"
+        ],
+        [
+          "02_ascend_horizontal_logo.png",
+          "2172 x 724",
+          "High-contrast horizontal alternative for dark placements"
+        ],
+        [
+          "03_golden_mountain_brush_emblem.png",
+          "1254 x 1254",
+          "Primary compact emblem and launcher-icon source concept"
+        ],
+        [
+          "04_grungy_golden_mountain_emblem.png",
+          "1254 x 1254",
+          "Expressive marketing artwork; avoid in dense product UI"
+        ],
+        [
+          "05_ascend_mountain_halo_logo.png",
+          "1254 x 1254",
+          "Secondary campaign or feature artwork"
+        ],
+        [
+          "06_monochrome_ascend_mountain_emblem.png",
+          "1254 x 1254",
+          "Single-color fallback and Android themed-icon reference"
+        ],
+        [
+          "07_golden_mountain_chevron_emblem.png",
+          "1254 x 1254",
+          "Alternative campaign emblem; not the default app mark"
+        ],
+        [
+          "ascend-gold-pattern.svg",
+          "Vector",
+          "Horizontal decorative pattern for restrained brand moments"
+        ],
+        [
+          "ascend-pattern-vertical-gold.svg",
+          "Vector",
+          "Gold progress or editorial edge treatment"
+        ],
+        [
+          "ascend-pattern-vertical-mono.svg",
+          "Vector",
+          "Monochrome progress or editorial edge treatment"
+        ]
+      ]
+    },
+    {
+      "type": "paragraph",
+      "style": "Normal",
+      "text": "The supplied PNG files have transparent backgrounds. Before mobile release, create platform-ready derivatives with documented backgrounds, optical padding, color profiles, and export settings. Keep the supplied originals unchanged as source artwork."
+    },
+    {
+      "type": "paragraph",
+      "style": "Heading 1",
+      "text": "10 Implementation and release checklist"
+    },
+    {
+      "type": "paragraph",
+      "style": "List Bullet",
+      "text": "[ ] All user-visible Xenoh text is replaced with Ascend in English and Vietnamese."
+    },
+    {
+      "type": "paragraph",
+      "style": "List Bullet",
+      "text": "[ ] The installed app name, launcher icon, splash screen, and store listing use Ascend."
+    },
+    {
+      "type": "paragraph",
+      "style": "List Bullet",
+      "text": "[ ] Ascend Coach, Ascend Library, and Ascend athlete use approved capitalization."
+    },
+    {
+      "type": "paragraph",
+      "style": "List Bullet",
+      "text": "[ ] No old logo appears in screens, widgets, shortcuts, notifications, screenshots, or preview media."
+    },
+    {
+      "type": "paragraph",
+      "style": "List Bullet",
+      "text": "[ ] The app icon remains recognizable under all platform masks and at notification size."
+    },
+    {
+      "type": "paragraph",
+      "style": "List Bullet",
+      "text": "[ ] Light, dark, tinted, and themed icon variants are reviewed where supported."
+    },
+    {
+      "type": "paragraph",
+      "style": "List Bullet",
+      "text": "[ ] Accessibility labels name Ascend correctly and decorative artwork is hidden from screen readers."
+    },
+    {
+      "type": "paragraph",
+      "style": "List Bullet",
+      "text": "[ ] Existing sessions, secure storage, analytics, deep links, and social sign-in still work after upgrade."
+    },
+    {
+      "type": "paragraph",
+      "style": "List Bullet",
+      "text": "[ ] API, email, sharing, payment, and push-notification flows complete successfully."
+    },
+    {
+      "type": "paragraph",
+      "style": "List Bullet",
+      "text": "[ ] Store metadata and privacy/support content are consistent with the in-app brand."
+    },
+    {
+      "type": "paragraph",
+      "style": "List Bullet",
+      "text": "[ ] A final case-insensitive repository search finds no unintended customer-facing Xenoh references."
+    },
+    {
+      "type": "paragraph",
+      "style": "List Bullet",
+      "text": "[ ] Release screenshots are captured from the final branded build on representative iOS and Android devices."
+    },
+    {
+      "type": "paragraph",
+      "style": "Heading 1",
+      "text": "11 Acceptance criteria"
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Acceptance area",
+          "Pass condition"
+        ],
+        [
+          "Identity",
+          "A user sees only Ascend naming and approved Ascend artwork throughout the mobile experience."
+        ],
+        [
+          "Consistency",
+          "English and Vietnamese naming matches this guide across app, notifications, email-linked screens, and stores."
+        ],
+        [
+          "Icon quality",
+          "The mountain A remains clear, centered, and unclipped across required platform masks and sizes."
+        ],
+        [
+          "Accessibility",
+          "Brand assets and controls remain readable, labeled, scalable, and contrast compliant."
+        ],
+        [
+          "Compatibility",
+          "An existing user can upgrade without losing authentication, preferences, deep links, or backend connectivity."
+        ],
+        [
+          "Release readiness",
+          "Automated tests pass and the team completes visual review on representative iOS and Android devices."
+        ]
+      ]
+    },
+    {
+      "type": "paragraph",
+      "style": "Heading 2",
+      "text": "Official platform references"
+    },
+    {
+      "type": "paragraph",
+      "style": "Normal",
+      "text": "Apple Human Interface Guidelines for app icons"
+    },
+    {
+      "type": "paragraph",
+      "style": "Normal",
+      "text": "Android adaptive icon guidance"
+    },
+    {
+      "type": "paragraph",
+      "style": "Normal",
+      "text": "Google Play preview asset requirements"
+    }
+  ],
+  "headers": [
+    {
+      "section": 1,
+      "text": ""
+    }
+  ],
+  "footers": [
+    {
+      "section": 1,
+      "text": "Ascend Mobile App Brand Migration Guide   |   "
+    }
+  ],
+  "media": [
+    "word/media/image1.png",
+    "word/media/image2.png",
+    "word/media/image3.png"
+  ],
+  "has_comments": false,
+  "has_footnotes": false,
+  "has_endnotes": false,
+  "has_tracked_changes": true
+}
